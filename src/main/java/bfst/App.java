@@ -3,12 +3,31 @@
  */
 package bfst;
 
-public class App {
-    public String getGreeting() {
-        return "Hello world.";
+import java.io.IOException;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class App extends Application {
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = App.loadFXML("main");
+        primaryStage.setTitle("LLamp");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+    }
+
+    public static Parent loadFXML(String filename) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/" + filename + ".fxml"));
+        return fxmlLoader.load();
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        App.launch(args);
     }
+
 }
