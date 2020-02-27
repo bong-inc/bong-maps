@@ -1,6 +1,7 @@
 # Gruppe kontrakt
 
 Gruppe kontrakt for gruppe 21
+
 | medlem             | id   |
 | ------------------ | ---- |
 | Frederik Raisa     | FRAI |
