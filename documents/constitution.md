@@ -1,6 +1,13 @@
 # Gruppe kontrakt
 
-*Signaturer og medlemsoversigt i bunden af dokumentet*
+Gruppe kontrakt for gruppe 21
+| medlem             | id   |
+| ------------------ | ---- |
+| Frederik Raisa     | FRAI |
+| Emil Jäpelt        | EMJA |
+| Thomas Kilbak      | THHK |
+| Jonas Røssum       | JGLR |
+| Kristoffer Højelse | FRAI |
 
 1. Organisatoriske normer
     1. Form for organisation
@@ -73,6 +80,9 @@
         Fælleskassen bliver brugt til fælles begivenheder, pizza, etc.
         Man skal sende pengende til mobilepay-boxen: 4084FT.
 
+    6. Mødepligt og sygdom
+        
+        Alle medlemmer møder til de tider som er skemalagt i google calendar. Faste frameldinger er specificeret ved at person er markeret med *optional* tag. Ved sygdom skal man informere om det på messenger tideligst muligt. Det forventes at man godt kan arbejde hjemmefra selvom man er syg (ved mindre man er *meget* syg).
 
 3. Tekniske normer
    1. Sprog
@@ -91,15 +101,33 @@
 
         Vi bruger Gradle som buildtool, for at skabe et agnostisk udviklingsmiljø der kan distribuere til forskellige platforme, samt udvikles på uanset IDE/Kode editor.
 
-# Underskrifter 
+## Underskrifter
 
-Gruppe kontrakt for gruppe 21
+<!-- Gruppe kontrakt for gruppe 21
 | medlem             | id   | signatur |
 | ------------------ | ---- | -------- |
-| Frederik Raisa     | FRAI |![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "frai") |
+| Frederik Raisa     | FRAI |![alt text](./signatures/frai.png) |
 | Emil Jäpelt        | EMJA | |
 | Thomas Kilbak      | THHK | |
 | Jonas Røssum       | JGLR | |
-| Kristoffer Højelse | FRAI | |
+| Kristoffer Højelse | KRBH | | -->
 
+Frederik Raisa FRAI
 
+![alt text](./signatures/frai.png)
+
+Emil Jäpelt EMJA
+
+![alt text](./signatures/emja.png)
+
+Thomas Kilbak THHK
+
+![alt text](./signatures/thhk.png)
+
+Jonas Røssum JGLR
+
+![alt text](./signatures/jglr.png)
+
+Kristoffer Højelse KRBH
+
+![alt text](./signatures/krbh.png)
