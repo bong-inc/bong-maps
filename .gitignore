@@ -3,6 +3,8 @@
 
 # Ignore Gradle build output directory
 build
+bin/*
+*.class
 
 # Enviroment files
 .env
