@@ -1,16 +1,18 @@
-package bfst20.tegneprogram;
+package bfst.canvas;
 
 import javafx.scene.canvas.GraphicsContext;
+
+import java.util.ArrayList;
 
 public class LinePath implements Drawable {
     float[] coords;
     Type type;
 
-    public LinePath(OSMWay way, Type type) {
+    public LinePath(ArrayList<Point> way, Type type) {
         coords = new float[way.size() * 2];
         for (int i = 0 ; i < way.size() ; ++i) {
-            coords[i*2] = way.get(i).lon;
-            coords[i*2+1] = way.get(i).lat;
+            coords[i*2] = way.get(i).x;
+            coords[i*2+1] = way.get(i).y;
         }
         this.type = type;
     }

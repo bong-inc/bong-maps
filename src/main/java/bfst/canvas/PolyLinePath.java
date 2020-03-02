@@ -1,14 +1,14 @@
-package bfst20.tegneprogram;
-
-import java.util.ArrayList;
+package bfst.canvas;
 
 import javafx.scene.canvas.GraphicsContext;
+
+import java.util.ArrayList;
 
 public class PolyLinePath extends ArrayList<LinePath> implements Drawable {
     private static final long serialVersionUID = -4838798038938840050L;
     Type type;
 
-    public PolyLinePath(OSMRelation currentRelation, Type type) {
+    public PolyLinePath(ArrayList<ArrayList<Point>> currentRelation, Type type) {
         for (var way : currentRelation) {
             add(new LinePath(way, type));
         }
