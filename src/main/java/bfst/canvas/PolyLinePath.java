@@ -1,4 +1,4 @@
-package bfst20.tegneprogram;
+package bfst.canvas;
 
 import java.util.ArrayList;
 

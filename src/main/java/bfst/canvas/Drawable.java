@@ -1,4 +1,4 @@
-package bfst20.tegneprogram;
+package bfst.canvas;
 
 import javafx.scene.canvas.GraphicsContext;
 
