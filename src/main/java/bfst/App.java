@@ -3,8 +3,10 @@
  */
 package bfst;
 
+import java.io.File;
 import java.io.IOException;
 
+import bfst.controllers.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,9 +14,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class App extends Application {
+    static Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        this.primaryStage = primaryStage;
         Parent root = App.loadFXML("main");
         primaryStage.setTitle("LLamp");
         primaryStage.setScene(new Scene(root));
@@ -23,11 +27,13 @@ public class App extends Application {
 
     public static Parent loadFXML(String filename) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/" + filename + ".fxml"));
+        fxmlLoader.setController(new MainController(primaryStage));
         return fxmlLoader.load();
     }
 
     public static void main(String[] args) {
         App.launch(args);
     }
+
 
 }
