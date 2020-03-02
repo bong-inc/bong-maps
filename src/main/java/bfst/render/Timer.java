@@ -1,4 +1,4 @@
-package bfst;
+package bfst.render;
 
 class Timer {
     private long start;
