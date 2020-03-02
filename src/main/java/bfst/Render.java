@@ -17,6 +17,10 @@ public class Render {
         this.lastRender = this.timer.check();
     }
 
+    /**
+     * This function will render if it's time to render.
+     * This is the GOTO method.
+     */
     public void requestRender() {
         if (this.shouldRender()) {
             this.render();
