@@ -45,6 +45,7 @@ public class MainController {
                     break;
                 case ".osm":
                     OSMReader reader = new OSMReader(new FileInputStream(file));
+                    System.out.println("hejejeje");
                     break;
                 default:
                     throw new FileTypeNotSupportedException(fileExtension);
