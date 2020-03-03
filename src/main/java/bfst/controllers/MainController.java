@@ -27,10 +27,14 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        loadClick.setOnAction(this::loadFile);
+        loadClick.setOnAction(this::loadFileOnClick);
     }
 
-    public void loadFile(ActionEvent e) {
+    public void loadFileOnClick(ActionEvent e){
+        loadFile();
+    }
+
+    public void loadFile() {
         File file = new FileChooser().showOpenDialog(stage);
 
         try {
@@ -45,19 +49,21 @@ public class MainController {
                     break;
                 case ".osm":
                     OSMReader reader = new OSMReader(new FileInputStream(file));
-                    System.out.println("hejejeje");
+                    System.out.println("It did it!!!!");
                     break;
                 default:
                     throw new FileTypeNotSupportedException(fileExtension);
             }
-
         }
         catch(FileTypeNotSupportedException exception){
-            new Alert(Alert.AlertType.ERROR,"File type not supported: " + exception.getFileType());
+            Alert alert = new Alert((Alert.AlertType.ERROR));
+            alert.setHeaderText("File type not supported: " +  exception.getFileType());
+            alert.showAndWait();
         }
         catch (Exception exception) {
-            exception.printStackTrace();
-            System.out.println("hovsa");
+            Alert alert = new Alert((Alert.AlertType.ERROR));
+            alert.setHeaderText("Something unexpected happened, please try again");
+            alert.showAndWait();
         }
     }
 }
