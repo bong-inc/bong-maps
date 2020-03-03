@@ -5,8 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/bfst.iml" filepath="$PROJECT_DIR$/.idea/modules/bfst.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/bfst.main.iml" filepath="$PROJECT_DIR$/.idea/modules/bfst.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/bfst.test.iml" filepath="$PROJECT_DIR$/.idea/modules/bfst.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/main/main.iml" filepath="$PROJECT_DIR$/src/main/main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/test/test.iml" filepath="$PROJECT_DIR$/src/test/test.iml" />
     </modules>
   </component>
 </project>
