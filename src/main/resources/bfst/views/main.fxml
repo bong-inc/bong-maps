@@ -39,6 +39,12 @@
             <MenuItem mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
+        <Menu mnemonicParsing="false" text="Canvas">
+          <items>
+            <MenuItem mnemonicParsing="false" text="zoom in" fx:id="zoomIn" />
+            <MenuItem mnemonicParsing="false" text="zoom out" fx:id="zoomOut" />
+          </items>
+        </Menu>
         <Menu mnemonicParsing="false" text="Edit">
           <items>
             <MenuItem mnemonicParsing="false" text="Undo" />

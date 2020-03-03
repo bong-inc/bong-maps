@@ -10,6 +10,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
@@ -21,14 +22,17 @@ public class OSMReader {
     private SortedArrayList<Relation> tempRelations = new SortedArrayList<>();
     private HashMap<Node, Way> tempCoastlines = new HashMap<>();
     private Bound bound;
-    bfst.canvas.Type type;
-
+    private bfst.canvas.Type type;
     private Node nodeHolder;
     private Way wayHolder;
     private Relation relationHolder;
 
     private long currentID;
-    HashMap<Type, ArrayList<Drawable>> drawableByType = new HashMap<>();
+    private HashMap<Type, ArrayList<Drawable>> drawableByType = new HashMap<>();
+
+    public HashMap<Type, ArrayList<Drawable>> getDrawableByType(){
+        return drawableByType;
+    }
 
     public Bound getBound(){return bound;}
 
@@ -72,6 +76,13 @@ public class OSMReader {
                             case "relation":
                                 break;
                             case "osm":
+                                ArrayList<Drawable> coastlines = new ArrayList<>();
+                                for(Map.Entry<Node,Way> entry : tempCoastlines.entrySet()){
+                                    if(entry.getKey() == entry.getValue().last()){
+                                        coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE));
+                                    }
+                                }
+                                drawableByType.put(Type.COASTLINE,coastlines);
                                 break;
                         }
                         break;

@@ -1,10 +1,12 @@
 package bfst.controllers;
 
+import bfst.OSMReader.Model;
 import bfst.OSMReader.OSMReader;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.MapCanvasWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
@@ -19,18 +21,42 @@ import java.io.FileInputStream;
  */
 public class MainController {
     Stage stage;
-    @FXML MenuItem loadClick;
+    Model model;
+    private Point2D lastMouse;
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
     }
     @FXML StackPane stackPane;
     @FXML MapCanvasWrapper mapCanvasWrapper;
-    @FXML MapCanvas canvas;
+    MapCanvas canvas;
+    @FXML MenuItem zoomIn;
+    @FXML MenuItem zoomOut;
+    @FXML MenuItem loadClick;
 
     @FXML
     public void initialize() {
         loadClick.setOnAction(this::loadFileOnClick);
+
+        canvas = mapCanvasWrapper.mapCanvas;
+
+        canvas.setOnMousePressed(e -> {
+            Point2D mc = canvas.toModelCoords(e.getX(), e.getY());
+            lastMouse = new Point2D(e.getX(), e.getY());
+        });
+
+        canvas.setOnMouseDragged(e -> {
+            canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
+            lastMouse = new Point2D(e.getX(), e.getY());
+        });
+
+        zoomIn.setOnAction(e -> {
+            canvas.zoom(2,0,0);
+        });
+
+        zoomOut.setOnAction(e -> {
+            canvas.zoom(0.5,0,0);
+        });
     }
 
     public void loadFileOnClick(ActionEvent e){
@@ -46,21 +72,21 @@ public class MainController {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("Something unexpected happened, please try again");
             alert.showAndWait();
+            exception.printStackTrace();
         }
     }
 
-    public static void loadFile(File file) throws Exception {
+    public void loadFile(File file) throws Exception {
         String fileName = file.getName();
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
         switch (fileExtension) {
             case ".bin":
                 //TODO loadBinary(file);
                 break;
-            case ".txt":
-                //TODO loadTxt(file);
-                break;
             case ".osm":
                 OSMReader reader = new OSMReader(new FileInputStream(file));
+                this.model = new Model(reader);
+                mapCanvasWrapper.mapCanvas.setModel(model);
                 break;
             default:
                 throw new FileTypeNotSupportedException(fileExtension);

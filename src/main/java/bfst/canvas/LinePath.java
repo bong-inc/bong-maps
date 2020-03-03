@@ -18,6 +18,7 @@ public class LinePath implements Drawable {
         }
         this.type = type;
     }
+
     public LinePath(Way way, Type type) {
         ArrayList<Node> nodes = way.getNodes();
         int nodesSize = nodes.size();
@@ -47,5 +48,4 @@ public class LinePath implements Drawable {
             gc.lineTo(coords[i], coords[i+1]);
         }
     }
-
 }
