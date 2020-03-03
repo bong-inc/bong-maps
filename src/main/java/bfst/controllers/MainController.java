@@ -31,31 +31,10 @@ public class MainController {
     }
 
     public void loadFileOnClick(ActionEvent e){
-        loadFile();
-    }
-
-    public void loadFile() {
         File file = new FileChooser().showOpenDialog(stage);
-
         try {
-            String fileName = file.getName();
-            String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-            switch (fileExtension) {
-                case ".bin":
-                    //loadBinary(file);
-                    break;
-                case ".txt":
-                    //loadTxt(file);
-                    break;
-                case ".osm":
-                    OSMReader reader = new OSMReader(new FileInputStream(file));
-                    System.out.println("It did it!!!!");
-                    break;
-                default:
-                    throw new FileTypeNotSupportedException(fileExtension);
-            }
-        }
-        catch(FileTypeNotSupportedException exception){
+            loadFile(file);
+        } catch(FileTypeNotSupportedException exception){
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("File type not supported: " +  exception.getFileType());
             alert.showAndWait();
@@ -64,6 +43,24 @@ public class MainController {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("Something unexpected happened, please try again");
             alert.showAndWait();
+        }
+    }
+
+    public static void loadFile(File file) throws Exception {
+        String fileName = file.getName();
+        String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+        switch (fileExtension) {
+            case ".bin":
+                //TODO loadBinary(file);
+                break;
+            case ".txt":
+                //TODO loadTxt(file);
+                break;
+            case ".osm":
+                OSMReader reader = new OSMReader(new FileInputStream(file));
+                break;
+            default:
+                throw new FileTypeNotSupportedException(fileExtension);
         }
     }
 }

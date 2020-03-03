@@ -41,12 +41,12 @@ public class OSMReader {
                                 float tempMinLat = Float.parseFloat(reader.getAttributeValue(null, "minlat"));
                                 float tempMinLon = Float.parseFloat(reader.getAttributeValue(null, "minlon"));
                                 float tempMaxLon = Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
-                                /*TODO tempBound = new Bound(
+                                bound = new Bound(
                                         -tempMaxLat,
                                         -tempMinLat,
                                         (float) Math.cos(tempMinLat * Math.PI / 180) * tempMinLon,
                                         (float) Math.cos(tempMaxLat * Math.PI / 180) * tempMaxLon
-                                );*/
+                                );
                                 break;
                             case "node":
                                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
