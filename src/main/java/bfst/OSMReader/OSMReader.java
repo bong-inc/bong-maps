@@ -1,12 +1,18 @@
 package bfst.OSMReader;
 
+import bfst.canvas.Drawable;
+import bfst.canvas.LinePath;
+import bfst.canvas.Type;
+
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import static javax.xml.stream.XMLStreamConstants.*;
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 public class OSMReader {
 
@@ -15,12 +21,14 @@ public class OSMReader {
     private SortedArrayList<Relation> tempRelations = new SortedArrayList<>();
     private HashMap<Node, Way> tempCoastlines = new HashMap<>();
     private Bound bound;
+    bfst.canvas.Type type;
 
     private Node nodeHolder;
     private Way wayHolder;
     private Relation relationHolder;
 
     private long currentID;
+    HashMap<Type, ArrayList<Drawable>> drawableByType = new HashMap<>();
 
     public Bound getBound(){return bound;}
 
@@ -34,68 +42,32 @@ public class OSMReader {
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
-                        String qName = reader.getLocalName();
-                        switch (qName) {
-                            case "bounds":
-                                float tempMaxLat = Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
-                                float tempMinLat = Float.parseFloat(reader.getAttributeValue(null, "minlat"));
-                                float tempMinLon = Float.parseFloat(reader.getAttributeValue(null, "minlon"));
-                                float tempMaxLon = Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
-                                bound = new Bound(
-                                        -tempMaxLat,
-                                        -tempMinLat,
-                                        (float) Math.cos(tempMinLat * Math.PI / 180) * tempMinLon,
-                                        (float) Math.cos(tempMaxLat * Math.PI / 180) * tempMaxLon
-                                );
-                                break;
-                            case "node":
-                                currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
-                                float tempLon = Float.parseFloat(reader.getAttributeValue(null, "lon"));
-                                float tempLat = Float.parseFloat(reader.getAttributeValue(null, "lat"));
-                                nodeHolder = new Node(currentID, (float) Math.cos(tempLat * Math.PI / 180) * tempLon, -tempLat);
-                                tempNodes.add(nodeHolder);
-                                break;
-                            case "way":
-                                currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
-                                wayHolder = new Way(currentID);
-                                tempWays.add(wayHolder);
-                                break;
-                            case "relation":
-                                currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
-                                relationHolder = new Relation();
-                                tempRelations.add(relationHolder);
-                                break;
-                            case "tag":
-                                String k = reader.getAttributeValue(null, "k");
-                                String v = reader.getAttributeValue(null, "v");
-                                break;
-                            case "nd":
-                                Long ref = Long.parseLong(reader.getAttributeValue(null, "ref"));
-                                if(wayHolder != null){
-                                    if(tempNodes.get(ref) != null) wayHolder.addNode(tempNodes.get(ref));
-                                }
-                                break;
-                            case "member":
-                                switch(reader.getAttributeValue(null, "type")){
-                                    case "node":
-                                        relationHolder.addNode(tempNodes.get(Long.parseLong(reader.getAttributeValue(null, "ref"))));
-                                        break;
-                                    case "way":
-                                        long memberRef = Long.parseLong(reader.getAttributeValue(null, "ref"));
-                                        if (tempWays.get(memberRef) != null)
-                                            relationHolder.addWay(tempWays.get(memberRef));
-                                        break;
-                                    case "relation":
-                                        relationHolder.addRefId(Long.parseLong(reader.getAttributeValue(null, "ref")));
-                                        break;
-                                }
-                                break;
-                        }
+                        String element = reader.getLocalName();
+                        parseElement(reader, element);
                         break;
                     case END_ELEMENT:
-                        qName = reader.getLocalName();
-                        switch (qName) {
+                        element = reader.getLocalName();
+                        switch (element) {
                             case "way":
+                                if(type != Type.COASTLINE) {
+                                    if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
+                                    drawableByType.get(type).add(new LinePath(wayHolder, type));
+                                } else {
+                                    Way before = tempCoastlines.remove(wayHolder.first());
+                                    if (before != null) {
+                                        tempCoastlines.remove(before.first());
+                                        tempCoastlines.remove(before.last());
+                                    }
+                                    Way after = tempCoastlines.remove(wayHolder.last());
+                                    if (after != null) {
+                                        tempCoastlines.remove(after.first());
+                                        tempCoastlines.remove(after.last());
+                                    }
+                                    wayHolder = Way.merge(Way.merge(before, wayHolder), after);
+                                    tempCoastlines.put(wayHolder.first(), wayHolder);
+                                    tempCoastlines.put(wayHolder.last(), wayHolder);
+                                }
+                                type = Type.UNKNOWN;
                                 break;
                             case "relation":
                                 break;
@@ -107,6 +79,141 @@ public class OSMReader {
             }
         } catch (XMLStreamException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void parseElement(XMLStreamReader reader, String element) {
+        switch (element) {
+            case "bounds":
+                float tempMaxLat = Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
+                float tempMinLat = Float.parseFloat(reader.getAttributeValue(null, "minlat"));
+                float tempMinLon = Float.parseFloat(reader.getAttributeValue(null, "minlon"));
+                float tempMaxLon = Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
+                bound = new Bound(
+                        -tempMaxLat,
+                        -tempMinLat,
+                        (float) Math.cos(tempMinLat * Math.PI / 180) * tempMinLon,
+                        (float) Math.cos(tempMaxLat * Math.PI / 180) * tempMaxLon
+                );
+                break;
+            case "node":
+                currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
+                float tempLon = Float.parseFloat(reader.getAttributeValue(null, "lon"));
+                float tempLat = Float.parseFloat(reader.getAttributeValue(null, "lat"));
+                nodeHolder = new Node(currentID, (float) Math.cos(tempLat * Math.PI / 180) * tempLon, -tempLat);
+                tempNodes.add(nodeHolder);
+                break;
+            case "way":
+                currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
+                wayHolder = new Way(currentID);
+                tempWays.add(wayHolder);
+                break;
+            case "relation":
+                currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
+                relationHolder = new Relation();
+                tempRelations.add(relationHolder);
+                break;
+            case "tag":
+                String k = reader.getAttributeValue(null, "k");
+                String v = reader.getAttributeValue(null, "v");
+
+                parseTag(k, v);
+
+                break;
+            case "nd":
+                Long ref = Long.parseLong(reader.getAttributeValue(null, "ref"));
+                if(wayHolder != null){
+                    if(tempNodes.get(ref) != null) wayHolder.addNode(tempNodes.get(ref));
+                }
+                break;
+            case "member":
+                parseMember(reader);
+                break;
+        }
+    }
+
+    private void parseTag(String k, String v) {
+        switch (k){
+            /*TODO address stuff
+            case "addr:city":
+                addressInfo[0] = v;
+                if (addressInfoIsFull(addressInfo) && wayHolder == null){
+                    addresses.add(new Address(tempNodes.get(currentID), addressInfo));
+                }
+                break;
+            case "postal_code":
+            case "addr:postcode":
+                addressInfo[1] = v;
+                if (addressInfoIsFull(addressInfo) && wayHolder == null){
+                    addresses.add(new Address(tempNodes.get(currentID), addressInfo));
+                }
+                break;
+            case "addr:street":
+                addressInfo[2] = v;
+                if (addressInfoIsFull(addressInfo) && wayHolder == null){
+                    addresses.add(new Address(tempNodes.get(currentID), addressInfo));
+                }
+                break;
+            case "addr:housenumber":
+                addressInfo[3] = v;
+                if (addressInfoIsFull(addressInfo) && wayHolder == null){
+                    addresses.add(new Address(tempNodes.get(currentID), addressInfo));
+                }
+                break;
+             */
+            case "building":
+                type = Type.BUILDING;
+                break;
+            case "natural":
+                switch (v){
+                    case "coastline":
+                        type = Type.COASTLINE;
+                        break;
+                    case "water":
+                        type = Type.WATER;
+                        break;
+                    case "beach":
+                        type = Type.BEACH;
+                        break;
+                    case "wood":
+                        type = Type.FOREST;
+                        break;
+                }
+                break;
+            case "waterway":
+                type = Type.WATERWAY;
+                break;
+            case "landuse":
+                switch (v){
+                    case "meadow":
+                    case "forest":
+                    case "wood":
+                        type = Type.FOREST;
+                        break;
+                    case "farmland":
+                        type = Type.FARMFIELD;
+                        break;
+                }
+                break;
+            case "highway":
+                type = Type.HIGHWAY;
+                break;
+        }
+    }
+
+    private void parseMember(XMLStreamReader reader) {
+        switch(reader.getAttributeValue(null, "type")){
+            case "node":
+                relationHolder.addNode(tempNodes.get(Long.parseLong(reader.getAttributeValue(null, "ref"))));
+                break;
+            case "way":
+                long memberRef = Long.parseLong(reader.getAttributeValue(null, "ref"));
+                if (tempWays.get(memberRef) != null)
+                    relationHolder.addWay(tempWays.get(memberRef));
+                break;
+            case "relation":
+                relationHolder.addRefId(Long.parseLong(reader.getAttributeValue(null, "ref")));
+                break;
         }
     }
 }

@@ -17,11 +17,12 @@ public class Way implements LongSupplier {
         nodes = new ArrayList<>();
     }
 
+
     public void addNode(Node node){
         nodes.add(node);
     }
 
-    public ArrayList getNodes(){
+    public ArrayList<Node> getNodes(){
         return nodes;
     }
 
