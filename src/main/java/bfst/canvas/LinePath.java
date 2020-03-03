@@ -1,7 +1,5 @@
 package bfst.canvas;
 
-import bfst.OSMReader.Node;
-import bfst.OSMReader.Way;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
@@ -15,16 +13,6 @@ public class LinePath implements Drawable {
         for (int i = 0 ; i < way.size() ; ++i) {
             coords[i*2] = way.get(i).x;
             coords[i*2+1] = way.get(i).y;
-        }
-        this.type = type;
-    }
-    public LinePath(Way way, Type type) {
-        ArrayList<Node> nodes = way.getNodes();
-        int nodesSize = nodes.size();
-        coords = new float[nodesSize * 2];
-        for (int i = 0 ; i < nodesSize ; ++i) {
-            coords[i*2] = nodes.get(i).getLon();
-            coords[i*2+1] = nodes.get(i).getLat();
         }
         this.type = type;
     }
