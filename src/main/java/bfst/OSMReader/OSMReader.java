@@ -63,10 +63,33 @@ public class OSMReader {
                             case "relation":
                                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                                 relationHolder = new Relation();
+                                tempRelations.add(relationHolder);
                                 break;
                             case "tag":
                                 String k = reader.getAttributeValue(null, "k");
                                 String v = reader.getAttributeValue(null, "v");
+                                break;
+                            case "nd":
+                                Long ref = Long.parseLong(reader.getAttributeValue(null, "ref"));
+                                if(wayHolder != null){
+                                    if(tempNodes.get(ref) != null) wayHolder.addNode(tempNodes.get(ref));
+                                }
+                                break;
+                            case "member":
+                                switch(reader.getAttributeValue(null, "type")){
+                                    case "node":
+                                        relationHolder.addNode(tempNodes.get(Long.parseLong(reader.getAttributeValue(null, "ref"))));
+                                        break;
+                                    case "way":
+                                        long memberRef = Long.parseLong(reader.getAttributeValue(null, "ref"));
+                                        if (tempWays.get(memberRef) != null)
+                                            relationHolder.addWay(tempWays.get(memberRef));
+                                        break;
+                                    case "relation":
+                                        relationHolder.addRefId(Long.parseLong(reader.getAttributeValue(null, "ref")));
+                                        break;
+                                }
+                                break;
                         }
                         break;
                     case END_ELEMENT:
