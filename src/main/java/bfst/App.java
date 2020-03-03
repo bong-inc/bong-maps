@@ -21,7 +21,9 @@ public class App extends Application {
         this.primaryStage = primaryStage;
         Parent root = App.loadFXML("main");
         primaryStage.setTitle("LLamp");
-        primaryStage.setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 

@@ -1,18 +1,18 @@
 package bfst.controllers;
 
 import bfst.OSMReader.OSMReader;
+import bfst.canvas.MapCanvas;
+import bfst.canvas.MapCanvasWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  * MainController
@@ -24,6 +24,9 @@ public class MainController {
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
     }
+    @FXML StackPane stackPane;
+    @FXML MapCanvasWrapper mapCanvasWrapper;
+    @FXML MapCanvas canvas;
 
     @FXML
     public void initialize() {
