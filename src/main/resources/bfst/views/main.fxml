@@ -68,7 +68,7 @@
     </MenuBar>
     <StackPane VBox.vgrow="ALWAYS" fx:id="stackPane">
         <MapCanvasWrapper fx:id="mapCanvasWrapper"/>
-        <!--<VBox fx:id="searchBar" styleClass="searchBar" layoutX="10" layoutY="10">
+        <!--<VBox fx:id="searchBar" styleClass="searchBar">
             <HBox styleClass="searchFieldWrapper">
                 <TextField styleClass="searchField" fx:id="input" promptText="Search"/>
                 <Button styleClass="icon-button, searchFieldIcon" fx:id="search">

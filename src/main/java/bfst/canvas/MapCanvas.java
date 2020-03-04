@@ -6,7 +6,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -49,20 +48,22 @@ public class MapCanvas extends Canvas {
     public void resetView() {
         trans.setToIdentity();
         Bound b = model.getBound();
-        pan(-b.getMinLon(), -b.getMinLat());
-        double boundHeight = b.getMaxLat() - b.getMinLat();
-        double boundWidth = b.getMaxLon() - b.getMinLon();
-        double bound;
-        double canvasScale;
+        pan(-(b.getMaxLon() + b.getMinLon())/2, -(b.getMaxLat() + b.getMinLat())/2);
+        pan(getWidth()/2,getHeight()/2);
+
+        float boundHeight = b.getMaxLat() - b.getMinLat();
+        float boundWidth = b.getMaxLon() - b.getMinLon();
+        float bound;
+        float canvasScale;
         if(boundHeight > boundWidth){
             bound = boundHeight;
-            canvasScale = getHeight();
+            canvasScale = (float) getHeight();
         } else {
             bound = boundWidth;
-            canvasScale = getWidth();
+            canvasScale = (float) getWidth();
         }
-        double factor = canvasScale/bound;
-        zoom(factor,0,0);
+        float factor = canvasScale/bound;
+        zoom(factor,getWidth()/2,getHeight()/2);
     }
 
     public void pan(double dx, double dy) {
@@ -81,7 +82,6 @@ public class MapCanvas extends Canvas {
             gc.setLineWidth(type.getWidth() * pixelwidth);
             if (type.getFill()) gc.setFill(type.getColor());
             gc.setStroke(type.getColor());
-            //gc.setStroke(Color.BLACK);
             for (Drawable drawable : drawables) {
                 drawable.draw(gc);
                 if (type.getFill()) gc.fill();

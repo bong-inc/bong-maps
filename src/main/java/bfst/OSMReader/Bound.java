@@ -22,8 +22,8 @@ public class Bound{
         this.maxLon = (float) maxs.getY();
     }
 
-    public double getMinLat(){return minLat;}
-    public double getMaxLat(){return maxLat;}
-    public double getMinLon(){return minLon;}
-    public double getMaxLon(){return maxLon;}
+    public float getMinLat(){return minLat;}
+    public float getMaxLat(){return maxLat;}
+    public float getMinLon(){return minLon;}
+    public float getMaxLon(){return maxLon;}
 }
