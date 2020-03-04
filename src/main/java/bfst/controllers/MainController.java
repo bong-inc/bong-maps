@@ -12,9 +12,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 /**
  * MainController
@@ -27,15 +29,28 @@ public class MainController {
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
     }
+
+    public void setDefaultMap(){
+        InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/samsoe.osm");
+        OSMReader reader = new OSMReader(is);
+        this.model = new Model(reader);
+        mapCanvasWrapper.mapCanvas.setModel(model);
+    }
+
     @FXML StackPane stackPane;
     @FXML MapCanvasWrapper mapCanvasWrapper;
     MapCanvas canvas;
     @FXML MenuItem zoomIn;
     @FXML MenuItem zoomOut;
     @FXML MenuItem loadClick;
+    @FXML MenuItem loadDefaultMap;
 
     @FXML
     public void initialize() {
+        stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> {
+            setDefaultMap();
+        });
+
         loadClick.setOnAction(this::loadFileOnClick);
 
         canvas = mapCanvasWrapper.mapCanvas;
@@ -57,18 +72,23 @@ public class MainController {
         zoomOut.setOnAction(e -> {
             canvas.zoom(0.5,0,0);
         });
+
+        loadDefaultMap.setOnAction(e -> {
+            setDefaultMap();
+        });
+
+        setDefaultMap();
     }
 
     public void loadFileOnClick(ActionEvent e){
-        File file = new FileChooser().showOpenDialog(stage);
         try {
+            File file = new FileChooser().showOpenDialog(stage);
             loadFile(file);
         } catch(FileTypeNotSupportedException exception){
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("File type not supported: " +  exception.getFileType());
             alert.showAndWait();
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("Something unexpected happened, please try again");
             alert.showAndWait();
@@ -77,6 +97,7 @@ public class MainController {
     }
 
     public void loadFile(File file) throws Exception {
+        FileInputStream is = new FileInputStream(file);
         String fileName = file.getName();
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
         switch (fileExtension) {
@@ -84,7 +105,7 @@ public class MainController {
                 //TODO loadBinary(file);
                 break;
             case ".osm":
-                OSMReader reader = new OSMReader(new FileInputStream(file));
+                OSMReader reader = new OSMReader(is);
                 this.model = new Model(reader);
                 mapCanvasWrapper.mapCanvas.setModel(model);
                 break;

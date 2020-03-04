@@ -27,7 +27,11 @@
           <items>
             <MenuItem mnemonicParsing="false" text="New" />
             <MenuItem mnemonicParsing="false" text="Open…" fx:id="loadClick"/>
-            <Menu mnemonicParsing="false" text="Open Recent" />
+            <Menu mnemonicParsing="false" text="Open Recent">
+              <items>
+                <MenuItem text="Load Default Map" fx:id="loadDefaultMap"/>
+              </items>
+            </Menu>
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Close"/>
             <MenuItem mnemonicParsing="false" text="Save" />

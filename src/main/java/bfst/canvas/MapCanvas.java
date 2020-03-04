@@ -29,9 +29,6 @@ public class MapCanvas extends Canvas {
         gc.setTransform(trans);
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
 
-        //gc.setFill(Paint.valueOf("#000"));
-        //gc.fillRect(10.599514,-55.806709,1,1);
-
         if(model != null) {
             Type[] typeArray = Type.getTypes();
             int arrayLength = typeArray.length;
