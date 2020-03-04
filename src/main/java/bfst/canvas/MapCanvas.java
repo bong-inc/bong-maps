@@ -77,13 +77,15 @@ public class MapCanvas extends Canvas {
 
     private void paintDrawablesOfType(Type type, double pixelwidth) {
         ArrayList<Drawable> drawables = model.getDrawablesOfType(type);
-        gc.setLineWidth(type.getWidth() * pixelwidth);
-        if(type.getFill()) gc.setFill(type.getColor());
-        gc.setStroke(type.getColor());
-        //gc.setStroke(Color.BLACK);
-        for(Drawable drawable : drawables){
-            drawable.draw(gc);
-            if(type.getFill()) gc.fill();
+        if (drawables != null) {
+            gc.setLineWidth(type.getWidth() * pixelwidth);
+            if (type.getFill()) gc.setFill(type.getColor());
+            gc.setStroke(type.getColor());
+            //gc.setStroke(Color.BLACK);
+            for (Drawable drawable : drawables) {
+                drawable.draw(gc);
+                if (type.getFill()) gc.fill();
+            }
         }
     }
 
