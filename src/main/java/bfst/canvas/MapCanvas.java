@@ -33,15 +33,11 @@ public class MapCanvas extends Canvas {
         //gc.fillRect(10.599514,-55.806709,1,1);
 
         if(model != null) {
-            paintDrawablesOfType(Type.COASTLINE, pixelwidth);
-            paintDrawablesOfType(Type.FARMFIELD, pixelwidth);
-            paintDrawablesOfType(Type.FOREST, pixelwidth);
-            paintDrawablesOfType(Type.BEACH, pixelwidth);
-            paintDrawablesOfType(Type.BUILDING, pixelwidth);
-            paintDrawablesOfType(Type.HIGHWAY, pixelwidth);
-            paintDrawablesOfType(Type.WATER, pixelwidth);
-            paintDrawablesOfType(Type.WATERWAY, pixelwidth);
-
+            Type[] typeArray = Type.getTypes();
+            int arrayLength = typeArray.length;
+            for (int i = 1; i < arrayLength; i++){
+                paintDrawablesOfType(typeArray[i],pixelwidth);
+            }
         }
     }
 

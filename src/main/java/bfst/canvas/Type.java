@@ -3,22 +3,19 @@ package bfst.canvas;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 public enum Type {
 
     UNKNOWN("","",Color.BLACK,1,false),
-    BUILDING("building","",Color.valueOf("#dbdbdb"),1,true),
-    HIGHWAY("highway","",Color.valueOf("#ffffff"),1,false),
     COASTLINE("natural","coastline",Color.valueOf("#f0f0f0"),1,true),
-    WATER("natural","water",Color.valueOf("#ade1ff"),1,true),
+    FARMFIELD("landuse","farmland",Color.BEIGE,1,true),
     //GREEN(Color.valueOf("#c8f2bb"),1,true),
     //PIN(Color.RED,1,true),
     BEACH("natural","beach",Color.BEIGE,1,true),
+    BUILDING("building","",Color.valueOf("#dbdbdb"),1,true),
     FOREST("landuse","meadow",Color.valueOf("#c8f2bb"),1,true),
-    WATERWAY("waterway","",Color.valueOf("#ade1ff"),1,false),
-    FARMFIELD("landuse","farmland",Color.BEIGE,1,true);
+    HIGHWAY("highway","",Color.valueOf("#ffffff"),1,false),
+    WATER("natural","water",Color.valueOf("#ade1ff"),1,true),
+    WATERWAY("waterway","",Color.valueOf("#ade1ff"),1,false);
 
     private final String key;
 
@@ -58,21 +55,5 @@ public enum Type {
 
     public Paint getColor() {
         return color;
-
-        /*
-        switch (type) {
-            case WATER:
-                return Color.valueOf("#ade1ff");
-            case GREEN:
-                return Color.valueOf("#c8f2bb");
-            case BUILDING:
-                return Color.valueOf("#dbdbdb");
-            case HIGHWAY:
-                return Color.valueOf("#ffffff");
-            case PIN:
-                return Color.RED;
-            default:
-                return Color.BLACK;
-        }*/
     }
 }
