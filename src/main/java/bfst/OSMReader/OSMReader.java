@@ -75,10 +75,8 @@ public class OSMReader {
                                 type = Type.UNKNOWN;
                                 break;
                             case "relation":
-                                if(type == Type.BUILDING){
-                                    if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
-                                    drawableByType.get(type).add(new PolyLinePath(relationHolder, type));
-                                }
+                                if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
+                                drawableByType.get(type).add(new PolyLinePath(relationHolder, type));
                                 type = Type.UNKNOWN;
                                 break;
                             case "osm":

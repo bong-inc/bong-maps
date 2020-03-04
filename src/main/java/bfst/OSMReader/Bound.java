@@ -3,7 +3,9 @@ package bfst.OSMReader;
 
 import javafx.geometry.Point2D;
 
-public class Bound{
+import java.io.Serializable;
+
+public class Bound implements Serializable {
     private float minLat;
     private float maxLat;
     private float minLon;

@@ -3,7 +3,9 @@ package bfst.canvas;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-public enum Type {
+import java.io.Serializable;
+
+public enum Type implements Serializable {
 
     UNKNOWN("","",Color.BLACK,1,false),
     COASTLINE("natural","coastline",Color.valueOf("#f0f0f0"),1,true),

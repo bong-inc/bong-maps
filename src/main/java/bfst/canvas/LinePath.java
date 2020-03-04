@@ -4,9 +4,10 @@ import bfst.OSMReader.Node;
 import bfst.OSMReader.Way;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class LinePath implements Drawable {
+public class LinePath implements Drawable, Serializable {
     float[] coords;
     Type type;
 

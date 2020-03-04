@@ -1,6 +1,8 @@
 package bfst.canvas;
 
-public class Point {
+import java.io.Serializable;
+
+public class Point implements Serializable {
     public long x;
     public long y;
 

@@ -14,9 +14,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * MainController
@@ -31,10 +29,18 @@ public class MainController {
     }
 
     public void setDefaultMap(){
-        InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/samsoe.osm");
-        OSMReader reader = new OSMReader(is);
-        this.model = new Model(reader);
-        mapCanvasWrapper.mapCanvas.setModel(model);
+        try {
+            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/samsoe.bin");
+            loadBinary(is);
+        }catch (Exception e){
+            System.out.println("oh nose");
+        }
+        /*File file = new File(getClass().getClassLoader().getResource("bfst/samsoe.bin").getFile());
+        try {
+            loadFile(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
     }
 
     @FXML StackPane stackPane;
@@ -44,6 +50,7 @@ public class MainController {
     @FXML MenuItem zoomOut;
     @FXML MenuItem loadClick;
     @FXML MenuItem loadDefaultMap;
+    @FXML MenuItem saveAs;
 
     @FXML
     public void initialize() {
@@ -77,7 +84,21 @@ public class MainController {
             setDefaultMap();
         });
 
-        setDefaultMap();
+        saveAs.setOnAction(this::saveFileOnClick);
+    }
+
+    public void saveFileOnClick(ActionEvent e){
+        try {
+            File file = new FileChooser().showSaveDialog(stage);
+            if(file != null){
+                saveBinary(file);
+            }
+        } catch (Exception exception) {
+            Alert alert = new Alert((Alert.AlertType.ERROR));
+            alert.setHeaderText("Something unexpected happened, please try again");
+            alert.showAndWait();
+            exception.printStackTrace();
+        }
     }
 
     public void loadFileOnClick(ActionEvent e){
@@ -102,7 +123,7 @@ public class MainController {
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
         switch (fileExtension) {
             case ".bin":
-                //TODO loadBinary(file);
+                loadBinary(is);
                 break;
             case ".osm":
                 OSMReader reader = new OSMReader(is);
@@ -112,5 +133,19 @@ public class MainController {
             default:
                 throw new FileTypeNotSupportedException(fileExtension);
         }
+    }
+
+    private void loadBinary(InputStream is) throws IOException, ClassNotFoundException {
+        ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
+        Object temp = ois.readObject();
+        this.model = (Model) temp;
+        ois.close();
+        mapCanvasWrapper.mapCanvas.setModel(model);
+    }
+
+    public void saveBinary(File file) throws IOException {
+        ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+        oos.writeObject(model);
+        oos.close();
     }
 }
