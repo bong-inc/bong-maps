@@ -6,6 +6,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.FillRule;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -28,7 +29,7 @@ public class MapCanvas extends Canvas {
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
-
+        gc.setFillRule(FillRule.EVEN_ODD);
         if(model != null) {
             Type[] typeArray = Type.getTypes();
             int arrayLength = typeArray.length;

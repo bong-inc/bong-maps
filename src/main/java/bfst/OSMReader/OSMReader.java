@@ -2,6 +2,7 @@ package bfst.OSMReader;
 
 import bfst.canvas.Drawable;
 import bfst.canvas.LinePath;
+import bfst.canvas.PolyLinePath;
 import bfst.canvas.Type;
 
 import javax.xml.stream.XMLInputFactory;
@@ -74,6 +75,11 @@ public class OSMReader {
                                 type = Type.UNKNOWN;
                                 break;
                             case "relation":
+                                if(type == Type.BUILDING){
+                                    if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
+                                    drawableByType.get(type).add(new PolyLinePath(relationHolder, type));
+                                }
+                                type = Type.UNKNOWN;
                                 break;
                             case "osm":
                                 ArrayList<Drawable> coastlines = new ArrayList<>();
@@ -103,15 +109,17 @@ public class OSMReader {
                 bound = new Bound(
                         -tempMaxLat,
                         -tempMinLat,
-                        (float) Math.cos(tempMinLat * Math.PI / 180) * tempMinLon,
-                        (float) Math.cos(tempMaxLat * Math.PI / 180) * tempMaxLon
+                        (float) 0.55673548 * tempMinLon,
+                        (float) 0.55673548 * tempMaxLon
                 );
                 break;
             case "node":
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 float tempLon = Float.parseFloat(reader.getAttributeValue(null, "lon"));
                 float tempLat = Float.parseFloat(reader.getAttributeValue(null, "lat"));
-                nodeHolder = new Node(currentID, (float) Math.cos(tempLat * Math.PI / 180) * tempLon, -tempLat);
+                // fancy but wrong
+                // nodeHolder = new Node(currentID, (float) Math.cos(tempLat * Math.PI / 180) * tempLon, -tempLat);
+                nodeHolder = new Node(currentID, (float) 0.55673548 * tempLon, -tempLat);
                 tempNodes.add(nodeHolder);
                 break;
             case "way":
