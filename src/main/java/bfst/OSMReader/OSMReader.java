@@ -144,8 +144,19 @@ public class OSMReader {
     }
 
     private void parseTag(String k, String v) {
+        Type[] typeArray = Type.getTypes();
+        for (Type currentType : typeArray){
+            if(k.equals(currentType.getKey())){
+                if(v.equals(currentType.getValue()) || currentType.getValue().equals("")){
+                    type = currentType;
+                    break;
+                }
+            }
+        }
+
+/*
         switch (k){
-            /*TODO address stuff
+            TODO address stuff
             case "addr:city":
                 addressInfo[0] = v;
                 if (addressInfoIsFull(addressInfo) && wayHolder == null){
@@ -171,45 +182,7 @@ public class OSMReader {
                     addresses.add(new Address(tempNodes.get(currentID), addressInfo));
                 }
                 break;
-             */
-            case "building":
-                type = Type.BUILDING;
-                break;
-            case "natural":
-                switch (v){
-                    case "coastline":
-                        type = Type.COASTLINE;
-                        break;
-                    case "water":
-                        type = Type.WATER;
-                        break;
-                    case "beach":
-                        type = Type.BEACH;
-                        break;
-                    case "wood":
-                        type = Type.FOREST;
-                        break;
-                }
-                break;
-            case "waterway":
-                type = Type.WATERWAY;
-                break;
-            case "landuse":
-                switch (v){
-                    case "meadow":
-                    case "forest":
-                    case "wood":
-                        type = Type.FOREST;
-                        break;
-                    case "farmland":
-                        type = Type.FARMFIELD;
-                        break;
-                }
-                break;
-            case "highway":
-                type = Type.HIGHWAY;
-                break;
-        }
+*/
     }
 
     private void parseMember(XMLStreamReader reader) {
