@@ -1,23 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.Region?>
-<?import bfst.canvas.MapCanvas?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
 <?import bfst.canvas.MapCanvasWrapper?>
-
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <VBox prefHeight="800" prefWidth="1200" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
 
   <children>
@@ -43,12 +29,6 @@
             <MenuItem mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Canvas">
-          <items>
-            <MenuItem mnemonicParsing="false" text="zoom in" fx:id="zoomIn" />
-            <MenuItem mnemonicParsing="false" text="zoom out" fx:id="zoomOut" />
-          </items>
-        </Menu>
         <Menu mnemonicParsing="false" text="Edit">
           <items>
             <MenuItem mnemonicParsing="false" text="Undo" />
@@ -68,10 +48,16 @@
             <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
           </items>
         </Menu>
+        <Menu mnemonicParsing="false" text="Dev" fx:id="devtools">
+            <items>
+                <MenuItem mnemonicParsing="false" text="open devtools" />
+            </items>
+        </Menu>
       </menus>
     </MenuBar>
     <StackPane VBox.vgrow="ALWAYS" fx:id="stackPane">
         <MapCanvasWrapper fx:id="mapCanvasWrapper"/>
+
         <!--<VBox fx:id="searchBar" styleClass="searchBar">
             <HBox styleClass="searchFieldWrapper">
                 <TextField styleClass="searchField" fx:id="input" promptText="Search"/>

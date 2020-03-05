@@ -17,6 +17,8 @@ public class MapCanvas extends Canvas {
     private Affine trans;
     private Model model;
 
+    private ArrayList<Type> typesToBeDrawn;
+
     public MapCanvas(){
         this.gc = getGraphicsContext2D();
         this.trans = new Affine();

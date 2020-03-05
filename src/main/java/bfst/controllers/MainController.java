@@ -1,14 +1,18 @@
 package bfst.controllers;
 
+import bfst.App;
 import bfst.OSMReader.Model;
 import bfst.OSMReader.OSMReader;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.MapCanvasWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Alert;
-import javafx.scene.control.MenuItem;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -46,11 +50,10 @@ public class MainController {
     @FXML StackPane stackPane;
     @FXML MapCanvasWrapper mapCanvasWrapper;
     MapCanvas canvas;
-    @FXML MenuItem zoomIn;
-    @FXML MenuItem zoomOut;
     @FXML MenuItem loadClick;
     @FXML MenuItem loadDefaultMap;
     @FXML MenuItem saveAs;
+    @FXML MenuItem devtools;
 
     @FXML
     public void initialize() {
@@ -72,19 +75,28 @@ public class MainController {
             lastMouse = new Point2D(e.getX(), e.getY());
         });
 
-        zoomIn.setOnAction(e -> {
-            canvas.zoom(2,0,0);
-        });
-
-        zoomOut.setOnAction(e -> {
-            canvas.zoom(0.5,0,0);
-        });
-
         loadDefaultMap.setOnAction(e -> {
             setDefaultMap();
         });
 
         saveAs.setOnAction(this::saveFileOnClick);
+
+        devtools.setOnAction(e -> {
+            try {
+                Stage devStage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/devview.fxml"));
+                DevController devController = new DevController(devStage, canvas);
+                fxmlLoader.setController(devController);
+                Parent root = fxmlLoader.load();
+                devStage.setTitle("dev tools");
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+                devStage.setScene(scene);
+                devStage.show();
+            } catch (Exception ex){
+                ex.printStackTrace();
+            }
+        });
     }
 
     public void saveFileOnClick(ActionEvent e){

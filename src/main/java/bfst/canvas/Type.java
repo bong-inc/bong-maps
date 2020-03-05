@@ -9,7 +9,7 @@ public enum Type implements Serializable {
 
     UNKNOWN("","",Color.BLACK,1,false),
     COASTLINE("natural","coastline",Color.valueOf("#f0f0f0"),1,true),
-    FARMFIELD("landuse","farmland",Color.valueOf("#eff7e4"),1,true),
+    FARMFIELD("landuse","farmland",Color.valueOf("#f7f6eb"),1,true),
     BEACH("natural","beach",Color.BEIGE,1,true),
     WATER("natural","water",Color.valueOf("#ade1ff"),1,true),
     WATERWAY("waterway","",Color.valueOf("#ade1ff"),1,false),
