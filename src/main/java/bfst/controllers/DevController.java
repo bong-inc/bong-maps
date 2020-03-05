@@ -28,7 +28,7 @@ public class DevController {
             canvas.zoom(0.5,canvas.getWidth()/2,canvas.getHeight()/2);
         });
 
-        
+
 
     }
 

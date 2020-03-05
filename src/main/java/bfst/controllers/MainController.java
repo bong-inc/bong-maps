@@ -81,6 +81,11 @@ public class MainController {
 
         saveAs.setOnAction(this::saveFileOnClick);
 
+        canvas.setOnScroll(e -> {
+            double factor = Math.pow(1.004,e.getDeltaY());
+            canvas.zoom(factor,e.getX(),e.getY());
+        });
+
         devtools.setOnAction(e -> {
             try {
                 Stage devStage = new Stage();
