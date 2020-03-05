@@ -32,9 +32,10 @@ public class LinePath implements Drawable, Serializable {
     }
 
     @Override
-    public void draw(GraphicsContext gc) {
+    public void draw(GraphicsContext gc, double scale) {
         gc.beginPath();
-        trace(gc);
+        //trace(gc);
+        smartTrace(gc, scale);
         gc.stroke();
     }
 
@@ -43,10 +44,29 @@ public class LinePath implements Drawable, Serializable {
         return type;
     }
 
-    public void trace(GraphicsContext gc) {
+    private void trace(GraphicsContext gc) {
         gc.moveTo(coords[0], coords[1]);
         for (int i = 2 ; i < coords.length ; i += 2) {
             gc.lineTo(coords[i], coords[i+1]);
+        }
+    }
+
+    public void smartTrace(GraphicsContext gc, double scale){
+        float lastX = coords[0];
+        float lastY = coords[1];
+        gc.moveTo(lastX,lastY);
+        for (int i = 2 ; i < coords.length ; i += 2) {
+            float nextX = coords[i];
+            float nextY = coords[i+1];
+            float diffX = nextX - lastX;
+            float diffY = nextY - lastY;
+            double hypotenuse = Math.sqrt(Math.pow(diffX,2) + Math.pow(diffY,2));
+            double distToNext = scale * hypotenuse;
+            if(2 < distToNext){
+                gc.lineTo(nextX,nextY);
+                lastX = nextX;
+                lastY = nextY;
+            }
         }
     }
 }

@@ -37,14 +37,8 @@ public class MainController {
             InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/samsoe.bin");
             loadBinary(is);
         }catch (Exception e){
-            System.out.println("oh nose");
+            System.out.println("Failed to set default map");
         }
-        /*File file = new File(getClass().getClassLoader().getResource("bfst/samsoe.bin").getFile());
-        try {
-            loadFile(file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
 
     @FXML StackPane stackPane;
@@ -142,9 +136,14 @@ public class MainController {
                 loadBinary(is);
                 break;
             case ".osm":
+                long time = -System.nanoTime();
+
                 OSMReader reader = new OSMReader(is);
                 this.model = new Model(reader);
                 mapCanvasWrapper.mapCanvas.setModel(model);
+
+                time += System.nanoTime();
+                System.out.println("load osm: " + time/1000000f + "ms");
                 break;
             default:
                 throw new FileTypeNotSupportedException(fileExtension);
@@ -152,11 +151,16 @@ public class MainController {
     }
 
     private void loadBinary(InputStream is) throws IOException, ClassNotFoundException {
+        long time = -System.nanoTime();
+
         ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
         Object temp = ois.readObject();
         this.model = (Model) temp;
         ois.close();
         mapCanvasWrapper.mapCanvas.setModel(model);
+
+        time += System.nanoTime();
+        System.out.println("load binary: " + time/1000000f + "ms");
     }
 
     public void saveBinary(File file) throws IOException {

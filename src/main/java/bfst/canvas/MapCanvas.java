@@ -29,6 +29,8 @@ public class MapCanvas extends Canvas {
     }
 
     public void repaint(){
+        long time = -System.nanoTime();
+
         gc.setTransform(new Affine());
         gc.setFill(Color.valueOf("#ade1ff"));
         gc.fillRect(0, 0, getWidth(), getHeight());
@@ -40,6 +42,9 @@ public class MapCanvas extends Canvas {
                 if(type != Type.UNKNOWN) paintDrawablesOfType(type, pixelwidth);
             }
         }
+
+        time += System.nanoTime();
+        System.out.println("repaint: " + time/1000000f + "ms");
     }
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn){
@@ -87,7 +92,7 @@ public class MapCanvas extends Canvas {
             if (type.shouldHaveFill()) gc.setFill(type.getColor());
             if (type.shouldHaveStroke()) gc.setStroke(type.getColor());
             for (Drawable drawable : drawables) {
-                drawable.draw(gc);
+                drawable.draw(gc, 1/pixelwidth);
                 if (type.shouldHaveFill()) gc.fill();
             }
         }
