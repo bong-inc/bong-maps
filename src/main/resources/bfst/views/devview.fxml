@@ -14,4 +14,8 @@
   </FlowPane>
   <FlowPane fx:id="filterTypes">
   </FlowPane>
+  <FlowPane>
+    <Button fx:id="selectall">Select All</Button>
+    <Button fx:id="deselectall">Deselect All</Button>
+  </FlowPane>
 </VBox>

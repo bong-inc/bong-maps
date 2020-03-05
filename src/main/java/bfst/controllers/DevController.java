@@ -26,6 +26,8 @@ public class DevController {
     @FXML Button zoomIn;
     @FXML Button zoomOut;
     @FXML FlowPane filterTypes;
+    @FXML Button selectall;
+    @FXML Button deselectall;
 
     @FXML
     public void initialize(){
@@ -43,16 +45,36 @@ public class DevController {
             c.setUserData(type);
             c.setSelected(true);
             c.setOnAction(e -> {
-                typesToBeDrawn = new ArrayList<>();
-                for(Node node : filterTypes.getChildren()){
-                    CheckBox check = (CheckBox) node;
-                    if(check.isSelected()) typesToBeDrawn.add((Type) check.getUserData());
-                }
-                canvas.setTypesToBeDrawn(typesToBeDrawn);
+                updateTypesToBeDrawn();
             });
             filterTypes.getChildren().add(c);
         }
 
+        selectall.setOnAction(e -> {
+            for(Node node : filterTypes.getChildren()){
+                CheckBox check = (CheckBox) node;
+                check.setSelected(true);
+            }
+            canvas.setTypesToBeDrawn(Arrays.asList(Type.getTypes()));
+        });
+
+        deselectall.setOnAction(e -> {
+            for(Node node : filterTypes.getChildren()){
+                CheckBox check = (CheckBox) node;
+                check.setSelected(false);
+            }
+            canvas.setTypesToBeDrawn(new ArrayList<>());
+        });
+
+    }
+
+    private void updateTypesToBeDrawn() {
+        typesToBeDrawn = new ArrayList<>();
+        for(Node node : filterTypes.getChildren()){
+            CheckBox check = (CheckBox) node;
+            if(check.isSelected()) typesToBeDrawn.add((Type) check.getUserData());
+        }
+        canvas.setTypesToBeDrawn(typesToBeDrawn);
     }
 
 }

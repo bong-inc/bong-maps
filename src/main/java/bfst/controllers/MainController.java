@@ -66,7 +66,6 @@ public class MainController {
         canvas = mapCanvasWrapper.mapCanvas;
 
         canvas.setOnMousePressed(e -> {
-            Point2D mc = canvas.toModelCoords(e.getX(), e.getY());
             lastMouse = new Point2D(e.getX(), e.getY());
         });
 

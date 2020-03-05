@@ -11,46 +11,19 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" text="New" />
             <MenuItem mnemonicParsing="false" text="Open…" fx:id="loadClick"/>
-            <Menu mnemonicParsing="false" text="Open Recent">
+            <Menu mnemonicParsing="false" text="Resources">
               <items>
-                <MenuItem text="Load Default Map" fx:id="loadDefaultMap"/>
+                <MenuItem text="samsoe.bin" fx:id="loadDefaultMap"/>
               </items>
             </Menu>
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close"/>
-            <MenuItem mnemonicParsing="false" text="Save" />
             <MenuItem mnemonicParsing="false" text="Save As…" fx:id="saveAs"/>
-            <MenuItem mnemonicParsing="false" text="Revert" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Undo" />
-            <MenuItem mnemonicParsing="false" text="Redo" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Cut" />
-            <MenuItem mnemonicParsing="false" text="Copy" />
-            <MenuItem mnemonicParsing="false" text="Paste" />
-            <MenuItem mnemonicParsing="false" text="Delete" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Select All" />
-            <MenuItem mnemonicParsing="false" text="Unselect All" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Help">
-          <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Dev" fx:id="devtools">
+        <Menu mnemonicParsing="false" text="Dev Tools" fx:id="devtools">
             <items>
-                <MenuItem mnemonicParsing="false" text="open devtools" />
+                <MenuItem mnemonicParsing="false" text="Open Dev Tools..." />
             </items>
         </Menu>
       </menus>

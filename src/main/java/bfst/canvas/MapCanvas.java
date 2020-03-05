@@ -6,6 +6,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.FillRule;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -79,13 +80,15 @@ public class MapCanvas extends Canvas {
 
     private void paintDrawablesOfType(Type type, double pixelwidth) {
         ArrayList<Drawable> drawables = model.getDrawablesOfType(type);
+        gc.setStroke(Color.TRANSPARENT);
+        gc.setFill(Color.TRANSPARENT);
         if (drawables != null) {
             gc.setLineWidth(type.getWidth() * pixelwidth);
-            if (type.getFill()) gc.setFill(type.getColor());
-            gc.setStroke(type.getColor());
+            if (type.shouldHaveFill()) gc.setFill(type.getColor());
+            if (type.shouldHaveStroke()) gc.setStroke(type.getColor());
             for (Drawable drawable : drawables) {
                 drawable.draw(gc);
-                if (type.getFill()) gc.fill();
+                if (type.shouldHaveFill()) gc.fill();
             }
         }
     }
