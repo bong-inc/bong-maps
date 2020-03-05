@@ -21,10 +21,10 @@ public class PolyLinePath extends ArrayList<LinePath> implements Drawable, Seria
     }
 
     @Override
-    public void draw(GraphicsContext gc) {
+    public void draw(GraphicsContext gc, double scale) {
         gc.beginPath();
-        for (var line : this) {
-            line.trace(gc);
+        for (LinePath linepath : this) {
+            linepath.smartTrace(gc,scale);
         }
         gc.stroke();
     }

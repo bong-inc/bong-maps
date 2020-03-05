@@ -29,7 +29,7 @@ public class Line implements Serializable, Drawable {
         this(from.x, from.y, to.x, to.y);
 	}
 
-	public void draw(GraphicsContext gc) {
+	public void draw(GraphicsContext gc, double scale) {
         gc.beginPath();
         gc.moveTo(x1, y1);
         gc.lineTo(x2, y2);
