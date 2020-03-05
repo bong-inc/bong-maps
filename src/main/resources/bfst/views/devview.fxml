@@ -4,7 +4,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <VBox prefHeight="600" prefWidth="400" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-  <Button fx:id="zoomIn">zoom</Button>
-  <Button fx:id="zoomOut">zoom</Button>
+  <FlowPane>
+    <Label>zoom</Label>
+    <Button fx:id="zoomIn">+</Button>
+    <Button fx:id="zoomOut">-</Button>
+  </FlowPane>
+  <FlowPane fx:id="filterTypes">
+  </FlowPane>
 </VBox>

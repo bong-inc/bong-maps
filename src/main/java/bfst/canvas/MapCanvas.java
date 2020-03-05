@@ -11,13 +11,15 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MapCanvas extends Canvas {
     private GraphicsContext gc;
     private Affine trans;
     private Model model;
 
-    private ArrayList<Type> typesToBeDrawn;
+    private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
     public MapCanvas(){
         this.gc = getGraphicsContext2D();
@@ -33,12 +35,15 @@ public class MapCanvas extends Canvas {
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setFillRule(FillRule.EVEN_ODD);
         if(model != null) {
-            Type[] typeArray = Type.getTypes();
-            int arrayLength = typeArray.length;
-            for (int i = 1; i < arrayLength; i++){
-                paintDrawablesOfType(typeArray[i],pixelwidth);
+            for (Type type : typesToBeDrawn){
+                if(type != Type.UNKNOWN) paintDrawablesOfType(type, pixelwidth);
             }
         }
+    }
+
+    public void setTypesToBeDrawn(List<Type> typesToBeDrawn){
+        this.typesToBeDrawn = typesToBeDrawn;
+        repaint();
     }
 
     public void resetView() {
