@@ -55,7 +55,7 @@ public class LinePath implements Drawable, Serializable {
         float lastX = coords[0];
         float lastY = coords[1];
         gc.moveTo(lastX,lastY);
-        for (int i = 2 ; i < coords.length ; i += 2) {
+        for (int i = 2 ; i < coords.length - 2 ; i += 2) {
             float nextX = coords[i];
             float nextY = coords[i+1];
             float diffX = nextX - lastX;
@@ -68,5 +68,7 @@ public class LinePath implements Drawable, Serializable {
                 lastY = nextY;
             }
         }
+
+        gc.lineTo(coords[coords.length-2],coords[coords.length-1]);
     }
 }

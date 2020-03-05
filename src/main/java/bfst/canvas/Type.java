@@ -16,7 +16,7 @@ public enum Type implements Serializable {
     FOREST("landuse","forest",Color.valueOf("#c8f2bb"),0,true),
     RESIDENTIAL("landuse","residential",Color.valueOf("#e8e8e8"),0,true),
     LEISURE("leisure","park",Color.valueOf("#c8f2bb"),0,true),
-    RAILWAY("railway","rail", Color.DARKGREY,1,false),
+    RAILWAY("railway","", Color.DARKGREY,1,false),
     BUILDING("building","",Color.valueOf("#dbdbdb"),0,true),
     PRIMARY_ROAD("highway","primary",Color.YELLOW,1.5,false),
     SECONDARY_ROAD("highway","secondary",Color.WHITE,1,false),
