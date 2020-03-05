@@ -152,10 +152,12 @@ public class OSMReader {
     private void parseTag(String k, String v) {
         Type[] typeArray = Type.getTypes();
         for (Type currentType : typeArray){
-            if(k.equals(currentType.getKey())){
-                if(v.equals(currentType.getValue()) || currentType.getValue().equals("")){
-                    type = currentType;
-                    break;
+            if (k.equals(currentType.getKey())){
+                for (String key : currentType.getValue()) {
+                    if (v.equals(key) || key.equals("")) {
+                        type = currentType;
+                        break;
+                    }
                 }
             }
         }
