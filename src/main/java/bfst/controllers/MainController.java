@@ -9,16 +9,28 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * MainController
@@ -48,6 +60,10 @@ public class MainController {
     @FXML MenuItem loadDefaultMap;
     @FXML MenuItem saveAs;
     @FXML MenuItem devtools;
+    @FXML TextField searchField;
+    @FXML VBox suggestions;
+
+    String tempQuery = "";
 
     @FXML
     public void initialize() {
@@ -95,6 +111,86 @@ public class MainController {
                 ex.printStackTrace();
             }
         });
+
+        searchField.focusedProperty().addListener((obs,oldVal,newVal) -> {
+            if (newVal) {
+                searchField.setText(tempQuery);
+                searchField.positionCaret(searchField.getText().length());
+                KeyEvent press = new KeyEvent(searchField,searchField,KeyEvent.KEY_PRESSED, "", "", KeyCode.RIGHT, false, false, false, false);
+                searchField.fireEvent(press);
+            }
+        });
+
+        searchField.textProperty().addListener((obs,oldVal,newVal) -> {
+            if (searchField.isFocused()) setTempQuery(searchField.getText());
+        });
+
+        searchField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.TAB) {
+                event.consume();
+            }
+            if (event.getCode() == KeyCode.DOWN) {
+                if(suggestions.getChildren().size() > 0) {
+                    suggestions.getChildren().get(0).requestFocus();
+                }
+                event.consume();
+            }
+        });
+
+    }
+
+    public void setTempQuery(String newQuery){
+        tempQuery = newQuery;
+        reGenSuggestions();
+    }
+
+    public void reGenSuggestions(){
+        String[] dummyAddresses = new String[]{"Jagtvej, Copenhagen","Jagtvej Hillerød"};
+        ArrayList<TextFlow> bs = new ArrayList<>();
+        for (String address : dummyAddresses) {
+            int[] matchRange = matches(searchField.getText(), address);
+            if (matchRange != null) {
+                TextFlow b = new TextFlow();
+                b.setUserData(address);
+                b.getChildren().add(new Text(address.substring(0,matchRange[0])));
+                Text matched = new Text(address.substring(matchRange[0],matchRange[1]));
+                matched.setStyle("-fx-font-weight: bold");
+                b.getChildren().add(matched);
+                b.getChildren().add(new Text(address.substring(matchRange[1])));
+                b.getStyleClass().add("suggestion");
+                b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.TAB) {
+                        setTempQuery((String) ((TextFlow) event.getSource()).getUserData());
+                        searchField.requestFocus();
+                        event.consume();
+                    }
+                    if (event.getCode() == KeyCode.A && event.isControlDown()) {
+                        searchField.requestFocus();
+                    }
+                });
+                b.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                    if (newVal) searchField.setText((String) b.getUserData());
+                });
+                bs.add(b);
+            }
+        }
+        updateSuggestions(bs);
+    }
+
+    public void updateSuggestions(ArrayList<TextFlow> bs){
+        suggestions.getChildren().clear();
+        for (TextFlow b : bs) suggestions.getChildren().add(b);
+    }
+
+    public int[] matches(String query, String address){
+        String regex = ".*?(?<match>" + query.toLowerCase() + ").*";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher m = pattern.matcher(address.toLowerCase());
+        if (m.find() && m.group("match") != null && query.length() > 0) {
+            return new int[]{m.start("match"), m.end("match")};
+        } else {
+            return null;
+        }
     }
 
     public void saveFileOnClick(ActionEvent e){

@@ -6,11 +6,6 @@
     -fx-faint-focus-color: transparent;
 }
 
-.UI {
-    -fx-padding: 20;
-}
-
-
 .content {
     -fx-fit-to-width: true;
 }
@@ -39,6 +34,38 @@
     -fx-focus-color: transparent;
     -fx-background-color: -fx-text-box-border, -fx-control-inner-background;
     -fx-faint-focus-color: transparent;
+}
+
+.UI {
+    -fx-padding: 20;
+}
+
+.suggestions {
+    -fx-fit-to-width: true;
+}
+
+.suggestion {
+    -fx-pref-width: Infinity;
+    -fx-padding: 10 20;
+    -fx-background-radius: 5;
+    -fx-background-color: #fff;
+    -fx-alignment: CENTER_LEFT;
+    -fx-focus-traversable: true;
+}
+
+.suggestion:focused {
+    -fx-background-color: #f8f8f8;
+}
+
+.searchBar {
+    -fx-background-color: white;
+    -fx-max-width: 400;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.searchFieldWrapper {
+    -fx-padding: 5 10;
 }
 
 .searchField {
@@ -84,14 +111,6 @@
 
 .searchFieldIcon {
 
-}
-
-.searchBar {
-    -fx-background-color: white;
-    -fx-max-width: 400;
-    -fx-padding: 5 10;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
 }
 
 .search-icon {
