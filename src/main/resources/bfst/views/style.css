@@ -1,0 +1,205 @@
+.root {
+    -fx-faint-focus-color: transparent;
+}
+
+.body {
+    -fx-faint-focus-color: transparent;
+}
+
+.content {
+    -fx-fit-to-width: true;
+}
+
+.sp {
+    -fx-padding: 20 0 0 0;
+    -fx-fit-to-width: true;
+    -fx-background-color : transparent;
+}
+
+.grid {
+    -fx-background-color : transparent;
+}
+
+.gridHeader {
+
+}
+
+.sp > .viewport {
+    -fx-background-color: transparent;
+}
+
+.output {
+    -fx-control-inner-background: #ddd;
+    -fx-text-box-border: transparent;
+    -fx-focus-color: transparent;
+    -fx-background-color: -fx-text-box-border, -fx-control-inner-background;
+    -fx-faint-focus-color: transparent;
+}
+
+.UI {
+    -fx-padding: 20;
+}
+
+.suggestions {
+    -fx-fit-to-width: true;
+}
+
+.suggestion {
+    -fx-pref-width: Infinity;
+    -fx-padding: 10 20;
+    -fx-background-radius: 5;
+    -fx-background-color: #fff;
+    -fx-alignment: CENTER_LEFT;
+    -fx-focus-traversable: true;
+}
+
+.suggestion:focused {
+    -fx-background-color: #f8f8f8;
+}
+
+.searchBar {
+    -fx-background-color: white;
+    -fx-max-width: 400;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.searchFieldWrapper {
+    -fx-padding: 5 10;
+}
+
+.searchField {
+    -fx-pref-width: 10000;
+    -fx-font-size: 10pt;
+    -fx-text-fill: #555;
+    -fx-border-width: 0;
+    -fx-text-box-border: transparent;
+    -fx-background-color: -fx-text-box-border, -fx-control-inner-background;
+    -fx-focus-color: transparent;
+}
+
+.searchField:focused {
+    -fx-focus-color: -fx-control-inner-background;
+    -fx-faint-focus-color: -fx-control-inner-background;
+}
+
+.icon-button .icon {
+    -fx-background-color: #ddd;
+    -size: 22;
+    -fx-min-height: -size;
+    -fx-min-width: -size;
+    -fx-max-height: -size;
+    -fx-max-width: -size;
+}
+
+.icon-button:hover .icon {
+    -fx-background-color: #bbb;
+}
+
+.iconHighlightOn {
+    -fx-background-color: #abd2e0;
+}
+
+.iconHighlightOff {
+    -fx-background-color: #e8e8e8;
+}
+
+.icon-button {
+    -fx-background-color: white;
+    -fx-content-display: graphic-only;
+}
+
+.searchFieldIcon {
+
+}
+
+.search-icon {
+    -fx-shape: "M15.75,15.05l-.7.7a.5.5,0,0,1-.71,0L10.69,12.1a5.46,5.46,0,1,1,1.41-1.41l3.65,3.65a.5.5,0,0,1,0,.71Zm-8.17-4A3.49,3.49,0,1,0,4.1,7.58,3.49,3.49,0,0,0,7.58,11.07Z";
+}
+
+Button:hover {
+    -fx-cursor: hand;
+}
+
+/* Custom scrollbar */
+
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+    -fx-background-color :transparent;
+    -fx-border-color :transparent;
+    -fx-background-radius : 0.0em;
+    -fx-border-radius :2.0em;
+}
+
+.scroll-bar:horizontal .increment-button ,
+.scroll-bar:horizontal .decrement-button {
+    -fx-background-color :transparent;
+    -fx-background-radius : 0.0em;
+    -fx-padding :0.0 0.0 10.0 0.0;
+
+}
+
+.scroll-bar:vertical .increment-button ,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color :transparent;
+    -fx-background-radius : 0.0em;
+    -fx-padding :0.0 10.0 0.0 0.0;
+
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow{
+    -fx-shape : " ";
+    -fx-padding :0.15em 0.0;
+}
+
+.scroll-bar:vertical .increment-arrow,
+.scroll-bar:vertical .decrement-arrow{
+    -fx-shape : " ";
+    -fx-padding :0.0 0.15em;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color : #333;
+    -fx-background-insets : 4.0, 0.0, 0.0;
+    -fx-background-radius : 2.0em;
+}
+
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color : #222;
+    -fx-background-insets : 3.0, 0.0, 0.0;
+    -fx-background-radius : 2.0em;
+}
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .increment-button {
+    visibility: hidden;
+}
+
+.scroll-bar .decrement-button {
+    visibility: hidden;
+}
+
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .track-background,
+.scroll-bar:horizontal .track-background {
+    visibility: hidden;
+}
+
+.scroll-bar:vertical .track,
+.scroll-bar:horizontal .track {
+    visibility: hidden;
+}
+
+.hide-thumb .scroll-bar:vertical .thumb,
+.hide-thumb .scroll-bar:horizontal .thumb{
+    -fx-background-color: transparent;
+}

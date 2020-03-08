@@ -20,6 +20,17 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'bfst.Launcher'
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 javafx {
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
@@ -50,4 +61,8 @@ test {
 application {
     // Define the main class for the application.
     mainClassName = 'bfst.Launcher'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
