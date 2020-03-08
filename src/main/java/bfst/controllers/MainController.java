@@ -9,19 +9,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -145,7 +142,7 @@ public class MainController {
     }
 
     public void reGenSuggestions(){
-        String[] dummyAddresses = new String[]{"Jagtvej, Copenhagen","Jagtvej Hillerød"};
+        String[] dummyAddresses = new String[]{"Jagtvej Copenhagen","Jagtvej Hillerød"};
         ArrayList<TextFlow> bs = new ArrayList<>();
         for (String address : dummyAddresses) {
             int[] matchRange = matches(searchField.getText(), address);
