@@ -4,6 +4,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.Group?>
 <VBox prefHeight="800" prefWidth="1200" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
 
   <children>
@@ -30,10 +33,10 @@
     </MenuBar>
     <StackPane VBox.vgrow="ALWAYS" fx:id="stackPane">
         <MapCanvasWrapper fx:id="mapCanvasWrapper"/>
-
-        <!--<VBox fx:id="searchBar" styleClass="searchBar">
+        <VBox styleClass="UI" pickOnBounds="false">
+          <VBox styleClass="searchBar">
             <HBox styleClass="searchFieldWrapper">
-                <TextField styleClass="searchField" fx:id="input" promptText="Search"/>
+                <TextField styleClass="searchField" fx:id="searchField" promptText="Search"/>
                 <Button styleClass="icon-button, searchFieldIcon" fx:id="search">
                     <graphic>
                         <Region fx:id="searchIcon" styleClass="icon, search-icon"/>
@@ -41,9 +44,9 @@
                 </Button>
             </HBox>
             <VBox fx:id="suggestions" styleClass="suggestions">
-
             </VBox>
-        </VBox>-->
+          </VBox>
+        </VBox>
     </StackPane>
   </children>
 </VBox>

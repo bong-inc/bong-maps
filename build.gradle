@@ -61,5 +61,8 @@ test {
 application {
     // Define the main class for the application.
     mainClassName = 'bfst.Launcher'
-    
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }

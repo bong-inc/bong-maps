@@ -24,6 +24,7 @@ public enum Type implements Serializable {
     //TERTIARY_ROAD("highway",new String[]{"tertiary"},Color.WHITE,1,false),
     //RESIDENTIAL_ROAD("highway",new String[]{"residential"},Color.WHITE,1,false);
 
+
     public String getKey() {
         return key;
     }
