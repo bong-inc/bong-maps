@@ -239,6 +239,7 @@ public class MainController {
                 System.out.println("load osm: " + time/1000000f + "ms");
                 break;
             default:
+                is.close();
                 throw new FileTypeNotSupportedException(fileExtension);
         }
     }

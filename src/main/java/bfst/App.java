@@ -3,7 +3,6 @@
  */
 package bfst;
 
-import java.io.File;
 import java.io.IOException;
 
 import bfst.controllers.MainController;
@@ -18,7 +17,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
+        App.primaryStage = primaryStage;
         Parent root = App.loadFXML("main");
         primaryStage.setTitle("LLamp");
         Scene scene = new Scene(root);
