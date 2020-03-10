@@ -40,6 +40,8 @@ public class MapCanvas extends Canvas {
             for (Type type : typesToBeDrawn){
                 if(type != Type.UNKNOWN) paintDrawablesOfType(type, pixelwidth);
             }
+            gc.setStroke(Color.BLACK);
+            model.getBound().draw(gc, trans.getMxx());
         }
 
         time += System.nanoTime();

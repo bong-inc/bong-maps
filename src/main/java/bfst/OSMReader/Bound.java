@@ -1,11 +1,14 @@
 package bfst.OSMReader;
 
 
+import bfst.canvas.Drawable;
+import bfst.canvas.Type;
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
 
 import java.io.Serializable;
 
-public class Bound implements Serializable {
+public class Bound implements Drawable,Serializable {
     private float minLat;
     private float maxLat;
     private float minLon;
@@ -28,4 +31,18 @@ public class Bound implements Serializable {
     public float getMaxLat(){return maxLat;}
     public float getMinLon(){return minLon;}
     public float getMaxLon(){return maxLon;}
+
+    public void draw(GraphicsContext gc, double scale){
+        gc.beginPath();
+        gc.moveTo(minLon,minLat);
+        gc.lineTo(minLon, maxLat);
+        gc.lineTo(maxLon, maxLat);
+        gc.lineTo(maxLon, minLat);
+        gc.lineTo(minLon, minLat);
+        gc.stroke();
+    }
+
+    public Type getType(){
+        return Type.UNKNOWN;
+    }
 }

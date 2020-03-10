@@ -82,11 +82,11 @@ public class OSMReader {
                             case "osm":
                                 ArrayList<Drawable> coastlines = new ArrayList<>();
                                 for(Map.Entry<Node,Way> entry : tempCoastlines.entrySet()){
-                                    if(entry.getKey() == entry.getValue().last()){
+                                    if(entry.getValue().first() == entry.getValue().last()){
                                         coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE));
                                     } else {
-                                        fixCoastline(entry.getValue());
-                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
+                                        //fixCoastline(entry.getValue());
+                                        //coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
                                     }
                                 }
                                 drawableByType.put(Type.COASTLINE,coastlines);
@@ -183,14 +183,47 @@ public class OSMReader {
     }
 
     private void fixCoastline(Way coastline){
-        if(coastline.first().getLat() <= bound.getMaxLat()) coastline.addNodeToFront(new Node(0, bound.getMaxLon(), bound.getMinLat()));
-        else if(coastline.first().getLat() >= bound.getMinLat()) coastline.addNodeToFront(new Node(0, bound.getMinLon(), bound.getMaxLat()));
-        else if(coastline.first().getLon() >= bound.getMinLon()) coastline.addNodeToFront(new Node(0, bound.getMinLon(), bound.getMinLat()));
-        else if(coastline.first().getLon() <= bound.getMaxLon()) coastline.addNodeToFront(new Node(0, bound.getMaxLon(), bound.getMaxLat()));
+        Node[] boundNodes = new Node[4];
+        boundNodes[0] = new Node(0, bound.getMinLon(), bound.getMinLat()); //TOPLEFT
+        boundNodes[1] = new Node(0, bound.getMinLon(), bound.getMaxLat()); //BOTTOMLEFT
+        boundNodes[2] = new Node(0, bound.getMaxLon(), bound.getMaxLat()); //BOTTOMRIGHT
+        boundNodes[3] = new Node(0, bound.getMaxLon(), bound.getMinLat()); //TOPRIGHT
 
-        if(coastline.last().getLat() >= bound.getMaxLat()) coastline.addNode(new Node(0, bound.getMaxLon(), bound.getMaxLat()));
-        else if(coastline.last().getLat() <= bound.getMinLat()) coastline.addNode(new Node(0, bound.getMinLon(), bound.getMinLat()));
-        else if(coastline.last().getLon() <= bound.getMinLon()) coastline.addNode(new Node(0, bound.getMinLon(), bound.getMaxLat()));
-        else if(coastline.last().getLon() >= bound.getMaxLon()) coastline.addNode(new Node(0, bound.getMaxLon(), bound.getMinLat()));
+        if(coastline.first().getLat() <= bound.getMinLat()){ //TOP
+            coastline.addNodeToFront(boundNodes[3]);
+        }
+        else if(coastline.first().getLat() >= bound.getMaxLat()){ //BOTTOM
+            coastline.addNodeToFront(boundNodes[1]);
+        }
+        else if(coastline.first().getLon() <= bound.getMinLon()){ //LEFT
+            coastline.addNodeToFront(boundNodes[0]);
+        }
+        else if(coastline.first().getLon() >= bound.getMaxLon()){ //RIGHT
+            coastline.addNodeToFront(boundNodes[2]);
+        }
+
+
+        int lastNode = 10;
+        if(coastline.last().getLat() <= bound.getMinLat()){ //TOP
+            coastline.addNode(boundNodes[2]);
+            lastNode = 2;
+        }
+        else if(coastline.last().getLat() >= bound.getMaxLat()){ //BOTTOM
+            coastline.addNode(boundNodes[0]);
+            lastNode = 0;
+        }
+        else if(coastline.last().getLon() <= bound.getMinLon()){ //LEFT
+            coastline.addNode(boundNodes[1]);
+            lastNode = 1;
+        }
+        else if(coastline.last().getLon() >= bound.getMaxLon()){ //RIGHT
+            coastline.addNode(boundNodes[3]);
+            lastNode = 3;
+        }
+
+        for(int i = lastNode; coastline.first() != coastline.last(); i++) {
+            coastline.addNode(boundNodes[i]);
+            if (i == 3) i = -1;
+        }
     }
 }
