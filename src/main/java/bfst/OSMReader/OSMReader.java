@@ -84,6 +84,9 @@ public class OSMReader {
                                 for(Map.Entry<Node,Way> entry : tempCoastlines.entrySet()){
                                     if(entry.getKey() == entry.getValue().last()){
                                         coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE));
+                                    } else {
+                                        fixCoastline(entry.getValue());
+                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
                                     }
                                 }
                                 drawableByType.put(Type.COASTLINE,coastlines);
@@ -161,36 +164,6 @@ public class OSMReader {
                 }
             }
         }
-
-/*
-        switch (k){
-            TODO address stuff
-            case "addr:city":
-                addressInfo[0] = v;
-                if (addressInfoIsFull(addressInfo) && wayHolder == null){
-                    addresses.add(new Address(tempNodes.get(currentID), addressInfo));
-                }
-                break;
-            case "postal_code":
-            case "addr:postcode":
-                addressInfo[1] = v;
-                if (addressInfoIsFull(addressInfo) && wayHolder == null){
-                    addresses.add(new Address(tempNodes.get(currentID), addressInfo));
-                }
-                break;
-            case "addr:street":
-                addressInfo[2] = v;
-                if (addressInfoIsFull(addressInfo) && wayHolder == null){
-                    addresses.add(new Address(tempNodes.get(currentID), addressInfo));
-                }
-                break;
-            case "addr:housenumber":
-                addressInfo[3] = v;
-                if (addressInfoIsFull(addressInfo) && wayHolder == null){
-                    addresses.add(new Address(tempNodes.get(currentID), addressInfo));
-                }
-                break;
-*/
     }
 
     private void parseMember(XMLStreamReader reader) {
@@ -208,6 +181,16 @@ public class OSMReader {
                 break;
         }
     }
-}
 
-//TODO load addresses
+    private void fixCoastline(Way coastline){
+        if(coastline.first().getLat() <= bound.getMaxLat()) coastline.addNodeToFront(new Node(0, bound.getMaxLon(), bound.getMinLat()));
+        else if(coastline.first().getLat() >= bound.getMinLat()) coastline.addNodeToFront(new Node(0, bound.getMinLon(), bound.getMaxLat()));
+        else if(coastline.first().getLon() >= bound.getMinLon()) coastline.addNodeToFront(new Node(0, bound.getMinLon(), bound.getMinLat()));
+        else if(coastline.first().getLon() <= bound.getMaxLon()) coastline.addNodeToFront(new Node(0, bound.getMaxLon(), bound.getMaxLat()));
+
+        if(coastline.last().getLat() >= bound.getMaxLat()) coastline.addNode(new Node(0, bound.getMaxLon(), bound.getMaxLat()));
+        else if(coastline.last().getLat() <= bound.getMinLat()) coastline.addNode(new Node(0, bound.getMinLon(), bound.getMinLat()));
+        else if(coastline.last().getLon() <= bound.getMinLon()) coastline.addNode(new Node(0, bound.getMinLon(), bound.getMaxLat()));
+        else if(coastline.last().getLon() >= bound.getMaxLon()) coastline.addNode(new Node(0, bound.getMaxLon(), bound.getMinLat()));
+    }
+}
