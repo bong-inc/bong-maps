@@ -85,8 +85,8 @@ public class OSMReader {
                                     if(entry.getValue().first() == entry.getValue().last()){
                                         coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE));
                                     } else {
-                                        //fixCoastline(entry.getValue());
-                                        //coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
+                                        fixCoastline(entry.getValue());
+                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
                                     }
                                 }
                                 drawableByType.put(Type.COASTLINE,coastlines);
@@ -205,12 +205,12 @@ public class OSMReader {
 
         int lastNode = 10;
         if(coastline.last().getLat() <= bound.getMinLat()){ //TOP
-            coastline.addNode(boundNodes[2]);
-            lastNode = 2;
-        }
-        else if(coastline.last().getLat() >= bound.getMaxLat()){ //BOTTOM
             coastline.addNode(boundNodes[0]);
             lastNode = 0;
+        }
+        else if(coastline.last().getLat() >= bound.getMaxLat()){ //BOTTOM
+            coastline.addNode(boundNodes[2]);
+            lastNode = 2;
         }
         else if(coastline.last().getLon() <= bound.getMinLon()){ //LEFT
             coastline.addNode(boundNodes[1]);
