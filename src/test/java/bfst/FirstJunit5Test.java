@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 class FirstJunit5Test {
 
-    @Test public void testAppHasAGreeting() {
+    @Test public void testHelloIsHello() {
         assertEquals("hello", "hello");
     }
 }

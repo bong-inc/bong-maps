@@ -32,19 +32,21 @@ public class LinePath implements Drawable, Serializable {
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale) {
+    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
         gc.beginPath();
-        //trace(gc);
-        smartTrace(gc, scale);
+        traceMethod(gc, scale, smartTrace);
         gc.stroke();
     }
 
-    @Override
-    public Type getType() {
-        return type;
+    public void traceMethod(GraphicsContext gc, double scale, boolean smartTrace) {
+        if(smartTrace) {
+            smartTrace(gc, scale);
+        } else {
+            trace(gc);
+        }
     }
 
-    private void trace(GraphicsContext gc) {
+    public void trace(GraphicsContext gc) {
         gc.moveTo(coords[0], coords[1]);
         for (int i = 2 ; i < coords.length ; i += 2) {
             gc.lineTo(coords[i], coords[i+1]);

@@ -21,6 +21,7 @@ public class Way implements LongSupplier {
     public void addNode(Node node){
         nodes.add(node);
     }
+    public void addNodeToFront(Node node){nodes.add(0, node); }
 
     public ArrayList<Node> getNodes(){
         return nodes;

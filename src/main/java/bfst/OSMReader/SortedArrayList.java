@@ -45,7 +45,7 @@ public class SortedArrayList<T extends LongSupplier> implements Iterable<T>{
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<T> iterator() {
         return list.iterator();
     }
 }

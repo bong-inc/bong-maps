@@ -1,8 +1,9 @@
 package bfst.OSMReader;
 
+import java.io.Serializable;
 import java.util.function.LongSupplier;
 
-public class Node implements LongSupplier {
+public class Node implements LongSupplier, Serializable {
     private long id;
     private float lon;
     private float lat;
