@@ -1,5 +1,6 @@
 package bfst.OSMReader;
 
+import bfst.addressparser.Address;
 import bfst.canvas.Drawable;
 import bfst.canvas.LinePath;
 import bfst.canvas.PolyLinePath;
@@ -28,11 +29,18 @@ public class OSMReader {
     private Way wayHolder;
     private Relation relationHolder;
 
+    private ArrayList<Address> addresses = new ArrayList<>();
+    private Address.Builder builder;
+
     private long currentID;
     private HashMap<Type, ArrayList<Drawable>> drawableByType = new HashMap<>();
 
     public HashMap<Type, ArrayList<Drawable>> getDrawableByType(){
         return drawableByType;
+    }
+
+    public ArrayList<Address> getAddresses(){
+        return addresses;
     }
 
     public Bound getBound(){return bound;}
@@ -53,6 +61,11 @@ public class OSMReader {
                     case END_ELEMENT:
                         element = reader.getLocalName();
                         switch (element) {
+                            case "node":
+                                if(!builder.isEmpty()) {
+                                    addresses.add(builder.build());
+                                }
+                                break;
                             case "way":
                                 if(type != Type.COASTLINE) {
                                     if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
@@ -115,11 +128,11 @@ public class OSMReader {
                 );
                 break;
             case "node":
+                builder = new Address.Builder();
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 float tempLon = Float.parseFloat(reader.getAttributeValue(null, "lon"));
                 float tempLat = Float.parseFloat(reader.getAttributeValue(null, "lat"));
-                // fancy but wrong
-                // nodeHolder = new Node(currentID, (float) Math.cos(tempLat * Math.PI / 180) * tempLon, -tempLat);
+                builder.node(nodeHolder);
                 nodeHolder = new Node(currentID, (float) 0.55673548 * tempLon, -tempLat);
                 tempNodes.add(nodeHolder);
                 break;
@@ -162,6 +175,26 @@ public class OSMReader {
                         break;
                     }
                 }
+            }
+        }
+        if(k.contains("addr:")){
+            switch (k) {
+                case "addr:city":
+                    builder = builder.city(v);
+                    break;
+                case "addr:postal_code":
+                case "addr:postcode":
+                    builder = builder.postcode(v);
+                    break;
+                case "addr:street":
+                    builder = builder.street(v);
+                    break;
+                case "addr:housenumber":
+                    builder = builder.house(v);
+                    break;
+                case "addr:municipality":
+                    builder = builder.municipality(v);
+                    break;
             }
         }
     }

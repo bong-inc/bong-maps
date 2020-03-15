@@ -3,6 +3,8 @@ package bfst.controllers;
 import bfst.App;
 import bfst.OSMReader.Model;
 import bfst.OSMReader.OSMReader;
+import bfst.addressparser.Address;
+import bfst.addressparser.InvalidAddressException;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.MapCanvasWrapper;
 import javafx.event.ActionEvent;
@@ -26,6 +28,7 @@ import javafx.stage.WindowEvent;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +39,7 @@ public class MainController {
     Stage stage;
     Model model;
     private Point2D lastMouse;
+    private ArrayList<String> tempBest = new ArrayList<>();
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
@@ -136,15 +140,39 @@ public class MainController {
 
     }
 
+    private void query(String query) {
+        ArrayList<Address> addresses = model.getAddresses();
+        //int index = Collections.binarySearch(addresses, new Address(query,null,null,null,null, null)); //TODO fix builder thingy
+        Address inputAdress = null;
+        query = query.toLowerCase();
+        try {
+            inputAdress = Address.parse(query);
+            System.out.println(inputAdress);
+            int index = Collections.binarySearch(addresses, inputAdress);
+            tempBest = new ArrayList<>();
+            System.out.println("query: " + query + " i: " + index);
+            for (int i = 0; i < 5; i++){
+                if(index < 0){
+                    tempBest.add(addresses.get(-index-1+i).toString());
+                } else {
+                    tempBest.add(addresses.get(index+i).toString());
+                }
+            }
+        } catch (InvalidAddressException e) {
+            System.out.println("invalid address");
+        }
+    }
+
     public void setTempQuery(String newQuery){
         tempQuery = newQuery;
+        query(tempQuery);
         reGenSuggestions();
     }
 
     public void reGenSuggestions(){
-        String[] dummyAddresses = new String[]{"Jagtvej Copenhagen","Jagtvej Hillerød"};
+        ArrayList<String> best = tempBest;
         ArrayList<TextFlow> bs = new ArrayList<>();
-        for (String address : dummyAddresses) {
+        for (String address : best) {
             int[] matchRange = matches(searchField.getText(), address);
             if (matchRange != null) {
                 TextFlow b = new TextFlow();
@@ -189,6 +217,7 @@ public class MainController {
             return null;
         }
     }
+
 
     public void saveFileOnClick(ActionEvent e){
         try {
