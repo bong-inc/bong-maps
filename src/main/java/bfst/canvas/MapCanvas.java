@@ -18,6 +18,8 @@ public class MapCanvas extends Canvas {
     private GraphicsContext gc;
     private Affine trans;
     private Model model;
+    private boolean smartTrace = true;
+    private boolean useRegularColors = true;
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
@@ -52,6 +54,17 @@ public class MapCanvas extends Canvas {
         this.typesToBeDrawn = typesToBeDrawn;
         repaint();
     }
+
+    public void setTraceType(boolean shouldSmartTrace) {
+        smartTrace = shouldSmartTrace;
+        repaint();
+    }
+
+    public void setUseRegularColors(boolean shouldUseRegularColors) {
+        useRegularColors = shouldUseRegularColors;
+        repaint();
+    }
+
 
     public void resetView() {
         trans.setToIdentity();

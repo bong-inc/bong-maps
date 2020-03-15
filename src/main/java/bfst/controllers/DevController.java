@@ -28,6 +28,8 @@ public class DevController {
     @FXML FlowPane filterTypes;
     @FXML Button selectall;
     @FXML Button deselectall;
+    @FXML CheckBox smartTraceToggle;
+    @FXML CheckBox colorToggle;
 
     @FXML
     public void initialize(){
@@ -64,6 +66,17 @@ public class DevController {
                 check.setSelected(false);
             }
             canvas.setTypesToBeDrawn(new ArrayList<>());
+        });
+
+
+        smartTraceToggle.setSelected(true);
+        smartTraceToggle.setOnAction(e -> {
+            canvas.setTraceType(smartTraceToggle.isSelected());
+        });
+
+        colorToggle.setSelected(true);
+        colorToggle.setOnAction(e -> {
+            canvas.setUseRegularColors(colorToggle.isSelected());
         });
 
     }
