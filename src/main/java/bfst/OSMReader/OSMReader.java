@@ -188,6 +188,7 @@ public class OSMReader {
         Node savedNd = coastline.first();
         Node currentNd;
         for(int i = 1;;){
+            if(coastlineNodes.size() <= 1) return;
             currentNd = coastlineNodes.get(i);
             float lon = currentNd.getLon();
             float lat = currentNd.getLat();
