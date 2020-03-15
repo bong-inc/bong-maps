@@ -18,16 +18,12 @@ public class PolyLinePath extends ArrayList<LinePath> implements Drawable {
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale) {
+    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
         gc.beginPath();
         for (LinePath linepath : this) {
-            linepath.smartTrace(gc,scale);
+            linepath.traceMethod(gc, scale, smartTrace);
         }
         gc.stroke();
     }
 
-    @Override
-    public Type getType() {
-        return type;
-    }
 }
