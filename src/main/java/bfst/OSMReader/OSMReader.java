@@ -215,7 +215,7 @@ public class OSMReader {
                     break;
             }
         }
-        if (k.equals("place") && (v.equals("city") || v.equals("town") || v.equals("hamlet") || v.equals("suburb") || v.equals("village"))) {
+        if (k.equals("place") && (v.equals("city") || v.equals("town") ||  v.equals("suburb") || v.equals("village"))) {
             cityBuilder.name(previousName);
             cityBuilder.cityType(v);
             cities.add(cityBuilder.build());

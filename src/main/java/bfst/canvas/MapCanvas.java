@@ -52,13 +52,16 @@ public class MapCanvas extends Canvas {
             model.getBound().draw(gc, pixelwidth, false);
 
             gc.setFill(Color.DARKGREY);
-            gc.setFont(new Font(pixelwidth * 20));
             for (City city : model.getCities()) {
-                city.draw(gc, pixelwidth, false);
+                gc.setFont(new Font(pixelwidth * city.getFontSize()));
+                if (trans.getMxx() < city.getMaxMxx() && trans.getMxx() > city.getMinMxx()) {
+                    city.draw(gc, pixelwidth, false);
+                }
             }
         }
         time += System.nanoTime();
         System.out.println("repaint: " + time/1000000f + "ms");
+        System.out.println("mxx: " + trans.getMxx());
     }
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn){

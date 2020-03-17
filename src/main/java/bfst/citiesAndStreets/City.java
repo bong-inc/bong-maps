@@ -10,6 +10,10 @@ public class City implements Serializable, Comparable<City>, Drawable {
     private final String name;
     private final Node node;
     private final String cityType;
+    private final int fontSize;
+
+    private final int minMxx;
+    private final int maxMxx;
 
     private City(
             String _name,
@@ -19,6 +23,19 @@ public class City implements Serializable, Comparable<City>, Drawable {
         name = _name;
         node = _node;
         cityType = _cityType;
+        switch (_cityType) {
+            case "city":
+                fontSize = 20;
+                minMxx = 400;
+                maxMxx = 4800;
+                break;
+            default:
+                fontSize = 10;
+                minMxx = 4800;
+                maxMxx = 20000;
+                break;
+
+        }
     }
 
     @Override
@@ -29,6 +46,18 @@ public class City implements Serializable, Comparable<City>, Drawable {
     @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
         gc.fillText(this.name, node.getLon(), node.getLat());
+    }
+
+    public int getFontSize() {
+        return fontSize;
+    }
+
+    public int getMinMxx() {
+        return minMxx;
+    }
+
+    public int getMaxMxx() {
+        return maxMxx;
     }
 
     public static class Builder {
