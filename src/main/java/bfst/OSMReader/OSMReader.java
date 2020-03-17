@@ -166,9 +166,11 @@ public class OSMReader {
 
                 break;
             case "nd":
-                Long ref = Long.parseLong(reader.getAttributeValue(null, "ref"));
+                long ref = Long.parseLong(reader.getAttributeValue(null, "ref"));
                 if(wayHolder != null){
-                    if(tempNodes.get(ref) != null) wayHolder.addNode(tempNodes.get(ref));
+                    Node node = tempNodes.get(ref);
+                    if(tempNodes.get(ref) != null) wayHolder.addNode(node);
+                    cityBuilder.node(node);
                 }
                 break;
             case "member":

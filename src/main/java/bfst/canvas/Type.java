@@ -22,7 +22,7 @@ public enum Type implements Serializable {
     PRIMARY_ROAD("highway",new String[]{"primary","motorway"},Color.YELLOW,1.5,false, Color.YELLOW),
     SECONDARY_ROAD("highway",new String[]{"secondary"},Color.WHITE,1,false, Color.valueOf("#6e7fff")),
     TERTIARY_ROAD("highway",new String[]{"tertiary"},Color.WHITE,1,false, Color.valueOf("#6e7fff")),
-    RESIDENTIAL_ROAD("highway",new String[]{"residential"},Color.WHITE,1,false, Color.valueOf("#6e7fff"));
+    RESIDENTIAL_ROAD("highway",new String[]{"residential", "unclassified"},Color.WHITE,1,false, Color.valueOf("#6e7fff"));
 
 
     public String getKey() {

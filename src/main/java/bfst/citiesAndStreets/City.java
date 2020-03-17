@@ -1,10 +1,8 @@
 package bfst.citiesAndStreets;
 
 import bfst.OSMReader.Node;
-import bfst.addressparser.Address;
 import bfst.canvas.Drawable;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 import java.io.Serializable;
 
