@@ -5,6 +5,7 @@ import bfst.canvas.Drawable;
 import bfst.canvas.LinePath;
 import bfst.canvas.PolyLinePath;
 import bfst.canvas.Type;
+import bfst.citiesAndStreets.City;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -30,7 +31,12 @@ public class OSMReader {
     private Relation relationHolder;
 
     private ArrayList<Address> addresses = new ArrayList<>();
+
+    private ArrayList<City> cities = new ArrayList<>();
     private Address.Builder builder;
+    private City.Builder cityBuilder;
+
+    private String previousName;
 
     private long currentID;
     private HashMap<Type, ArrayList<Drawable>> drawableByType = new HashMap<>();
@@ -41,6 +47,10 @@ public class OSMReader {
 
     public ArrayList<Address> getAddresses(){
         return addresses;
+    }
+
+    public ArrayList<City> getCities() {
+        return cities;
     }
 
     public Bound getBound(){return bound;}
@@ -129,11 +139,13 @@ public class OSMReader {
                 break;
             case "node":
                 builder = new Address.Builder();
+                cityBuilder = new City.Builder();
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 float tempLon = Float.parseFloat(reader.getAttributeValue(null, "lon"));
                 float tempLat = Float.parseFloat(reader.getAttributeValue(null, "lat"));
-                builder.node(nodeHolder);
                 nodeHolder = new Node(currentID, (float) 0.55673548 * tempLon, -tempLat);
+                builder.node(nodeHolder);
+                cityBuilder.node(nodeHolder);
                 tempNodes.add(nodeHolder);
                 break;
             case "way":
@@ -166,6 +178,10 @@ public class OSMReader {
     }
 
     private void parseTag(String k, String v) {
+        if (k.equals("name")) {
+            previousName = v;
+        }
+
         Type[] typeArray = Type.getTypes();
         for (Type currentType : typeArray){
             if (k.equals(currentType.getKey())){
@@ -196,6 +212,11 @@ public class OSMReader {
                     builder = builder.municipality(v);
                     break;
             }
+        }
+        if (k.equals("place") && (v.equals("city") || v.equals("town") || v.equals("hamlet") || v.equals("suburb") || v.equals("village"))) {
+            cityBuilder.name(previousName);
+            cityBuilder.cityType(v);
+            cities.add(cityBuilder.build());
         }
     }
 
@@ -257,14 +278,14 @@ public class OSMReader {
 
         if((first.getLon() < bound.getMaxLon() && first.getLon() > bound.getMinLon()) && (last.getLon() < bound.getMaxLon() && last.getLon() > bound.getMinLon())) {
             if( (first.getLat() < midLat && last.getLat() < midLat && first.getLon() < last.getLon()) ||
-                (first.getLat() > midLat && last.getLat() > midLat && first.getLon() > last.getLon())) {
+                    (first.getLat() > midLat && last.getLat() > midLat && first.getLon() > last.getLon())) {
                 coastline.addNode(last);
                 fixed = true;
             }
         }
         else if((first.getLat() < bound.getMaxLat() && first.getLat() > bound.getMinLat()) && (last.getLat() < bound.getMaxLat() && last.getLat() > bound.getMinLat())){
             if( (first.getLon() < midLon && last.getLon() < midLon && first.getLat() > last.getLat()) ||
-                (first.getLon() > midLon && last.getLon() > midLon && first.getLat() < last.getLat())){
+                    (first.getLon() > midLon && last.getLon() > midLon && first.getLat() < last.getLat())){
                 coastline.addNode(last);
                 fixed = true;
             }

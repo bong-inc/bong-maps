@@ -13,7 +13,7 @@ public enum Type implements Serializable {
     FARMFIELD("landuse",new String[]{"farmland"},Color.valueOf("#f7f6eb"),0,true, Color.valueOf("#f2ff00")),
     BEACH("natural",new String[]{"beach"},Color.BEIGE,0,true, Color.valueOf("#f8ff70")),
     FOREST("landuse",new String[]{"forest","meadow","grass"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#04ff00")),
-    NATURALS("natural",new String[]{"scrub","grassland","heath","wetland"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#04ff00")),
+    NATURALS("natural",new String[]{"scrub","grassland","heath"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#04ff00")),
     LEISURE("leisure",new String[]{"park"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#04ff00")),
     WATER("natural",new String[]{"water"},Color.valueOf("#ade1ff"),0,true, Color.AQUA),
     WATERWAY("waterway",new String[]{""},Color.valueOf("#ade1ff"),1,false, Color.AQUA),

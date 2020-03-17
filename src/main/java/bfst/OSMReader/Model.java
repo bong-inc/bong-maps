@@ -3,6 +3,7 @@ package bfst.OSMReader;
 import bfst.addressparser.Address;
 import bfst.canvas.Drawable;
 import bfst.canvas.Type;
+import bfst.citiesAndStreets.City;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,13 +15,16 @@ public class Model implements Serializable {
 
     private Map<Type, ArrayList<Drawable>> drawablesByType;
     private ArrayList<Address> addresses;
+    private ArrayList<City> cities;
     private Bound bound;
 
     public Model(OSMReader reader){
         this.drawablesByType = reader.getDrawableByType();
         this.bound = reader.getBound();
         this.addresses = reader.getAddresses();
+        this.cities = reader.getCities();
         Collections.sort(addresses);
+        Collections.sort(cities);
     }
 
     public ArrayList<Drawable> getDrawablesOfType(Type type){
@@ -33,5 +37,9 @@ public class Model implements Serializable {
 
     public Bound getBound(){
         return bound;
+    }
+
+    public ArrayList<City> getCities() {
+        return cities;
     }
 }

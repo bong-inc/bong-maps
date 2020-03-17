@@ -2,11 +2,13 @@ package bfst.canvas;
 
 import bfst.OSMReader.Bound;
 import bfst.OSMReader.Model;
+import bfst.citiesAndStreets.City;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -48,8 +50,13 @@ public class MapCanvas extends Canvas {
             }
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
-        }
 
+            gc.setFill(Color.DARKGREY);
+            gc.setFont(new Font(pixelwidth * 20));
+            for (City city : model.getCities()) {
+                city.draw(gc, pixelwidth, false);
+            }
+        }
         time += System.nanoTime();
         System.out.println("repaint: " + time/1000000f + "ms");
     }
