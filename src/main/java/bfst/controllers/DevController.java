@@ -18,31 +18,40 @@ public class DevController {
     MapCanvas canvas;
     List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
-    public DevController(Stage devStage, MapCanvas canvas){
+    public DevController(Stage devStage, MapCanvas canvas) {
         this.stage = devStage;
         this.canvas = canvas;
     }
 
-    @FXML Button zoomIn;
-    @FXML Button zoomOut;
-    @FXML FlowPane filterTypes;
-    @FXML Button selectall;
-    @FXML Button deselectall;
-    @FXML CheckBox smartTraceToggle;
-    @FXML CheckBox colorToggle;
+    @FXML
+    private Button zoomIn;
+    @FXML
+    private Button zoomOut;
+    @FXML
+    private FlowPane filterTypes;
+    @FXML
+    private Button selectall;
+    @FXML
+    private Button deselectall;
+    @FXML
+    private CheckBox smartTraceToggle;
+    @FXML
+    private CheckBox colorToggle;
+    @FXML
+    private CheckBox citiesToggle;
 
     @FXML
-    public void initialize(){
+    public void initialize() {
 
         zoomIn.setOnAction(e -> {
-            canvas.zoom(2,canvas.getWidth()/2,canvas.getHeight()/2);
+            canvas.zoom(2, canvas.getWidth() / 2, canvas.getHeight() / 2);
         });
 
         zoomOut.setOnAction(e -> {
-            canvas.zoom(0.5,canvas.getWidth()/2,canvas.getHeight()/2);
+            canvas.zoom(0.5, canvas.getWidth() / 2, canvas.getHeight() / 2);
         });
 
-        for (Type type : Type.getTypes()){
+        for (Type type : Type.getTypes()) {
             CheckBox c = new CheckBox(type.name());
             c.setUserData(type);
             c.setSelected(true);
@@ -53,7 +62,7 @@ public class DevController {
         }
 
         selectall.setOnAction(e -> {
-            for(Node node : filterTypes.getChildren()){
+            for (Node node : filterTypes.getChildren()) {
                 CheckBox check = (CheckBox) node;
                 check.setSelected(true);
             }
@@ -61,7 +70,7 @@ public class DevController {
         });
 
         deselectall.setOnAction(e -> {
-            for(Node node : filterTypes.getChildren()){
+            for (Node node : filterTypes.getChildren()) {
                 CheckBox check = (CheckBox) node;
                 check.setSelected(false);
             }
@@ -78,13 +87,17 @@ public class DevController {
             canvas.setUseRegularColors(colorToggle.isSelected());
         });
 
+        citiesToggle.setSelected(true);
+        citiesToggle.setOnAction(e -> {
+            canvas.setShowCities(citiesToggle.isSelected());
+        });
     }
 
     private void updateTypesToBeDrawn() {
         typesToBeDrawn = new ArrayList<>();
-        for(Node node : filterTypes.getChildren()){
+        for (Node node : filterTypes.getChildren()) {
             CheckBox check = (CheckBox) node;
-            if(check.isSelected()) typesToBeDrawn.add((Type) check.getUserData());
+            if (check.isSelected()) typesToBeDrawn.add((Type) check.getUserData());
         }
         canvas.setTypesToBeDrawn(typesToBeDrawn);
     }

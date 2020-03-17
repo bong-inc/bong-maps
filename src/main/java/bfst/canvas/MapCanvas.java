@@ -22,6 +22,7 @@ public class MapCanvas extends Canvas {
     private Model model;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
+    private boolean showCities = true;
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
@@ -51,11 +52,13 @@ public class MapCanvas extends Canvas {
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
 
-            gc.setFill(Color.DARKGREY);
-            for (City city : model.getCities()) {
-                gc.setFont(new Font(pixelwidth * city.getFontSize()));
-                if (trans.getMxx() < city.getMaxMxx() && trans.getMxx() > city.getMinMxx()) {
-                    city.draw(gc, pixelwidth, false);
+            if (showCities) {
+                gc.setFill(Color.DARKGREY);
+                for (City city : model.getCities()) {
+                    gc.setFont(new Font(pixelwidth * city.getFontSize()));
+                    if (trans.getMxx() < city.getMaxMxx() && trans.getMxx() > city.getMinMxx()) {
+                        city.draw(gc, pixelwidth, false);
+                    }
                 }
             }
         }
@@ -76,6 +79,11 @@ public class MapCanvas extends Canvas {
 
     public void setTraceType(boolean shouldSmartTrace) {
         smartTrace = shouldSmartTrace;
+        repaint();
+    }
+
+    public void setShowCities(boolean shouldShowCities) {
+        showCities = shouldShowCities;
         repaint();
     }
 
