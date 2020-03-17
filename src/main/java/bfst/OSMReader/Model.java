@@ -25,6 +25,7 @@ public class Model implements Serializable {
         this.cities = reader.getCities();
         Collections.sort(addresses);
         Collections.sort(cities);
+
     }
 
     public ArrayList<Drawable> getDrawablesOfType(Type type){

@@ -7,13 +7,20 @@ import javafx.scene.canvas.GraphicsContext;
 import java.io.Serializable;
 
 public class City implements Serializable, Comparable<City>, Drawable {
+    public String getName() {
+        return name;
+    }
+
     private final String name;
     private final Node node;
-    private final String cityType;
     private final int fontSize;
 
     private final int minMxx;
     private final int maxMxx;
+
+    public Node getNode() {
+        return node;
+    }
 
     private City(
             String _name,
@@ -22,7 +29,6 @@ public class City implements Serializable, Comparable<City>, Drawable {
     ) {
         name = _name;
         node = _node;
-        cityType = _cityType;
         switch (_cityType) {
             case "city":
                 fontSize = 20;

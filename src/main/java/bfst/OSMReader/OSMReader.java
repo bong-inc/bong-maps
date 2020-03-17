@@ -229,8 +229,11 @@ public class OSMReader {
                 break;
             case "way":
                 long memberRef = Long.parseLong(reader.getAttributeValue(null, "ref"));
-                if (tempWays.get(memberRef) != null)
+                Way tempWay = tempWays.get(memberRef);
+                if (tempWay != null) {
                     relationHolder.addWay(tempWays.get(memberRef));
+                    cityBuilder.node(tempWay.last());
+                }
                 break;
             case "relation":
                 relationHolder.addRefId(Long.parseLong(reader.getAttributeValue(null, "ref")));
