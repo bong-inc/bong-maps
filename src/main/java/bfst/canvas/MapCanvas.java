@@ -47,7 +47,9 @@ public class MapCanvas extends Canvas {
         gc.setFillRule(FillRule.EVEN_ODD);
         if(model != null) {
             for (Type type : typesToBeDrawn){
-                if(type != Type.UNKNOWN) paintDrawablesOfType(type, pixelwidth,useRegularColors);
+                if(type != Type.UNKNOWN && type.getMinMxx() < trans.getMxx()) {
+                    paintDrawablesOfType(type, pixelwidth,useRegularColors);
+                }
             }
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
