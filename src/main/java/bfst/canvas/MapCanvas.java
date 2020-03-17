@@ -23,6 +23,7 @@ public class MapCanvas extends Canvas {
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
     private boolean showCities = true;
+    private boolean useDependentDraw = true;
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
@@ -47,8 +48,14 @@ public class MapCanvas extends Canvas {
         gc.setFillRule(FillRule.EVEN_ODD);
         if(model != null) {
             for (Type type : typesToBeDrawn){
-                if(type != Type.UNKNOWN && type.getMinMxx() < trans.getMxx()) {
-                    paintDrawablesOfType(type, pixelwidth,useRegularColors);
+                if(type != Type.UNKNOWN ) {
+                    if(useDependentDraw) {
+                        if (type.getMinMxx() < trans.getMxx()) {
+                            paintDrawablesOfType(type, pixelwidth, useRegularColors);
+                        }
+                    } else {
+                        paintDrawablesOfType(type, pixelwidth, useRegularColors);
+                    }
                 }
             }
             gc.setStroke(Color.BLACK);
@@ -86,6 +93,11 @@ public class MapCanvas extends Canvas {
 
     public void setShowCities(boolean shouldShowCities) {
         showCities = shouldShowCities;
+        repaint();
+    }
+
+    public void setUseDependentDraw(boolean shouldUseDependentDraw) {
+        useDependentDraw = shouldUseDependentDraw;
         repaint();
     }
 
