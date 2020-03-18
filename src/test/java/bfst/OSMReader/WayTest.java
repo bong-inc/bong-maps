@@ -25,20 +25,17 @@ public class WayTest {
         assertEquals(3, way1.getNodes().size());
     }
 
-    @Test
-    public void MergeTest(){
-        Way test;
-        Node nd1 = new Node(1, 1, 1);
-        Node nd2 = new Node(2, 2, 2);
-        Node nd3 = new Node(3, 3, 3);
-        Node nd4 = new Node(4, 4, 4);
+    Node nd1 = new Node(1, 1, 1);
+    Node nd2 = new Node(2, 2, 2);
+    Node nd3 = new Node(3, 3, 3);
+    Node nd4 = new Node(4, 4, 4);
 
-        //BASE
+    @Test
+    public void MergeTestFirstToFirst(){
+        Way test;
         Way w1 = new Way();
         w1.addNode(nd1);
         w1.addNode(nd2);
-
-        //FIRST-FIRST
         Way w2 = new Way();
         w2.addNode(nd1);
         w2.addNode(nd3);
@@ -46,47 +43,94 @@ public class WayTest {
         test = Way.merge(w1, w2);
         assertEquals(w1.last(), test.first());
         assertEquals(w2.last(), test.last());
+    }
 
-        //LAST-LAST
-        Way w3 = new Way();
-        w3.addNode(nd3);
-        w3.addNode(nd2);
+    @Test
+    public void MergeTestLastToLast(){
+        Way test;
+        Way w1 = new Way();
+        w1.addNode(nd1);
+        w1.addNode(nd2);
+        Way w2 = new Way();
+        w2.addNode(nd3);
+        w2.addNode(nd2);
 
-        test = Way.merge(w1, w3);
+        test = Way.merge(w1, w2);
         assertEquals(w1.first(), test.first());
-        assertEquals(w3.first(), test.last());
+        assertEquals(w2.first(), test.last());
+    }
 
-        //FIRST-LAST
-        Way w4 = new Way();
-        w4.addNode(nd3);
-        w4.addNode(nd1);
+    @Test
+    public void MergeTestFirstToLast(){
+        Way test;
+        Way w1 = new Way();
+        w1.addNode(nd1);
+        w1.addNode(nd2);
+        Way w2 = new Way();
+        w2.addNode(nd3);
+        w2.addNode(nd1);
 
-        test = Way.merge(w1, w4);
-        assertEquals(w4.first(), test.first());
+        test = Way.merge(w1, w2);
+        assertEquals(w2.first(), test.first());
         assertEquals(w1.last(), test.last());
+    }
 
-        //LAST-FIRST
-        Way w5 = new Way();
-        w5.addNode(nd2);
-        w5.addNode(nd3);
+    @Test
+    public void MergeTestLastToFirst(){
+        Way test;
+        Way w1 = new Way();
+        w1.addNode(nd1);
+        w1.addNode(nd2);
+        Way w2 = new Way();
+        w2.addNode(nd2);
+        w2.addNode(nd3);
 
-        test = Way.merge(w1, w5);
-        assertEquals(w5.last(), test.last());
+        test = Way.merge(w1, w2);
+        assertEquals(w2.last(), test.last());
         assertEquals(w1.first(), test.first());
+    }
 
-        //EXCEPTION
-        Way w6 = new Way();
-        w6.addNode(nd3);
-        w6.addNode(nd4);
+    @Test
+    public void MergeTestUnconnected(){
+        Way test;
+        Way w1 = new Way();
+        w1.addNode(nd1);
+        w1.addNode(nd2);
+        Way w2 = new Way();
+        w2.addNode(nd3);
+        w2.addNode(nd4);
 
+        String message = "";
         try {
-            test = Way.merge(w1, w6);
+            test = Way.merge(w1, w2);
         } catch (Exception e){
-            String s = e.getMessage();
+            message = e.getMessage();
         }
 
-        //NULL
-        test = Way.merge(w1, null);
+        assertEquals("Cannot merge unconnected OSMWays", message);
+    }
+
+    @Test
+    public void MergeTestNullToWay(){
+        Way test;
+        Way w1 = new Way();
+        w1.addNode(nd1);
+        w1.addNode(nd2);
         test = Way.merge(null, w1);
+
+        assertEquals(w1.first(), test.first());
+        assertEquals(w1.last(), test.last());
+    }
+
+    @Test
+    public void MergeTestWayToNull(){
+        Way test;
+        Way w1 = new Way();
+        w1.addNode(nd1);
+        w1.addNode(nd2);
+        test = Way.merge(w1, null);
+
+        assertEquals(w1.first(), test.first());
+        assertEquals(w1.last(), test.last());
     }
 }
