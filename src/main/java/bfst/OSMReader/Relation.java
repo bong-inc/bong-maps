@@ -1,6 +1,8 @@
 package bfst.OSMReader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.LongSupplier;
 
 public class Relation implements LongSupplier {
@@ -76,17 +78,32 @@ public class Relation implements LongSupplier {
             }
         }
 
-        for(int i = 0; i < tempOuters.size(); i++){
-            Way resOuter = tempOuters.get(i);
-            for(int o = i; o < tempOuters.size(); o++){
-                try{
-                    resOuter = Way.merge(resOuter, tempOuters.get(o));
-                } catch (IllegalArgumentException e) {
-                    continue;
-                }
+        HashMap<Node, Way> collector = new HashMap<>();
+        for(Way way : tempOuters){
+            Way before = collector.remove(way.first());
+            if (before != null) {
+                collector.remove(before.first());
+                collector.remove(before.last());
             }
-            resOuters.add(resOuter);
+            Way after = collector.remove(way.last());
+            if (after != null) {
+                collector.remove(after.first());
+                collector.remove(after.last());
+            }
+            way = Way.merge(Way.merge(before, way), after);
+            collector.put(way.first(), way);
+            collector.put(way.last(), way);
         }
+
+        for(Map.Entry<Node, Way> entry : collector.entrySet()){
+            if(entry.getValue().first() == entry.getValue().last()){
+                resOuters.add(entry.getValue());
+            }
+            else{
+                tempOuters.add(entry.getValue());
+            }
+        }
+
         ways.addAll(resOuters);
         ways.addAll(tempOuters);
         ways.addAll(inner);
