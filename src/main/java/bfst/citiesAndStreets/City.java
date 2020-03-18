@@ -18,10 +18,6 @@ public class City implements Serializable, Comparable<City>, Drawable {
     private final int minMxx;
     private final int maxMxx;
 
-    public Node getNode() {
-        return node;
-    }
-
     private City(
             String _name,
             Node _node,
@@ -32,15 +28,19 @@ public class City implements Serializable, Comparable<City>, Drawable {
         switch (_cityType) {
             case "city":
                 fontSize = 20;
-                minMxx = 400;
+                minMxx = 200;
                 maxMxx = 4800;
+                break;
+            case "town":
+                fontSize = 10;
+                minMxx = 600;
+                maxMxx = 25000;
                 break;
             default:
                 fontSize = 10;
                 minMxx = 4800;
-                maxMxx = 20000;
+                maxMxx = 25000;
                 break;
-
         }
     }
 

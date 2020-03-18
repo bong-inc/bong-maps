@@ -33,6 +33,7 @@ public class OSMReader {
     private ArrayList<Address> addresses = new ArrayList<>();
 
     private ArrayList<City> cities = new ArrayList<>();
+
     private Address.Builder builder;
     private City.Builder cityBuilder;
 
@@ -216,9 +217,17 @@ public class OSMReader {
             }
         }
         if (k.equals("place") && (v.equals("city") || v.equals("town") ||  v.equals("suburb") || v.equals("village"))) {
-            cityBuilder.name(previousName);
-            cityBuilder.cityType(v);
-            cities.add(cityBuilder.build());
+            boolean cityNotPresent = true;
+            for (City city : cities) {
+                if (city.getName().equals(previousName)) {
+                    cityNotPresent = false;
+                }
+            }
+            if (cityNotPresent) {
+                cityBuilder.name(previousName);
+                cityBuilder.cityType(v);
+                cities.add(cityBuilder.build());
+            }
         }
     }
 
