@@ -22,7 +22,6 @@ import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 public class OSMReader {
-
     private SortedArrayList<Node> tempNodes = new SortedArrayList<>();
     private SortedArrayList<Way> tempWays = new SortedArrayList<>();
     private SortedArrayList<Relation> tempRelations = new SortedArrayList<>();
@@ -169,11 +168,13 @@ public class OSMReader {
                 float tempMinLat = Float.parseFloat(reader.getAttributeValue(null, "minlat"));
                 float tempMinLon = Float.parseFloat(reader.getAttributeValue(null, "minlon"));
                 float tempMaxLon = Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
+                Node max = MercatorProjector.project(tempMaxLon, tempMaxLat);
+                Node min = MercatorProjector.project(tempMinLon, tempMinLat);
                 bound = new Bound(
-                        -tempMaxLat,
-                        -tempMinLat,
-                        (float) 0.55673548 * tempMinLon,
-                        (float) 0.55673548 * tempMaxLon
+                        -max.getLat(),
+                        -min.getLat(),
+                        min.getLon(),
+                        max.getLon()
                 );
                 break;
             case "node":
@@ -182,7 +183,7 @@ public class OSMReader {
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 float tempLon = Float.parseFloat(reader.getAttributeValue(null, "lon"));
                 float tempLat = Float.parseFloat(reader.getAttributeValue(null, "lat"));
-                nodeHolder = new Node(currentID, (float) 0.55673548 * tempLon, -tempLat);
+                nodeHolder = MercatorProjector.project(currentID, tempLon, -tempLat);
                 builder.node(nodeHolder);
                 cityBuilder.node(nodeHolder);
                 tempNodes.add(nodeHolder);
