@@ -20,7 +20,10 @@ public class ScaleBar implements Drawable {
         placementX = placement.getX();
         placementY = placement.getY();
         double scale = canvas.getGraphicsContext2D().getTransform().getMxx();
-        if (scale < 1500) {
+        if (scale < 750) {
+            barLength = kilometerLength * 20;
+            barShowing = "20km";
+        } else if (scale < 1500) {
             barLength = kilometerLength * 10;
             barShowing = "10km";
         } else if (scale < 3000) {
@@ -59,6 +62,7 @@ public class ScaleBar implements Drawable {
         gc.setLineWidth(2*scale);
         gc.stroke();
         gc.setFont(new Font(Font.getDefault().toString(), 12 * scale));
+        gc.setLineWidth(scale);
         gc.strokeText(barShowing, placementX - 10*scale, placementY + 13*scale);
     }
 }
