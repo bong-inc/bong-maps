@@ -3,6 +3,7 @@ package bfst.canvas;
 import bfst.OSMReader.Bound;
 import bfst.OSMReader.Model;
 import bfst.citiesAndStreets.City;
+import bfst.citiesAndStreets.Street;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -58,6 +59,13 @@ public class MapCanvas extends Canvas {
                     }
                 }
             }
+
+            gc.setStroke(Color.YELLOW);
+            for (Street street : model.getStreets()) {
+                street.draw(gc, pixelwidth, false);
+            }
+
+
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
 

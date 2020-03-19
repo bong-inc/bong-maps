@@ -6,6 +6,8 @@ import bfst.canvas.LinePath;
 import bfst.canvas.PolyLinePath;
 import bfst.canvas.Type;
 import bfst.citiesAndStreets.City;
+import bfst.citiesAndStreets.Street;
+import bfst.citiesAndStreets.Tag;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -29,10 +31,12 @@ public class OSMReader {
     private Node nodeHolder;
     private Way wayHolder;
     private Relation relationHolder;
+    private ArrayList<Tag> tagList = new ArrayList<>();
 
     private ArrayList<Address> addresses = new ArrayList<>();
 
     private ArrayList<City> cities = new ArrayList<>();
+    private ArrayList<Street> streets = new ArrayList<>();
 
     private Address.Builder builder;
     private City.Builder cityBuilder;
@@ -52,6 +56,10 @@ public class OSMReader {
 
     public ArrayList<City> getCities() {
         return cities;
+    }
+
+    public ArrayList<Street> getStreets() {
+        return streets;
     }
 
     public Bound getBound(){return bound;}
@@ -78,6 +86,15 @@ public class OSMReader {
                                 }
                                 break;
                             case "way":
+                                for (Tag tag : tagList) {
+                                    if (tag.getKey().equals("highway")) {
+                                        Street street = new Street(tagList, wayHolder);
+                                        streets.add(street);
+                                        break;
+                                    }
+                                }
+
+
                                 if(type != Type.COASTLINE) {
                                     if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
                                     drawableByType.get(type).add(new LinePath(wayHolder, type));
@@ -150,6 +167,7 @@ public class OSMReader {
                 tempNodes.add(nodeHolder);
                 break;
             case "way":
+                tagList = new ArrayList<>();
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 wayHolder = new Way(currentID);
                 tempWays.add(wayHolder);
@@ -162,6 +180,9 @@ public class OSMReader {
             case "tag":
                 String k = reader.getAttributeValue(null, "k");
                 String v = reader.getAttributeValue(null, "v");
+
+                Tag tag = new Tag(k, v);
+                tagList.add(tag);
 
                 parseTag(k, v);
 
