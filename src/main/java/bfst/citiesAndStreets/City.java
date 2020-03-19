@@ -34,12 +34,17 @@ public class City implements Serializable, Comparable<City>, Drawable {
             case "town":
                 fontSize = 10;
                 minMxx = 600;
-                maxMxx = 25000;
+                maxMxx = 90000;
+                break;
+            case "hamlet":
+                fontSize = 10;
+                minMxx = 10000;
+                maxMxx = 90000;
                 break;
             default:
                 fontSize = 10;
                 minMxx = 4800;
-                maxMxx = 25000;
+                maxMxx = 90000;
                 break;
         }
     }

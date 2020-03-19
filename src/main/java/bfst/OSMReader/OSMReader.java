@@ -216,11 +216,12 @@ public class OSMReader {
                     break;
             }
         }
-        if (k.equals("place") && (v.equals("city") || v.equals("town") ||  v.equals("suburb") || v.equals("village"))) {
+        if (k.equals("place") && (v.equals("city") || v.equals("town") ||  v.equals("suburb") || v.equals("village") || v.equals("hamlet"))) {
             boolean cityNotPresent = true;
             for (City city : cities) {
                 if (city.getName().equals(previousName)) {
                     cityNotPresent = false;
+                    break;
                 }
             }
             if (cityNotPresent) {
