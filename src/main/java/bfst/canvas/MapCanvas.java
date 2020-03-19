@@ -62,7 +62,7 @@ public class MapCanvas extends Canvas {
 
             gc.setStroke(Color.YELLOW);
             for (Street street : model.getStreets()) {
-                street.draw(gc, pixelwidth, false);
+                    street.draw(gc, pixelwidth, false);
             }
 
 

@@ -8,12 +8,12 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.ArrayList;
 
 public class Street implements Drawable {
-    private Boolean onewayCar;
-    private Boolean bicycle; //residential, highway:cycleway, cycleway:track
-    private Boolean walking; //foot, sidewalk, highway:footway
-    private Boolean car;
-    private Boolean onewayBicycle;
-    private Integer maxspeed;
+    private boolean onewayCar = false;
+    private boolean bicycle = false; //residential, highway:cycleway, cycleway:track
+    private boolean walking = false; //foot, sidewalk, highway:footway
+    private boolean car = false;
+    private boolean onewayBicycle = false;
+    private int maxspeed = 0;
     private String highwayType;
     private Way way;
     private String name;
@@ -54,7 +54,11 @@ public class Street implements Drawable {
                     }
                     break;
                 case "maxspeed":
-                    maxspeed = Integer.parseInt(tag.getValue());
+                    try {
+                        maxspeed = Integer.parseInt(tag.getValue());
+                    } catch (Exception ignored) {
+
+                    }
                     break;
                 case "sidewalk":
                     walking = true;
@@ -85,7 +89,7 @@ public class Street implements Drawable {
 
         }
 
-        if (maxspeed == null) {
+        if (maxspeed == 0) {
             switch (highwayType) {
                 case "motorway":
                     maxspeed = 130;
