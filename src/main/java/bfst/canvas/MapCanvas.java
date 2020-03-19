@@ -124,4 +124,17 @@ public class MapCanvas extends Canvas {
         this.model = model;
         resetView();
     }
+
+    public Point2D getModelCoordinates(double x, double y){
+        try{
+            return trans.inverseTransform(x,y);
+        } catch(NonInvertibleTransformException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Point2D getScreenCoordinates(double x, double y){
+        return trans.transform(x,y);
+    }
 }
