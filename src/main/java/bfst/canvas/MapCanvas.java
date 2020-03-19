@@ -18,6 +18,7 @@ public class MapCanvas extends Canvas {
     private GraphicsContext gc;
     private Affine trans;
     private Model model;
+    private ScaleBar scaleBar;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
 
@@ -26,6 +27,7 @@ public class MapCanvas extends Canvas {
     public MapCanvas(){
         this.gc = getGraphicsContext2D();
         this.trans = new Affine();
+        this.scaleBar = new ScaleBar();
         repaint();
     }
 
@@ -49,6 +51,9 @@ public class MapCanvas extends Canvas {
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
         }
+
+        scaleBar.updateScaleBar(this);
+        scaleBar.draw(gc, pixelwidth, false);
 
         time += System.nanoTime();
         System.out.println("repaint: " + time/1000000f + "ms");
