@@ -5,6 +5,7 @@ import bfst.canvas.Drawable;
 import bfst.canvas.Type;
 import bfst.citiesAndStreets.City;
 import bfst.citiesAndStreets.Street;
+import bfst.citiesAndStreets.StreetType;
 
 import java.io.*;
 import java.util.ArrayList;

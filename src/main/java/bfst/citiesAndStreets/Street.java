@@ -16,19 +16,19 @@ public class Street implements Drawable {
     private boolean car = false;
     private boolean onewayBicycle = false;
     private int maxspeed = 0;
-    private String highwayType;
+    private StreetType type;
     private Way way;
     private String name;
-    private Color color;
-    private float width;
-    private int minMxx;
-    private double textTilt;
 
-    public Street(ArrayList<Tag> tags, Way way) {
+
+    public Street(ArrayList<Tag> tags, Way way, StreetType type) {
+        this.way = way;
+        this.type = type;
+
         for (Tag tag : tags) {
             switch (tag.getKey()) {
                 case "highway":
-                    highwayType = tag.getValue();
+
                     switch (tag.getValue()) {
                         case "footway":
                         case "steps":
@@ -96,12 +96,11 @@ public class Street implements Drawable {
         }
 
         if (maxspeed == 0) {
-            switch (highwayType) {
-                case "motorway":
+            switch (type) {
+                case MOTORWAY:
                     maxspeed = 130;
                     break;
-                case "residential":
-                case "service":
+                case OTHER:
                     maxspeed = 50;
                     break;
                 default:
@@ -110,38 +109,14 @@ public class Street implements Drawable {
             }
         }
 
-        this.way = way;
-
-        switch (highwayType) {
-            case "motorway":
-            case "primary":
-                color = Color.YELLOW;
-                width = 1.5f;
-                minMxx = 1;
-            case "secondary":
-                color = Color.WHITE;
-                width = 1;
-                minMxx = 1000;
-            case "tertiary":
-                color = Color.WHITE;
-                width = 1;
-                minMxx = 10000;
-            default:
-                color = Color.WHITE;
-                width = 1;
-                minMxx = 25000;
-        }
     }
 
-    public int getMinMxx() {
-        return minMxx;
+    public StreetType getType() {
+        return type;
     }
 
     @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
-        gc.setStroke(this.color);
-        gc.setLineWidth(scale * this.width);
-
         gc.beginPath();
         for (int i = 0; i < way.getNodes().size(); i++) {
             Node currentNode = way.getNodes().get(i);

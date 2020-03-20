@@ -4,14 +4,13 @@ import bfst.OSMReader.Bound;
 import bfst.OSMReader.Model;
 import bfst.citiesAndStreets.City;
 import bfst.citiesAndStreets.Street;
-import javafx.geometry.Point2D;
+import bfst.citiesAndStreets.StreetType;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
-import javafx.scene.transform.NonInvertibleTransformException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,9 +59,15 @@ public class MapCanvas extends Canvas {
                 }
             }
 
+
             for (Street street : model.getStreets()) {
-                if (trans.getMxx() > street.getMinMxx()) {
-                    street.draw(gc, pixelwidth, false);
+                StreetType type = street.getType();
+                if (useDependentDraw) {
+                    if (trans.getMxx() > type.getMinMxx()) {
+                        setValuesAndDrawStreet(pixelwidth, street, type);
+                    }
+                } else {
+                    setValuesAndDrawStreet(pixelwidth, street, type);
                 }
             }
 
@@ -83,6 +88,16 @@ public class MapCanvas extends Canvas {
         time += System.nanoTime();
         System.out.println("repaint: " + time/1000000f + "ms");
         System.out.println("mxx: " + trans.getMxx());
+    }
+
+    private void setValuesAndDrawStreet(double pixelwidth, Street street, StreetType type) {
+        if (useRegularColors) {
+            gc.setStroke(type.getColor());
+        } else {
+            gc.setStroke(type.getAlternateColor());
+        }
+        gc.setLineWidth(pixelwidth * type.getWidth());
+        street.draw(gc, pixelwidth, false);
     }
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn){

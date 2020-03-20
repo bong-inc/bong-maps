@@ -7,6 +7,7 @@ import bfst.canvas.PolyLinePath;
 import bfst.canvas.Type;
 import bfst.citiesAndStreets.City;
 import bfst.citiesAndStreets.Street;
+import bfst.citiesAndStreets.StreetType;
 import bfst.citiesAndStreets.Tag;
 
 import javax.xml.stream.XMLInputFactory;
@@ -88,7 +89,27 @@ public class OSMReader {
                             case "way":
                                 for (Tag tag : tagList) {
                                     if (tag.getKey().equals("highway")) {
-                                        Street street = new Street(tagList, wayHolder);
+                                        StreetType type;
+                                        switch(tag.getValue()) {
+                                            case "motorway":
+                                                type = StreetType.MOTORWAY;
+                                                break;
+                                            case "primary":
+                                                type = StreetType.PRIMARY;
+                                                break;
+                                            case "secondary":
+                                                type = StreetType.SECONDARY;
+                                                break;
+                                            case "tertiary":
+                                                type = StreetType.TERTIARY;
+                                                break;
+                                            default:
+                                                type = StreetType.OTHER;
+                                                break;
+                                        }
+
+
+                                        Street street = new Street(tagList, wayHolder, type);
                                         streets.add(street);
                                         break;
                                     }
