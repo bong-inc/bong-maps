@@ -13,10 +13,7 @@ public class City implements Serializable, Comparable<City>, Drawable {
 
     private final String name;
     private final Node node;
-    private final int fontSize;
-
-    private final int minMxx;
-    private final int maxMxx;
+    private final CityType type;
 
     private City(
             String _name,
@@ -27,24 +24,16 @@ public class City implements Serializable, Comparable<City>, Drawable {
         node = _node;
         switch (_cityType) {
             case "city":
-                fontSize = 20;
-                minMxx = 200;
-                maxMxx = 4800;
+                type = CityType.CITY;
                 break;
             case "town":
-                fontSize = 10;
-                minMxx = 600;
-                maxMxx = 90000;
+                type = CityType.TOWN;
                 break;
             case "hamlet":
-                fontSize = 10;
-                minMxx = 10000;
-                maxMxx = 90000;
+                type = CityType.HAMLET;
                 break;
             default:
-                fontSize = 10;
-                minMxx = 4800;
-                maxMxx = 90000;
+                type = CityType.OTHER;
                 break;
         }
     }
@@ -59,17 +48,10 @@ public class City implements Serializable, Comparable<City>, Drawable {
         gc.fillText(this.name, node.getLon(), node.getLat());
     }
 
-    public int getFontSize() {
-        return fontSize;
+    public CityType getType() {
+        return type;
     }
 
-    public int getMinMxx() {
-        return minMxx;
-    }
-
-    public int getMaxMxx() {
-        return maxMxx;
-    }
 
     public static class Builder {
         private String name;

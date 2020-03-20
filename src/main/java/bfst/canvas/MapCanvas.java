@@ -3,6 +3,7 @@ package bfst.canvas;
 import bfst.OSMReader.Bound;
 import bfst.OSMReader.Model;
 import bfst.citiesAndStreets.City;
+import bfst.citiesAndStreets.CityType;
 import bfst.citiesAndStreets.Street;
 import bfst.citiesAndStreets.StreetType;
 import javafx.scene.canvas.Canvas;
@@ -78,8 +79,9 @@ public class MapCanvas extends Canvas {
             if (showCities) {
                 gc.setFill(Color.DARKGREY);
                 for (City city : model.getCities()) {
-                    gc.setFont(new Font(pixelwidth * city.getFontSize()));
-                    if (trans.getMxx() < city.getMaxMxx() && trans.getMxx() > city.getMinMxx()) {
+                    CityType type = city.getType();
+                    gc.setFont(new Font(pixelwidth * type.getFontSize()));
+                    if (trans.getMxx() < type.getMaxMxx() && trans.getMxx() > type.getMinMxx()) {
                         city.draw(gc, pixelwidth, false);
                     }
                 }

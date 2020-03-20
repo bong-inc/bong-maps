@@ -16,9 +16,10 @@ public class Street implements Drawable {
     private boolean car = false;
     private boolean onewayBicycle = false;
     private int maxspeed = 0;
+    private String name;
     private StreetType type;
     private Way way;
-    private String name;
+
 
 
     public Street(ArrayList<Tag> tags, Way way, StreetType type) {
