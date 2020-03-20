@@ -60,9 +60,10 @@ public class MapCanvas extends Canvas {
                 }
             }
 
-            gc.setStroke(Color.YELLOW);
             for (Street street : model.getStreets()) {
+                if (trans.getMxx() > street.getMinMxx()) {
                     street.draw(gc, pixelwidth, false);
+                }
             }
 
 

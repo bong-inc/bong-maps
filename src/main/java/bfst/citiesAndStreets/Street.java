@@ -4,6 +4,8 @@ import bfst.OSMReader.Node;
 import bfst.OSMReader.Way;
 import bfst.canvas.Drawable;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 
@@ -17,6 +19,10 @@ public class Street implements Drawable {
     private String highwayType;
     private Way way;
     private String name;
+    private Color color;
+    private float width;
+    private int minMxx;
+    private double textTilt;
 
     public Street(ArrayList<Tag> tags, Way way) {
         for (Tag tag : tags) {
@@ -105,10 +111,37 @@ public class Street implements Drawable {
         }
 
         this.way = way;
+
+        switch (highwayType) {
+            case "motorway":
+            case "primary":
+                color = Color.YELLOW;
+                width = 1.5f;
+                minMxx = 1;
+            case "secondary":
+                color = Color.WHITE;
+                width = 1;
+                minMxx = 1000;
+            case "tertiary":
+                color = Color.WHITE;
+                width = 1;
+                minMxx = 10000;
+            default:
+                color = Color.WHITE;
+                width = 1;
+                minMxx = 25000;
+        }
+    }
+
+    public int getMinMxx() {
+        return minMxx;
     }
 
     @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+        gc.setStroke(this.color);
+        gc.setLineWidth(scale * this.width);
+
         gc.beginPath();
         for (int i = 0; i < way.getNodes().size(); i++) {
             Node currentNode = way.getNodes().get(i);
