@@ -2,13 +2,12 @@ package bfst.canvas;
 
 import bfst.OSMReader.Bound;
 import bfst.OSMReader.Model;
-import javafx.geometry.Point2D;
+import bfst.OSMReader.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.transform.Affine;
-import javafx.scene.transform.NonInvertibleTransformException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +19,7 @@ public class MapCanvas extends Canvas {
     private Model model;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
+    private Pin currentPin;
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
@@ -49,6 +49,9 @@ public class MapCanvas extends Canvas {
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
         }
+
+        System.out.println("request draw pin");
+        if(currentPin != null) currentPin.draw(gc, pixelwidth);
 
         time += System.nanoTime();
         System.out.println("repaint: " + time/1000000f + "ms");
@@ -123,5 +126,25 @@ public class MapCanvas extends Canvas {
     public void setModel(Model model) {
         this.model = model;
         resetView();
+    }
+
+	public void zoomToNode(Node node) {
+        trans.setToIdentity();
+        pan(-node.getLon(), -node.getLat());
+        zoom(100000,0,0);
+        pan(getWidth()/2,getHeight()/2);
+        repaint();
+    }
+    
+    public void setPin(Node node){
+        System.out.println("set pin");
+        currentPin = new Pin(node.getLon(), node.getLat(), 1);
+        repaint();
+    }
+
+    public void nullPin(){
+        System.out.println("null pin");
+        currentPin = null;
+        repaint();
     }
 }
