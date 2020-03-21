@@ -111,7 +111,7 @@ public class Street implements Drawable, Serializable {
                     break;
             }
         }
-tags.clear();
+        tags.clear();
     }
 
     public StreetType getType() {
