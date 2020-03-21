@@ -7,9 +7,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Street implements Drawable {
+public class Street implements Drawable, Serializable {
     private boolean onewayCar = false;
     private boolean bicycle = false; //residential, highway:cycleway, cycleway:track
     private boolean walking = false; //foot, sidewalk, highway:footway
@@ -22,15 +23,16 @@ public class Street implements Drawable {
 
 
 
-    public Street(ArrayList<Tag> tags, Way way, StreetType type) {
+    public Street(ArrayList<String> tags, Way way, StreetType type) {
         this.way = way;
         this.type = type;
 
-        for (Tag tag : tags) {
-            switch (tag.getKey()) {
-                case "highway":
+        for (int i = 0; i < tags.size(); i += 2) {
+            String value = tags.get(i + 1);
+            switch (tags.get(i)) {
 
-                    switch (tag.getValue()) {
+                case "highway":
+                    switch (value) {
                         case "footway":
                         case "steps":
                             walking = true;
@@ -62,7 +64,7 @@ public class Street implements Drawable {
                     break;
                 case "maxspeed":
                     try {
-                        maxspeed = Integer.parseInt(tag.getValue());
+                        maxspeed = Integer.parseInt(value);
                     } catch (Exception ignored) {
 
                     }
@@ -74,7 +76,7 @@ public class Street implements Drawable {
                     bicycle = true;
                     break;
                 case "name":
-                    name = tag.getValue();
+                    name = value;
                     break;
                 case "oneway":
                     onewayCar = true;
@@ -83,12 +85,12 @@ public class Street implements Drawable {
                     onewayBicycle = true;
                     break;
                 case "foot":
-                    if (tag.getValue().equals("yes") || tag.getValue().equals("designated")) {
+                    if (value.equals("yes") || value.equals("designated")) {
                         walking = true;
                     }
                     break;
                 case "bicycle":
-                    if (tag.getValue().equals("yes") || tag.getValue().equals("designated")) {
+                    if (value.equals("yes") || value.equals("designated")) {
                         bicycle = true;
                     }
                     break;
@@ -109,7 +111,7 @@ public class Street implements Drawable {
                     break;
             }
         }
-
+tags.clear();
     }
 
     public StreetType getType() {

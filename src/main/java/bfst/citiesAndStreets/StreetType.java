@@ -3,7 +3,9 @@ package bfst.citiesAndStreets;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-public enum StreetType {
+import java.io.Serializable;
+
+public enum StreetType implements Serializable {
 
     MOTORWAY(Color.YELLOW, 1.5, Color.BLUE, 1),
     PRIMARY(Color.YELLOW, 1.5, Color.BLUE, 1),
