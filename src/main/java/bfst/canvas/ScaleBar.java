@@ -19,7 +19,7 @@ public class ScaleBar implements Drawable {
         Point2D placement = canvas.getModelCoordinates(canvas.getWidth() - 50, canvas.getHeight() - 50);
         placementX = placement.getX();
         placementY = placement.getY();
-        double scale = canvas.getGraphicsContext2D().getTransform().getMxx();
+        double scale = canvas.getGraphicsContext2D().getTransform().getMxx() / 0.00000500123;
         if (scale < 750) {
             barLength = kilometerLength * 20;
             barShowing = "20km";
