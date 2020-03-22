@@ -30,10 +30,12 @@ public class Relation implements LongSupplier {
     public void addRefId(Long id){ ids.add(id); }
     public void addRelation(Relation relation){ relations.add(relation); }
 
+    public ArrayList<Node> getNodes(){return nodes;}
     public ArrayList<Way> getWays(){ return ways; }
     public ArrayList<Long> getIds(){return ids;}
+    public ArrayList<Relation> getRelations(){return relations;}
 
-    public void nullifyIds(){
+    public void nullifyIdArray(){
         ids = null;
     }
 
