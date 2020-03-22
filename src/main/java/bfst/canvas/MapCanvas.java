@@ -26,6 +26,7 @@ public class MapCanvas extends Canvas {
     private GraphicsContext gc;
     private Affine trans;
     private Model model;
+    private ScaleBar scaleBar;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
 
@@ -40,6 +41,7 @@ public class MapCanvas extends Canvas {
     public MapCanvas(){
         this.gc = getGraphicsContext2D();
         this.trans = new Affine();
+        this.scaleBar = new ScaleBar();
         repaint();
     }
 
@@ -101,6 +103,9 @@ public class MapCanvas extends Canvas {
                 }
             }
         }
+
+        scaleBar.updateScaleBar(this);
+        scaleBar.draw(gc, pixelwidth, false);
 
         time += System.nanoTime();
         System.out.println("repaint: " + time/1000000f + "ms");
@@ -198,6 +203,19 @@ public class MapCanvas extends Canvas {
         resetView();
     }
 
+
+    public Point2D getModelCoordinates(double x, double y){
+        try{
+            return trans.inverseTransform(x,y);
+        } catch(NonInvertibleTransformException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Point2D getScreenCoordinates(double x, double y){
+        return trans.transform(x,y);
+
 	public void zoomToNode(Node node) {
         trans.setToIdentity();
         pan(-node.getLon(), -node.getLat());
@@ -216,5 +234,6 @@ public class MapCanvas extends Canvas {
         System.out.println("null pin");
         currentPin = null;
         repaint();
+
     }
 }
