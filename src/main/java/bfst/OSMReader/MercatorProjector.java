@@ -4,7 +4,6 @@ package bfst.OSMReader;
 
 public class MercatorProjector {
     final private static double R_MAJOR = 6378137.0;
-    final private static double R_MINOR = 6356752.3142;
 
     public static Node project(double x, double y) {
         return new Node(

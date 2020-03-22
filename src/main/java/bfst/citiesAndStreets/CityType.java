@@ -2,7 +2,7 @@ package bfst.citiesAndStreets;
 
 import java.io.Serializable;
 
-public enum CityType implements Serializable {
+public enum CityType {
 
     CITY(0.001000246664f, 0.02400591994f, 20),
     TOWN(0.003000739993f, 0.4501109989f, 10),

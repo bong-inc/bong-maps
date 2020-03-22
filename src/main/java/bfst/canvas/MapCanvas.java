@@ -20,6 +20,7 @@ import javafx.scene.transform.Affine;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MapCanvas extends Canvas {
     private GraphicsContext gc;
@@ -200,7 +201,7 @@ public class MapCanvas extends Canvas {
 	public void zoomToNode(Node node) {
         trans.setToIdentity();
         pan(-node.getLon(), -node.getLat());
-        zoom(100000,0,0);
+        zoom(1,0,0);
         pan(getWidth()/2,getHeight()/2);
         repaint();
     }
