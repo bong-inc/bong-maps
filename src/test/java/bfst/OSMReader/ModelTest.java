@@ -24,11 +24,11 @@ public class ModelTest {
             System.out.println(
                 model.getBound()
                 );
-
+            /*
             System.out.println(
                 model.getDrawablesOfType(Type.PRIMARY_ROAD)
                 );
-            
+            */
 
     }
 }
