@@ -136,19 +136,28 @@ public class OSMReader {
                                 type = Type.UNKNOWN;
                                 break;
                             case "relation":
+                                relationHolder.collectRelation();
                                 if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
-                                drawableByType.get(type).add(new PolyLinePath(relationHolder, type));
+                                if(relationHolder.getWays() != null) drawableByType.get(type).add(new PolyLinePath(relationHolder, type));
                                 type = Type.UNKNOWN;
                                 break;
                             case "osm":
                                 ArrayList<Drawable> coastlines = new ArrayList<>();
                                 for(Map.Entry<Node,Way> entry : tempCoastlines.entrySet()){
                                     if(entry.getValue().first() == entry.getValue().last()){
-                                        coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE));
+                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
                                     } else {
                                         fixCoastline(entry.getValue());
                                         coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
                                     }
+                                }
+                                if(coastlines.size() == 0){
+                                    Way land = new Way();
+                                    land.addNode(new Node(0, bound.getMinLon(), bound.getMinLat()));
+                                    land.addNode(new Node(0, bound.getMinLon(), bound.getMaxLat()));
+                                    land.addNode(new Node(0, bound.getMaxLon(), bound.getMaxLat()));
+                                    land.addNode(new Node(0, bound.getMaxLon(), bound.getMinLat()));
+                                    coastlines.add(new LinePath(land, Type.COASTLINE));
                                 }
                                 drawableByType.put(Type.COASTLINE,coastlines);
                                 break;
@@ -282,10 +291,25 @@ public class OSMReader {
                 break;
             case "way":
                 long memberRef = Long.parseLong(reader.getAttributeValue(null, "ref"));
+
+                if (tempWays.get(memberRef) != null) {
+                    switch (reader.getAttributeValue(null, "role")) {
+                        case "outer":
+                            relationHolder.addToOuter(tempWays.get(memberRef));
+                            break;
+                        case "inner":
+                            relationHolder.addToInner(tempWays.get(memberRef));
+                            break;
+                        default:
+                            relationHolder.addWay(tempWays.get(memberRef));
+                            break;
+                    }
+
                 Way tempWay = tempWays.get(memberRef);
                 if (tempWay != null) {
                     relationHolder.addWay(tempWays.get(memberRef));
                     cityBuilder.node(tempWay.last());
+
                 }
                 break;
             case "relation":
