@@ -2,10 +2,14 @@ package bfst.canvas;
 
 import bfst.OSMReader.Bound;
 import bfst.OSMReader.Model;
+
+import bfst.OSMReader.Node;
+
 import bfst.citiesAndStreets.City;
 import bfst.citiesAndStreets.CityType;
 import bfst.citiesAndStreets.Street;
 import bfst.citiesAndStreets.StreetType;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -23,8 +27,12 @@ public class MapCanvas extends Canvas {
     private Model model;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
+
+    private Pin currentPin;
+
     private boolean showCities = true;
     private boolean useDependentDraw = true;
+
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
@@ -76,6 +84,11 @@ public class MapCanvas extends Canvas {
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
 
+
+        System.out.println("request draw pin");
+        if(currentPin != null) currentPin.draw(gc, pixelwidth);
+
+
             if (showCities) {
                 gc.setFill(Color.DARKGREY);
                 for (City city : model.getCities()) {
@@ -87,6 +100,7 @@ public class MapCanvas extends Canvas {
                 }
             }
         }
+
         time += System.nanoTime();
         System.out.println("repaint: " + time/1000000f + "ms");
         System.out.println("mxx: " + trans.getMxx());
@@ -181,5 +195,25 @@ public class MapCanvas extends Canvas {
     public void setModel(Model model) {
         this.model = model;
         resetView();
+    }
+
+	public void zoomToNode(Node node) {
+        trans.setToIdentity();
+        pan(-node.getLon(), -node.getLat());
+        zoom(100000,0,0);
+        pan(getWidth()/2,getHeight()/2);
+        repaint();
+    }
+    
+    public void setPin(Node node){
+        System.out.println("set pin");
+        currentPin = new Pin(node.getLon(), node.getLat(), 1);
+        repaint();
+    }
+
+    public void nullPin(){
+        System.out.println("null pin");
+        currentPin = null;
+        repaint();
     }
 }
