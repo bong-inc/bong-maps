@@ -25,5 +25,4 @@ public class PolyLinePath extends ArrayList<LinePath> implements Drawable {
         }
         gc.stroke();
     }
-
 }

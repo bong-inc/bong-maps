@@ -108,5 +108,4 @@ public class DevController {
         }
         canvas.setTypesToBeDrawn(typesToBeDrawn);
     }
-
 }

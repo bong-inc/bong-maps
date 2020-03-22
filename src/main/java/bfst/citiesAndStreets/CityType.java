@@ -2,19 +2,22 @@ package bfst.citiesAndStreets;
 
 import java.io.Serializable;
 
-public enum CityType implements Serializable {
+public enum CityType {
 
-    CITY(200, 4800, 20),
-    TOWN(600, 90000, 10),
-    HAMLET(10000, 90000, 10),
-    OTHER(4800, 90000, 10);
+    CITY(0.001000246664f, 0.02400591994f, 20),
+    TOWN(0.003000739993f, 0.4501109989f, 10),
+    HAMLET(0.05001233322f, 0.4501109989f, 10),
+    OTHER(0.02400591994f, 0.4501109989f, 10);
+    
+    private final float minMxx;
+    private final float maxMxx;
+    private final int fontSize;
 
-
-    public int getMinMxx() {
+    public float getMinMxx() {
         return minMxx;
     }
 
-    public int getMaxMxx() {
+    public float getMaxMxx() {
         return maxMxx;
     }
 
@@ -22,11 +25,7 @@ public enum CityType implements Serializable {
         return fontSize;
     }
 
-    private final int minMxx;
-    private final int maxMxx;
-    private final int fontSize;
-
-    CityType(int minMxx, int maxMxx, int fontSize) {
+    CityType(float minMxx, float maxMxx, int fontSize) {
         this.minMxx = minMxx;
         this.maxMxx = maxMxx;
         this.fontSize = fontSize;
