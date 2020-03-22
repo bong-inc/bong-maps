@@ -5,6 +5,10 @@ import bfst.canvas.Drawable;
 import bfst.canvas.LinePath;
 import bfst.canvas.PolyLinePath;
 import bfst.canvas.Type;
+import bfst.citiesAndStreets.City;
+import bfst.citiesAndStreets.Street;
+import bfst.citiesAndStreets.StreetType;
+
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -28,9 +32,17 @@ public class OSMReader {
     private Node nodeHolder;
     private Way wayHolder;
     private Relation relationHolder;
+    private ArrayList<String> tagList = new ArrayList<>();
 
     private ArrayList<Address> addresses = new ArrayList<>();
+
+    private ArrayList<City> cities = new ArrayList<>();
+    private ArrayList<Street> streets = new ArrayList<>();
+
     private Address.Builder builder;
+    private City.Builder cityBuilder;
+
+    private String previousName;
 
     private long currentID;
     private HashMap<Type, ArrayList<Drawable>> drawableByType = new HashMap<>();
@@ -41,6 +53,14 @@ public class OSMReader {
 
     public ArrayList<Address> getAddresses(){
         return addresses;
+    }
+
+    public ArrayList<City> getCities() {
+        return cities;
+    }
+
+    public ArrayList<Street> getStreets() {
+        return streets;
     }
 
     public Bound getBound(){return bound;}
@@ -67,6 +87,35 @@ public class OSMReader {
                                 }
                                 break;
                             case "way":
+
+                                for (int i = 0; i < tagList.size(); i += 2) {
+                                    if (tagList.get(i).equals("highway")) {
+
+                                        StreetType type;
+                                        switch(tagList.get(i + 1)) {
+                                            case "motorway":
+                                                type = StreetType.MOTORWAY;
+                                                break;
+                                            case "primary":
+                                                type = StreetType.PRIMARY;
+                                                break;
+                                            case "secondary":
+                                                type = StreetType.SECONDARY;
+                                                break;
+                                            case "tertiary":
+                                                type = StreetType.TERTIARY;
+                                                break;
+                                            default:
+                                                type = StreetType.OTHER;
+                                                break;
+                                        }
+
+                                        streets.add(new Street(tagList, wayHolder, type));
+                                        break;
+                                    }
+                                }
+
+
                                 if(type != Type.COASTLINE) {
                                     if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
                                     drawableByType.get(type).add(new LinePath(wayHolder, type));
@@ -129,14 +178,17 @@ public class OSMReader {
                 break;
             case "node":
                 builder = new Address.Builder();
+                cityBuilder = new City.Builder();
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 float tempLon = Float.parseFloat(reader.getAttributeValue(null, "lon"));
                 float tempLat = Float.parseFloat(reader.getAttributeValue(null, "lat"));
-                builder.node(nodeHolder);
                 nodeHolder = new Node(currentID, (float) 0.55673548 * tempLon, -tempLat);
+                builder.node(nodeHolder);
+                cityBuilder.node(nodeHolder);
                 tempNodes.add(nodeHolder);
                 break;
             case "way":
+                tagList.clear();
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 wayHolder = new Way(currentID);
                 tempWays.add(wayHolder);
@@ -150,13 +202,18 @@ public class OSMReader {
                 String k = reader.getAttributeValue(null, "k");
                 String v = reader.getAttributeValue(null, "v");
 
+                tagList.add(k);
+                tagList.add(v);
+
                 parseTag(k, v);
 
                 break;
             case "nd":
-                Long ref = Long.parseLong(reader.getAttributeValue(null, "ref"));
+                long ref = Long.parseLong(reader.getAttributeValue(null, "ref"));
                 if(wayHolder != null){
-                    if(tempNodes.get(ref) != null) wayHolder.addNode(tempNodes.get(ref));
+                    Node node = tempNodes.get(ref);
+                    if(tempNodes.get(ref) != null) wayHolder.addNode(node);
+                    cityBuilder.node(node);
                 }
                 break;
             case "member":
@@ -166,6 +223,10 @@ public class OSMReader {
     }
 
     private void parseTag(String k, String v) {
+        if (k.equals("name")) {
+            previousName = v;
+        }
+
         Type[] typeArray = Type.getTypes();
         for (Type currentType : typeArray){
             if (k.equals(currentType.getKey())){
@@ -197,6 +258,20 @@ public class OSMReader {
                     break;
             }
         }
+        if (k.equals("place") && (v.equals("city") || v.equals("town") ||  v.equals("suburb") || v.equals("village") || v.equals("hamlet"))) {
+            boolean cityNotPresent = true;
+            for (City city : cities) {
+                if (city.getName().equals(previousName)) {
+                    cityNotPresent = false;
+                    break;
+                }
+            }
+            if (cityNotPresent) {
+                cityBuilder.name(previousName);
+                cityBuilder.cityType(v);
+                cities.add(cityBuilder.build());
+            }
+        }
     }
 
     private void parseMember(XMLStreamReader reader) {
@@ -206,8 +281,11 @@ public class OSMReader {
                 break;
             case "way":
                 long memberRef = Long.parseLong(reader.getAttributeValue(null, "ref"));
-                if (tempWays.get(memberRef) != null)
+                Way tempWay = tempWays.get(memberRef);
+                if (tempWay != null) {
                     relationHolder.addWay(tempWays.get(memberRef));
+                    cityBuilder.node(tempWay.last());
+                }
                 break;
             case "relation":
                 relationHolder.addRefId(Long.parseLong(reader.getAttributeValue(null, "ref")));
@@ -257,14 +335,14 @@ public class OSMReader {
 
         if((first.getLon() < bound.getMaxLon() && first.getLon() > bound.getMinLon()) && (last.getLon() < bound.getMaxLon() && last.getLon() > bound.getMinLon())) {
             if( (first.getLat() < midLat && last.getLat() < midLat && first.getLon() < last.getLon()) ||
-                (first.getLat() > midLat && last.getLat() > midLat && first.getLon() > last.getLon())) {
+                    (first.getLat() > midLat && last.getLat() > midLat && first.getLon() > last.getLon())) {
                 coastline.addNode(last);
                 fixed = true;
             }
         }
         else if((first.getLat() < bound.getMaxLat() && first.getLat() > bound.getMinLat()) && (last.getLat() < bound.getMaxLat() && last.getLat() > bound.getMinLat())){
             if( (first.getLon() < midLon && last.getLon() < midLon && first.getLat() > last.getLat()) ||
-                (first.getLon() > midLon && last.getLon() > midLon && first.getLat() < last.getLat())){
+                    (first.getLon() > midLon && last.getLon() > midLon && first.getLat() < last.getLat())){
                 coastline.addNode(last);
                 fixed = true;
             }
