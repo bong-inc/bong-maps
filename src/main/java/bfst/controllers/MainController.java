@@ -7,6 +7,7 @@ import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.MapCanvasWrapper;
+import bfst.exceptions.FileTypeNotSupportedException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,14 +33,11 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * MainController
- */
 public class MainController {
     Stage stage;
     Model model;
     private Point2D lastMouse;
-    private ArrayList<String> tempBest = new ArrayList<>();
+    private ArrayList<Address> tempBest = new ArrayList<>();
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
@@ -124,6 +122,8 @@ public class MainController {
 
         searchField.textProperty().addListener((obs,oldVal,newVal) -> {
             if (searchField.isFocused()) setTempQuery(searchField.getText());
+            canvas.nullPin();
+            System.out.println("CHANGED");
         });
 
         searchField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
@@ -138,24 +138,32 @@ public class MainController {
             }
         });
 
+        searchField.setOnAction(e -> {
+            System.out.println("action");
+            if(suggestions.getChildren().size() > 0) {
+                Address a = (Address) suggestions.getChildren().get(0).getUserData();
+                searchField.setText(a.toString());
+                searchField.positionCaret(searchField.getText().length());
+                canvas.zoomToNode(a.node);
+                canvas.setPin(a.node);
+                suggestions.getChildren().clear();
+            }
+        });
     }
 
     private void query(String query) {
         ArrayList<Address> addresses = model.getAddresses();
-        //int index = Collections.binarySearch(addresses, new Address(query,null,null,null,null, null)); //TODO fix builder thingy
         Address inputAdress = null;
         query = query.toLowerCase();
         try {
             inputAdress = Address.parse(query);
-            System.out.println(inputAdress);
             int index = Collections.binarySearch(addresses, inputAdress);
             tempBest = new ArrayList<>();
-            System.out.println("query: " + query + " i: " + index);
             for (int i = 0; i < 5; i++){
                 if(index < 0){
-                    tempBest.add(addresses.get(-index-1+i).toString());
+                    tempBest.add(addresses.get(-index-1+i));
                 } else {
-                    tempBest.add(addresses.get(index+i).toString());
+                    tempBest.add(addresses.get(index+i));
                 }
             }
         } catch (InvalidAddressException e) {
@@ -170,23 +178,25 @@ public class MainController {
     }
 
     public void reGenSuggestions(){
-        ArrayList<String> best = tempBest;
+        ArrayList<Address> best = tempBest;
         ArrayList<TextFlow> bs = new ArrayList<>();
-        for (String address : best) {
-            int[] matchRange = matches(searchField.getText(), address);
+        for (Address address : best) {
+            String addressString = address.toString();
+            int[] matchRange = matches(searchField.getText(), addressString);
             if (matchRange != null) {
                 TextFlow b = new TextFlow();
                 b.setUserData(address);
-                b.getChildren().add(new Text(address.substring(0,matchRange[0])));
-                Text matched = new Text(address.substring(matchRange[0],matchRange[1]));
+                b.getChildren().add(new Text(addressString.substring(0,matchRange[0])));
+                Text matched = new Text(addressString.substring(matchRange[0],matchRange[1]));
                 matched.setStyle("-fx-font-weight: bold");
                 b.getChildren().add(matched);
-                b.getChildren().add(new Text(address.substring(matchRange[1])));
+                b.getChildren().add(new Text(addressString.substring(matchRange[1])));
                 b.getStyleClass().add("suggestion");
                 b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
                     if (event.getCode() == KeyCode.TAB) {
-                        setTempQuery((String) ((TextFlow) event.getSource()).getUserData());
+                        setTempQuery(((Address) ((TextFlow) event.getSource()).getUserData()).toString());
                         searchField.requestFocus();
+                        searchField.positionCaret(searchField.getText().length());
                         event.consume();
                     }
                     if (event.getCode() == KeyCode.A && event.isControlDown()) {
@@ -194,7 +204,7 @@ public class MainController {
                     }
                 });
                 b.focusedProperty().addListener((obs, oldVal, newVal) -> {
-                    if (newVal) searchField.setText((String) b.getUserData());
+                    if (newVal) searchField.setText((String) b.getUserData().toString());
                 });
                 bs.add(b);
             }
