@@ -2,13 +2,16 @@ package bfst.canvas;
 
 import bfst.OSMReader.Bound;
 import bfst.OSMReader.Model;
-import javafx.geometry.Point2D;
+import bfst.citiesAndStreets.City;
+import bfst.citiesAndStreets.CityType;
+import bfst.citiesAndStreets.Street;
+import bfst.citiesAndStreets.StreetType;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
-import javafx.scene.transform.NonInvertibleTransformException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +23,8 @@ public class MapCanvas extends Canvas {
     private Model model;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
+    private boolean showCities = true;
+    private boolean useDependentDraw = true;
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
@@ -44,14 +49,57 @@ public class MapCanvas extends Canvas {
         gc.setFillRule(FillRule.EVEN_ODD);
         if(model != null) {
             for (Type type : typesToBeDrawn){
-                if(type != Type.UNKNOWN) paintDrawablesOfType(type, pixelwidth,useRegularColors);
+                if(type != Type.UNKNOWN ) {
+                    if(useDependentDraw) {
+                        if (type.getMinMxx() < trans.getMxx()) {
+                            paintDrawablesOfType(type, pixelwidth, useRegularColors);
+                        }
+                    } else {
+                        paintDrawablesOfType(type, pixelwidth, useRegularColors);
+                    }
+                }
             }
+
+
+            for (Street street : model.getStreets()) {
+                StreetType type = street.getType();
+                if (useDependentDraw) {
+                    if (trans.getMxx() > type.getMinMxx()) {
+                        setValuesAndDrawStreet(pixelwidth, street, type);
+                    }
+                } else {
+                    setValuesAndDrawStreet(pixelwidth, street, type);
+                }
+            }
+
+
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
-        }
 
+            if (showCities) {
+                gc.setFill(Color.DARKGREY);
+                for (City city : model.getCities()) {
+                    CityType type = city.getType();
+                    gc.setFont(new Font(pixelwidth * type.getFontSize()));
+                    if (trans.getMxx() < type.getMaxMxx() && trans.getMxx() > type.getMinMxx()) {
+                        city.draw(gc, pixelwidth, false);
+                    }
+                }
+            }
+        }
         time += System.nanoTime();
         System.out.println("repaint: " + time/1000000f + "ms");
+        System.out.println("mxx: " + trans.getMxx());
+    }
+
+    private void setValuesAndDrawStreet(double pixelwidth, Street street, StreetType type) {
+        if (useRegularColors) {
+            gc.setStroke(type.getColor());
+        } else {
+            gc.setStroke(type.getAlternateColor());
+        }
+        gc.setLineWidth(pixelwidth * type.getWidth());
+        street.draw(gc, pixelwidth, false);
     }
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn){
@@ -66,6 +114,16 @@ public class MapCanvas extends Canvas {
 
     public void setTraceType(boolean shouldSmartTrace) {
         smartTrace = shouldSmartTrace;
+        repaint();
+    }
+
+    public void setShowCities(boolean shouldShowCities) {
+        showCities = shouldShowCities;
+        repaint();
+    }
+
+    public void setUseDependentDraw(boolean shouldUseDependentDraw) {
+        useDependentDraw = shouldUseDependentDraw;
         repaint();
     }
 
