@@ -85,14 +85,10 @@ public class MapCanvas extends Canvas {
                 }
             }
 
-
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
 
-
-            System.out.println("request draw pin");
             if (currentPin != null) currentPin.draw(gc, pixelwidth);
-
 
             if (showCities) {
                 gc.setFill(Color.DARKGREY);
@@ -111,7 +107,6 @@ public class MapCanvas extends Canvas {
 
         time += System.nanoTime();
         System.out.println("repaint: " + time / 1000000f + "ms");
-        System.out.println("mxx: " + trans.getMxx());
     }
 
     private void setValuesAndDrawStreet(double pixelwidth, Street street, StreetType type) {
@@ -218,24 +213,22 @@ public class MapCanvas extends Canvas {
     public Point2D getScreenCoordinates(double x, double y) {
         return trans.transform(x, y);
     }
-        public void zoomToNode (Node node){
-            trans.setToIdentity();
-            pan(-node.getLon(), -node.getLat());
-            zoom(1, 0, 0);
-            pan(getWidth() / 2, getHeight() / 2);
-            repaint();
-        }
 
-        public void setPin (Node node){
-            System.out.println("set pin");
-            currentPin = new Pin(node.getLon(), node.getLat(), 1);
-            repaint();
-        }
-
-        public void nullPin () {
-            System.out.println("null pin");
-            currentPin = null;
-            repaint();
-
-        }
+    public void zoomToNode (Node node){
+        trans.setToIdentity();
+        pan(-node.getLon(), -node.getLat());
+        zoom(1, 0, 0);
+        pan(getWidth() / 2, getHeight() / 2);
+        repaint();
     }
+
+    public void setPin (Node node){
+        currentPin = new Pin(node.getLon(), node.getLat(), 1);
+        repaint();
+    }
+
+    public void nullPin () {
+        currentPin = null;
+        repaint();
+    }
+}

@@ -34,22 +34,22 @@ public class ScaleBar implements Drawable {
         } else if (scale < 3000) {
             barLength = kilometerInPixels * 5;
             barShowing = "5km";
-        } else if(scale < 6000){
+        } else if(scale < 6000) {
             barLength = kilometerInPixels * 2;
             barShowing = "2km";
-        } else if(scale < 12000){
+        } else if(scale < 12000) {
             barLength = kilometerInPixels;
             barShowing = "1km";
-        } else if(scale < 24000){
+        } else if(scale < 24000) {
             barLength = kilometerInPixels/2;
             barShowing = "500m";
-        } else if(scale < 48000){
+        } else if(scale < 48000) {
             barLength = kilometerInPixels/4;
             barShowing = "250m";
-        } else if(scale < 96000){
+        } else if(scale < 96000) {
             barLength = kilometerInPixels/10;
             barShowing = "100m";
-        } else if(scale < 192000){
+        } else if(scale < 192000) {
             barLength = kilometerInPixels/20;
             barShowing = "50m";
         }

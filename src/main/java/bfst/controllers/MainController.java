@@ -45,7 +45,7 @@ public class MainController {
 
     public void setDefaultMap(){
         try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/samsoe.bin");
+            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/copenhagen.bin");
             loadBinary(is);
         }catch (Exception e){
             System.out.println("Failed to set default map");
@@ -247,10 +247,12 @@ public class MainController {
         try {
             File file = new FileChooser().showOpenDialog(stage);
             loadFile(file);
-        } catch(FileTypeNotSupportedException exception){
+        } catch(FileTypeNotSupportedException exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
-            alert.setHeaderText("File type not supported: " +  exception.getFileType());
+            alert.setHeaderText("File type not supported: " + exception.getFileType());
             alert.showAndWait();
+        } catch (NullPointerException exception){
+            return;
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("Something unexpected happened, please try again");
