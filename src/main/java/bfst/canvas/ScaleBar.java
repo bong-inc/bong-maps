@@ -1,5 +1,7 @@
 package bfst.canvas;
 
+import bfst.OSMReader.MercatorProjector;
+import bfst.OSMReader.Node;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -19,33 +21,36 @@ public class ScaleBar implements Drawable {
         Point2D placement = canvas.getModelCoordinates(canvas.getWidth() - 50, canvas.getHeight() - 50);
         placementX = placement.getX();
         placementY = placement.getY();
+        Node placementModel = MercatorProjector.unproject(placementX, placementY);
+        Node kilometerPointPos = MercatorProjector.project(placementModel.getLon(), placementModel.getLat() - kilometerLength);
+        double kilometerInPixels = placement.getY() - kilometerPointPos.getLat();
         double scale = canvas.getGraphicsContext2D().getTransform().getMxx() / 0.00000500123;
         if (scale < 750) {
-            barLength = kilometerLength * 20;
+            barLength = kilometerInPixels * 20;
             barShowing = "20km";
         } else if (scale < 1500) {
-            barLength = kilometerLength * 10;
+            barLength = kilometerInPixels * 10;
             barShowing = "10km";
         } else if (scale < 3000) {
-            barLength = kilometerLength * 5;
+            barLength = kilometerInPixels * 5;
             barShowing = "5km";
         } else if(scale < 6000){
-            barLength = kilometerLength * 2;
+            barLength = kilometerInPixels * 2;
             barShowing = "2km";
         } else if(scale < 12000){
-            barLength = kilometerLength;
+            barLength = kilometerInPixels;
             barShowing = "1km";
         } else if(scale < 24000){
-            barLength = kilometerLength/2;
+            barLength = kilometerInPixels/2;
             barShowing = "500m";
         } else if(scale < 48000){
-            barLength = kilometerLength/4;
+            barLength = kilometerInPixels/4;
             barShowing = "250m";
         } else if(scale < 96000){
-            barLength = kilometerLength/10;
+            barLength = kilometerInPixels/10;
             barShowing = "100m";
         } else if(scale < 192000){
-            barLength = kilometerLength/20;
+            barLength = kilometerInPixels/20;
             barShowing = "50m";
         }
     }
