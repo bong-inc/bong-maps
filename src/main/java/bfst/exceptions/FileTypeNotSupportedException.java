@@ -1,4 +1,4 @@
-package bfst.controllers;
+package bfst.exceptions;
 
 public class FileTypeNotSupportedException extends Exception{
     private String fileType;

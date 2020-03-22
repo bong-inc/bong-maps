@@ -1,10 +1,11 @@
 package bfst.OSMReader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.LongSupplier;
 
-public class Way implements LongSupplier {
+public class Way implements LongSupplier, Serializable {
     private long id;
     private ArrayList<Node> nodes;
 

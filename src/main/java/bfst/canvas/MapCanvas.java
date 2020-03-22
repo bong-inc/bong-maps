@@ -2,17 +2,25 @@ package bfst.canvas;
 
 import bfst.OSMReader.Bound;
 import bfst.OSMReader.Model;
-import javafx.geometry.Point2D;
+
+import bfst.OSMReader.Node;
+
+import bfst.citiesAndStreets.City;
+import bfst.citiesAndStreets.CityType;
+import bfst.citiesAndStreets.Street;
+import bfst.citiesAndStreets.StreetType;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
-import javafx.scene.transform.NonInvertibleTransformException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MapCanvas extends Canvas {
     private GraphicsContext gc;
@@ -21,6 +29,12 @@ public class MapCanvas extends Canvas {
     private ScaleBar scaleBar;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
+
+    private Pin currentPin;
+
+    private boolean showCities = true;
+    private boolean useDependentDraw = true;
+
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
@@ -46,10 +60,48 @@ public class MapCanvas extends Canvas {
         gc.setFillRule(FillRule.EVEN_ODD);
         if(model != null) {
             for (Type type : typesToBeDrawn){
-                if(type != Type.UNKNOWN) paintDrawablesOfType(type, pixelwidth,useRegularColors);
+                if(type != Type.UNKNOWN ) {
+                    if(useDependentDraw) {
+                        if (type.getMinMxx() < trans.getMxx()) {
+                            paintDrawablesOfType(type, pixelwidth, useRegularColors);
+                        }
+                    } else {
+                        paintDrawablesOfType(type, pixelwidth, useRegularColors);
+                    }
+                }
             }
+
+
+            for (Street street : model.getStreets()) {
+                StreetType type = street.getType();
+                if (useDependentDraw) {
+                    if (trans.getMxx() > type.getMinMxx()) {
+                        setValuesAndDrawStreet(pixelwidth, street, type);
+                    }
+                } else {
+                    setValuesAndDrawStreet(pixelwidth, street, type);
+                }
+            }
+
+
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
+
+
+        System.out.println("request draw pin");
+        if(currentPin != null) currentPin.draw(gc, pixelwidth);
+
+
+            if (showCities) {
+                gc.setFill(Color.DARKGREY);
+                for (City city : model.getCities()) {
+                    CityType type = city.getType();
+                    gc.setFont(new Font(pixelwidth * type.getFontSize()));
+                    if (trans.getMxx() < type.getMaxMxx() && trans.getMxx() > type.getMinMxx()) {
+                        city.draw(gc, pixelwidth, false);
+                    }
+                }
+            }
         }
 
         scaleBar.updateScaleBar(this);
@@ -57,6 +109,17 @@ public class MapCanvas extends Canvas {
 
         time += System.nanoTime();
         System.out.println("repaint: " + time/1000000f + "ms");
+        System.out.println("mxx: " + trans.getMxx());
+    }
+
+    private void setValuesAndDrawStreet(double pixelwidth, Street street, StreetType type) {
+        if (useRegularColors) {
+            gc.setStroke(type.getColor());
+        } else {
+            gc.setStroke(type.getAlternateColor());
+        }
+        gc.setLineWidth(pixelwidth * type.getWidth());
+        street.draw(gc, pixelwidth, false);
     }
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn){
@@ -71,6 +134,16 @@ public class MapCanvas extends Canvas {
 
     public void setTraceType(boolean shouldSmartTrace) {
         smartTrace = shouldSmartTrace;
+        repaint();
+    }
+
+    public void setShowCities(boolean shouldShowCities) {
+        showCities = shouldShowCities;
+        repaint();
+    }
+
+    public void setUseDependentDraw(boolean shouldUseDependentDraw) {
+        useDependentDraw = shouldUseDependentDraw;
         repaint();
     }
 
@@ -130,6 +203,7 @@ public class MapCanvas extends Canvas {
         resetView();
     }
 
+
     public Point2D getModelCoordinates(double x, double y){
         try{
             return trans.inverseTransform(x,y);
@@ -141,5 +215,25 @@ public class MapCanvas extends Canvas {
 
     public Point2D getScreenCoordinates(double x, double y){
         return trans.transform(x,y);
+
+	public void zoomToNode(Node node) {
+        trans.setToIdentity();
+        pan(-node.getLon(), -node.getLat());
+        zoom(1,0,0);
+        pan(getWidth()/2,getHeight()/2);
+        repaint();
+    }
+    
+    public void setPin(Node node){
+        System.out.println("set pin");
+        currentPin = new Pin(node.getLon(), node.getLat(), 1);
+        repaint();
+    }
+
+    public void nullPin(){
+        System.out.println("null pin");
+        currentPin = null;
+        repaint();
+
     }
 }
