@@ -38,6 +38,8 @@ public class MapCanvas extends Canvas {
     private boolean showCities = true;
     private boolean useDependentDraw = true;
 
+    private boolean showStreets = true;
+
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
@@ -74,18 +76,18 @@ public class MapCanvas extends Canvas {
                 }
             }
 
-
-            for (Street street : model.getStreets()) {
-                StreetType type = street.getType();
-                if (useDependentDraw) {
-                    if (trans.getMxx() > type.getMinMxx()) {
+            if (showStreets) {
+                for (Street street : model.getStreets()) {
+                    StreetType type = street.getType();
+                    if (useDependentDraw) {
+                        if (trans.getMxx() > type.getMinMxx()) {
+                            setValuesAndDrawStreet(pixelwidth, street, type);
+                        }
+                    } else {
                         setValuesAndDrawStreet(pixelwidth, street, type);
                     }
-                } else {
-                    setValuesAndDrawStreet(pixelwidth, street, type);
                 }
             }
-
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
 
@@ -142,6 +144,11 @@ public class MapCanvas extends Canvas {
 
     public void setUseDependentDraw(boolean shouldUseDependentDraw) {
         useDependentDraw = shouldUseDependentDraw;
+        repaint();
+    }
+
+    public void setShowStreets(boolean showStreets) {
+        this.showStreets = showStreets;
         repaint();
     }
 

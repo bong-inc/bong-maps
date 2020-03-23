@@ -41,6 +41,8 @@ public class DevController {
     private CheckBox citiesToggle;
     @FXML
     private CheckBox dependentDrawToggle;
+    @FXML
+    private CheckBox streetsToggle;
 
     @FXML
     public void initialize() {
@@ -97,6 +99,11 @@ public class DevController {
         dependentDrawToggle.setSelected(true);
         dependentDrawToggle.setOnAction(e -> {
             canvas.setUseDependentDraw(dependentDrawToggle.isSelected());
+        });
+
+        streetsToggle.setSelected(true);
+        streetsToggle.setOnAction(e -> {
+            canvas.setShowStreets(streetsToggle.isSelected());
         });
     }
 

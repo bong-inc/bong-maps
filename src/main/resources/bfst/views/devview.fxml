@@ -18,5 +18,6 @@
     <CheckBox fx:id="colorToggle">Use regular colors</CheckBox>
     <CheckBox fx:id="citiesToggle">Show citites</CheckBox>
     <CheckBox fx:id="dependentDrawToggle">Use zoom-dependent draw</CheckBox>
+    <CheckBox fx:id="streetsToggle">Show streets</CheckBox>
   </FlowPane>
 </VBox>
