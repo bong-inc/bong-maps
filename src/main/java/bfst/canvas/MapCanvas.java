@@ -28,6 +28,7 @@ public class MapCanvas extends Canvas {
     private GraphicsContext gc;
     private Affine trans;
     private Model model;
+
     private ScaleBar scaleBar;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
@@ -116,7 +117,7 @@ public class MapCanvas extends Canvas {
             gc.setStroke(type.getAlternateColor());
         }
         gc.setLineWidth(pixelwidth * type.getWidth());
-        street.draw(gc, pixelwidth, false);
+        street.draw(gc, pixelwidth, smartTrace);
     }
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn) {

@@ -17,7 +17,7 @@
             <MenuItem mnemonicParsing="false" text="Open…" fx:id="loadClick"/>
             <Menu mnemonicParsing="false" text="Resources">
               <items>
-                <MenuItem text="samsoe.bin" fx:id="loadDefaultMap"/>
+                <MenuItem text="Load default map" fx:id="loadDefaultMap"/>
               </items>
             </Menu>
             <SeparatorMenuItem mnemonicParsing="false" />

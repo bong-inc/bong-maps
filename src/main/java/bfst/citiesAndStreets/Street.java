@@ -3,6 +3,7 @@ package bfst.citiesAndStreets;
 import bfst.OSMReader.Node;
 import bfst.OSMReader.Way;
 import bfst.canvas.Drawable;
+import bfst.canvas.LinePath;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -120,11 +121,6 @@ public class Street implements Drawable, Serializable {
 
     @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
-        gc.beginPath();
-        for (int i = 0; i < way.getNodes().size(); i++) {
-            Node currentNode = way.getNodes().get(i);
-            gc.lineTo(currentNode.getLon(), currentNode.getLat());
-        }
-        gc.stroke();
+        new LinePath(way).draw(gc, scale, smartTrace);
     }
 }
