@@ -109,7 +109,10 @@ public class OSMReader {
                                                 break;
                                         }
 
-                                        streets.add(new Street(tagList, wayHolder, type));
+                                        ArrayList<Node> nodes = wayHolder.getNodes();
+                                        for (int j = 1; j < nodes.size(); j++){
+                                            streets.add(new Street(tagList, nodes.get(j - 1), nodes.get(j), type));
+                                        }
                                         break;
                                     }
                                 }

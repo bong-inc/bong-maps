@@ -1,12 +1,9 @@
 package bfst.citiesAndStreets;
 
 import bfst.OSMReader.Node;
-import bfst.OSMReader.Way;
 import bfst.canvas.Drawable;
 import bfst.canvas.LinePath;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,12 +17,14 @@ public class Street implements Drawable, Serializable {
     private int maxspeed = 0;
     private String name;
     private StreetType type;
-    private Way way;
+    private Node tailNode;
+    private Node headNode;
 
 
 
-    public Street(ArrayList<String> tags, Way way, StreetType type) {
-        this.way = way;
+    public Street(ArrayList<String> tags, Node tailNode, Node headnode, StreetType type) {
+        this.tailNode = tailNode;
+        this.headNode = headnode;
         this.type = type;
 
         for (int i = 0; i < tags.size(); i += 2) {
@@ -121,6 +120,6 @@ public class Street implements Drawable, Serializable {
 
     @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
-        new LinePath(way).draw(gc, scale, smartTrace);
+        new LinePath(tailNode, headNode).draw(gc, scale, smartTrace);
     }
 }

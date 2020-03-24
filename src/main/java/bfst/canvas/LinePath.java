@@ -32,6 +32,14 @@ public class LinePath implements Drawable, Serializable {
         }
     }
 
+    public LinePath(Node tail, Node head) {
+        coords = new float[4];
+        coords[0] = tail.getLon();
+        coords[1] = tail.getLat();
+        coords[2] = head.getLon();
+        coords[3] = head.getLat();
+    }
+
     @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
         gc.beginPath();
