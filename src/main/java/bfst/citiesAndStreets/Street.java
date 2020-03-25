@@ -17,6 +17,9 @@ public class Street implements Drawable, Serializable {
     private int maxspeed = 0;
     private String name;
     private StreetType type;
+    private double weight;
+
+
     private Node tailNode;
     private Node headNode;
 
@@ -26,6 +29,7 @@ public class Street implements Drawable, Serializable {
         this.tailNode = tailNode;
         this.headNode = headnode;
         this.type = type;
+        weight = Math.sqrt(Math.pow(this.tailNode.getLon()  -this.headNode.getLon(), 2) + Math.pow(this.tailNode.getLat()-this.headNode.getLat(), 2));
 
         for (int i = 0; i < tags.size(); i += 2) {
             String value = tags.get(i + 1);
@@ -116,6 +120,26 @@ public class Street implements Drawable, Serializable {
 
     public StreetType getType() {
         return type;
+    }
+
+    public Node getTailNode() {
+        return tailNode;
+    }
+
+    public Node getHeadNode() {
+        return headNode;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public long other(long vertex) {
+        if (vertex == tailNode.getAsLong()) {
+            return headNode.getAsLong();
+        } else {
+            return tailNode.getAsLong();
+        }
     }
 
     @Override
