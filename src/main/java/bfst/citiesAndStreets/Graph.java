@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class Graph {
 
-    private final int V;
 
     public HashMap<Long, HashSet<Street>> getAdj() {
         return adj;
@@ -16,14 +15,9 @@ public class Graph {
     private HashMap<Long,HashSet<Street>> adj;
 
 
-    public Graph(int V) {
-        this.V = V;
+    public Graph() {
         adj = new HashMap<>();
 
-    }
-
-    public int V() {
-        return V;
     }
 
     public ArrayList<Long> getKeys() {
@@ -34,16 +28,9 @@ public class Graph {
         return list;
     }
 
-    private void validateVertex(long v) {
-        if (v < 0 || v >= V)
-            throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V-1));
-    }
-
     public void addEdge(Street street) {
         long v = street.getTailNode().getAsLong();
         long w = street.getHeadNode().getAsLong();
-        validateVertex(v);
-        validateVertex(w);
         if (adj.containsKey(v)) {
             adj.get(v).add(street);
         } else {

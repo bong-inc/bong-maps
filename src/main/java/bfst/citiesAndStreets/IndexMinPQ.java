@@ -5,18 +5,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class IndexMinPQ<Key extends Comparable<Key>>  {
-    private int n;           // number of elements on PQ
-    private HashMap<Integer, Long> pq;
-    private HashMap<Long, Integer> qp;        // inverse of pq - qp[pq[i]] = pq[qp[i]] = i
+    private long n;           // number of elements on PQ
+    private HashMap<Long, Long> pq;
+    private HashMap<Long, Long> qp;        // inverse of pq - qp[pq[i]] = pq[qp[i]] = i
     private HashMap<Long, Key> keys;
 
-    /**
-     * Initializes an empty indexed priority queue with indices between {@code 0}
-     * and {@code maxN - 1}.
-     * @param  maxN the keys on this priority queue are index from {@code 0}
-     *         {@code maxN - 1}
-     * @throws IllegalArgumentException if {@code maxN < 0}
-     */
     public IndexMinPQ() {
         n = 0;
         keys = new HashMap<>();    // make this of length maxN??
@@ -50,7 +43,7 @@ public class IndexMinPQ<Key extends Comparable<Key>>  {
      *
      * @return the number of keys on this priority queue
      */
-    public int size() {
+    public long size() {
         return n;
     }
 
@@ -112,11 +105,11 @@ public class IndexMinPQ<Key extends Comparable<Key>>  {
     /***************************************************************************
      * General helper functions.
      ***************************************************************************/
-    private boolean greater(int i, int j) {
+    private boolean greater(long i, long j) {
         return keys.get(pq.get(i)).compareTo(keys.get(pq.get(j))) > 0;
     }
 
-    private void exch(int i, int j) {
+    private void exch(long i, long j) {
         long swap = pq.get(i);
         pq.put(i, pq.get(j));
         pq.put(j, swap);
@@ -128,16 +121,16 @@ public class IndexMinPQ<Key extends Comparable<Key>>  {
     /***************************************************************************
      * Heap helper functions.
      ***************************************************************************/
-    private void swim(int k) {
+    private void swim(long k) {
         while (k > 1 && greater(k/2, k)) {
             exch(k, k/2);
             k = k/2;
         }
     }
 
-    private void sink(int k) {
+    private void sink(long k) {
         while (2*k <= n) {
-            int j = 2*k;
+            long j = 2*k;
             if (j < n && greater(j, j+1)) j++;
             if (!greater(k, j)) break;
             exch(k, j);

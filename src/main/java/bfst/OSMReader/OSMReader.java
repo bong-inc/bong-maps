@@ -5,9 +5,7 @@ import bfst.canvas.Drawable;
 import bfst.canvas.LinePath;
 import bfst.canvas.PolyLinePath;
 import bfst.canvas.Type;
-import bfst.citiesAndStreets.City;
-import bfst.citiesAndStreets.Street;
-import bfst.citiesAndStreets.StreetType;
+import bfst.citiesAndStreets.*;
 
 
 import javax.xml.stream.XMLInputFactory;
@@ -38,6 +36,7 @@ public class OSMReader {
     private ArrayList<City> cities = new ArrayList<>();
     private ArrayList<Street> streets = new ArrayList<>();
 
+    private Graph graph = new Graph();
     private Address.Builder builder;
     private City.Builder cityBuilder;
 
@@ -60,6 +59,10 @@ public class OSMReader {
 
     public ArrayList<Street> getStreets() {
         return streets;
+    }
+
+    public Graph getGraph() {
+        return graph;
     }
 
     public Bound getBound(){return bound;}
@@ -111,7 +114,9 @@ public class OSMReader {
 
                                         ArrayList<Node> nodes = wayHolder.getNodes();
                                         for (int j = 1; j < nodes.size(); j++){
-                                            streets.add(new Street(tagList, nodes.get(j - 1), nodes.get(j), type));
+                                            Street street = new Street(tagList, nodes.get(j - 1), nodes.get(j), type);
+                                            streets.add(street);
+                                            graph.addEdge(street);
                                         }
                                         break;
                                     }

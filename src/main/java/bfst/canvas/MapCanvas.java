@@ -5,10 +5,7 @@ import bfst.OSMReader.Model;
 
 import bfst.OSMReader.Node;
 
-import bfst.citiesAndStreets.City;
-import bfst.citiesAndStreets.CityType;
-import bfst.citiesAndStreets.Street;
-import bfst.citiesAndStreets.StreetType;
+import bfst.citiesAndStreets.*;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -103,7 +100,15 @@ public class MapCanvas extends Canvas {
                     }
                 }
             }
+            Dijkstra dijkstra = new Dijkstra(model.getGraph(), 4927474144L);
+
+            gc.setStroke(Color.RED);
+            for (Street street : dijkstra.pathTo(8468145L)) {
+                street.draw(gc, pixelwidth, smartTrace);
+
+            }
         }
+
 
         scaleBar.updateScaleBar(this);
         scaleBar.draw(gc, pixelwidth, false);

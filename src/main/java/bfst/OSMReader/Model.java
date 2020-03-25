@@ -4,6 +4,7 @@ import bfst.addressparser.Address;
 import bfst.canvas.Drawable;
 import bfst.canvas.Type;
 import bfst.citiesAndStreets.City;
+import bfst.citiesAndStreets.Graph;
 import bfst.citiesAndStreets.Street;
 import bfst.citiesAndStreets.StreetType;
 
@@ -18,6 +19,7 @@ public class Model implements Serializable {
     private Map<Type, ArrayList<Drawable>> drawablesByType;
     private ArrayList<Address> addresses;
     private ArrayList<City> cities;
+    private Graph graph;
 
     private ArrayList<Street> streets;
     private Bound bound;
@@ -28,6 +30,7 @@ public class Model implements Serializable {
         this.addresses = reader.getAddresses();
         this.cities = reader.getCities();
         this.streets = reader.getStreets();
+        this.graph = reader.getGraph();
         Collections.sort(addresses);
         Collections.sort(cities);
 
@@ -50,5 +53,9 @@ public class Model implements Serializable {
     }
     public ArrayList<Street> getStreets() {
         return streets;
+    }
+
+    public Graph getGraph() {
+        return graph;
     }
 }
