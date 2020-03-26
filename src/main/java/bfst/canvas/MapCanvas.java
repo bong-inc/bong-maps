@@ -75,7 +75,7 @@ public class MapCanvas extends Canvas {
 
             if (showStreets) {
                 for (Edge edge : model.getGraph().edges()) {
-                    StreetType type = edge.getType();
+                    StreetType type = edge.getStreet().getType();
                     if (useDependentDraw) {
                         if (trans.getMxx() > type.getMinMxx()) {
                             setValuesAndDrawStreet(pixelwidth, edge, type);
@@ -119,7 +119,7 @@ public class MapCanvas extends Canvas {
     }
 
     public void setRoute(long startPoint, long endPoint, String vehicle) {
-        Dijkstra dijkstra = new Dijkstra(model.getGraph(), startPoint);
+        Dijkstra dijkstra = new Dijkstra(model.getGraph(), startPoint, vehicle);
         route = dijkstra.pathTo(endPoint);
         repaint();
     }

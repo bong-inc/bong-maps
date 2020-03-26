@@ -2,7 +2,6 @@ package bfst.controllers;
 
 import bfst.canvas.MapCanvas;
 import bfst.canvas.Type;
-import bfst.routeFinding.RouteFinder;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;

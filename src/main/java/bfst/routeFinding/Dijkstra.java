@@ -7,11 +7,13 @@ public class Dijkstra {
 
     private HashMap<Long, Double> distTo;
     private HashMap<Long, Edge> edgeTo;
+    private String vehicle;
     private IndexMinPQ pq;
 
-    public Dijkstra(Graph G, long s) {
+    public Dijkstra(Graph G, long s, String vehicle) {
         distTo = new HashMap<>();
         edgeTo = new HashMap<>();
+        this.vehicle = vehicle;
 
         distTo.put(s, 0.0);
 
@@ -21,7 +23,24 @@ public class Dijkstra {
         while (!pq.isEmpty()) {
             long v = pq.delMin();
             for (Edge edge : G.getAdj().get(v)) {
-                relax(edge, v);
+
+                switch (vehicle) {
+                    case "Car":
+                        if (edge.getStreet().isCar()) {
+                            relax(edge, v);
+                        }
+                        break;
+                    case "Walk":
+                        if (edge.getStreet().isWalking()) {
+                            relax(edge, v);
+                        }
+                        break;
+                    case "Bicycle":
+                        if (edge.getStreet().isBicycle()) {
+                            relax(edge, v);
+                        }
+                        break;
+                }
             }
         }
     }
@@ -56,7 +75,10 @@ public class Dijkstra {
         Stack<Edge> path = new Stack<>();
         long x = v;
         for (Edge edge = edgeTo.get(v); edge != null; edge = edgeTo.get(x)) {
+
             path.push(edge);
+
+
             x = edge.other(x);
         }
         return path;

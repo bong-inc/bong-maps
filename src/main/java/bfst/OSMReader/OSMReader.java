@@ -27,6 +27,7 @@ public class OSMReader {
     private Way wayHolder;
     private Relation relationHolder;
     private ArrayList<String> tagList = new ArrayList<>();
+    private Street currentStreet;
 
     private ArrayList<Address> addresses = new ArrayList<>();
 
@@ -110,8 +111,10 @@ public class OSMReader {
                                         }
 
                                         ArrayList<Node> nodes = wayHolder.getNodes();
+                                        currentStreet = new Street(tagList, type);
+
                                         for (int j = 1; j < nodes.size(); j++){
-                                            Edge edge = new Edge(tagList, nodes.get(j - 1), nodes.get(j), type);
+                                            Edge edge = new Edge(nodes.get(j - 1), nodes.get(j), currentStreet);
                                             //streets.add(street);
                                             graph.addEdge(edge);
                                         }
