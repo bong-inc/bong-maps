@@ -28,7 +28,7 @@ public class MapCanvas extends Canvas {
     private ScaleBar scaleBar;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
-    private Iterable<Street> route;
+    private Iterable<Edge> route;
 
     private Pin currentPin;
 
@@ -74,14 +74,14 @@ public class MapCanvas extends Canvas {
             }
 
             if (showStreets) {
-                for (Street street : model.getGraph().edges()) {
-                    StreetType type = street.getType();
+                for (Edge edge : model.getGraph().edges()) {
+                    StreetType type = edge.getType();
                     if (useDependentDraw) {
                         if (trans.getMxx() > type.getMinMxx()) {
-                            setValuesAndDrawStreet(pixelwidth, street, type);
+                            setValuesAndDrawStreet(pixelwidth, edge, type);
                         }
                     } else {
-                        setValuesAndDrawStreet(pixelwidth, street, type);
+                        setValuesAndDrawStreet(pixelwidth, edge, type);
                     }
                 }
             }
@@ -103,8 +103,8 @@ public class MapCanvas extends Canvas {
 
             if (route != null) {
                 gc.setStroke(Color.RED);
-                for (Street street : route) {
-                    street.draw(gc, pixelwidth, smartTrace);
+                for (Edge edge : route) {
+                    edge.draw(gc, pixelwidth, smartTrace);
 
                 }
             }
@@ -129,14 +129,14 @@ public class MapCanvas extends Canvas {
         repaint();
     }
 
-    private void setValuesAndDrawStreet(double pixelwidth, Street street, StreetType type) {
+    private void setValuesAndDrawStreet(double pixelwidth, Edge edge, StreetType type) {
         if (useRegularColors) {
             gc.setStroke(type.getColor());
         } else {
             gc.setStroke(type.getAlternateColor());
         }
         gc.setLineWidth(pixelwidth * type.getWidth());
-        street.draw(gc, pixelwidth, smartTrace);
+        edge.draw(gc, pixelwidth, smartTrace);
     }
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn) {

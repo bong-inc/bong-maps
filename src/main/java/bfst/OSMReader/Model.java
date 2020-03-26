@@ -19,7 +19,7 @@ public class Model implements Serializable {
     private ArrayList<City> cities;
     private Graph graph;
 
-    private ArrayList<Street> streets;
+    private ArrayList<Edge> edges;
     private Bound bound;
 
     public Model(OSMReader reader){
@@ -48,8 +48,8 @@ public class Model implements Serializable {
     public ArrayList<City> getCities() {
         return cities;
     }
-    public ArrayList<Street> getStreets() {
-        return streets;
+    public ArrayList<Edge> getEdges() {
+        return edges;
     }
 
     public Graph getGraph() {

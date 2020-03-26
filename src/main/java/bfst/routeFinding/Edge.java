@@ -8,7 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Street implements Drawable, Serializable {
+public class Edge implements Drawable, Serializable {
     private boolean onewayCar = false;
     private boolean bicycle = false; //residential, highway:cycleway, cycleway:track
     private boolean walking = false; //foot, sidewalk, highway:footway
@@ -25,7 +25,7 @@ public class Street implements Drawable, Serializable {
 
 
 
-    public Street(ArrayList<String> tags, Node tailNode, Node headnode, StreetType type) {
+    public Edge(ArrayList<String> tags, Node tailNode, Node headnode, StreetType type) {
         this.tailNode = tailNode;
         this.headNode = headnode;
         this.type = type;

@@ -111,9 +111,9 @@ public class OSMReader {
 
                                         ArrayList<Node> nodes = wayHolder.getNodes();
                                         for (int j = 1; j < nodes.size(); j++){
-                                            Street street = new Street(tagList, nodes.get(j - 1), nodes.get(j), type);
+                                            Edge edge = new Edge(tagList, nodes.get(j - 1), nodes.get(j), type);
                                             //streets.add(street);
-                                            graph.addEdge(street);
+                                            graph.addEdge(edge);
                                         }
                                         break;
                                     }
