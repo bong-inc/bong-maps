@@ -1,10 +1,10 @@
 package bfst.OSMReader;
 
 import bfst.addressparser.Address;
+import bfst.canvas.City;
 import bfst.canvas.Drawable;
 import bfst.canvas.Type;
-import bfst.citiesAndStreets.*;
-import javafx.scene.paint.Color;
+import bfst.routeFinding.*;
 
 import java.io.*;
 import java.util.ArrayList;

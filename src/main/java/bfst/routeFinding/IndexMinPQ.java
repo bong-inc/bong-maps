@@ -1,7 +1,6 @@
-package bfst.citiesAndStreets;
+package bfst.routeFinding;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class IndexMinPQ<Key extends Comparable<Key>>  {

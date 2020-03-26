@@ -1,11 +1,8 @@
 package bfst.OSMReader;
 
 import bfst.addressparser.Address;
-import bfst.canvas.Drawable;
-import bfst.canvas.LinePath;
-import bfst.canvas.PolyLinePath;
-import bfst.canvas.Type;
-import bfst.citiesAndStreets.*;
+import bfst.canvas.*;
+import bfst.routeFinding.*;
 
 
 import javax.xml.stream.XMLInputFactory;

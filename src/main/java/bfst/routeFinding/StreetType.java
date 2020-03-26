@@ -1,9 +1,7 @@
-package bfst.citiesAndStreets;
+package bfst.routeFinding;
 
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-
-import java.io.Serializable;
 
 public enum StreetType {
 

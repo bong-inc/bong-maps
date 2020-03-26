@@ -1,4 +1,4 @@
-package bfst.citiesAndStreets;
+package bfst.canvas;
 
 import java.io.Serializable;
 

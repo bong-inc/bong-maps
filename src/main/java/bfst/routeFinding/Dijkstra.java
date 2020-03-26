@@ -1,4 +1,4 @@
-package bfst.citiesAndStreets;
+package bfst.routeFinding;
 
 import java.util.HashMap;
 import java.util.Stack;

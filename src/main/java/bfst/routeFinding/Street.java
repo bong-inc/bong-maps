@@ -1,4 +1,4 @@
-package bfst.citiesAndStreets;
+package bfst.routeFinding;
 
 import bfst.OSMReader.Node;
 import bfst.canvas.Drawable;

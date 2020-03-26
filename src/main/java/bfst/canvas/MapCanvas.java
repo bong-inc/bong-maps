@@ -5,7 +5,7 @@ import bfst.OSMReader.Model;
 
 import bfst.OSMReader.Node;
 
-import bfst.citiesAndStreets.*;
+import bfst.routeFinding.*;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -19,7 +19,6 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class MapCanvas extends Canvas {
     private GraphicsContext gc;

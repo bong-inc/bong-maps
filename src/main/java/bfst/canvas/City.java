@@ -1,7 +1,6 @@
-package bfst.citiesAndStreets;
+package bfst.canvas;
 
 import bfst.OSMReader.Node;
-import bfst.canvas.Drawable;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.io.Serializable;
