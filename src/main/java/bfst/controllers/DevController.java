@@ -51,6 +51,8 @@ public class DevController {
     private Button findRoute;
     @FXML
     private ComboBox<String> vehicle;
+    @FXML
+    private Button clearRoute;
 
     @FXML
     public void initialize() {
@@ -119,6 +121,10 @@ public class DevController {
 
         findRoute.setOnAction(e -> {
             canvas.setRoute(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue());
+        });
+
+        clearRoute.setOnAction(e -> {
+            canvas.clearRoute();
         });
     }
 

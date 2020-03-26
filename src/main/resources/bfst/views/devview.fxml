@@ -23,5 +23,6 @@
     <TextField fx:id="endPoint"/>
     <ComboBox fx:id="vehicle"/>
     <Button fx:id="findRoute">Find route</Button>
+    <Button fx:id="clearRoute">Clear route</Button>
   </FlowPane>
 </VBox>

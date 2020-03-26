@@ -124,6 +124,11 @@ public class MapCanvas extends Canvas {
         repaint();
     }
 
+    public void clearRoute() {
+        route = null;
+        repaint();
+    }
+
     private void setValuesAndDrawStreet(double pixelwidth, Street street, StreetType type) {
         if (useRegularColors) {
             gc.setStroke(type.getColor());
