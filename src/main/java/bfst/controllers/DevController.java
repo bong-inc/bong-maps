@@ -52,6 +52,8 @@ public class DevController {
     private ComboBox<String> vehicle;
     @FXML
     private Button clearRoute;
+    @FXML
+    private CheckBox shortestRoute;
 
     @FXML
     public void initialize() {
@@ -119,12 +121,14 @@ public class DevController {
         vehicle.getSelectionModel().selectLast();
 
         findRoute.setOnAction(e -> {
-            canvas.setRoute(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue());
+            canvas.setRoute(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
         });
 
         clearRoute.setOnAction(e -> {
             canvas.clearRoute();
         });
+
+        shortestRoute.setSelected(true);
     }
 
     private void updateTypesToBeDrawn() {

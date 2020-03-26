@@ -10,7 +10,7 @@ public class Dijkstra {
     private String vehicle;
     private IndexMinPQ pq;
 
-    public Dijkstra(Graph G, long s, String vehicle) {
+    public Dijkstra(Graph G, long s, String vehicle, boolean shortestRoute) {
         distTo = new HashMap<>();
         edgeTo = new HashMap<>();
         this.vehicle = vehicle;
@@ -24,20 +24,19 @@ public class Dijkstra {
             long v = pq.delMin();
             for (Edge edge : G.getAdj().get(v)) {
 
-
                 switch (vehicle) {
                     case "Car":
                         if (edge.getStreet().isCar()) {
                             if (edge.getStreet().isOnewayCar() && edge.getHeadNode().getAsLong() == v) {
                                 break;
                             }
-                            relax(edge, v);
+                            relax(edge, v, shortestRoute);
                         }
                         break;
                     case "Walk":
                         if (edge.getStreet().isWalking()) {
 
-                            relax(edge, v);
+                            relax(edge, v, true);
                         }
                         break;
                     case "Bicycle":
@@ -45,7 +44,7 @@ public class Dijkstra {
                             if (edge.getStreet().isOnewayBicycle() && edge.getHeadNode().getAsLong() == v) {
                                 break;
                             }
-                            relax(edge, v);
+                            relax(edge, v, true);
                         }
                         break;
                 }
@@ -53,15 +52,23 @@ public class Dijkstra {
         }
     }
 
-    private void relax(Edge edge, long v) {
+    private void relax(Edge edge, long v, boolean shortestRoute) {
         long w = edge.other(v);
         if (!distTo.containsKey(w)) {
             distTo.put(w, Double.POSITIVE_INFINITY);
         }
+
+        double weight;
+        if (shortestRoute) {
+            weight = edge.getWeight();
+        } else {
+            weight = edge.getWeight() / edge.getStreet().getMaxspeed();
+        }
+
         if(distTo.get(w) >
                 distTo.get(v) +
                         edge.getWeight()) {
-            distTo.put(w, distTo.get(v) + edge.getWeight());
+            distTo.put(w, distTo.get(v) + weight);
             edgeTo.put(w, edge);
             if (pq.contains(w)) {
                 pq.decreaseKey(w, distTo.get(w));

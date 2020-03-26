@@ -118,8 +118,8 @@ public class MapCanvas extends Canvas {
         System.out.println("repaint: " + time / 1000000f + "ms");
     }
 
-    public void setRoute(long startPoint, long endPoint, String vehicle) {
-        Dijkstra dijkstra = new Dijkstra(model.getGraph(), startPoint, vehicle);
+    public void setRoute(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
+        Dijkstra dijkstra = new Dijkstra(model.getGraph(), startPoint, vehicle, shortestRoute);
         route = dijkstra.pathTo(endPoint);
         repaint();
     }

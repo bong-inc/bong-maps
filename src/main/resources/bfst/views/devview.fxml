@@ -24,5 +24,6 @@
     <ComboBox fx:id="vehicle"/>
     <Button fx:id="findRoute">Find route</Button>
     <Button fx:id="clearRoute">Clear route</Button>
+    <CheckBox fx:id="shortestRoute">Shortest route (off means fastest)</CheckBox>
   </FlowPane>
 </VBox>
