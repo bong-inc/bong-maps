@@ -18,7 +18,6 @@ public class Model implements Serializable {
     private ArrayList<Address> addresses;
     private ArrayList<City> cities;
     private Graph graph;
-    private Dijkstra dijkstra;
 
     private ArrayList<Street> streets;
     private Bound bound;
@@ -28,11 +27,10 @@ public class Model implements Serializable {
         this.bound = reader.getBound();
         this.addresses = reader.getAddresses();
         this.cities = reader.getCities();
-        this.streets = reader.getStreets();
+        //this.streets = reader.getStreets();
         this.graph = reader.getGraph();
         Collections.sort(addresses);
         Collections.sort(cities);
-        dijkstra = new Dijkstra(reader.getGraph(), 4927474144L);
     }
 
     public ArrayList<Drawable> getDrawablesOfType(Type type){
@@ -56,9 +54,5 @@ public class Model implements Serializable {
 
     public Graph getGraph() {
         return graph;
-    }
-
-    public Dijkstra getDijkstra() {
-        return dijkstra;
     }
 }

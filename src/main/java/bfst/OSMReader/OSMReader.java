@@ -31,7 +31,7 @@ public class OSMReader {
     private ArrayList<Address> addresses = new ArrayList<>();
 
     private ArrayList<City> cities = new ArrayList<>();
-    private ArrayList<Street> streets = new ArrayList<>();
+    //private ArrayList<Street> streets = new ArrayList<>();
 
     private Graph graph = new Graph();
     private Address.Builder builder;
@@ -54,9 +54,9 @@ public class OSMReader {
         return cities;
     }
 
-    public ArrayList<Street> getStreets() {
+    /*public ArrayList<Street> getStreets() {
         return streets;
-    }
+    }*/
 
     public Graph getGraph() {
         return graph;
@@ -112,7 +112,7 @@ public class OSMReader {
                                         ArrayList<Node> nodes = wayHolder.getNodes();
                                         for (int j = 1; j < nodes.size(); j++){
                                             Street street = new Street(tagList, nodes.get(j - 1), nodes.get(j), type);
-                                            streets.add(street);
+                                            //streets.add(street);
                                             graph.addEdge(street);
                                         }
                                         break;
