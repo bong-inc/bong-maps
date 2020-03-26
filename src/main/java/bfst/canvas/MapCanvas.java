@@ -18,6 +18,7 @@ import javafx.scene.transform.NonInvertibleTransformException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class MapCanvas extends Canvas {
@@ -124,6 +125,40 @@ public class MapCanvas extends Canvas {
         repaint();
     }
 
+    //har egentlig ikke noget med canvas at gøre, så skal nok flyttes
+    public ArrayList<String> getRouteDescription(Iterable<Edge> iterable) {
+
+        ArrayList<String> description = new ArrayList<>();
+        Iterator iterator = iterable.iterator();
+
+        Edge first = (Edge) iterator.next();
+        String prevEdgeName = first.getStreet().getName();
+        double tempLength = first.getWeight();
+        Edge prevEdge = first;
+
+        while (iterator.hasNext()) {
+            Edge edge = (Edge) iterator.next();
+
+            if (prevEdgeName.equals(edge.getStreet().getName())) {
+                tempLength += edge.getWeight();
+            } else {
+                tempLength = tempLength * 0.56; //TODO denne værdi er et groft estimat
+                description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+
+                double a = prevEdge.getWeight();
+                double b = edge.getWeight();
+                double c = Math.sqrt(Math.pow(prevEdge.getTailNode().getLon() - edge.getHeadNode().getLon(), 2) + Math.pow(prevEdge.getTailNode().getLat() - edge.getHeadNode().getLat(), 2));
+                double turnAngle = Math.acos((Math.pow(a, 2) + Math.pow(b, 2) - Math.pow(c, 2)) / 2*a*b);
+
+                prevEdgeName = edge.getStreet().getName();
+                tempLength = edge.getWeight() * 0.56;
+            }
+            prevEdge = edge;
+        }
+        description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+        return description;
+    }
+
     public void clearRoute() {
         route = null;
         repaint();
@@ -167,6 +202,10 @@ public class MapCanvas extends Canvas {
     public void setShowStreets(boolean showStreets) {
         this.showStreets = showStreets;
         repaint();
+    }
+
+    public Iterable<Edge> getRoute() {
+        return route;
     }
 
     public void resetView() {

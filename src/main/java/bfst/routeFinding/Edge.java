@@ -22,7 +22,7 @@ public class Edge implements Drawable, Serializable {
         this.tailNode = tailNode;
         this.headNode = headnode;
         this.street = street;
-        weight = Math.sqrt(Math.pow(this.tailNode.getLon()  -this.headNode.getLon(), 2) + Math.pow(this.tailNode.getLat()-this.headNode.getLat(), 2));
+        weight = Math.sqrt(Math.pow(this.tailNode.getLon() - this.headNode.getLon(), 2) + Math.pow(this.tailNode.getLat() - this.headNode.getLat(), 2));
     }
 
     public Node getTailNode() {

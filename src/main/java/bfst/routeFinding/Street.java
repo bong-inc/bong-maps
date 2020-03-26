@@ -1,8 +1,9 @@
 package bfst.routeFinding;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Street {
+public class Street implements Serializable {
 
     private boolean onewayCar = false;
     private boolean bicycle = false; //residential, highway:cycleway, cycleway:track

@@ -54,6 +54,8 @@ public class DevController {
     private Button clearRoute;
     @FXML
     private CheckBox shortestRoute;
+    @FXML
+    private Button routeDescription;
 
     @FXML
     public void initialize() {
@@ -129,6 +131,12 @@ public class DevController {
         });
 
         shortestRoute.setSelected(true);
+
+        routeDescription.setOnAction(e -> {
+            for (String string : canvas.getRouteDescription(canvas.getRoute())) {
+                System.out.println(string);
+            }
+        });
     }
 
     private void updateTypesToBeDrawn() {

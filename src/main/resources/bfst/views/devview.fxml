@@ -25,5 +25,6 @@
     <Button fx:id="findRoute">Find route</Button>
     <Button fx:id="clearRoute">Clear route</Button>
     <CheckBox fx:id="shortestRoute">Shortest route (off means fastest)</CheckBox>
+    <Button fx:id="routeDescription">Print route description</Button>
   </FlowPane>
 </VBox>

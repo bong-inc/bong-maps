@@ -9,6 +9,7 @@ public class Dijkstra {
     private HashMap<Long, Edge> edgeTo;
     private String vehicle;
     private IndexMinPQ pq;
+    private long endPoint = 0;
 
     public Dijkstra(Graph G, long s, String vehicle, boolean shortestRoute) {
         distTo = new HashMap<>();
@@ -84,9 +85,9 @@ public class Dijkstra {
 
     public Iterable<Edge> pathTo(long v) {
         if (!hasPathTo(v)) {
-            System.out.println("NULLLLL");
             return null;
         }
+        endPoint = v;
         Stack<Edge> path = new Stack<>();
         long x = v;
         for (Edge edge = edgeTo.get(v); edge != null; edge = edgeTo.get(x)) {
