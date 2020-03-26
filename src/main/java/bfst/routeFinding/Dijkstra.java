@@ -24,19 +24,27 @@ public class Dijkstra {
             long v = pq.delMin();
             for (Edge edge : G.getAdj().get(v)) {
 
+
                 switch (vehicle) {
                     case "Car":
                         if (edge.getStreet().isCar()) {
+                            if (edge.getStreet().isOnewayCar() && edge.getHeadNode().getAsLong() == v) {
+                                break;
+                            }
                             relax(edge, v);
                         }
                         break;
                     case "Walk":
                         if (edge.getStreet().isWalking()) {
+
                             relax(edge, v);
                         }
                         break;
                     case "Bicycle":
                         if (edge.getStreet().isBicycle()) {
+                            if (edge.getStreet().isOnewayBicycle() && edge.getHeadNode().getAsLong() == v) {
+                                break;
+                            }
                             relax(edge, v);
                         }
                         break;

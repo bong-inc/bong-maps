@@ -62,6 +62,8 @@ public class Street {
                     walking = true;
                     break;
                 case "cycleway":
+                case "cycleway:right":
+                case "cycleway:left":
                     bicycle = true;
                     break;
                 case "name":
