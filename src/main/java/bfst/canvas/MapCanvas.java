@@ -28,6 +28,7 @@ public class MapCanvas extends Canvas {
     private ScaleBar scaleBar;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
+    private Iterable<Street> route;
 
     private Pin currentPin;
 
@@ -100,10 +101,12 @@ public class MapCanvas extends Canvas {
                 }
             }
 
-            gc.setStroke(Color.RED);
-            for (Street street : model.getDijkstra().pathTo(8468145L)) {
-                street.draw(gc, pixelwidth, smartTrace);
+            if (route != null) {
+                gc.setStroke(Color.RED);
+                for (Street street : route) {
+                    street.draw(gc, pixelwidth, smartTrace);
 
+                }
             }
         }
 
@@ -113,6 +116,12 @@ public class MapCanvas extends Canvas {
 
         time += System.nanoTime();
         System.out.println("repaint: " + time / 1000000f + "ms");
+    }
+
+    public void setRoute(long startPoint, long endPoint, String vehicle) {
+        Dijkstra dijkstra = new Dijkstra(model.getGraph(), startPoint);
+        route = dijkstra.pathTo(endPoint);
+        repaint();
     }
 
     private void setValuesAndDrawStreet(double pixelwidth, Street street, StreetType type) {

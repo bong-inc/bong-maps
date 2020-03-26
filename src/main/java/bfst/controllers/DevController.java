@@ -2,10 +2,10 @@ package bfst.controllers;
 
 import bfst.canvas.MapCanvas;
 import bfst.canvas.Type;
+import bfst.routeFinding.RouteFinder;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
@@ -43,6 +43,14 @@ public class DevController {
     private CheckBox dependentDrawToggle;
     @FXML
     private CheckBox streetsToggle;
+    @FXML
+    private TextField startPoint;
+    @FXML
+    private TextField endPoint;
+    @FXML
+    private Button findRoute;
+    @FXML
+    private ComboBox<String> vehicle;
 
     @FXML
     public void initialize() {
@@ -104,6 +112,13 @@ public class DevController {
         streetsToggle.setSelected(true);
         streetsToggle.setOnAction(e -> {
             canvas.setShowStreets(streetsToggle.isSelected());
+        });
+
+        vehicle.getItems().addAll("Walk", "Bicycle", "Car");
+        vehicle.getSelectionModel().selectLast();
+
+        findRoute.setOnAction(e -> {
+            canvas.setRoute(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue());
         });
     }
 

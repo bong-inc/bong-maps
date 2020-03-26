@@ -19,5 +19,9 @@
     <CheckBox fx:id="citiesToggle">Show citites</CheckBox>
     <CheckBox fx:id="dependentDrawToggle">Use zoom-dependent draw</CheckBox>
     <CheckBox fx:id="streetsToggle">Show streets</CheckBox>
+    <TextField fx:id="startPoint"/>
+    <TextField fx:id="endPoint"/>
+    <ComboBox fx:id="vehicle"/>
+    <Button fx:id="findRoute">Find route</Button>
   </FlowPane>
 </VBox>
