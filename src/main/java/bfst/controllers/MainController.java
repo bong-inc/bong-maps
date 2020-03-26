@@ -252,7 +252,7 @@ public class MainController {
             alert.setHeaderText("File type not supported: " + exception.getFileType());
             alert.showAndWait();
         } catch (NullPointerException exception){
-            return;
+            exception.printStackTrace();
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("Something unexpected happened, please try again");

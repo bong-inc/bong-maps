@@ -3,10 +3,8 @@ package bfst.OSMReader;
 import bfst.addressparser.Address;
 import bfst.canvas.Drawable;
 import bfst.canvas.Type;
-import bfst.citiesAndStreets.City;
-import bfst.citiesAndStreets.Graph;
-import bfst.citiesAndStreets.Street;
-import bfst.citiesAndStreets.StreetType;
+import bfst.citiesAndStreets.*;
+import javafx.scene.paint.Color;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -20,6 +18,7 @@ public class Model implements Serializable {
     private ArrayList<Address> addresses;
     private ArrayList<City> cities;
     private Graph graph;
+    private Dijkstra dijkstra;
 
     private ArrayList<Street> streets;
     private Bound bound;
@@ -33,7 +32,7 @@ public class Model implements Serializable {
         this.graph = reader.getGraph();
         Collections.sort(addresses);
         Collections.sort(cities);
-
+        dijkstra = new Dijkstra(reader.getGraph(), 4927474144L);
     }
 
     public ArrayList<Drawable> getDrawablesOfType(Type type){
@@ -57,5 +56,9 @@ public class Model implements Serializable {
 
     public Graph getGraph() {
         return graph;
+    }
+
+    public Dijkstra getDijkstra() {
+        return dijkstra;
     }
 }

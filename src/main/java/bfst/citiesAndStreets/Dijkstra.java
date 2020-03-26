@@ -28,6 +28,9 @@ public class Dijkstra {
 
     private void relax(Street street, long v) {
         long w = street.other(v);
+        if (!distTo.containsKey(w)) {
+            distTo.put(w, Double.POSITIVE_INFINITY);
+        }
         if(distTo.get(w) >
                 distTo.get(v) +
                         street.getWeight()) {
@@ -46,7 +49,10 @@ public class Dijkstra {
     }
 
     public Iterable<Street> pathTo(long v) {
-        if (!hasPathTo(v)) return null;
+        if (!hasPathTo(v)) {
+            System.out.println("NULLLLL");
+            return null;
+        }
         Stack<Street> path = new Stack<>();
         long x = v;
         for (Street street = edgeTo.get(v); street != null; street = edgeTo.get(x)) {

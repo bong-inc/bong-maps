@@ -73,7 +73,7 @@ public class IndexMinPQ<Key extends Comparable<Key>>  {
      */
     public long delMin() {
         if (n == 0) throw new NoSuchElementException("Priority queue underflow");
-        long min = pq.get(1);
+        long min = pq.get(1L);
         exch(1, n--);
         sink(1);
         assert min == pq.get(n+1);

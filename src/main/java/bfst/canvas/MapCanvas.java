@@ -74,7 +74,7 @@ public class MapCanvas extends Canvas {
             }
 
             if (showStreets) {
-                for (Street street : model.getStreets()) {
+                for (Street street : model.getGraph().edges()) {
                     StreetType type = street.getType();
                     if (useDependentDraw) {
                         if (trans.getMxx() > type.getMinMxx()) {
@@ -100,10 +100,9 @@ public class MapCanvas extends Canvas {
                     }
                 }
             }
-            Dijkstra dijkstra = new Dijkstra(model.getGraph(), 4927474144L);
 
             gc.setStroke(Color.RED);
-            for (Street street : dijkstra.pathTo(8468145L)) {
+            for (Street street : model.getDijkstra().pathTo(8468145L)) {
                 street.draw(gc, pixelwidth, smartTrace);
 
             }
