@@ -1,5 +1,7 @@
 package bfst.routeFinding;
 
+import bfst.OSMReader.Node;
+
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -23,7 +25,7 @@ public class Dijkstra {
 
         while (!pq.isEmpty()) {
             long v = pq.delMin();
-            for (Edge edge : G.getAdj().get(v)) {
+            for (Edge edge : G.getNodes().get(v).getAdj()) {
 
                 switch (vehicle) {
                     case "Car":
@@ -66,9 +68,7 @@ public class Dijkstra {
             weight = edge.getWeight() / edge.getStreet().getMaxspeed();
         }
 
-        if(distTo.get(w) >
-                distTo.get(v) +
-                        edge.getWeight()) {
+        if(distTo.get(w) > distTo.get(v) + edge.getWeight()) {
             distTo.put(w, distTo.get(v) + weight);
             edgeTo.put(w, edge);
             if (pq.contains(w)) {

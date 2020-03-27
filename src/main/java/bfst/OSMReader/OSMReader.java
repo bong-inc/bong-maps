@@ -164,6 +164,7 @@ public class OSMReader {
                         break;
                 }
             }
+            graph.sortNodes();
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }

@@ -125,7 +125,7 @@ public class MapCanvas extends Canvas {
         repaint();
     }
 
-    //har egentlig ikke noget med canvas at gøre, så skal nok flyttes
+    //TODO har egentlig ikke noget med canvas at gøre, så skal nok flyttes
     public ArrayList<String> getRouteDescription(Iterable<Edge> iterable) {
 
         ArrayList<String> description = new ArrayList<>();

@@ -44,6 +44,10 @@ public class SortedArrayList<T extends LongSupplier> implements Iterable<T>{
         return null;
     }
 
+    public void sort() {
+        list.sort(Comparator.comparingLong(T::getAsLong));
+    }
+
     @Override
     public Iterator<T> iterator() {
         return list.iterator();

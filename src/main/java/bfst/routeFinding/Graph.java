@@ -1,58 +1,65 @@
 package bfst.routeFinding;
 
+import bfst.OSMReader.Node;
+import bfst.OSMReader.SortedArrayList;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
 public class Graph implements Serializable {
 
-
-    public HashMap<Long, HashSet<Edge>> getAdj() {
-        return adj;
+    public SortedArrayList<Node> getNodes() {
+        return nodes;
     }
 
-    private HashMap<Long,HashSet<Edge>> adj;
+    //private HashMap<Long,HashSet<Edge>> adj;
 
+    private SortedArrayList<Node> nodes;
 
     public Graph() {
-        adj = new HashMap<>();
+        nodes = new SortedArrayList<>();
 
     }
-
-    public ArrayList<Long> getKeys() {
-        ArrayList<Long> list = new ArrayList<>();
-        for (Map.Entry<Long, HashSet<Edge>> entry : adj.entrySet()) {
-            list.add(entry.getKey());
+    /*
+        public ArrayList<Long> getKeys() {
+            ArrayList<Long> list = new ArrayList<>();
+            for (Map.Entry<Long, HashSet<Edge>> entry : adj.entrySet()) {
+                list.add(entry.getKey());
+            }
+            return list;
         }
-        return list;
-    }
-
+    */
     public void addEdge(Edge edge) {
         long v = edge.getTailNode().getAsLong();
         long w = edge.getHeadNode().getAsLong();
-        if (adj.containsKey(v)) {
-            adj.get(v).add(edge);
+        if (nodes.get(v) != null) {
+            nodes.get(v).addEdge(edge);
         } else {
-            adj.put(v, new HashSet<>());
-            adj.get(v).add(edge);
+            Node newNode = edge.getTailNode();
+            newNode.addEdge(edge);
+            nodes.add(newNode);
         }
-        if (adj.containsKey(w)) {
-            adj.get(w).add(edge);
+        if (nodes.get(w) != null) {
+            nodes.get(w).addEdge(edge);
         } else {
-            adj.put(w, new HashSet<>());
-            adj.get(w).add(edge);
+            Node newNode = edge.getHeadNode();
+            newNode.addEdge(edge);
+            nodes.add(newNode);
         }
+
+    }
+
+    public void sortNodes() {
+        nodes.sort();
     }
 
     public Iterable<Edge> edges() {
         ArrayList<Edge> list = new ArrayList<>();
-        for (Map.Entry<Long,HashSet<Edge>> set : adj.entrySet()) {
-            for (Edge edge : set.getValue()) {
-                list.add(edge);
-            }
+
+        for (Node node : nodes) {
+            list.addAll(node.getAdj());
         }
+
         return list;
     }
 
