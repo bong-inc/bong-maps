@@ -138,13 +138,14 @@ public class MapCanvas extends Canvas {
 
         while (iterator.hasNext()) {
             Edge edge = (Edge) iterator.next();
-
-            if (prevEdgeName.equals(edge.getStreet().getName())) {
+            //TODO hvis street ikke har noget navn, skal gøres noget andet
+            if (edge.getStreet().getName() == null || prevEdgeName.equals(edge.getStreet().getName())) {
                 tempLength += edge.getWeight();
             } else {
                 tempLength = tempLength * 0.56; //TODO denne værdi er et groft estimat
                 description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
 
+                //TODO noget med "drej til højre" osv
                 double a = prevEdge.getWeight();
                 double b = edge.getWeight();
                 double c = Math.sqrt(Math.pow(prevEdge.getTailNode().getLon() - edge.getHeadNode().getLon(), 2) + Math.pow(prevEdge.getTailNode().getLat() - edge.getHeadNode().getLat(), 2));
@@ -156,6 +157,7 @@ public class MapCanvas extends Canvas {
             prevEdge = edge;
         }
         description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+        description.add("You have arrived at your destination");
         return description;
     }
 
