@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 public class DevController {
     Stage stage;
@@ -133,9 +134,15 @@ public class DevController {
         shortestRoute.setSelected(true);
 
         routeDescription.setOnAction(e -> {
+            Stack<String> stack = canvas.getRouteDescription(canvas.getRoute());
+
+            while (!stack.isEmpty()) {
+                System.out.println(stack.pop());
+            }
+            /*
             for (String string : canvas.getRouteDescription(canvas.getRoute())) {
                 System.out.println(string);
-            }
+            }*/
         });
     }
 

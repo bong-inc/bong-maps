@@ -19,15 +19,7 @@ public class Graph implements Serializable {
     public Graph() {
         adj = new HashMap<>();
     }
-    /*
-        public ArrayList<Long> getKeys() {
-            ArrayList<Long> list = new ArrayList<>();
-            for (Map.Entry<Long, HashSet<Edge>> entry : adj.entrySet()) {
-                list.add(entry.getKey());
-            }
-            return list;
-        }
-    */
+
     public void addEdge(Edge edge) {
         long v = edge.getTailNode().getAsLong();
         long w = edge.getHeadNode().getAsLong();
@@ -45,10 +37,7 @@ public class Graph implements Serializable {
             list.add(edge);
             adj.put(w, list);
         }
-
     }
-
-
 
     public Iterable<Edge> edges() {
         ArrayList<Edge> list = new ArrayList<>();

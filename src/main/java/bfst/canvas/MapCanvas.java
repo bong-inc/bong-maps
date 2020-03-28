@@ -16,10 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class MapCanvas extends Canvas {
     private GraphicsContext gc;
@@ -126,9 +123,10 @@ public class MapCanvas extends Canvas {
     }
 
     //TODO har egentlig ikke noget med canvas at gøre, så skal nok flyttes
-    public ArrayList<String> getRouteDescription(Iterable<Edge> iterable) {
+    public Stack<String> getRouteDescription(Iterable<Edge> iterable) {
 
-        ArrayList<String> description = new ArrayList<>();
+        Stack<String> description = new Stack<>();
+        description.push("You have arrived at your destination");
         Iterator iterator = iterable.iterator();
 
         Edge first = (Edge) iterator.next();
@@ -143,7 +141,7 @@ public class MapCanvas extends Canvas {
                 tempLength += edge.getWeight();
             } else {
                 tempLength = tempLength * 0.56; //TODO denne værdi er et groft estimat
-                description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+                description.push("Follow " + prevEdgeName + " for " + tempLength + " meters");
 
                 //TODO noget med "drej til højre" osv
                 double a = prevEdge.getWeight();
@@ -156,8 +154,7 @@ public class MapCanvas extends Canvas {
             }
             prevEdge = edge;
         }
-        description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
-        description.add("You have arrived at your destination");
+        description.push("Follow " + prevEdgeName + " for " + tempLength + " meters");
         return description;
     }
 

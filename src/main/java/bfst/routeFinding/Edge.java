@@ -18,9 +18,9 @@ public class Edge implements Drawable, Serializable {
 
 
 
-    public Edge(Node tailNode, Node headnode, Street street) {
+    public Edge(Node tailNode, Node headNode, Street street) {
         this.tailNode = tailNode;
-        this.headNode = headnode;
+        this.headNode = headNode;
         this.street = street;
         weight = Math.sqrt(Math.pow(this.tailNode.getLon() - this.headNode.getLon(), 2) + Math.pow(this.tailNode.getLat() - this.headNode.getLat(), 2));
     }
