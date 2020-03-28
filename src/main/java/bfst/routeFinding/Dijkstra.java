@@ -25,7 +25,7 @@ public class Dijkstra {
 
         while (!pq.isEmpty()) {
             long v = pq.delMin();
-            for (Edge edge : G.getNodes().get(v).getAdj()) {
+            for (Edge edge : G.getAdj().get(v)) {
 
                 switch (vehicle) {
                     case "Car":

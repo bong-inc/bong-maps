@@ -10,13 +10,11 @@ public class Node implements LongSupplier, Serializable {
     private long id;
     private float lon;
     private float lat;
-    ArrayList<Edge> adj;
 
     public Node(long id, float lon, float lat){
         this.id = id;
         this.lon = lon;
         this.lat = lat;
-        adj = new ArrayList<>();
     }
 
     public float getLon() {
@@ -30,13 +28,5 @@ public class Node implements LongSupplier, Serializable {
     @Override
     public long getAsLong() {
         return id;
-    }
-
-    public void addEdge(Edge edge) {
-        adj.add(edge);
-    }
-
-    public ArrayList<Edge> getAdj() {
-        return adj;
     }
 }

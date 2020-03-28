@@ -5,20 +5,19 @@ import bfst.OSMReader.SortedArrayList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Graph implements Serializable {
 
-    public SortedArrayList<Node> getNodes() {
-        return nodes;
+    public HashMap<Long, ArrayList<Edge>> getAdj() {
+        return adj;
     }
 
-    //private HashMap<Long,HashSet<Edge>> adj;
-
-    private SortedArrayList<Node> nodes;
+    private HashMap<Long, ArrayList<Edge>> adj;
 
     public Graph() {
-        nodes = new SortedArrayList<>();
-
+        adj = new HashMap<>();
     }
     /*
         public ArrayList<Long> getKeys() {
@@ -32,32 +31,30 @@ public class Graph implements Serializable {
     public void addEdge(Edge edge) {
         long v = edge.getTailNode().getAsLong();
         long w = edge.getHeadNode().getAsLong();
-        if (nodes.get(v) != null) {
-            nodes.get(v).addEdge(edge);
+        if (adj.containsKey(v)) {
+            adj.get(v).add(edge);
         } else {
-            Node newNode = edge.getTailNode();
-            newNode.addEdge(edge);
-            nodes.add(newNode);
+            ArrayList<Edge> list = new ArrayList<>();
+            list.add(edge);
+            adj.put(v, list);
         }
-        if (nodes.get(w) != null) {
-            nodes.get(w).addEdge(edge);
+        if (adj.containsKey(w)) {
+            adj.get(w).add(edge);
         } else {
-            Node newNode = edge.getHeadNode();
-            newNode.addEdge(edge);
-            nodes.add(newNode);
+            ArrayList<Edge> list = new ArrayList<>();
+            list.add(edge);
+            adj.put(w, list);
         }
 
     }
 
-    public void sortNodes() {
-        nodes.sort();
-    }
+
 
     public Iterable<Edge> edges() {
         ArrayList<Edge> list = new ArrayList<>();
 
-        for (Node node : nodes) {
-            list.addAll(node.getAdj());
+        for (Map.Entry<Long, ArrayList<Edge>> entry : adj.entrySet()) {
+            list.addAll(entry.getValue());
         }
 
         return list;
