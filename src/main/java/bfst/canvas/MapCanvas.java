@@ -5,10 +5,7 @@ import bfst.OSMReader.Model;
 
 import bfst.OSMReader.Node;
 
-import bfst.citiesAndStreets.City;
-import bfst.citiesAndStreets.CityType;
-import bfst.citiesAndStreets.Street;
-import bfst.citiesAndStreets.StreetType;
+import bfst.routeFinding.*;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -19,10 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 public class MapCanvas extends Canvas {
     private GraphicsContext gc;
@@ -32,6 +26,7 @@ public class MapCanvas extends Canvas {
     private ScaleBar scaleBar;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
+    private Iterable<Edge> route;
 
     private Pin currentPin;
 
@@ -77,14 +72,14 @@ public class MapCanvas extends Canvas {
             }
 
             if (showStreets) {
-                for (Street street : model.getStreets()) {
-                    StreetType type = street.getType();
+                for (Edge edge : model.getGraph().edges()) {
+                    StreetType type = edge.getStreet().getType();
                     if (useDependentDraw) {
                         if (trans.getMxx() > type.getMinMxx()) {
-                            setValuesAndDrawStreet(pixelwidth, street, type);
+                            setValuesAndDrawStreet(pixelwidth, edge, type);
                         }
                     } else {
-                        setValuesAndDrawStreet(pixelwidth, street, type);
+                        setValuesAndDrawStreet(pixelwidth, edge, type);
                     }
                 }
             }
@@ -103,7 +98,16 @@ public class MapCanvas extends Canvas {
                     }
                 }
             }
+
+            if (route != null) {
+                gc.setStroke(Color.RED);
+                for (Edge edge : route) {
+                    edge.draw(gc, pixelwidth, smartTrace);
+
+                }
+            }
         }
+
 
         scaleBar.updateScaleBar(this);
         scaleBar.draw(gc, pixelwidth, false);
@@ -112,14 +116,61 @@ public class MapCanvas extends Canvas {
         System.out.println("repaint: " + time / 1000000f + "ms");
     }
 
-    private void setValuesAndDrawStreet(double pixelwidth, Street street, StreetType type) {
+    public void setRoute(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
+        Dijkstra dijkstra = new Dijkstra(model.getGraph(), startPoint, vehicle, shortestRoute);
+        route = dijkstra.pathTo(endPoint);
+        repaint();
+    }
+
+    //TODO har egentlig ikke noget med canvas at gøre, så skal nok flyttes
+    public Stack<String> getRouteDescription(Iterable<Edge> iterable) {
+
+        Stack<String> description = new Stack<>();
+        description.push("You have arrived at your destination");
+        Iterator iterator = iterable.iterator();
+
+        Edge first = (Edge) iterator.next();
+        String prevEdgeName = first.getStreet().getName();
+        double tempLength = first.getWeight();
+        Edge prevEdge = first;
+
+        while (iterator.hasNext()) {
+            Edge edge = (Edge) iterator.next();
+            //TODO hvis street ikke har noget navn, skal gøres noget andet
+            if (edge.getStreet().getName() == null || prevEdgeName.equals(edge.getStreet().getName())) {
+                tempLength += edge.getWeight();
+            } else {
+                tempLength = tempLength * 0.56; //TODO denne værdi er et groft estimat
+                description.push("Follow " + prevEdgeName + " for " + tempLength + " meters");
+
+                //TODO noget med "drej til højre" osv
+                double a = prevEdge.getWeight();
+                double b = edge.getWeight();
+                double c = Math.sqrt(Math.pow(prevEdge.getTailNode().getLon() - edge.getHeadNode().getLon(), 2) + Math.pow(prevEdge.getTailNode().getLat() - edge.getHeadNode().getLat(), 2));
+                double turnAngle = Math.acos((Math.pow(a, 2) + Math.pow(b, 2) - Math.pow(c, 2)) / 2*a*b);
+
+                prevEdgeName = edge.getStreet().getName();
+                tempLength = edge.getWeight() * 0.56;
+            }
+            prevEdge = edge;
+        }
+        description.push("Follow " + prevEdgeName + " for " + tempLength + " meters");
+        return description;
+    }
+
+    public void clearRoute() {
+        route = null;
+        repaint();
+    }
+
+    private void setValuesAndDrawStreet(double pixelwidth, Edge edge, StreetType type) {
         if (useRegularColors) {
             gc.setStroke(type.getColor());
         } else {
             gc.setStroke(type.getAlternateColor());
         }
         gc.setLineWidth(pixelwidth * type.getWidth());
-        street.draw(gc, pixelwidth, smartTrace);
+        edge.draw(gc, pixelwidth, smartTrace);
     }
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn) {
@@ -150,6 +201,10 @@ public class MapCanvas extends Canvas {
     public void setShowStreets(boolean showStreets) {
         this.showStreets = showStreets;
         repaint();
+    }
+
+    public Iterable<Edge> getRoute() {
+        return route;
     }
 
     public void resetView() {

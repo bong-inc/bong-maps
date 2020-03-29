@@ -9,7 +9,7 @@
  <node id="5" lat="5.0" lon="5.0">
   <tag k="addr:city" v="Valby"/>
   <tag k="addr:housenumber" v="5"/>
-  <tag k="addr:street" v="Valby Langgade"/>
+  <tag k="addr:edge" v="Valby Langgade"/>
   <tag k="addr:postcode" v="5135"/>
  </node>
  <way id="6">

@@ -44,6 +44,10 @@ public class SortedArrayList<T extends LongSupplier> implements Iterable<T>{
         return null;
     }
 
+    public void trim() {
+        list.trimToSize();
+    }
+
     @Override
     public Iterator<T> iterator() {
         return list.iterator();
