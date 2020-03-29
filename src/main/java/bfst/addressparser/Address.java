@@ -6,26 +6,44 @@ import java.io.Serializable;
 import java.util.regex.*;
 
 public class Address implements Serializable, Comparable<Address> {
-    public final String street, house, postcode, city, municipality, floor, side;
+    public final String street, house, postcode, city, municipality;
+    //public final int postcode;
     public final Node node;
 
     private Address(
             String _street,
             String _house,
-            String _floor,
-            String _side,
             String _postcode,
             String _city,
             String _municipality,
             Node _node
     ) {
-        street = _street;
-        house = _house;
-        floor = _floor;
-        side = _side;
-        postcode = _postcode;
-        city = _city;
-        municipality = _municipality;
+        if (_street != null) {
+            street = _street.intern();
+        } else {
+            street = _street;
+        }
+
+        if (_house != null) {
+            house = _house.intern();
+        } else {
+            house = _house;
+        }
+        if (_postcode != null) {
+            postcode = _postcode.intern();
+        } else {
+            postcode = _postcode;
+        }
+        if (_city !=  null) {
+            city = _city.intern();
+        } else {
+            city = _city;
+        }
+        if (_municipality != null) {
+            municipality = _municipality.intern();
+        } else {
+            municipality = _municipality;
+        }
         node = _node;
 
     }
@@ -146,7 +164,7 @@ public class Address implements Serializable, Comparable<Address> {
         }
 
         public Address build() {
-            return new Address(street, house, floor, side, postcode, city, municipality, node);
+            return new Address(street, house, postcode, city, municipality, node);
         }
     }
 }

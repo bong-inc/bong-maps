@@ -29,14 +29,16 @@ public class OSMReader {
     private ArrayList<String> tagList = new ArrayList<>();
     private Street currentStreet;
 
+    int counter = 0; //TODO bruges kun til videreudvikling, skal fjernes fra endelige produkt
+
     private ArrayList<Address> addresses = new ArrayList<>();
 
     private ArrayList<City> cities = new ArrayList<>();
-    //private ArrayList<Street> streets = new ArrayList<>();
 
     private Graph graph = new Graph();
     private Address.Builder builder;
     private City.Builder cityBuilder;
+    private boolean nodesOver = false;
 
     private String previousName;
 
@@ -72,6 +74,11 @@ public class OSMReader {
                     .createXMLStreamReader(inputStream);
 
             while (reader.hasNext()) {
+                counter++;
+                if (counter % 1000000 == 0) {
+                    System.out.println(counter);
+                }
+
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
@@ -84,6 +91,8 @@ public class OSMReader {
                             case "node":
                                 if(!builder.isEmpty()) {
                                     addresses.add(builder.build());
+                                } else {
+                                    tempNodes.add(nodeHolder);
                                 }
                                 break;
                             case "way":
@@ -115,7 +124,6 @@ public class OSMReader {
 
                                         for (int j = 1; j < nodes.size(); j++){
                                             Edge edge = new Edge(nodes.get(j - 1), nodes.get(j), currentStreet);
-                                            //streets.add(street);
                                             graph.addEdge(edge);
                                         }
                                         break;
@@ -194,9 +202,12 @@ public class OSMReader {
                 nodeHolder = MercatorProjector.project(currentID, tempLon, -tempLat);
                 builder.node(nodeHolder);
                 cityBuilder.node(nodeHolder);
-                tempNodes.add(nodeHolder);
                 break;
             case "way":
+                if(!nodesOver) {
+                    addresses.trimToSize();
+                    nodesOver = true;
+                }
                 tagList.clear();
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 wayHolder = new Way(currentID);

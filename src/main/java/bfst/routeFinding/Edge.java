@@ -49,6 +49,7 @@ public class Edge implements Drawable, Serializable {
         }
     }
 
+    //TODO optimer tegning
     @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
         new LinePath(tailNode, headNode).draw(gc, scale, smartTrace);
