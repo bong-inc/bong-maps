@@ -1,6 +1,9 @@
 package bfst.OSMReader;
 
+import bfst.routeFinding.Edge;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.function.LongSupplier;
 
 public class Node implements LongSupplier, Serializable {

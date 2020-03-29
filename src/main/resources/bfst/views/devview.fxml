@@ -18,5 +18,13 @@
     <CheckBox fx:id="colorToggle">Use regular colors</CheckBox>
     <CheckBox fx:id="citiesToggle">Show citites</CheckBox>
     <CheckBox fx:id="dependentDrawToggle">Use zoom-dependent draw</CheckBox>
+    <CheckBox fx:id="streetsToggle">Show streets</CheckBox>
+    <TextField fx:id="startPoint"/>
+    <TextField fx:id="endPoint"/>
+    <ComboBox fx:id="vehicle"/>
+    <Button fx:id="findRoute">Find route</Button>
+    <Button fx:id="clearRoute">Clear route</Button>
+    <CheckBox fx:id="shortestRoute">Shortest route (off means fastest)</CheckBox>
+    <Button fx:id="routeDescription">Print route description</Button>
   </FlowPane>
 </VBox>

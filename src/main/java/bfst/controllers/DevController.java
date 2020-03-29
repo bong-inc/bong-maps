@@ -4,14 +4,14 @@ import bfst.canvas.MapCanvas;
 import bfst.canvas.Type;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 public class DevController {
     Stage stage;
@@ -41,6 +41,22 @@ public class DevController {
     private CheckBox citiesToggle;
     @FXML
     private CheckBox dependentDrawToggle;
+    @FXML
+    private CheckBox streetsToggle;
+    @FXML
+    private TextField startPoint;
+    @FXML
+    private TextField endPoint;
+    @FXML
+    private Button findRoute;
+    @FXML
+    private ComboBox<String> vehicle;
+    @FXML
+    private Button clearRoute;
+    @FXML
+    private CheckBox shortestRoute;
+    @FXML
+    private Button routeDescription;
 
     @FXML
     public void initialize() {
@@ -97,6 +113,36 @@ public class DevController {
         dependentDrawToggle.setSelected(true);
         dependentDrawToggle.setOnAction(e -> {
             canvas.setUseDependentDraw(dependentDrawToggle.isSelected());
+        });
+
+        streetsToggle.setSelected(true);
+        streetsToggle.setOnAction(e -> {
+            canvas.setShowStreets(streetsToggle.isSelected());
+        });
+
+        vehicle.getItems().addAll("Walk", "Bicycle", "Car");
+        vehicle.getSelectionModel().selectLast();
+
+        findRoute.setOnAction(e -> {
+            canvas.setRoute(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+        });
+
+        clearRoute.setOnAction(e -> {
+            canvas.clearRoute();
+        });
+
+        shortestRoute.setSelected(true);
+
+        routeDescription.setOnAction(e -> {
+            Stack<String> stack = canvas.getRouteDescription(canvas.getRoute());
+
+            while (!stack.isEmpty()) {
+                System.out.println(stack.pop());
+            }
+            /*
+            for (String string : canvas.getRouteDescription(canvas.getRoute())) {
+                System.out.println(string);
+            }*/
         });
     }
 

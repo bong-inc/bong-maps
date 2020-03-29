@@ -8,17 +8,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class LinePath implements Drawable, Serializable {
-    float[] coords;
-    Type type;
-
-    public LinePath(ArrayList<Point> way, Type type) {
-        coords = new float[way.size() * 2];
-        for (int i = 0 ; i < way.size() ; ++i) {
-            coords[i*2] = way.get(i).x;
-            coords[i*2+1] = way.get(i).y;
-        }
-        this.type = type;
-    }
+    private float[] coords;
+    private Type type;
 
     public LinePath(Way way, Type type) {
         ArrayList<Node> nodes = way.getNodes();
@@ -29,6 +20,24 @@ public class LinePath implements Drawable, Serializable {
             coords[i*2+1] = nodes.get(i).getLat();
         }
         this.type = type;
+    }
+
+    public LinePath(Way way) {
+        ArrayList<Node> nodes = way.getNodes();
+        int nodesSize = nodes.size();
+        coords = new float[nodesSize * 2];
+        for (int i = 0 ; i < nodesSize ; ++i) {
+            coords[i*2] = nodes.get(i).getLon();
+            coords[i*2+1] = nodes.get(i).getLat();
+        }
+    }
+
+    public LinePath(Node tail, Node head) {
+        coords = new float[4];
+        coords[0] = tail.getLon();
+        coords[1] = tail.getLat();
+        coords[2] = head.getLon();
+        coords[3] = head.getLat();
     }
 
     @Override

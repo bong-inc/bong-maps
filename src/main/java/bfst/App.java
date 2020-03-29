@@ -19,7 +19,7 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
         App.primaryStage = primaryStage;
         Parent root = App.loadFXML("main");
-        primaryStage.setTitle("LLamp");
+        primaryStage.setTitle("LaMap");
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
         primaryStage.setScene(scene);
