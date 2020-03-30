@@ -83,7 +83,7 @@ public class Dijkstra {
         return distTo.containsKey(v);
     }
 
-    public Iterable<Edge> pathTo(long v) {
+    public Stack<Edge> pathTo(long v) {
         if (!hasPathTo(v)) {
             return null;
         }
