@@ -70,7 +70,7 @@ public class MapCanvas extends Canvas {
                     }
                 }
             }
-
+/*
             if (showStreets) {
                 for (Edge edge : model.getGraph().edges()) {
                     StreetType type = edge.getStreet().getType();
@@ -83,6 +83,8 @@ public class MapCanvas extends Canvas {
                     }
                 }
             }
+
+ */
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
 

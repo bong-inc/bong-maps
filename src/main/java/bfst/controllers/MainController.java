@@ -67,7 +67,7 @@ public class MainController {
     @FXML
     public void initialize() {
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> {
-            setDefaultMap();
+            //setDefaultMap();
         });
 
         loadClick.setOnAction(this::loadFileOnClick);
