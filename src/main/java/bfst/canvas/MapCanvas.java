@@ -26,15 +26,13 @@ public class MapCanvas extends Canvas {
     private ScaleBar scaleBar;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
-    private Iterable<Edge> route;
+    private Stack<Edge> route;
+    private LinePath drawableRoute;
 
     private Pin currentPin;
 
     private boolean showCities = true;
     private boolean useDependentDraw = true;
-
-    private boolean showStreets = true;
-
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
@@ -71,18 +69,11 @@ public class MapCanvas extends Canvas {
                 }
             }
 
-            if (showStreets) {
-                for (Edge edge : model.getGraph().edges()) {
-                    StreetType type = edge.getStreet().getType();
-                    if (useDependentDraw) {
-                        if (trans.getMxx() > type.getMinMxx()) {
-                            setValuesAndDrawStreet(pixelwidth, edge, type);
-                        }
-                    } else {
-                        setValuesAndDrawStreet(pixelwidth, edge, type);
-                    }
-                }
+            if (route != null) {
+                gc.setStroke(Color.RED);
+                drawableRoute.draw(gc, pixelwidth, smartTrace);
             }
+
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
 
@@ -98,16 +89,7 @@ public class MapCanvas extends Canvas {
                     }
                 }
             }
-
-            if (route != null) {
-                gc.setStroke(Color.RED);
-                for (Edge edge : route) {
-                    edge.draw(gc, pixelwidth, smartTrace);
-
-                }
-            }
         }
-
 
         scaleBar.updateScaleBar(this);
         scaleBar.draw(gc, pixelwidth, false);
@@ -119,6 +101,23 @@ public class MapCanvas extends Canvas {
     public void setRoute(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
         Dijkstra dijkstra = new Dijkstra(model.getGraph(), startPoint, vehicle, shortestRoute);
         route = dijkstra.pathTo(endPoint);
+
+        Stack<Edge> routeCopy = route;
+        float[] floats = new float[routeCopy.size() * 2 + 2];
+
+        Edge firstEdge = routeCopy.pop();
+        floats[0] = firstEdge.getTailNode().getLon();
+        floats[1] = firstEdge.getTailNode().getLat();
+        floats[2] = firstEdge.getHeadNode().getLon();
+        floats[3] = firstEdge.getHeadNode().getLat();
+
+        for (int i = 4; i < floats.length; i += 2) {
+            Node currentNode = routeCopy.pop().getHeadNode();
+            floats[i] = currentNode.getLon();
+            floats[i + 1] = currentNode.getLat();
+        }
+        drawableRoute = new LinePath(floats);
+
         repaint();
     }
 
@@ -160,17 +159,8 @@ public class MapCanvas extends Canvas {
 
     public void clearRoute() {
         route = null;
+        drawableRoute = null;
         repaint();
-    }
-
-    private void setValuesAndDrawStreet(double pixelwidth, Edge edge, StreetType type) {
-        if (useRegularColors) {
-            gc.setStroke(type.getColor());
-        } else {
-            gc.setStroke(type.getAlternateColor());
-        }
-        gc.setLineWidth(pixelwidth * type.getWidth());
-        edge.draw(gc, pixelwidth, smartTrace);
     }
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn) {
@@ -195,11 +185,6 @@ public class MapCanvas extends Canvas {
 
     public void setUseDependentDraw(boolean shouldUseDependentDraw) {
         useDependentDraw = shouldUseDependentDraw;
-        repaint();
-    }
-
-    public void setShowStreets(boolean showStreets) {
-        this.showStreets = showStreets;
         repaint();
     }
 

@@ -25,7 +25,6 @@ public class ScaleBar implements Drawable {
         Node kilometerPointPos = MercatorProjector.project(placementModel.getLon(), placementModel.getLat() - kilometerLength);
         double kilometerInPixels = placement.getY() - kilometerPointPos.getLat();
         double scale = canvas.getGraphicsContext2D().getTransform().getMxx() / 0.00000500123;
-        System.out.println("scale: " + scale);
         if (scale < 750) {
             barLength = kilometerInPixels * 20;
             barShowing = "20km";
@@ -54,7 +53,6 @@ public class ScaleBar implements Drawable {
             barLength = kilometerInPixels/20;
             barShowing = "50m";
         }
-        System.out.println("barlength: " + barLength);
     }
 
 

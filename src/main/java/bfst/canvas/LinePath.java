@@ -22,6 +22,10 @@ public class LinePath implements Drawable, Serializable {
         this.type = type;
     }
 
+    public LinePath(float[] coords) {
+        this.coords = coords;
+    }
+
     public LinePath(Way way) {
         ArrayList<Node> nodes = way.getNodes();
         int nodesSize = nodes.size();
