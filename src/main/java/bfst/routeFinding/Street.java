@@ -12,10 +12,8 @@ public class Street implements Serializable {
     private boolean onewayBicycle = false;
     private int maxspeed = 0;
     private String name;
-    private StreetType type;
 
-    public Street(ArrayList<String> tags,StreetType type) {
-        this.type = type;
+    public Street(ArrayList<String> tags, int defaultSpeed) {
 
         for (int i = 0; i < tags.size(); i += 2) {
             String value = tags.get(i + 1);
@@ -91,17 +89,7 @@ public class Street implements Serializable {
         }
 
         if (maxspeed == 0) {
-            switch (type) {
-                case MOTORWAY:
-                    maxspeed = 130;
-                    break;
-                case OTHER:
-                    maxspeed = 50;
-                    break;
-                default:
-                    maxspeed = 80;
-                    break;
-            }
+            maxspeed = defaultSpeed;
         }
         tags.clear();
     }
@@ -131,9 +119,5 @@ public class Street implements Serializable {
 
     public String getName() {
         return name;
-    }
-
-    public StreetType getType() {
-        return type;
     }
 }

@@ -165,6 +165,7 @@ public class MapCanvas extends Canvas {
         repaint();
     }
 
+    /*
     private void setValuesAndDrawStreet(double pixelwidth, Edge edge, StreetType type) {
         if (useRegularColors) {
             gc.setStroke(type.getColor());
@@ -174,7 +175,7 @@ public class MapCanvas extends Canvas {
         gc.setLineWidth(pixelwidth * type.getWidth());
         edge.draw(gc, pixelwidth, smartTrace);
     }
-
+*/
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn) {
         this.typesToBeDrawn = typesToBeDrawn;
         repaint();

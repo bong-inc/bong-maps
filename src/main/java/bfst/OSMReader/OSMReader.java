@@ -100,27 +100,23 @@ public class OSMReader {
                                 for (int i = 0; i < tagList.size(); i += 2) {
                                     if (tagList.get(i).equals("highway")) {
 
-                                        StreetType type;
+                                        int defaultSpeed;
                                         switch(tagList.get(i + 1)) {
                                             case "motorway":
-                                                type = StreetType.MOTORWAY;
+                                                defaultSpeed = 130;
                                                 break;
                                             case "primary":
-                                                type = StreetType.PRIMARY;
-                                                break;
                                             case "secondary":
-                                                type = StreetType.SECONDARY;
-                                                break;
                                             case "tertiary":
-                                                type = StreetType.TERTIARY;
+                                                defaultSpeed = 80;
                                                 break;
                                             default:
-                                                type = StreetType.OTHER;
+                                                defaultSpeed = 50;
                                                 break;
                                         }
 
                                         ArrayList<Node> nodes = wayHolder.getNodes();
-                                        currentStreet = new Street(tagList, type);
+                                        currentStreet = new Street(tagList, defaultSpeed);
 
                                         for (int j = 1; j < nodes.size(); j++){
                                             Edge edge = new Edge(nodes.get(j - 1), nodes.get(j), currentStreet);
