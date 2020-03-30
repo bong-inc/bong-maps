@@ -42,8 +42,6 @@ public class DevController {
     @FXML
     private CheckBox dependentDrawToggle;
     @FXML
-    private CheckBox streetsToggle;
-    @FXML
     private TextField startPoint;
     @FXML
     private TextField endPoint;
@@ -113,11 +111,6 @@ public class DevController {
         dependentDrawToggle.setSelected(true);
         dependentDrawToggle.setOnAction(e -> {
             canvas.setUseDependentDraw(dependentDrawToggle.isSelected());
-        });
-
-        streetsToggle.setSelected(true);
-        streetsToggle.setOnAction(e -> {
-            canvas.setShowStreets(streetsToggle.isSelected());
         });
 
         vehicle.getItems().addAll("Walk", "Bicycle", "Car");

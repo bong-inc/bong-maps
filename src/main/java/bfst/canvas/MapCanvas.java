@@ -34,9 +34,6 @@ public class MapCanvas extends Canvas {
     private boolean showCities = true;
     private boolean useDependentDraw = true;
 
-    private boolean showStreets = true;
-
-
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
     public MapCanvas() {
@@ -71,21 +68,12 @@ public class MapCanvas extends Canvas {
                     }
                 }
             }
-/*
-            if (showStreets) {
-                for (Edge edge : model.getGraph().edges()) {
-                    StreetType type = edge.getStreet().getType();
-                    if (useDependentDraw) {
-                        if (trans.getMxx() > type.getMinMxx()) {
-                            setValuesAndDrawStreet(pixelwidth, edge, type);
-                        }
-                    } else {
-                        setValuesAndDrawStreet(pixelwidth, edge, type);
-                    }
-                }
+
+            if (route != null) {
+                gc.setStroke(Color.RED);
+                drawableRoute.draw(gc, pixelwidth, smartTrace);
             }
 
- */
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
 
@@ -101,13 +89,7 @@ public class MapCanvas extends Canvas {
                     }
                 }
             }
-
-            if (route != null) {
-                gc.setStroke(Color.RED);
-                drawableRoute.draw(gc, pixelwidth, smartTrace);
-            }
         }
-
 
         scaleBar.updateScaleBar(this);
         scaleBar.draw(gc, pixelwidth, false);
@@ -181,17 +163,6 @@ public class MapCanvas extends Canvas {
         repaint();
     }
 
-    /*
-    private void setValuesAndDrawStreet(double pixelwidth, Edge edge, StreetType type) {
-        if (useRegularColors) {
-            gc.setStroke(type.getColor());
-        } else {
-            gc.setStroke(type.getAlternateColor());
-        }
-        gc.setLineWidth(pixelwidth * type.getWidth());
-        edge.draw(gc, pixelwidth, smartTrace);
-    }
-*/
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn) {
         this.typesToBeDrawn = typesToBeDrawn;
         repaint();
@@ -214,11 +185,6 @@ public class MapCanvas extends Canvas {
 
     public void setUseDependentDraw(boolean shouldUseDependentDraw) {
         useDependentDraw = shouldUseDependentDraw;
-        repaint();
-    }
-
-    public void setShowStreets(boolean showStreets) {
-        this.showStreets = showStreets;
         repaint();
     }
 
