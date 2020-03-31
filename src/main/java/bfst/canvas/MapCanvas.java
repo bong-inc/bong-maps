@@ -99,11 +99,14 @@ public class MapCanvas extends Canvas {
         System.out.println("repaint: " + time / 1000000f + "ms");
     }
 
-    public void setDijkstra(long startPoint, String vehicle, boolean shortestRoute) {
+    public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
         long time = -System.nanoTime();
-        dijkstra = new Dijkstra(model.getGraph(), startPoint, vehicle, shortestRoute);
+        dijkstra = new Dijkstra(model.getGraph(), startPoint, endPoint, vehicle, shortestRoute);
         time += System.nanoTime();
         System.out.println("Set dijkstra: " + time / 1000000f + "ms");
+        for (Map.Entry<Long, Edge> entry : dijkstra.getEdgeTo().entrySet()) {
+            new LinePath(entry.getValue().getTailNode(), entry.getValue().getHeadNode()).draw(gc, 1, false);
+        }
     }
 
     public void setRoute(long endPoint) {

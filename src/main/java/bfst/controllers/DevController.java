@@ -119,7 +119,7 @@ public class DevController {
         vehicle.getSelectionModel().selectLast();
 
         generateDijkstra.setOnAction(e -> {
-            canvas.setDijkstra(Long.parseLong(startPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+            canvas.setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
         });
 
         findRoute.setOnAction(e -> {
