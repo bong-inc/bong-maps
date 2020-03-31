@@ -44,6 +44,8 @@ public class DevController {
     @FXML
     private TextField startPoint;
     @FXML
+    private Button generateDijkstra;
+    @FXML
     private TextField endPoint;
     @FXML
     private Button findRoute;
@@ -116,8 +118,12 @@ public class DevController {
         vehicle.getItems().addAll("Walk", "Bicycle", "Car");
         vehicle.getSelectionModel().selectLast();
 
+        generateDijkstra.setOnAction(e -> {
+            canvas.setDijkstra(Long.parseLong(startPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+        });
+
         findRoute.setOnAction(e -> {
-            canvas.setRoute(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+            canvas.setRoute(Long.parseLong(endPoint.getText()));
         });
 
         clearRoute.setOnAction(e -> {
@@ -127,10 +133,8 @@ public class DevController {
         shortestRoute.setSelected(true);
 
         routeDescription.setOnAction(e -> {
-            Stack<String> stack = canvas.getRouteDescription(canvas.getRoute());
-
-            while (!stack.isEmpty()) {
-                System.out.println(stack.pop());
+            for (String string : canvas.getRouteDescription(canvas.getRoute())) {
+                System.out.println(string);
             }
             /*
             for (String string : canvas.getRouteDescription(canvas.getRoute())) {

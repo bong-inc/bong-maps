@@ -19,6 +19,7 @@
     <CheckBox fx:id="citiesToggle">Show citites</CheckBox>
     <CheckBox fx:id="dependentDrawToggle">Use zoom-dependent draw</CheckBox>
     <TextField fx:id="startPoint"/>
+    <Button fx:id="generateDijkstra">Generate Dijkstra</Button>
     <TextField fx:id="endPoint"/>
     <ComboBox fx:id="vehicle"/>
     <Button fx:id="findRoute">Find route</Button>

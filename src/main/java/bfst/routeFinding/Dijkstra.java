@@ -2,6 +2,7 @@ package bfst.routeFinding;
 
 import bfst.OSMReader.Node;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -83,7 +84,7 @@ public class Dijkstra {
         return distTo.containsKey(v);
     }
 
-    public Stack<Edge> pathTo(long v) {
+    public ArrayList<Edge> pathTo(long v) {
         if (!hasPathTo(v)) {
             return null;
         }
@@ -97,7 +98,14 @@ public class Dijkstra {
 
             x = edge.other(x);
         }
-        return path;
+
+        ArrayList<Edge> list = new ArrayList();
+
+        while(!path.isEmpty()) {
+            list.add(path.pop());
+        }
+
+        return list;
     }
 
 }
