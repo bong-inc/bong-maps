@@ -1,7 +1,5 @@
 package bfst.routeFinding;
 
-import bfst.OSMReader.Node;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
@@ -10,14 +8,12 @@ public class Dijkstra {
 
     private HashMap<Long, Double> distTo;
     private HashMap<Long, Edge> edgeTo;
-    private String vehicle;
     private IndexMinPQ pq;
-    private long endPoint = 0;
+
 
     public Dijkstra(Graph G, long s, String vehicle, boolean shortestRoute) {
         distTo = new HashMap<>();
         edgeTo = new HashMap<>();
-        this.vehicle = vehicle;
 
         distTo.put(s, 0.0);
 
@@ -88,7 +84,6 @@ public class Dijkstra {
         if (!hasPathTo(v)) {
             return null;
         }
-        endPoint = v;
         Stack<Edge> path = new Stack<>();
         long x = v;
         for (Edge edge = edgeTo.get(v); edge != null; edge = edgeTo.get(x)) {

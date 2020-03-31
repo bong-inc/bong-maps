@@ -19,12 +19,12 @@
     <CheckBox fx:id="citiesToggle">Show citites</CheckBox>
     <CheckBox fx:id="dependentDrawToggle">Use zoom-dependent draw</CheckBox>
     <TextField fx:id="startPoint"/>
+    <ComboBox fx:id="vehicle"/>
+    <CheckBox fx:id="shortestRoute">Shortest route (off means fastest)</CheckBox>
     <Button fx:id="generateDijkstra">Generate Dijkstra</Button>
     <TextField fx:id="endPoint"/>
-    <ComboBox fx:id="vehicle"/>
     <Button fx:id="findRoute">Find route</Button>
     <Button fx:id="clearRoute">Clear route</Button>
-    <CheckBox fx:id="shortestRoute">Shortest route (off means fastest)</CheckBox>
     <Button fx:id="routeDescription">Print route description</Button>
   </FlowPane>
 </VBox>
