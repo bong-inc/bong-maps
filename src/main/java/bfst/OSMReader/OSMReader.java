@@ -78,7 +78,7 @@ public class OSMReader {
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
-                        String element = reader.getLocalName();
+                        String element = reader.getLocalName().intern();
                         parseElement(reader, element);
                         break;
                     case END_ELEMENT:
@@ -223,8 +223,8 @@ public class OSMReader {
                 tempRelations.add(relationHolder);
                 break;
             case "tag":
-                String k = reader.getAttributeValue(null, "k");
-                String v = reader.getAttributeValue(null, "v");
+                String k = reader.getAttributeValue(null, "k").intern();
+                String v = reader.getAttributeValue(null, "v").intern();
 
                 tagList.add(k);
                 tagList.add(v);
