@@ -66,7 +66,7 @@ public class Street implements Serializable {
                     bicycle = true;
                     break;
                 case "name":
-                    name = value;
+                    name = value.intern();
                     break;
                 case "oneway":
                     onewayCar = true;

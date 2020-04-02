@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 
 public class DevController {
     Stage stage;
@@ -43,6 +42,8 @@ public class DevController {
     private CheckBox dependentDrawToggle;
     @FXML
     private TextField startPoint;
+    @FXML
+    private Button showDijkstra;
     @FXML
     private TextField endPoint;
     @FXML
@@ -116,8 +117,13 @@ public class DevController {
         vehicle.getItems().addAll("Walk", "Bicycle", "Car");
         vehicle.getSelectionModel().selectLast();
 
+        showDijkstra.setOnAction(e -> {
+            canvas.showDijkstraTree();
+        });
+
         findRoute.setOnAction(e -> {
-            canvas.setRoute(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+            canvas.setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+            canvas.setRoute();
         });
 
         clearRoute.setOnAction(e -> {
@@ -127,10 +133,8 @@ public class DevController {
         shortestRoute.setSelected(true);
 
         routeDescription.setOnAction(e -> {
-            Stack<String> stack = canvas.getRouteDescription(canvas.getRoute());
-
-            while (!stack.isEmpty()) {
-                System.out.println(stack.pop());
+            for (String string : canvas.getRouteDescription(canvas.getRoute())) {
+                System.out.println(string);
             }
             /*
             for (String string : canvas.getRouteDescription(canvas.getRoute())) {

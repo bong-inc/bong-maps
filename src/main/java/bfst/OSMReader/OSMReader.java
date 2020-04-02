@@ -98,6 +98,12 @@ public class OSMReader {
                             case "way":
 
                                 for (int i = 0; i < tagList.size(); i += 2) {
+
+                                    if (tagList.get(i).equals("access")) {
+                                        if (tagList.get(i + 1).equals("no")) {
+                                            break;
+                                        }
+                                    }
                                     if (tagList.get(i).equals("highway")) {
 
                                         int defaultSpeed;

@@ -26,8 +26,10 @@ public class MapCanvas extends Canvas {
     private ScaleBar scaleBar;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
-    private Stack<Edge> route;
+    private ArrayList<Edge> route;
+    private Dijkstra dijkstra;
     private LinePath drawableRoute;
+    private LinePath drawableRoute2;
 
     private Pin currentPin;
 
@@ -98,21 +100,38 @@ public class MapCanvas extends Canvas {
         System.out.println("repaint: " + time / 1000000f + "ms");
     }
 
-    public void setRoute(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
-        Dijkstra dijkstra = new Dijkstra(model.getGraph(), startPoint, vehicle, shortestRoute);
-        route = dijkstra.pathTo(endPoint);
+    public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
+        long time = -System.nanoTime();
+        dijkstra = new Dijkstra(model.getGraph(), startPoint, endPoint, vehicle, shortestRoute);
+        time += System.nanoTime();
+        System.out.println("Set dijkstra: " + time / 1000000f + "ms");
+    }
 
-        Stack<Edge> routeCopy = route;
-        float[] floats = new float[routeCopy.size() * 2 + 2];
+    public void showDijkstraTree() {
+        if (dijkstra != null) {
+            for (Map.Entry<Long, Edge> entry : dijkstra.getAllEdgeTo().entrySet()) {
+                new LinePath(entry.getValue().getTailNode(), entry.getValue().getHeadNode()).draw(gc, 1, false);
+            }
+        }
+    }
 
-        Edge firstEdge = routeCopy.pop();
+    public void setRoute() {
+        route = dijkstra.pathTo(dijkstra.getLastNode(), 1);
+
+        ArrayList<Edge> secondPart = dijkstra.pathTo(dijkstra.getLastNode(), 2);
+        Collections.reverse(secondPart);
+        route.addAll(secondPart);
+
+        float[] floats = new float[route.size() * 2 + 2];
+
+        Edge firstEdge = route.get(0);
         floats[0] = firstEdge.getTailNode().getLon();
         floats[1] = firstEdge.getTailNode().getLat();
         floats[2] = firstEdge.getHeadNode().getLon();
         floats[3] = firstEdge.getHeadNode().getLat();
 
         for (int i = 4; i < floats.length; i += 2) {
-            Node currentNode = routeCopy.pop().getHeadNode();
+            Node currentNode = route.get((i - 2) / 2).getHeadNode();
             floats[i] = currentNode.getLon();
             floats[i + 1] = currentNode.getLat();
         }
@@ -122,10 +141,9 @@ public class MapCanvas extends Canvas {
     }
 
     //TODO har egentlig ikke noget med canvas at gøre, så skal nok flyttes
-    public Stack<String> getRouteDescription(Iterable<Edge> iterable) {
+    public ArrayList<String> getRouteDescription(Iterable<Edge> iterable) {
 
-        Stack<String> description = new Stack<>();
-        description.push("You have arrived at your destination");
+        ArrayList<String> description = new ArrayList<>();
         Iterator iterator = iterable.iterator();
 
         Edge first = (Edge) iterator.next();
@@ -139,26 +157,34 @@ public class MapCanvas extends Canvas {
             if (edge.getStreet().getName() == null || prevEdgeName.equals(edge.getStreet().getName())) {
                 tempLength += edge.getWeight();
             } else {
-                tempLength = tempLength * 0.56; //TODO denne værdi er et groft estimat
-                description.push("Follow " + prevEdgeName + " for " + tempLength + " meters");
+                Node prevHead = prevEdge.getHeadNode();
+                Node prevTail = prevEdge.getTailNode();
+                Node currHead = edge.getHeadNode();
+                //TODO noget med når man drejer
+                double directionPrev = Math.atan((prevHead.getLat() - prevTail.getLat()) / (prevHead.getLon() - prevTail.getLon()));
+                double directionCurr = Math.atan((currHead.getLat() - prevHead.getLat()) / (currHead.getLon() - prevHead.getLon()));
 
-                //TODO noget med "drej til højre" osv
-                double a = prevEdge.getWeight();
-                double b = edge.getWeight();
-                double c = Math.sqrt(Math.pow(prevEdge.getTailNode().getLon() - edge.getHeadNode().getLon(), 2) + Math.pow(prevEdge.getTailNode().getLat() - edge.getHeadNode().getLat(), 2));
-                double turnAngle = Math.acos((Math.pow(a, 2) + Math.pow(b, 2) - Math.pow(c, 2)) / 2*a*b);
+
+
+
+
+                tempLength = tempLength * 0.56; //TODO denne værdi er et groft estimat
+                description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+
 
                 prevEdgeName = edge.getStreet().getName();
                 tempLength = edge.getWeight() * 0.56;
             }
             prevEdge = edge;
         }
-        description.push("Follow " + prevEdgeName + " for " + tempLength + " meters");
+        description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+        description.add("You have arrived at your destination");
         return description;
     }
 
     public void clearRoute() {
         route = null;
+        dijkstra = null;
         drawableRoute = null;
         repaint();
     }
