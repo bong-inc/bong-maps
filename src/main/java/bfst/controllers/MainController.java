@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class MainController {
     Stage stage;
@@ -279,6 +281,10 @@ public class MainController {
                 time += System.nanoTime();
                 System.out.println("load osm: " + time/1000000f + "ms");
                 break;
+            case ".bz2":
+            case ".zip":
+                unzip(file);
+                break;
             default:
                 is.close();
                 throw new FileTypeNotSupportedException(fileExtension);
@@ -302,5 +308,26 @@ public class MainController {
         ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
         oos.writeObject(model);
         oos.close();
+    }
+
+    private void unzip(File file) throws IOException {
+        byte[] buffer = new byte[1024];
+        ZipInputStream zis = new ZipInputStream(new FileInputStream(file.getAbsolutePath()));
+        ZipEntry zipEntry = zis.getNextEntry();
+        File destDir = new File("src/main/resources/bfst/unzippedFiles");
+
+        while (zipEntry != null) {
+            File newFile = new File(destDir, zipEntry.getName());
+            FileOutputStream fos = new FileOutputStream(newFile);
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+                fos.write(buffer, 0, len);
+            }
+            fos.close();
+            zipEntry = zis.getNextEntry();
+        }
+        zis.closeEntry();
+        zis.close();
+
     }
 }
