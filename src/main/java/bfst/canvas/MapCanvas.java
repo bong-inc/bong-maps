@@ -29,7 +29,6 @@ public class MapCanvas extends Canvas {
     private ArrayList<Edge> route;
     private Dijkstra dijkstra;
     private LinePath drawableRoute;
-    private LinePath drawableRoute2;
 
     private Pin currentPin;
 
