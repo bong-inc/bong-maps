@@ -13,8 +13,12 @@ public class Dijkstra {
     private IndexMinPQ pq;
     private IndexMinPQ pq2;
     private int currDijkstra = 1;
-    Edge lastEdge;
 
+    public long getLastNode() {
+        return lastNode;
+    }
+
+    private long lastNode = 1;
 
     public Dijkstra(Graph G, long s, long t, String vehicle, boolean shortestRoute) {
         distTo = new HashMap<>();
@@ -31,23 +35,23 @@ public class Dijkstra {
 
         pq2 = new IndexMinPQ();
         pq2.insert(t, distTo2.get(t));
-        long lastNode = 1;
 
         while (!pq.isEmpty()) {
 
-             if (currDijkstra == 1) {
-                 if (distTo2.containsKey(lastNode)) {
-                     break;
-                 }
-                 currDijkstra = 2;
-             } else {
-                 if (distTo.containsKey(lastNode)) {
-                     break;
-                 }
-                 currDijkstra = 1;
-             }
+            if (currDijkstra == 1) {
+                if (distTo2.containsKey(lastNode)) {
+                    break;
+                }
+                currDijkstra = 2;
+            } else {
+                if (distTo.containsKey(lastNode)) {
+                    break;
+                }
+                currDijkstra = 1;
+            }
             lastNode = determineRelax(currDijkstra, G, vehicle, shortestRoute);
         }
+
     }
 
     private long determineRelax(int currDijkstra, Graph G, String vehicle, boolean shortestRoute) {
@@ -59,8 +63,6 @@ public class Dijkstra {
             v = pq2.delMin();
         }
 
-
-
         for (Edge edge : G.getAdj().get(v)) {
             switch (vehicle) {
                 case "Car":
@@ -71,9 +73,9 @@ public class Dijkstra {
                             }
                         }
                         if (currDijkstra == 1) {
-                            relax(edge, v, shortestRoute);
+                            relax(edge, v, shortestRoute, distTo, edgeTo, pq);
                         } else {
-                            relax2(edge, v, shortestRoute);
+                            relax(edge, v, shortestRoute, distTo2, edgeTo2, pq2);
                         }
                     }
                     break;
@@ -81,9 +83,9 @@ public class Dijkstra {
                     if (edge.getStreet().isWalking()) {
 
                         if (currDijkstra == 1) {
-                            relax(edge, v, true);
+                            relax(edge, v, true, distTo, edgeTo, pq);
                         } else {
-                            relax2(edge, v, true);
+                            relax(edge, v, true, distTo2, edgeTo2, pq2);
                         }
                     }
                     break;
@@ -95,34 +97,32 @@ public class Dijkstra {
                             }
                         }
                         if (currDijkstra == 1) {
-                            relax(edge, v, true);
+                            relax(edge, v, true, distTo, edgeTo, pq);
                         } else {
-                            relax2(edge, v, true);
+                            relax(edge, v, true, distTo2, edgeTo2, pq2);
                         }
                     }
                     break;
             }
         }
 
-
         if (currDijkstra == 1) {
             if (distTo2.containsKey(v)) {
-                distTo.putAll(distTo2);
-                edgeTo.putAll(edgeTo2);
+                //distTo.putAll(distTo2);
+                //edgeTo.putAll(edgeTo2);
                 return v;
             }
-        } else{
+        } else {
             if (distTo.containsKey(v)) {
-                distTo.putAll(distTo2);
-                edgeTo.putAll(edgeTo2);
+                //distTo.putAll(distTo2);
+                //edgeTo.putAll(edgeTo2);
                 return v;
             }
         }
-
         return 1;
     }
 
-    private void relax(Edge edge, long v, boolean shortestRoute) {
+    private void relax(Edge edge, long v, boolean shortestRoute, HashMap<Long, Double> distTo, HashMap<Long, Edge> edgeTo, IndexMinPQ pq) {
         long w = edge.other(v);
         if (!distTo.containsKey(w)) {
             distTo.put(w, Double.POSITIVE_INFINITY);
@@ -146,32 +146,12 @@ public class Dijkstra {
         }
     }
 
-    private void relax2(Edge edge, long v, boolean shortestRoute) {
-        long w = edge.other(v);
-        if (!distTo2.containsKey(w)) {
-            distTo2.put(w, Double.POSITIVE_INFINITY);
-        }
-
-        double weight;
-        if (shortestRoute) {
-            weight = edge.getWeight();
-        } else {
-            weight = edge.getWeight() / edge.getStreet().getMaxspeed();
-        }
-
-        if(distTo2.get(w) > distTo2.get(v) + edge.getWeight()) {
-            distTo2.put(w, distTo2.get(v) + weight);
-            edgeTo2.put(w, edge);
-            if (pq2.contains(w)) {
-                pq2.decreaseKey(w, distTo2.get(w));
-            } else {
-                pq2.insert(w, distTo2.get(w));
-            }
-        }
-    }
-
     public boolean hasPathTo(long v) {
         return distTo.containsKey(v);
+    }
+
+    public boolean hasPathTo2(long v) {
+        return distTo2.containsKey(v);
     }
 
     public HashMap<Long, Edge> getEdgeTo() {
@@ -192,7 +172,30 @@ public class Dijkstra {
             x = edge.other(x);
         }
 
-        ArrayList<Edge> list = new ArrayList();
+        ArrayList<Edge> list = new ArrayList<>();
+
+        while(!path.isEmpty()) {
+            list.add(path.pop());
+        }
+
+        return list;
+    }
+
+    public ArrayList<Edge> pathTo2(long v) {
+        if (!hasPathTo(v)) {
+            return null;
+        }
+        Stack<Edge> path = new Stack<>();
+        long x = v;
+        for (Edge edge = edgeTo2.get(v); edge != null; edge = edgeTo2.get(x)) {
+
+            path.push(edge);
+
+
+            x = edge.other(x);
+        }
+
+        ArrayList<Edge> list = new ArrayList<>();
 
         while(!path.isEmpty()) {
             list.add(path.pop());

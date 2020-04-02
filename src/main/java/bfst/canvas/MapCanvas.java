@@ -29,6 +29,7 @@ public class MapCanvas extends Canvas {
     private ArrayList<Edge> route;
     private Dijkstra dijkstra;
     private LinePath drawableRoute;
+    private LinePath drawableRoute2;
 
     private Pin currentPin;
 
@@ -70,9 +71,14 @@ public class MapCanvas extends Canvas {
                 }
             }
 
-            if (route != null) {
+           /* if (route != null) {
                 gc.setStroke(Color.RED);
                 drawableRoute.draw(gc, pixelwidth, smartTrace);
+            }*/
+
+            if (route != null) {
+                gc.setStroke(Color.RED);
+                drawableRoute2.draw(gc, pixelwidth, smartTrace);
             }
 
             gc.setStroke(Color.BLACK);
@@ -110,8 +116,9 @@ public class MapCanvas extends Canvas {
     }
 
     public void setRoute(long endPoint) {
-        route = dijkstra.pathTo(endPoint);
+        route = dijkstra.pathTo(dijkstra.getLastNode());
 
+/*
         float[] floats = new float[route.size() * 2 + 2];
 
         Edge firstEdge = route.get(0);
@@ -126,6 +133,26 @@ public class MapCanvas extends Canvas {
             floats[i + 1] = currentNode.getLat();
         }
         drawableRoute = new LinePath(floats);
+*/
+
+        ArrayList<Edge> secondPart = dijkstra.pathTo2(dijkstra.getLastNode());
+        Collections.reverse(secondPart);
+        route.addAll(secondPart);
+
+        float[] floats = new float[route.size() * 2 + 2];
+
+        Edge firstEdge = route.get(0);
+        floats[0] = firstEdge.getTailNode().getLon();
+        floats[1] = firstEdge.getTailNode().getLat();
+        floats[2] = firstEdge.getHeadNode().getLon();
+        floats[3] = firstEdge.getHeadNode().getLat();
+
+        for (int i = 4; i < floats.length; i += 2) {
+            Node currentNode = route.get((i - 2) / 2).getHeadNode();
+            floats[i] = currentNode.getLon();
+            floats[i + 1] = currentNode.getLat();
+        }
+        drawableRoute2 = new LinePath(floats);
 
         repaint();
     }
