@@ -105,8 +105,13 @@ public class MapCanvas extends Canvas {
         dijkstra = new Dijkstra(model.getGraph(), startPoint, endPoint, vehicle, shortestRoute);
         time += System.nanoTime();
         System.out.println("Set dijkstra: " + time / 1000000f + "ms");
-        for (Map.Entry<Long, Edge> entry : dijkstra.getEdgeTo().entrySet()) {
-            new LinePath(entry.getValue().getTailNode(), entry.getValue().getHeadNode()).draw(gc, 1, false);
+    }
+
+    public void showDijkstraTree() {
+        if (dijkstra != null) {
+            for (Map.Entry<Long, Edge> entry : dijkstra.getAllEdgeTo().entrySet()) {
+                new LinePath(entry.getValue().getTailNode(), entry.getValue().getHeadNode()).draw(gc, 1, false);
+            }
         }
     }
 
@@ -179,6 +184,7 @@ public class MapCanvas extends Canvas {
 
     public void clearRoute() {
         route = null;
+        dijkstra = null;
         drawableRoute = null;
         repaint();
     }

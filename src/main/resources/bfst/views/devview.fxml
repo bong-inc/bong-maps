@@ -21,7 +21,7 @@
     <TextField fx:id="startPoint"/>
     <ComboBox fx:id="vehicle"/>
     <CheckBox fx:id="shortestRoute">Shortest route (off means fastest)</CheckBox>
-    <Button fx:id="generateDijkstra">Generate Dijkstra</Button>
+    <Button fx:id="showDijkstra">Show dijkstra</Button>
     <TextField fx:id="endPoint"/>
     <Button fx:id="findRoute">Find route</Button>
     <Button fx:id="clearRoute">Clear route</Button>

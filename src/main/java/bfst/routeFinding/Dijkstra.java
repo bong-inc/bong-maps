@@ -154,9 +154,14 @@ public class Dijkstra {
         }
     }
 
-    public HashMap<Long, Edge> getEdgeTo() {
-        return edgeTo;
+    public HashMap<Long, Edge> getAllEdgeTo() {
+        HashMap<Long, Edge> allEdgeTo = new HashMap<>();
+        allEdgeTo.putAll(edgeTo);
+        allEdgeTo.putAll(edgeTo2);
+        return allEdgeTo;
     }
+
+
 
     public ArrayList<Edge> pathTo(long v, int currDijkstra) {
         if (!hasPathTo(v, currDijkstra)) {

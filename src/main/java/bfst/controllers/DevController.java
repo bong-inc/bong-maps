@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 
 public class DevController {
     Stage stage;
@@ -44,7 +43,7 @@ public class DevController {
     @FXML
     private TextField startPoint;
     @FXML
-    private Button generateDijkstra;
+    private Button showDijkstra;
     @FXML
     private TextField endPoint;
     @FXML
@@ -118,11 +117,12 @@ public class DevController {
         vehicle.getItems().addAll("Walk", "Bicycle", "Car");
         vehicle.getSelectionModel().selectLast();
 
-        generateDijkstra.setOnAction(e -> {
-            canvas.setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+        showDijkstra.setOnAction(e -> {
+            canvas.showDijkstraTree();
         });
 
         findRoute.setOnAction(e -> {
+            canvas.setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
             canvas.setRoute();
         });
 
