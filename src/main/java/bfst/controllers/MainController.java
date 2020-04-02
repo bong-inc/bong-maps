@@ -284,9 +284,6 @@ public class MainController {
             case ".zip":
                 loadZip(file);
                 break;
-            case ".bz2":
-
-                break;
             default:
                 throw new FileTypeNotSupportedException(fileExtension);
         }
