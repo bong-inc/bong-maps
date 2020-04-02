@@ -281,14 +281,16 @@ public class MainController {
                 time += System.nanoTime();
                 System.out.println("load osm: " + time/1000000f + "ms");
                 break;
-            case ".bz2":
             case ".zip":
-                unzip(file);
+                loadZip(file);
+                break;
+            case ".bz2":
+
                 break;
             default:
-                is.close();
                 throw new FileTypeNotSupportedException(fileExtension);
         }
+        is.close();
     }
 
     private void loadBinary(InputStream is) throws IOException, ClassNotFoundException {
@@ -310,14 +312,17 @@ public class MainController {
         oos.close();
     }
 
-    private void unzip(File file) throws IOException {
+    private void loadZip(File file) throws Exception {
+        String fileName = "";
         byte[] buffer = new byte[1024];
         ZipInputStream zis = new ZipInputStream(new FileInputStream(file.getAbsolutePath()));
         ZipEntry zipEntry = zis.getNextEntry();
-        File destDir = new File("src/main/resources/bfst/unzippedFiles");
+        String destFolder = System.getProperty("user.home") + File.separator + "Documents";
+        File destDir = new File(destFolder);
 
         while (zipEntry != null) {
             File newFile = new File(destDir, zipEntry.getName());
+            fileName = newFile.getName();
             FileOutputStream fos = new FileOutputStream(newFile);
             int len;
             while ((len = zis.read(buffer)) > 0) {
@@ -328,6 +333,8 @@ public class MainController {
         }
         zis.closeEntry();
         zis.close();
+
+        loadFile(new File(destFolder + File.separator + fileName));
 
     }
 }
