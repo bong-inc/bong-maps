@@ -146,25 +146,32 @@ public class Dijkstra {
         }
     }
 
-    public boolean hasPathTo(long v) {
-        return distTo.containsKey(v);
-    }
-
-    public boolean hasPathTo2(long v) {
-        return distTo2.containsKey(v);
+    public boolean hasPathTo(long v, int currDijkstra) {
+        if (currDijkstra == 1) {
+            return distTo.containsKey(v);
+        } else {
+            return distTo2.containsKey(v);
+        }
     }
 
     public HashMap<Long, Edge> getEdgeTo() {
         return edgeTo;
     }
 
-    public ArrayList<Edge> pathTo(long v) {
-        if (!hasPathTo(v)) {
+    public ArrayList<Edge> pathTo(long v, int currDijkstra) {
+        if (!hasPathTo(v, currDijkstra)) {
             return null;
         }
+        HashMap<Long, Edge> thisEdgeTo;
+        if (currDijkstra == 1) {
+            thisEdgeTo = edgeTo;
+        } else {
+            thisEdgeTo = edgeTo2;
+        }
+
         Stack<Edge> path = new Stack<>();
         long x = v;
-        for (Edge edge = edgeTo.get(v); edge != null; edge = edgeTo.get(x)) {
+        for (Edge edge = thisEdgeTo.get(v); edge != null; edge = thisEdgeTo.get(x)) {
 
             path.push(edge);
 
@@ -181,27 +188,5 @@ public class Dijkstra {
         return list;
     }
 
-    public ArrayList<Edge> pathTo2(long v) {
-        if (!hasPathTo(v)) {
-            return null;
-        }
-        Stack<Edge> path = new Stack<>();
-        long x = v;
-        for (Edge edge = edgeTo2.get(v); edge != null; edge = edgeTo2.get(x)) {
-
-            path.push(edge);
-
-
-            x = edge.other(x);
-        }
-
-        ArrayList<Edge> list = new ArrayList<>();
-
-        while(!path.isEmpty()) {
-            list.add(path.pop());
-        }
-
-        return list;
-    }
 
 }

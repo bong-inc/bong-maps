@@ -71,14 +71,9 @@ public class MapCanvas extends Canvas {
                 }
             }
 
-           /* if (route != null) {
-                gc.setStroke(Color.RED);
-                drawableRoute.draw(gc, pixelwidth, smartTrace);
-            }*/
-
             if (route != null) {
                 gc.setStroke(Color.RED);
-                drawableRoute2.draw(gc, pixelwidth, smartTrace);
+                drawableRoute.draw(gc, pixelwidth, smartTrace);
             }
 
             gc.setStroke(Color.BLACK);
@@ -115,27 +110,10 @@ public class MapCanvas extends Canvas {
         }
     }
 
-    public void setRoute(long endPoint) {
-        route = dijkstra.pathTo(dijkstra.getLastNode());
+    public void setRoute() {
+        route = dijkstra.pathTo(dijkstra.getLastNode(), 1);
 
-/*
-        float[] floats = new float[route.size() * 2 + 2];
-
-        Edge firstEdge = route.get(0);
-        floats[0] = firstEdge.getTailNode().getLon();
-        floats[1] = firstEdge.getTailNode().getLat();
-        floats[2] = firstEdge.getHeadNode().getLon();
-        floats[3] = firstEdge.getHeadNode().getLat();
-
-        for (int i = 4; i < floats.length; i += 2) {
-            Node currentNode = route.get((i - 2) / 2).getHeadNode();
-            floats[i] = currentNode.getLon();
-            floats[i + 1] = currentNode.getLat();
-        }
-        drawableRoute = new LinePath(floats);
-*/
-
-        ArrayList<Edge> secondPart = dijkstra.pathTo2(dijkstra.getLastNode());
+        ArrayList<Edge> secondPart = dijkstra.pathTo(dijkstra.getLastNode(), 2);
         Collections.reverse(secondPart);
         route.addAll(secondPart);
 
@@ -152,7 +130,7 @@ public class MapCanvas extends Canvas {
             floats[i] = currentNode.getLon();
             floats[i + 1] = currentNode.getLat();
         }
-        drawableRoute2 = new LinePath(floats);
+        drawableRoute = new LinePath(floats);
 
         repaint();
     }

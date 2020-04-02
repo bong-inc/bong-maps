@@ -123,7 +123,7 @@ public class DevController {
         });
 
         findRoute.setOnAction(e -> {
-            canvas.setRoute(Long.parseLong(endPoint.getText()));
+            canvas.setRoute();
         });
 
         clearRoute.setOnAction(e -> {
