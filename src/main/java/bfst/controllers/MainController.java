@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class MainController {
     Stage stage;
@@ -279,10 +281,13 @@ public class MainController {
                 time += System.nanoTime();
                 System.out.println("load osm: " + time/1000000f + "ms");
                 break;
+            case ".zip":
+                loadZip(file);
+                break;
             default:
-                is.close();
                 throw new FileTypeNotSupportedException(fileExtension);
         }
+        is.close();
     }
 
     private void loadBinary(InputStream is) throws IOException, ClassNotFoundException {
@@ -302,5 +307,31 @@ public class MainController {
         ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
         oos.writeObject(model);
         oos.close();
+    }
+
+    private void loadZip(File file) throws Exception {
+        String fileName = "";
+        byte[] buffer = new byte[1024];
+        ZipInputStream zis = new ZipInputStream(new FileInputStream(file.getAbsolutePath()));
+        ZipEntry zipEntry = zis.getNextEntry();
+        String destFolder = System.getProperty("user.home") + File.separator + "Documents";
+        File destDir = new File(destFolder);
+
+        while (zipEntry != null) {
+            File newFile = new File(destDir, zipEntry.getName());
+            fileName = newFile.getName();
+            FileOutputStream fos = new FileOutputStream(newFile);
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+                fos.write(buffer, 0, len);
+            }
+            fos.close();
+            zipEntry = zis.getNextEntry();
+        }
+        zis.closeEntry();
+        zis.close();
+
+        loadFile(new File(destFolder + File.separator + fileName));
+
     }
 }
