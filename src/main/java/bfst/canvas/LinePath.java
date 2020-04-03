@@ -52,7 +52,7 @@ public class LinePath implements Drawable, Serializable {
     }
 
     public void traceMethod(GraphicsContext gc, double scale, boolean smartTrace) {
-        if(smartTrace) {
+        if (smartTrace) {
             smartTrace(gc, scale);
         } else {
             trace(gc);

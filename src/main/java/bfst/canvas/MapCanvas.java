@@ -37,6 +37,10 @@ public class MapCanvas extends Canvas {
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
+    public Affine getTrans() {
+        return trans;
+    }
+
     public MapCanvas() {
         this.gc = getGraphicsContext2D();
         this.trans = new Affine();
@@ -297,6 +301,11 @@ public class MapCanvas extends Canvas {
 
     public void setPin (Node node){
         currentPin = new Pin(node.getLon(), node.getLat(), 1);
+        repaint();
+    }
+
+    public void setPin (float lon, float lat){
+        currentPin = new Pin(lon, lat, 1);
         repaint();
     }
 
