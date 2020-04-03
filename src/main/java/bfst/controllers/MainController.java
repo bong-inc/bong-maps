@@ -8,6 +8,7 @@ import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.MapCanvasWrapper;
+import bfst.canvas.Type;
 import bfst.exceptions.FileTypeNotSupportedException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -31,6 +32,7 @@ import javafx.stage.WindowEvent;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -289,6 +291,7 @@ public class MainController {
                 loadBinary(is);
                 break;
             case ".osm":
+                canvas.setTypesToBeDrawn(new ArrayList<>());
                 long time = -System.nanoTime();
 
                 OSMReader reader = new OSMReader(is);
@@ -297,6 +300,9 @@ public class MainController {
 
                 time += System.nanoTime();
                 System.out.println("load osm: " + time/1000000f + "ms");
+
+                ArrayList<Type> list = new ArrayList<>(Arrays.asList(Type.getTypes()));
+                canvas.setTypesToBeDrawn(list);
                 break;
             case ".zip":
                 loadZip(file);
