@@ -1,6 +1,7 @@
 package bfst.controllers;
 
 import bfst.App;
+import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Model;
 import bfst.OSMReader.OSMReader;
 import bfst.addressparser.Address;
@@ -23,6 +24,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -40,6 +42,7 @@ public class MainController {
     Model model;
     private Point2D lastMouse;
     private ArrayList<Address> tempBest = new ArrayList<>();
+    private boolean hasBeenDragged = false;
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
@@ -81,8 +84,22 @@ public class MainController {
         });
 
         canvas.setOnMouseDragged(e -> {
+            hasBeenDragged = true;
             canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
             lastMouse = new Point2D(e.getX(), e.getY());
+        });
+
+        canvas.setOnMouseReleased(e -> {
+            if (!hasBeenDragged) {
+                try {
+                    Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
+                    canvas.setPin((float) point2D.getX(), (float) point2D.getY());
+
+                } catch (NonInvertibleTransformException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            hasBeenDragged = false;
         });
 
         loadDefaultMap.setOnAction(e -> {
