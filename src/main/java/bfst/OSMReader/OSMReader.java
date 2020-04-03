@@ -134,8 +134,11 @@ public class OSMReader {
 
 
                                 if(type != Type.COASTLINE) {
-                                    if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
-                                    drawableByType.get(type).add(new LinePath(wayHolder, type));
+                                    if (wayHolder.getNodes().size() > 0) {
+                                        if (!drawableByType.containsKey(type))
+                                            drawableByType.put(type, new ArrayList<>());
+                                        drawableByType.get(type).add(new LinePath(wayHolder, type));
+                                    }
                                 } else {
                                     Way before = tempCoastlines.remove(wayHolder.first());
                                     if (before != null) {
