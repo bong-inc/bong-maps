@@ -92,6 +92,7 @@ public class OSMReader {
                                 }
                                 break;
                             case "way":
+                                wayHolder.trim();
                                 for (int i = 0; i < tagList.size(); i += 2) {
 
                                     if (tagList.get(i).equals("access")) {
@@ -116,11 +117,11 @@ public class OSMReader {
                                                 break;
                                         }
 
-                                        ArrayList<Node> nodes = wayHolder.getNodes();
+                                        long[] nodes = wayHolder.getNodes();
                                         currentStreet = new Street(tagList, defaultSpeed);
 
-                                        for (int j = 1; j < nodes.size(); j++){
-                                            Edge edge = new Edge(nodes.get(j - 1), nodes.get(j), currentStreet);
+                                        for (int j = 1; j < nodes.length; j++){
+                                            Edge edge = new Edge(tempNodes.get(nodes[j-1]), tempNodes.get(nodes[j]), currentStreet);
                                             graph.addEdge(edge);
                                         }
                                         break; 
@@ -128,51 +129,55 @@ public class OSMReader {
                                 }
 
                                 if(type != Type.COASTLINE) {
-                                    if (wayHolder.getNodes().size() > 0) {
+                                    if (wayHolder.getSize() > 0) {
                                         if (!drawableByType.containsKey(type))
                                             drawableByType.put(type, new ArrayList<>());
-                                        drawableByType.get(type).add(new LinePath(wayHolder, type));
+                                        drawableByType.get(type).add(new LinePath(wayHolder, type, tempNodes));
                                     }
+                                    
                                 } else {
-                                    Way before = tempCoastlines.remove(wayHolder.first().getAsLong());
+                                    Way before = tempCoastlines.remove(wayHolder.first());
                                     if (before != null) {
-                                        tempCoastlines.remove(before.first().getAsLong());
-                                        tempCoastlines.remove(before.last().getAsLong());
+                                        tempCoastlines.remove(before.first());
+                                        tempCoastlines.remove(before.last());
                                     }
-                                    Way after = tempCoastlines.remove(wayHolder.last().getAsLong());
+                                    Way after = tempCoastlines.remove(wayHolder.last());
                                     if (after != null) {
-                                        tempCoastlines.remove(after.first().getAsLong());
-                                        tempCoastlines.remove(after.last().getAsLong());
+                                        tempCoastlines.remove(after.first());
+                                        tempCoastlines.remove(after.last());
                                     }
-                                    wayHolder = Way.merge(Way.merge(before, wayHolder), after);
-                                    tempCoastlines.put(wayHolder.first().getAsLong(), wayHolder);
-                                    tempCoastlines.put(wayHolder.last().getAsLong(), wayHolder);
+                                    wayHolder = Way.merge(before, wayHolder);
+                                    //wayHolder.trim();
+                                    wayHolder = Way.merge(wayHolder, after);
+                                    //wayHolder.trim();
+                                    tempCoastlines.put(wayHolder.first(), wayHolder);
+                                    tempCoastlines.put(wayHolder.last(), wayHolder);
                                 }
                                 type = Type.UNKNOWN;
                                 break;
                             case "relation":
                                 relationHolder.collectRelation();
                                 if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
-                                if(relationHolder.getWays() != null) drawableByType.get(type).add(new PolyLinePath(relationHolder, type));
+                                if(relationHolder.getWays() != null) drawableByType.get(type).add(new PolyLinePath(relationHolder, type, tempNodes));
                                 type = Type.UNKNOWN;
                                 break;
                             case "osm":
                                 ArrayList<Drawable> coastlines = new ArrayList<>();
                                 for(Map.Entry<Long,Way> entry : tempCoastlines.entrySet()){
                                     if(entry.getValue().first() == entry.getValue().last()){
-                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
+                                        coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE,tempNodes));
                                     } else {
-                                        fixCoastline(entry.getValue());
-                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
+                                        //fixCoastline(entry.getValue());
+                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE,tempNodes));
                                     }
                                 }
                                 if(coastlines.size() == 0){
                                     Way land = new Way();
-                                    land.addNode(new Node(0, bound.getMinLon(), bound.getMinLat()));
-                                    land.addNode(new Node(0, bound.getMinLon(), bound.getMaxLat()));
-                                    land.addNode(new Node(0, bound.getMaxLon(), bound.getMaxLat()));
-                                    land.addNode(new Node(0, bound.getMaxLon(), bound.getMinLat()));
-                                    coastlines.add(new LinePath(land, Type.COASTLINE));
+                                    land.addNode(-1);
+                                    land.addNode(-2);
+                                    land.addNode(-3);
+                                    land.addNode(-4);
+                                    coastlines.add(new LinePath(land, Type.COASTLINE, tempNodes));
                                 }
                                 drawableByType.put(Type.COASTLINE,coastlines);
                                 break;
@@ -235,8 +240,8 @@ public class OSMReader {
             case "nd":
                 long ref = Long.parseLong(reader.getAttributeValue(null, "ref"));
                 if(wayHolder != null){
+                    if(tempNodes.get(ref) != null) wayHolder.addNode(ref);
                     Node node = tempNodes.get(ref);
-                    if(tempNodes.get(ref) != null) wayHolder.addNode(node);
                     cityBuilder.node(node);
                 }
                 break;
@@ -319,7 +324,7 @@ public class OSMReader {
                             relationHolder.addWay(tempWays.get(memberRef));
                             break;
                     }
-                    cityBuilder.node(tempWay.last());
+                    cityBuilder.node(tempNodes.get(tempWay.last()));
                 }
                 break;
             case "relation":
@@ -327,7 +332,7 @@ public class OSMReader {
                 break;
         }
     }
-
+/*
     private void fixCoastline(Way coastline){
 
         ArrayList<Node> coastlineNodes = coastline.getNodes();
@@ -427,5 +432,5 @@ public class OSMReader {
                 }
             }
         }
-    }
+    }*/
 }

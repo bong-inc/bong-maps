@@ -1,6 +1,7 @@
 package bfst.canvas;
 
 import bfst.OSMReader.Node;
+import bfst.OSMReader.NodeContainer;
 import bfst.OSMReader.Way;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -11,13 +12,16 @@ public class LinePath implements Drawable, Serializable {
     private float[] coords;
     private Type type;
 
-    public LinePath(Way way, Type type) {
-        ArrayList<Node> nodes = way.getNodes();
-        int nodesSize = nodes.size();
+    public LinePath(Way way, Type type, NodeContainer nodeContainer) {
+        long[] nodes = way.getNodes();
+        int nodesSize = way.getSize();
         coords = new float[nodesSize * 2];
         for (int i = 0 ; i < nodesSize ; ++i) {
-            coords[i*2] = nodes.get(i).getLon();
-            coords[i*2+1] = nodes.get(i).getLat();
+            Node nd = nodeContainer.get(nodes[i]);
+            if(nd != null) {
+                coords[i * 2] = nd.getLon();
+                coords[i * 2 + 1] = nd.getLat();
+            }
         }
         this.type = type;
     }
@@ -25,7 +29,7 @@ public class LinePath implements Drawable, Serializable {
     public LinePath(float[] coords) {
         this.coords = coords;
     }
-
+/*
     public LinePath(Way way) {
         ArrayList<Node> nodes = way.getNodes();
         int nodesSize = nodes.size();
@@ -35,7 +39,7 @@ public class LinePath implements Drawable, Serializable {
             coords[i*2+1] = nodes.get(i).getLat();
         }
     }
-
+*/
     public LinePath(Node tail, Node head) {
         coords = new float[4];
         coords[0] = tail.getLon();
