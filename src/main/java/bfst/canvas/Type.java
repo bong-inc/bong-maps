@@ -16,7 +16,7 @@ public enum Type {
     NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#04ff00"), 0.03000739993f),
     LEISURE("leisure",new String[]{"park"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#04ff00"), 0.03000739993f),
     WATER("natural",new String[]{"water"},Color.valueOf("#ade1ff"),0,true, Color.AQUA, 0.01000246664f),
-    WETLAND("natural",new String[]{"wetland"},Color.valueOf("#ade1ff"),0,true, Color.valueOf("#ade1ff"), 0.01000246664f),
+    WETLAND("natural",new String[]{"wetland"},Color.valueOf("#a5f2d6"),0,true, Color.valueOf("#ade1ff"), 0.03000739993f),
     WATERWAY("waterway",new String[]{""},Color.valueOf("#ade1ff"),1,false, Color.AQUA, 0.05001233322f),
     BRIDGE("man_made", new String[]{"bridge", "pier"}, Color.DARKGREY, 0, true, Color.ORANGE, 0.005001233322f),
     RAILWAY("railway",new String[]{"rail","light_rail","subway"}, Color.DARKGREY,1,false, Color.valueOf("#da21ff"), 0.002500616661f),
