@@ -7,17 +7,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Graph implements Serializable {
 
-    public HashMap<Long, ArrayList<Edge>> getAdj() {
+    public TreeMap<Long, ArrayList<Edge>> getAdj() {
         return adj;
     }
 
-    private HashMap<Long, ArrayList<Edge>> adj;
+    private TreeMap<Long, ArrayList<Edge>> adj;
 
     public Graph() {
-        adj = new HashMap<>();
+        adj = new TreeMap<>();
     }
 
     public void addEdge(Edge edge) {

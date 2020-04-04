@@ -82,7 +82,7 @@ public class OSMReader {
                         parseElement(reader, element);
                         break;
                     case END_ELEMENT:
-                        element = reader.getLocalName();
+                        element = reader.getLocalName().intern();
                         switch (element) {
                             case "node":
                                 if(!builder.isEmpty()) {
