@@ -337,7 +337,6 @@ public class OSMReader {
     }
 
     private void fixCoastline(Way coastline){
-        System.out.println("fixing");
         long[] coastlineNodes;
         Node savedNd;
         Node currentNd;
@@ -347,8 +346,6 @@ public class OSMReader {
             currentNd = tempNodes.get(coastlineNodes[i]);
             float lon = currentNd.getLon();
             float lat = currentNd.getLat();
-            System.out.println("lon: " +bound.getMaxLon() + " | " + lon + " | " + bound.getMinLon());
-            System.out.println("lat: "+bound.getMaxLat() + " | " + lat + " | " + bound.getMinLat());
             if(lon <= bound.getMaxLon() && lon >= bound.getMinLon() && lat <= bound.getMaxLat() && lat >= bound.getMinLat()){ //Is inside bound
                 break;
             }
@@ -362,6 +359,7 @@ public class OSMReader {
         for(int i = size-1; i >= 0; i--){
             coastlineNodes = coastline.getNodes();
             currentNd = tempNodes.get(coastlineNodes[i]);
+            if(currentNd == null) continue;
             float lon = currentNd.getLon();
             float lat = currentNd.getLat();
             if(lon <= bound.getMaxLon() && lon >= bound.getMinLon() && lat <= bound.getMaxLat() && lat >= bound.getMinLat()){ //Is inside bound
