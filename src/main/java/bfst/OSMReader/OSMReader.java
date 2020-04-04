@@ -147,9 +147,8 @@ public class OSMReader {
                                         tempCoastlines.remove(after.last());
                                     }
                                     wayHolder = Way.merge(before, wayHolder);
-                                    //wayHolder.trim();
                                     wayHolder = Way.merge(wayHolder, after);
-                                    //wayHolder.trim();
+
                                     tempCoastlines.put(wayHolder.first(), wayHolder);
                                     tempCoastlines.put(wayHolder.last(), wayHolder);
                                 }
@@ -167,7 +166,7 @@ public class OSMReader {
                                     if(entry.getValue().first() == entry.getValue().last()){
                                         coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE,tempNodes));
                                     } else {
-                                        //fixCoastline(entry.getValue());
+                                        fixCoastline(entry.getValue());
                                         coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE,tempNodes));
                                     }
                                 }
@@ -205,6 +204,10 @@ public class OSMReader {
                         min.getLon(),
                         max.getLon()
                 );
+                tempNodes.add(-1, bound.getMinLon(), bound.getMinLat()); //TOPLEFT
+                tempNodes.add(-2, bound.getMinLon(), bound.getMaxLat()); //BOTTOMLEFT
+                tempNodes.add(-3, bound.getMaxLon(), bound.getMaxLat()); //BOTTOMRIGHT
+                tempNodes.add(-4, bound.getMaxLon(), bound.getMinLat()); //TOPRIGHT
                 break;
             case "node":
                 builder = new Address.Builder();
@@ -332,42 +335,46 @@ public class OSMReader {
                 break;
         }
     }
-/*
-    private void fixCoastline(Way coastline){
 
-        ArrayList<Node> coastlineNodes = coastline.getNodes();
-        Node savedNd = coastline.first();
+    private void fixCoastline(Way coastline){
+        System.out.println("fixing");
+        long[] coastlineNodes;
+        Node savedNd;
         Node currentNd;
         for(int i = 1;;){
-            if(coastlineNodes.size() <= 1) return;
-            currentNd = coastlineNodes.get(i);
+            coastlineNodes = coastline.getNodes();
+            if(coastlineNodes.length <= 1) return;
+            currentNd = tempNodes.get(coastlineNodes[i]);
             float lon = currentNd.getLon();
             float lat = currentNd.getLat();
+            System.out.println("lon: " +bound.getMaxLon() + " | " + lon + " | " + bound.getMinLon());
+            System.out.println("lat: "+bound.getMaxLat() + " | " + lat + " | " + bound.getMinLat());
             if(lon <= bound.getMaxLon() && lon >= bound.getMinLon() && lat <= bound.getMaxLat() && lat >= bound.getMinLat()){ //Is inside bound
                 break;
             }
             else{
-                coastlineNodes.remove(savedNd);
+                coastline.remove(currentNd.getAsLong());
                 savedNd = currentNd;
             }
         }
-        savedNd = coastline.last();
-        int size = coastlineNodes.size();
+        savedNd = tempNodes.get(coastline.last());
+        int size = coastlineNodes.length;
         for(int i = size-1; i >= 0; i--){
-            currentNd = coastlineNodes.get(i);
+            coastlineNodes = coastline.getNodes();
+            currentNd = tempNodes.get(coastlineNodes[i]);
             float lon = currentNd.getLon();
             float lat = currentNd.getLat();
             if(lon <= bound.getMaxLon() && lon >= bound.getMinLon() && lat <= bound.getMaxLat() && lat >= bound.getMinLat()){ //Is inside bound
                 break;
             }
             else{
-                coastlineNodes.remove(savedNd);
+                coastline.remove(savedNd.getAsLong());
                 savedNd = currentNd;
             }
         }
 
-        Node first = coastline.first();
-        Node last = coastline.last();
+        Node first = tempNodes.get(coastline.first());
+        Node last = tempNodes.get(coastline.last());
         float midLon = (bound.getMaxLon() + bound.getMinLon())/2;
         float midLat = (bound.getMaxLat() + bound.getMinLat())/2;
 
@@ -376,61 +383,62 @@ public class OSMReader {
         if((first.getLon() < bound.getMaxLon() && first.getLon() > bound.getMinLon()) && (last.getLon() < bound.getMaxLon() && last.getLon() > bound.getMinLon())) {
             if( (first.getLat() < midLat && last.getLat() < midLat && first.getLon() < last.getLon()) ||
                     (first.getLat() > midLat && last.getLat() > midLat && first.getLon() > last.getLon())) {
-                coastline.addNode(last);
+                coastline.addNode(last.getAsLong());
                 fixed = true;
             }
         }
         else if((first.getLat() < bound.getMaxLat() && first.getLat() > bound.getMinLat()) && (last.getLat() < bound.getMaxLat() && last.getLat() > bound.getMinLat())){
             if( (first.getLon() < midLon && last.getLon() < midLon && first.getLat() > last.getLat()) ||
                     (first.getLon() > midLon && last.getLon() > midLon && first.getLat() < last.getLat())){
-                coastline.addNode(last);
+                coastline.addNode(last.getAsLong());
                 fixed = true;
             }
         }
         if(!fixed){
             Node[] boundNodes = new Node[4];
-            boundNodes[0] = new Node(0, bound.getMinLon(), bound.getMinLat()); //TOPLEFT
-            boundNodes[1] = new Node(0, bound.getMinLon(), bound.getMaxLat()); //BOTTOMLEFT
-            boundNodes[2] = new Node(0, bound.getMaxLon(), bound.getMaxLat()); //BOTTOMRIGHT
-            boundNodes[3] = new Node(0, bound.getMaxLon(), bound.getMinLat()); //TOPRIGHT
+            boundNodes[0] = new Node(-1, bound.getMinLon(), bound.getMinLat()); //TOPLEFT == -1
+            boundNodes[1] = new Node(-2, bound.getMinLon(), bound.getMaxLat()); //BOTTOMLEFT == -2
+            boundNodes[2] = new Node(-3, bound.getMaxLon(), bound.getMaxLat()); //BOTTOMRIGHT == -3
+            boundNodes[3] = new Node(-4, bound.getMaxLon(), bound.getMinLat()); //TOPRIGHT == -4
 
             if(first.getLat() <= bound.getMinLat()){ //TOP
-                coastline.addNodeToFront(boundNodes[3]);
+                coastline.addNodeToFront(-4L);
             }
             else if(first.getLat() >= bound.getMaxLat()){ //BOTTOM
-                coastline.addNodeToFront(boundNodes[1]);
+                coastline.addNodeToFront(-2L);
             }
             else if(first.getLon() <= bound.getMinLon()){ //LEFT
-                coastline.addNodeToFront(boundNodes[0]);
+                coastline.addNodeToFront(-1L);
             }
             else if(first.getLon() >= bound.getMaxLon()){ //RIGHT
-                coastline.addNodeToFront(boundNodes[2]);
+                coastline.addNodeToFront(-3L);
             }
 
-            int lastNode = 10;
+            long lastNode = 10;
             if(last.getLat() <= bound.getMinLat()){ //TOP
-                coastline.addNode(boundNodes[0]);
-                lastNode = 0;
+                coastline.addNode(-1L);
+                lastNode = -1L;
             }
             else if(last.getLat() >= bound.getMaxLat()){ //BOTTOM
-                coastline.addNode(boundNodes[2]);
-                lastNode = 2;
+                coastline.addNode(-3L);
+                lastNode = -3L;
             }
             else if(last.getLon() <= bound.getMinLon()){ //LEFT
-                coastline.addNode(boundNodes[1]);
-                lastNode = 1;
+                coastline.addNode(-2L);
+                lastNode = -2L;
             }
             else if(last.getLon() >= bound.getMaxLon()){ //RIGHT
-                coastline.addNode(boundNodes[3]);
-                lastNode = 3;
+                coastline.addNode(-4L);
+                lastNode = -4L;
             }
 
             if(lastNode != 10){
-                for(int i = lastNode; coastline.first() != coastline.last(); i++) {
-                    coastline.addNode(boundNodes[i]);
-                    if (i == 3) i = -1;
+                for(long i = lastNode; coastline.first() != coastline.last(); i--) {
+                    coastline.addNode(i);
+                    if (i == -4L) i = 0;
                 }
             }
+            coastline.trim();
         }
-    }*/
+    }
 }

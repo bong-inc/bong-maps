@@ -48,6 +48,26 @@ public class Way implements LongSupplier, Serializable {
         fill--;
     }
 
+    public void remove(long id){
+        int index = -1;
+        for(int i = 0; i < fill; i++){
+            if(nodes[i] == id){
+                index = i;
+                break;
+            }
+        }
+        if(index == -1) return;
+        long[] cpyNodes = nodes;
+        nodes = new long[fill-1];
+        for(int i = 0; i < index; i++){
+            nodes[i] = cpyNodes[i];
+        }
+        for(int i = index+1; i < fill; i++){
+            nodes[i-1] = cpyNodes[i];
+        }
+        fill--;
+    }
+
     public long[] getNodes(){
         return nodes;
     }
