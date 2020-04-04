@@ -36,30 +36,34 @@ public class Way implements LongSupplier, Serializable {
     }
 
     public static Way merge(Way before, Way after){
-        if (before == null) return after;
-        if (after == null) return before;
+        if (before == null){
+            return after;
+        }
+        if (after == null){
+            return before;
+        }
         Way result = new Way();
-        if (before.first() == after.first()) {
+        if (before.first().getAsLong() == after.first().getAsLong()) {
             result.nodes.addAll(before.nodes);
             Collections.reverse(result.getNodes());
             result.nodes.remove(result.nodes.size() - 1);
             result.nodes.addAll(after.nodes);
-        } else if (before.first() == after.last()) {
+        } else if (before.first().getAsLong() == after.last().getAsLong()) {
             result.nodes.addAll(after.nodes);
             result.nodes.remove(result.nodes.size() - 1);
             result.nodes.addAll(before.nodes);
-        } else if (before.last() == after.first()) {
+        } else if (before.last().getAsLong() == after.first().getAsLong()) {
             result.nodes.addAll(before.nodes);
             result.nodes.remove(result.nodes.size() - 1);
             result.nodes.addAll(after.nodes);
-        } else if (before.last() == after.last()) {
+        } else if (before.last().getAsLong() == after.last().getAsLong()) {
             ArrayList<Node> tmp = new ArrayList<>(after.nodes);
             Collections.reverse(tmp);
             result.nodes.addAll(before.nodes);
             result.nodes.remove(result.nodes.size() - 1);
             result.nodes.addAll(tmp);
         } else {
-            throw new IllegalArgumentException("Cannot merge unconnected OSMWays");
+            throw new IllegalArgumentException("Cannot merge unconnected Ways");
         }
         return result;
     }

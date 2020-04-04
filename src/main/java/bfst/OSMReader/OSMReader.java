@@ -18,11 +18,10 @@ import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 public class OSMReader {
-
-    private SortedArrayList<Node> tempNodes = new SortedArrayList<>();
+    private NodeContainer tempNodes = new NodeContainer();
     private SortedArrayList<Way> tempWays = new SortedArrayList<>();
     private SortedArrayList<Relation> tempRelations = new SortedArrayList<>();
-    private HashMap<Node, Way> tempCoastlines = new HashMap<>();
+    private HashMap<Long, Way> tempCoastlines = new HashMap<>();
     private Bound bound;
     private bfst.canvas.Type type;
     private Node nodeHolder;
@@ -88,7 +87,8 @@ public class OSMReader {
                                 if(!builder.isEmpty()) {
                                     addresses.add(builder.build());
                                 } else {
-                                    tempNodes.add(nodeHolder);
+                                    tempNodes.add(nodeHolder.getAsLong(), nodeHolder.getLon(), nodeHolder.getLat());
+                                    //tempNodes.add(nodeHolder);
                                 }
                                 break;
                             case "way":
@@ -134,19 +134,19 @@ public class OSMReader {
                                         drawableByType.get(type).add(new LinePath(wayHolder, type));
                                     }
                                 } else {
-                                    Way before = tempCoastlines.remove(wayHolder.first());
+                                    Way before = tempCoastlines.remove(wayHolder.first().getAsLong());
                                     if (before != null) {
-                                        tempCoastlines.remove(before.first());
-                                        tempCoastlines.remove(before.last());
+                                        tempCoastlines.remove(before.first().getAsLong());
+                                        tempCoastlines.remove(before.last().getAsLong());
                                     }
-                                    Way after = tempCoastlines.remove(wayHolder.last());
+                                    Way after = tempCoastlines.remove(wayHolder.last().getAsLong());
                                     if (after != null) {
-                                        tempCoastlines.remove(after.first());
-                                        tempCoastlines.remove(after.last());
+                                        tempCoastlines.remove(after.first().getAsLong());
+                                        tempCoastlines.remove(after.last().getAsLong());
                                     }
                                     wayHolder = Way.merge(Way.merge(before, wayHolder), after);
-                                    tempCoastlines.put(wayHolder.first(), wayHolder);
-                                    tempCoastlines.put(wayHolder.last(), wayHolder);
+                                    tempCoastlines.put(wayHolder.first().getAsLong(), wayHolder);
+                                    tempCoastlines.put(wayHolder.last().getAsLong(), wayHolder);
                                 }
                                 type = Type.UNKNOWN;
                                 break;
@@ -158,7 +158,7 @@ public class OSMReader {
                                 break;
                             case "osm":
                                 ArrayList<Drawable> coastlines = new ArrayList<>();
-                                for(Map.Entry<Node,Way> entry : tempCoastlines.entrySet()){
+                                for(Map.Entry<Long,Way> entry : tempCoastlines.entrySet()){
                                     if(entry.getValue().first() == entry.getValue().last()){
                                         coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
                                     } else {
