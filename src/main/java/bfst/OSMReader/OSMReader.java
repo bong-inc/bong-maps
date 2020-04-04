@@ -286,7 +286,7 @@ public class OSMReader {
         if (k.equals("place") && (v.equals("city") || v.equals("town") ||  v.equals("suburb") || v.equals("village") || v.equals("hamlet"))) {
             boolean cityNotPresent = true;
             for (City city : cities) {
-                if (city.getName().equals(previousName)) {
+                if (city.getName().equals(previousName) && city.getType().toString().equals(v)) {
                     cityNotPresent = false;
                     break;
                 }
