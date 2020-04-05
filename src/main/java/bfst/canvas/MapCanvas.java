@@ -160,21 +160,24 @@ public class MapCanvas extends Canvas {
         description = new ArrayList<>();
         routeDistance = 0;
         routeTime = 0;
-        Iterator iterator = iterable.iterator();
 
         Edge first = iterable.get(0);
         String prevEdgeName = first.getStreet().getName();
         double tempLength = 0;
         Edge prevEdge = first;
 
-        for (Edge edge : iterable) {
+        for (int i = 0; i < iterable.size(); i++) {
             //TODO hvis street ikke har noget navn, skal gøres noget andet
-            if (edge.getStreet().getName() == null || prevEdgeName.equals(edge.getStreet().getName())) {
-                tempLength += edge.getWeight() * 0.56;
+            if (iterable.get(i).getStreet().getName() == null || prevEdgeName.equals(iterable.get(i).getStreet().getName())) {
+                tempLength += iterable.get(i).getWeight() * 0.56;
+
+                if (i == iterable.size() - 1) {
+                    description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+                }
             } else {
                 Node prevHead = prevEdge.getHeadNode();
                 Node prevTail = prevEdge.getTailNode();
-                Node currHead = edge.getHeadNode();
+                Node currHead = iterable.get(i).getHeadNode();
                 //TODO noget med når man drejer
                 double directionPrev = Math.atan((prevHead.getLat() - prevTail.getLat()) / (prevHead.getLon() - prevTail.getLon()));
                 double directionCurr = Math.atan((currHead.getLat() - prevHead.getLat()) / (currHead.getLon() - prevHead.getLon()));
@@ -183,17 +186,17 @@ public class MapCanvas extends Canvas {
                 description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
 
 
-                prevEdgeName = edge.getStreet().getName();
-                tempLength = edge.getWeight() * 0.56;
+                prevEdgeName = iterable.get(i).getStreet().getName();
+                tempLength = iterable.get(i).getWeight() * 0.56;
             }
-            prevEdge = edge;
+            prevEdge = iterable.get(i);
 
-            double distance = edge.getWeight() * 0.56;
+            double distance = iterable.get(i).getWeight() * 0.56;
             routeDistance += distance;
 
             switch (vehicle) {
                 case "Car":
-                    routeTime += distance / (edge.getStreet().getMaxspeed() / 3.6);
+                    routeTime += distance / (iterable.get(i).getStreet().getMaxspeed() / 3.6);
                     break;
                 case "Walk":
                     routeTime += distance / 1.1; //estimate for walking speed, 1.1 m/s.
@@ -204,7 +207,6 @@ public class MapCanvas extends Canvas {
             }
 
         }
-        description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
         description.add("You have arrived at your destination");
         description.add("Total distance: " + routeDistance + " meters");
         description.add("Estimated time: " + routeTime / 60 + " minutes");
