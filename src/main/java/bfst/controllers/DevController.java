@@ -133,7 +133,7 @@ public class DevController {
         shortestRoute.setSelected(true);
 
         routeDescription.setOnAction(e -> {
-            for (String string : canvas.getRouteDescription(canvas.getRoute())) {
+            for (String string : canvas.getDescription()) {
                 System.out.println(string);
             }
             /*

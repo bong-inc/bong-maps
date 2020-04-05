@@ -29,6 +29,10 @@ public class MapCanvas extends Canvas {
     private ArrayList<Edge> route;
     private Dijkstra dijkstra;
     private LinePath drawableRoute;
+    private double routeTime;
+    private double routeDistance;
+
+    ArrayList<String> description;
 
     private Pin currentPin;
 
@@ -39,6 +43,10 @@ public class MapCanvas extends Canvas {
 
     public Affine getTrans() {
         return trans;
+    }
+
+    public ArrayList<String> getDescription() {
+        return description;
     }
 
     public MapCanvas() {
@@ -108,6 +116,9 @@ public class MapCanvas extends Canvas {
         dijkstra = new Dijkstra(model.getGraph(), startPoint, endPoint, vehicle, shortestRoute);
         time += System.nanoTime();
         System.out.println("Set dijkstra: " + time / 1000000f + "ms");
+
+        setRoute();
+        generateRouteInfo(route, vehicle);
     }
 
     public void showDijkstraTree() {
@@ -144,21 +155,22 @@ public class MapCanvas extends Canvas {
     }
 
     //TODO har egentlig ikke noget med canvas at gøre, så skal nok flyttes
-    public ArrayList<String> getRouteDescription(Iterable<Edge> iterable) {
+    public void generateRouteInfo(ArrayList<Edge> iterable, String vehicle) {
 
-        ArrayList<String> description = new ArrayList<>();
+        description = new ArrayList<>();
+        routeDistance = 0;
+        routeTime = 0;
         Iterator iterator = iterable.iterator();
 
-        Edge first = (Edge) iterator.next();
+        Edge first = iterable.get(0);
         String prevEdgeName = first.getStreet().getName();
-        double tempLength = first.getWeight();
+        double tempLength = 0;
         Edge prevEdge = first;
 
-        while (iterator.hasNext()) {
-            Edge edge = (Edge) iterator.next();
+        for (Edge edge : iterable) {
             //TODO hvis street ikke har noget navn, skal gøres noget andet
             if (edge.getStreet().getName() == null || prevEdgeName.equals(edge.getStreet().getName())) {
-                tempLength += edge.getWeight();
+                tempLength += edge.getWeight() * 0.56;
             } else {
                 Node prevHead = prevEdge.getHeadNode();
                 Node prevTail = prevEdge.getTailNode();
@@ -168,10 +180,6 @@ public class MapCanvas extends Canvas {
                 double directionCurr = Math.atan((currHead.getLat() - prevHead.getLat()) / (currHead.getLon() - prevHead.getLon()));
 
 
-
-
-
-                tempLength = tempLength * 0.56; //TODO denne værdi er et groft estimat
                 description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
 
 
@@ -179,10 +187,27 @@ public class MapCanvas extends Canvas {
                 tempLength = edge.getWeight() * 0.56;
             }
             prevEdge = edge;
+
+            double distance = edge.getWeight() * 0.56;
+            routeDistance += distance;
+
+            switch (vehicle) {
+                case "Car":
+                    routeTime += distance / (edge.getStreet().getMaxspeed() / 3.6);
+                    break;
+                case "Walk":
+                    routeTime += distance / 1.1; //estimate for walking speed, 1.1 m/s.
+                    break;
+                case "Bicycle":
+                    routeTime += distance / 6; //6 m/s biking speed estimate.
+                    break;
+            }
+
         }
         description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
         description.add("You have arrived at your destination");
-        return description;
+        description.add("Total distance: " + routeDistance + " meters");
+        description.add("Estimated time: " + routeTime / 60 + " minutes");
     }
 
     public void clearRoute() {
