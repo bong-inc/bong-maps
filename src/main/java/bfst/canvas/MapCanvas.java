@@ -16,6 +16,8 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.*;
 
 public class MapCanvas extends Canvas {
@@ -26,17 +28,28 @@ public class MapCanvas extends Canvas {
     private ScaleBar scaleBar;
     private boolean smartTrace = true;
     private boolean useRegularColors = true;
-    private Iterable<Edge> route;
+    private ArrayList<Edge> route;
+    private Dijkstra dijkstra;
+    private LinePath drawableRoute;
+    private double routeTime;
+    private double routeDistance;
+
+    ArrayList<String> description;
 
     private Pin currentPin;
 
     private boolean showCities = true;
     private boolean useDependentDraw = true;
 
-    private boolean showStreets = true;
-
-
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
+
+    public Affine getTrans() {
+        return trans;
+    }
+
+    public ArrayList<String> getDescription() {
+        return description;
+    }
 
     public MapCanvas() {
         this.gc = getGraphicsContext2D();
@@ -71,18 +84,11 @@ public class MapCanvas extends Canvas {
                 }
             }
 
-            if (showStreets) {
-                for (Edge edge : model.getGraph().edges()) {
-                    StreetType type = edge.getStreet().getType();
-                    if (useDependentDraw) {
-                        if (trans.getMxx() > type.getMinMxx()) {
-                            setValuesAndDrawStreet(pixelwidth, edge, type);
-                        }
-                    } else {
-                        setValuesAndDrawStreet(pixelwidth, edge, type);
-                    }
-                }
+            if (route != null) {
+                gc.setStroke(Color.RED);
+                drawableRoute.draw(gc, pixelwidth, smartTrace);
             }
+
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
 
@@ -98,16 +104,7 @@ public class MapCanvas extends Canvas {
                     }
                 }
             }
-
-            if (route != null) {
-                gc.setStroke(Color.RED);
-                for (Edge edge : route) {
-                    edge.draw(gc, pixelwidth, smartTrace);
-
-                }
-            }
         }
-
 
         scaleBar.updateScaleBar(this);
         scaleBar.draw(gc, pixelwidth, false);
@@ -116,61 +113,144 @@ public class MapCanvas extends Canvas {
         System.out.println("repaint: " + time / 1000000f + "ms");
     }
 
-    public void setRoute(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
-        Dijkstra dijkstra = new Dijkstra(model.getGraph(), startPoint, vehicle, shortestRoute);
-        route = dijkstra.pathTo(endPoint);
+    public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
+        long time = -System.nanoTime();
+        dijkstra = new Dijkstra(model.getGraph(), startPoint, endPoint, vehicle, shortestRoute);
+        time += System.nanoTime();
+        System.out.println("Set dijkstra: " + time / 1000000f + "ms");
+
+        setRoute();
+        generateRouteInfo(route, vehicle);
+    }
+
+    public void showDijkstraTree() {
+        if (dijkstra != null) {
+            for (Map.Entry<Long, Edge> entry : dijkstra.getAllEdgeTo().entrySet()) {
+                new LinePath(entry.getValue().getTailNode(), entry.getValue().getHeadNode()).draw(gc, 1, false);
+            }
+        }
+    }
+
+    public void setRoute() {
+        route = dijkstra.pathTo(dijkstra.getLastNode(), 1);
+
+        ArrayList<Edge> secondPart = dijkstra.pathTo(dijkstra.getLastNode(), 2);
+        Collections.reverse(secondPart);
+        route.addAll(secondPart);
+
+        float[] floats = new float[route.size() * 2 + 4];
+
+        Edge firstEdge = route.get(0);
+        floats[0] = firstEdge.getTailNode().getLon();
+        floats[1] = firstEdge.getTailNode().getLat();
+        floats[2] = firstEdge.getHeadNode().getLon();
+        floats[3] = firstEdge.getHeadNode().getLat();
+
+        for (int i = 4; i < route.size() * 2 + 2; i += 2) {
+            Node currentNode = route.get((i - 2) / 2).getHeadNode();
+            floats[i] = currentNode.getLon();
+            floats[i + 1] = currentNode.getLat();
+        }
+
+        Node last = route.get(route.size() - 1).getTailNode();
+        floats[floats.length - 2] = last.getLon();
+        floats[floats.length - 1] = last.getLat();
+
+        drawableRoute = new LinePath(floats);
+
         repaint();
     }
 
     //TODO har egentlig ikke noget med canvas at gøre, så skal nok flyttes
-    public Stack<String> getRouteDescription(Iterable<Edge> iterable) {
+    public void generateRouteInfo(ArrayList<Edge> iterable, String vehicle) {
 
-        Stack<String> description = new Stack<>();
-        description.push("You have arrived at your destination");
-        Iterator iterator = iterable.iterator();
+        description = new ArrayList<>();
+        routeDistance = 0;
+        routeTime = 0;
 
-        Edge first = (Edge) iterator.next();
+        Edge first = iterable.get(0);
         String prevEdgeName = first.getStreet().getName();
-        double tempLength = first.getWeight();
+        double tempLength = 0;
         Edge prevEdge = first;
 
-        while (iterator.hasNext()) {
-            Edge edge = (Edge) iterator.next();
+        for (int i = 0; i < iterable.size(); i++) {
             //TODO hvis street ikke har noget navn, skal gøres noget andet
-            if (edge.getStreet().getName() == null || prevEdgeName.equals(edge.getStreet().getName())) {
-                tempLength += edge.getWeight();
+            if (iterable.get(i).getStreet().getName() == null || prevEdgeName.equals(iterable.get(i).getStreet().getName())) {
+                tempLength += iterable.get(i).getWeight() * 0.56;
+
+                if (i == iterable.size() - 1) {
+                    description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+                }
             } else {
-                tempLength = tempLength * 0.56; //TODO denne værdi er et groft estimat
-                description.push("Follow " + prevEdgeName + " for " + tempLength + " meters");
+                Node prevHead = prevEdge.getHeadNode();
+                Node prevTail = prevEdge.getTailNode();
+                Node currHead = iterable.get(i).getHeadNode();
+                //TODO noget med når man drejer
+                double directionPrev = Math.atan((prevHead.getLat() - prevTail.getLat()) / (prevHead.getLon() - prevTail.getLon()));
+                double directionCurr = Math.atan((currHead.getLat() - prevHead.getLat()) / (currHead.getLon() - prevHead.getLon()));
 
-                //TODO noget med "drej til højre" osv
-                double a = prevEdge.getWeight();
-                double b = edge.getWeight();
-                double c = Math.sqrt(Math.pow(prevEdge.getTailNode().getLon() - edge.getHeadNode().getLon(), 2) + Math.pow(prevEdge.getTailNode().getLat() - edge.getHeadNode().getLat(), 2));
-                double turnAngle = Math.acos((Math.pow(a, 2) + Math.pow(b, 2) - Math.pow(c, 2)) / 2*a*b);
 
-                prevEdgeName = edge.getStreet().getName();
-                tempLength = edge.getWeight() * 0.56;
+                description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+
+
+                prevEdgeName = iterable.get(i).getStreet().getName();
+                tempLength = iterable.get(i).getWeight() * 0.56;
             }
-            prevEdge = edge;
+            prevEdge = iterable.get(i);
+
+            double distance = iterable.get(i).getWeight() * 0.56;
+            routeDistance += distance;
+
+            switch (vehicle) {
+                case "Car":
+                    routeTime += distance / (iterable.get(i).getStreet().getMaxspeed() / 3.6);
+                    break;
+                case "Walk":
+                    routeTime += distance / 1.1; //estimate for walking speed, 1.1 m/s.
+                    break;
+                case "Bicycle":
+                    routeTime += distance / 6; //6 m/s biking speed estimate.
+                    break;
+            }
+
         }
-        description.push("Follow " + prevEdgeName + " for " + tempLength + " meters");
-        return description;
+        description.add("You have arrived at your destination");
+
+        BigDecimal bd = new BigDecimal(routeDistance);
+        bd = bd.round(new MathContext(3));
+        double roundedDistance = bd.doubleValue();
+        double timeInMinutes = routeTime / 60;
+
+        String distanceString;
+        String timeString;
+        int hourCount = 0;
+
+        if (routeDistance >= 10000) {
+            distanceString = (int) roundedDistance / 1000 + " km";
+        } else {
+            distanceString = roundedDistance + " m";
+        }
+
+        while (timeInMinutes >= 60) {
+            hourCount++;
+            timeInMinutes -= 60;
+        }
+
+        if (hourCount > 0) {
+            timeString = hourCount + " h " + (int) timeInMinutes + " m";
+        } else {
+            timeString = (int) timeInMinutes + " m";
+        }
+
+        description.add("Total distance: " + distanceString);
+        description.add("Estimated time: " + timeString);
     }
 
     public void clearRoute() {
         route = null;
+        dijkstra = null;
+        drawableRoute = null;
         repaint();
-    }
-
-    private void setValuesAndDrawStreet(double pixelwidth, Edge edge, StreetType type) {
-        if (useRegularColors) {
-            gc.setStroke(type.getColor());
-        } else {
-            gc.setStroke(type.getAlternateColor());
-        }
-        gc.setLineWidth(pixelwidth * type.getWidth());
-        edge.draw(gc, pixelwidth, smartTrace);
     }
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn) {
@@ -195,11 +275,6 @@ public class MapCanvas extends Canvas {
 
     public void setUseDependentDraw(boolean shouldUseDependentDraw) {
         useDependentDraw = shouldUseDependentDraw;
-        repaint();
-    }
-
-    public void setShowStreets(boolean showStreets) {
-        this.showStreets = showStreets;
         repaint();
     }
 
@@ -287,6 +362,11 @@ public class MapCanvas extends Canvas {
 
     public void setPin (Node node){
         currentPin = new Pin(node.getLon(), node.getLat(), 1);
+        repaint();
+    }
+
+    public void setPin (float lon, float lat){
+        currentPin = new Pin(lon, lat, 1);
         repaint();
     }
 

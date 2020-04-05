@@ -22,6 +22,10 @@ public class LinePath implements Drawable, Serializable {
         this.type = type;
     }
 
+    public LinePath(float[] coords) {
+        this.coords = coords;
+    }
+
     public LinePath(Way way) {
         ArrayList<Node> nodes = way.getNodes();
         int nodesSize = nodes.size();
@@ -48,7 +52,7 @@ public class LinePath implements Drawable, Serializable {
     }
 
     public void traceMethod(GraphicsContext gc, double scale, boolean smartTrace) {
-        if(smartTrace) {
+        if (smartTrace) {
             smartTrace(gc, scale);
         } else {
             trace(gc);

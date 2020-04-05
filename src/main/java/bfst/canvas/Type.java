@@ -13,18 +13,20 @@ public enum Type {
     FARMFIELD("landuse",new String[]{"farmland"},Color.valueOf("#f7f6eb"),0,true, Color.valueOf("#f2ff00"), 0.01500369996f),
     BEACH("natural",new String[]{"beach"},Color.BEIGE,0,true, Color.valueOf("#f8ff70"), 0.02000493329f),
     FOREST("landuse",new String[]{"forest","meadow","grass"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#04ff00"), 0.01500369996f),
-    NATURALS("natural",new String[]{"scrub","grassland","heath"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#04ff00"), 0.03000739993f),
+    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#04ff00"), 0.03000739993f),
     LEISURE("leisure",new String[]{"park"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#04ff00"), 0.03000739993f),
     WATER("natural",new String[]{"water"},Color.valueOf("#ade1ff"),0,true, Color.AQUA, 0.01000246664f),
+    WETLAND("natural",new String[]{"wetland"},Color.valueOf("#a5f2d6"),0,true, Color.valueOf("#ade1ff"), 0.03000739993f),
     WATERWAY("waterway",new String[]{""},Color.valueOf("#ade1ff"),1,false, Color.AQUA, 0.05001233322f),
     BRIDGE("man_made", new String[]{"bridge"}, Color.DARKGREY, 0, true, Color.ORANGE, 0.005001233322f),
+    PIER("man_made", new String[]{"pier"}, Color.DARKGREY, 1, false, Color.ORANGE, 0.005001233322f),
     RAILWAY("railway",new String[]{"rail","light_rail","subway"}, Color.DARKGREY,1,false, Color.valueOf("#da21ff"), 0.002500616661f),
-    BUILDING("building",new String[]{""},Color.valueOf("#dbdbdb"),0,true, Color.valueOf("#ff7c3b"), 0.1000246664f)
-    /*
-    PRIMARY_ROAD("highway",new String[]{"primary","motorway"},Color.YELLOW,1.5,false, Color.YELLOW, 1),
-    SECONDARY_ROAD("highway",new String[]{"secondary"},Color.WHITE,1,false, Color.valueOf("#6e7fff"), 1000),
-    TERTIARY_ROAD("highway",new String[]{"tertiary"},Color.WHITE,1,false, Color.valueOf("#6e7fff"), 10000),
-    RESIDENTIAL_ROAD("highway",new String[]{"residential", "unclassified"},Color.WHITE,1,false, Color.valueOf("#6e7fff"), 25000)*/;
+    BUILDING("building",new String[]{""},Color.valueOf("#dbdbdb"),0,true, Color.valueOf("#ff7c3b"), 0.1000246664f),
+
+    PRIMARY_ROAD("highway",new String[]{"primary","motorway"},Color.YELLOW,1.5,false, Color.YELLOW, 0.00000500123f),
+    SECONDARY_ROAD("highway",new String[]{"secondary"},Color.WHITE,1,false, Color.valueOf("#6e7fff"), 0.00500123f),
+    TERTIARY_ROAD("highway",new String[]{"tertiary"},Color.WHITE,1,false, Color.valueOf("#6e7fff"), 0.0500123f),
+    OTHER("highway",new String[]{"residential", "unclassified", "track", "footway", "cycleway", "path", "service", "motorway_link", "steps"},Color.WHITE,1,false, Color.valueOf("#6e7fff"), 0.12503075f);
 
 
     public String getKey() {

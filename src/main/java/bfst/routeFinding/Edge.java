@@ -8,7 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Edge implements Drawable, Serializable {
+public class Edge implements Serializable {
 
     private double weight;
     private Street street;
@@ -47,11 +47,5 @@ public class Edge implements Drawable, Serializable {
         } else {
             return tailNode.getAsLong();
         }
-    }
-
-    //TODO optimer tegning
-    @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
-        new LinePath(tailNode, headNode).draw(gc, scale, smartTrace);
     }
 }

@@ -1,12 +1,14 @@
 package bfst.controllers;
 
 import bfst.App;
+import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Model;
 import bfst.OSMReader.OSMReader;
 import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.MapCanvasWrapper;
+import bfst.canvas.Type;
 import bfst.exceptions.FileTypeNotSupportedException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,21 +25,26 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class MainController {
     Stage stage;
     Model model;
     private Point2D lastMouse;
     private ArrayList<Address> tempBest = new ArrayList<>();
+    private boolean hasBeenDragged = false;
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
@@ -79,8 +86,22 @@ public class MainController {
         });
 
         canvas.setOnMouseDragged(e -> {
+            hasBeenDragged = true;
             canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
             lastMouse = new Point2D(e.getX(), e.getY());
+        });
+
+        canvas.setOnMouseReleased(e -> {
+            if (!hasBeenDragged) {
+                try {
+                    Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
+                    canvas.setPin((float) point2D.getX(), (float) point2D.getY());
+
+                } catch (NonInvertibleTransformException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            hasBeenDragged = false;
         });
 
         loadDefaultMap.setOnAction(e -> {
@@ -270,6 +291,7 @@ public class MainController {
                 loadBinary(is);
                 break;
             case ".osm":
+                canvas.setTypesToBeDrawn(new ArrayList<>());
                 long time = -System.nanoTime();
 
                 OSMReader reader = new OSMReader(is);
@@ -278,11 +300,17 @@ public class MainController {
 
                 time += System.nanoTime();
                 System.out.println("load osm: " + time/1000000f + "ms");
+
+                ArrayList<Type> list = new ArrayList<>(Arrays.asList(Type.getTypes()));
+                canvas.setTypesToBeDrawn(list);
+                break;
+            case ".zip":
+                loadZip(file);
                 break;
             default:
-                is.close();
                 throw new FileTypeNotSupportedException(fileExtension);
         }
+        is.close();
     }
 
     private void loadBinary(InputStream is) throws IOException, ClassNotFoundException {
@@ -302,5 +330,31 @@ public class MainController {
         ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
         oos.writeObject(model);
         oos.close();
+    }
+
+    private void loadZip(File file) throws Exception {
+        String fileName = "";
+        byte[] buffer = new byte[1024];
+        ZipInputStream zis = new ZipInputStream(new FileInputStream(file.getAbsolutePath()));
+        ZipEntry zipEntry = zis.getNextEntry();
+        String destFolder = System.getProperty("user.home") + File.separator + "Documents";
+        File destDir = new File(destFolder);
+
+        while (zipEntry != null) {
+            File newFile = new File(destDir, zipEntry.getName());
+            fileName = newFile.getName();
+            FileOutputStream fos = new FileOutputStream(newFile);
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+                fos.write(buffer, 0, len);
+            }
+            fos.close();
+            zipEntry = zis.getNextEntry();
+        }
+        zis.closeEntry();
+        zis.close();
+
+        loadFile(new File(destFolder + File.separator + fileName));
+
     }
 }

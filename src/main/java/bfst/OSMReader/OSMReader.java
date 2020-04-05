@@ -2,8 +2,9 @@ package bfst.OSMReader;
 
 import bfst.addressparser.Address;
 import bfst.canvas.*;
-import bfst.routeFinding.*;
-
+import bfst.routeFinding.Edge;
+import bfst.routeFinding.Graph;
+import bfst.routeFinding.Street;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -17,6 +18,7 @@ import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 public class OSMReader {
+
     private SortedArrayList<Node> tempNodes = new SortedArrayList<>();
     private SortedArrayList<Way> tempWays = new SortedArrayList<>();
     private SortedArrayList<Relation> tempRelations = new SortedArrayList<>();
@@ -32,13 +34,11 @@ public class OSMReader {
     int counter = 0; //TODO bruges kun til videreudvikling, skal fjernes fra endelige produkt
 
     private ArrayList<Address> addresses = new ArrayList<>();
-
+    private Address.Builder builder;
     private ArrayList<City> cities = new ArrayList<>();
 
     private Graph graph = new Graph();
-    private Address.Builder builder;
     private City.Builder cityBuilder;
-    private boolean nodesOver = false;
 
     private String previousName;
 
@@ -56,10 +56,6 @@ public class OSMReader {
     public ArrayList<City> getCities() {
         return cities;
     }
-
-    /*public ArrayList<Street> getStreets() {
-        return streets;
-    }*/
 
     public Graph getGraph() {
         return graph;
@@ -96,31 +92,32 @@ public class OSMReader {
                                 }
                                 break;
                             case "way":
-
                                 for (int i = 0; i < tagList.size(); i += 2) {
+
+                                    if (tagList.get(i).equals("access")) {
+                                        if (tagList.get(i + 1).equals("no")) {
+                                            break;
+                                        }
+                                    }
                                     if (tagList.get(i).equals("highway")) {
 
-                                        StreetType type;
+                                        int defaultSpeed;
                                         switch(tagList.get(i + 1)) {
                                             case "motorway":
-                                                type = StreetType.MOTORWAY;
+                                                defaultSpeed = 130;
                                                 break;
                                             case "primary":
-                                                type = StreetType.PRIMARY;
-                                                break;
                                             case "secondary":
-                                                type = StreetType.SECONDARY;
-                                                break;
                                             case "tertiary":
-                                                type = StreetType.TERTIARY;
+                                                defaultSpeed = 80;
                                                 break;
                                             default:
-                                                type = StreetType.OTHER;
+                                                defaultSpeed = 50;
                                                 break;
                                         }
 
                                         ArrayList<Node> nodes = wayHolder.getNodes();
-                                        currentStreet = new Street(tagList, type);
+                                        currentStreet = new Street(tagList, defaultSpeed);
 
                                         for (int j = 1; j < nodes.size(); j++){
                                             Edge edge = new Edge(nodes.get(j - 1), nodes.get(j), currentStreet);
@@ -130,10 +127,12 @@ public class OSMReader {
                                     }
                                 }
 
-
                                 if(type != Type.COASTLINE) {
-                                    if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
-                                    drawableByType.get(type).add(new LinePath(wayHolder, type));
+                                    if (wayHolder.getNodes().size() > 0) {
+                                        if (!drawableByType.containsKey(type))
+                                            drawableByType.put(type, new ArrayList<>());
+                                        drawableByType.get(type).add(new LinePath(wayHolder, type));
+                                    }
                                 } else {
                                     Way before = tempCoastlines.remove(wayHolder.first());
                                     if (before != null) {
@@ -152,19 +151,28 @@ public class OSMReader {
                                 type = Type.UNKNOWN;
                                 break;
                             case "relation":
+                                relationHolder.collectRelation();
                                 if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
-                                drawableByType.get(type).add(new PolyLinePath(relationHolder, type));
+                                if(relationHolder.getWays() != null) drawableByType.get(type).add(new PolyLinePath(relationHolder, type));
                                 type = Type.UNKNOWN;
                                 break;
                             case "osm":
                                 ArrayList<Drawable> coastlines = new ArrayList<>();
                                 for(Map.Entry<Node,Way> entry : tempCoastlines.entrySet()){
                                     if(entry.getValue().first() == entry.getValue().last()){
-                                        coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE));
+                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
                                     } else {
                                         fixCoastline(entry.getValue());
                                         coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
                                     }
+                                }
+                                if(coastlines.size() == 0){
+                                    Way land = new Way();
+                                    land.addNode(new Node(0, bound.getMinLon(), bound.getMinLat()));
+                                    land.addNode(new Node(0, bound.getMinLon(), bound.getMaxLat()));
+                                    land.addNode(new Node(0, bound.getMaxLon(), bound.getMaxLat()));
+                                    land.addNode(new Node(0, bound.getMaxLon(), bound.getMinLat()));
+                                    coastlines.add(new LinePath(land, Type.COASTLINE));
                                 }
                                 drawableByType.put(Type.COASTLINE,coastlines);
                                 break;
@@ -204,10 +212,6 @@ public class OSMReader {
                 cityBuilder.node(nodeHolder);
                 break;
             case "way":
-                if(!nodesOver) {
-                    addresses.trimToSize();
-                    nodesOver = true;
-                }
                 tagList.clear();
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 wayHolder = new Way(currentID);
@@ -278,6 +282,7 @@ public class OSMReader {
                     break;
             }
         }
+
         if (k.equals("place") && (v.equals("city") || v.equals("town") ||  v.equals("suburb") || v.equals("village") || v.equals("hamlet"))) {
             boolean cityNotPresent = true;
             for (City city : cities) {
@@ -303,7 +308,17 @@ public class OSMReader {
                 long memberRef = Long.parseLong(reader.getAttributeValue(null, "ref"));
                 Way tempWay = tempWays.get(memberRef);
                 if (tempWay != null) {
-                    relationHolder.addWay(tempWays.get(memberRef));
+                    switch (reader.getAttributeValue(null, "role")) {
+                        case "outer":
+                            relationHolder.addToOuter(tempWays.get(memberRef));
+                            break;
+                        case "inner":
+                            relationHolder.addToInner(tempWays.get(memberRef));
+                            break;
+                        default:
+                            relationHolder.addWay(tempWays.get(memberRef));
+                            break;
+                    }
                     cityBuilder.node(tempWay.last());
                 }
                 break;
