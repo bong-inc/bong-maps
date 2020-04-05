@@ -16,6 +16,8 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.*;
 
 public class MapCanvas extends Canvas {
@@ -213,8 +215,17 @@ public class MapCanvas extends Canvas {
 
         }
         description.add("You have arrived at your destination");
-        description.add("Total distance: " + routeDistance + " meters");
-        description.add("Estimated time: " + routeTime / 60 + " minutes");
+
+        BigDecimal bd = new BigDecimal(routeDistance);
+        bd = bd.round(new MathContext(2));
+        int roundedDistance = bd.intValue();
+
+        BigDecimal bigDecimal = new BigDecimal(routeTime / 60);
+        bigDecimal = bigDecimal.round(new MathContext(2));
+        int roundedTime = bigDecimal.intValue();
+
+        description.add("Total distance: " + roundedDistance + " m");
+        description.add("Estimated time: " + roundedTime + " m");
     }
 
     public void clearRoute() {
