@@ -136,7 +136,7 @@ public class MapCanvas extends Canvas {
         Collections.reverse(secondPart);
         route.addAll(secondPart);
 
-        float[] floats = new float[route.size() * 2 + 2];
+        float[] floats = new float[route.size() * 2 + 4];
 
         Edge firstEdge = route.get(0);
         floats[0] = firstEdge.getTailNode().getLon();
@@ -144,11 +144,16 @@ public class MapCanvas extends Canvas {
         floats[2] = firstEdge.getHeadNode().getLon();
         floats[3] = firstEdge.getHeadNode().getLat();
 
-        for (int i = 4; i < floats.length; i += 2) {
+        for (int i = 4; i < route.size() * 2 + 2; i += 2) {
             Node currentNode = route.get((i - 2) / 2).getHeadNode();
             floats[i] = currentNode.getLon();
             floats[i + 1] = currentNode.getLat();
         }
+
+        Node last = route.get(route.size() - 1).getTailNode();
+        floats[floats.length - 2] = last.getLon();
+        floats[floats.length - 1] = last.getLat();
+
         drawableRoute = new LinePath(floats);
 
         repaint();
