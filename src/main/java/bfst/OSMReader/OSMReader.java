@@ -88,7 +88,6 @@ public class OSMReader {
                                     addresses.add(builder.build());
                                 } else {
                                     tempNodes.add(nodeHolder.getAsLong(), nodeHolder.getLon(), nodeHolder.getLat());
-                                    //tempNodes.add(nodeHolder);
                                 }
                                 break;
                             case "way":
@@ -166,7 +165,7 @@ public class OSMReader {
                                     if(entry.getValue().first() == entry.getValue().last()){
                                         coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE,tempNodes));
                                     } else {
-                                        fixCoastline(entry.getValue());
+                                        //fixCoastline(entry.getValue());
                                         coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE,tempNodes));
                                     }
                                 }
@@ -438,5 +437,12 @@ public class OSMReader {
             }
             coastline.trim();
         }
+    }
+
+    public void destroy(){
+        tempNodes = null;
+        tempWays = null;
+        tempRelations = null;
+        tempCoastlines = null;
     }
 }
