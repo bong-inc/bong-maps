@@ -217,15 +217,33 @@ public class MapCanvas extends Canvas {
         description.add("You have arrived at your destination");
 
         BigDecimal bd = new BigDecimal(routeDistance);
-        bd = bd.round(new MathContext(2));
-        int roundedDistance = bd.intValue();
+        bd = bd.round(new MathContext(3));
+        double roundedDistance = bd.doubleValue();
+        double timeInMinutes = routeTime / 60;
 
-        BigDecimal bigDecimal = new BigDecimal(routeTime / 60);
-        bigDecimal = bigDecimal.round(new MathContext(2));
-        int roundedTime = bigDecimal.intValue();
+        String distanceString;
+        String timeString;
+        int hourCount = 0;
 
-        description.add("Total distance: " + roundedDistance + " m");
-        description.add("Estimated time: " + roundedTime + " m");
+        if (routeDistance >= 10000) {
+            distanceString = (int) roundedDistance / 1000 + " km";
+        } else {
+            distanceString = roundedDistance + " m";
+        }
+
+        while (timeInMinutes >= 60) {
+            hourCount++;
+            timeInMinutes -= 60;
+        }
+
+        if (hourCount > 0) {
+            timeString = hourCount + " h " + (int) timeInMinutes + " m";
+        } else {
+            timeString = (int) timeInMinutes + " m";
+        }
+
+        description.add("Total distance: " + distanceString);
+        description.add("Estimated time: " + timeString);
     }
 
     public void clearRoute() {
