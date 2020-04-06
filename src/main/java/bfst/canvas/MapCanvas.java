@@ -185,7 +185,14 @@ public class MapCanvas extends Canvas {
                     tempLength += iterable.get(i).getWeight() * 0.56;
 
                     if (i == iterable.size() - 1) {
-                        description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+                        BigDecimal bd = new BigDecimal(tempLength);
+                        bd = bd.round(new MathContext(2));
+                        int roundedLength = bd.intValue();
+                        if (roundedLength > 1000) {
+                            description.add("Follow " + prevEdgeName + " for " + (double) roundedLength / 1000 + " km");
+                        } else {
+                            description.add("Follow " + prevEdgeName + " for " + roundedLength + " m");
+                        }
                     }
 
 
@@ -197,8 +204,14 @@ public class MapCanvas extends Canvas {
                     double directionPrev = Math.atan((prevHead.getLat() - prevTail.getLat()) / (prevHead.getLon() - prevTail.getLon()));
                     double directionCurr = Math.atan((currHead.getLat() - prevHead.getLat()) / (currHead.getLon() - prevHead.getLon()));
 
-
-                    description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+                    BigDecimal bd = new BigDecimal(tempLength);
+                    bd = bd.round(new MathContext(2));
+                    int roundedLength = bd.intValue();
+                    if (roundedLength > 1000) {
+                        description.add("Follow " + prevEdgeName + " for " + (double) roundedLength / 1000 + " km");
+                    } else {
+                        description.add("Follow " + prevEdgeName + " for " + roundedLength + " m");
+                    }
 
                     if (iterable.get(i).getStreet().getRole() == 3 && prevEdge.getStreet().getRole() == 1) {
                         description.add("Take the ramp onto the motorway");
@@ -238,15 +251,15 @@ public class MapCanvas extends Canvas {
 
         BigDecimal bd = new BigDecimal(routeDistance);
         bd = bd.round(new MathContext(3));
-        double roundedDistance = bd.doubleValue();
+        int roundedDistance = bd.intValue();
         double timeInMinutes = routeTime / 60;
 
         String distanceString;
         String timeString;
         int hourCount = 0;
 
-        if (routeDistance >= 10000) {
-            distanceString = (int) roundedDistance / 1000 + " km";
+        if (routeDistance >= 1000) {
+            distanceString = (double) roundedDistance / 1000 + " km";
         } else {
             distanceString = roundedDistance + " m";
         }
