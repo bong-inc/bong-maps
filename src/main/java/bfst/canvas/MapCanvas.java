@@ -172,8 +172,14 @@ public class MapCanvas extends Canvas {
         String prevEdgeName = first.getStreet().getName();
         double tempLength = 0;
         Edge prevEdge = first;
+        int roundaboutCounter = 0;
 
         for (int i = 0; i < iterable.size(); i++) {
+
+            if (iterable.get(i).getStreet().getRole() == 2 && model.getGraph().getAdj().get(iterable.get(i).getHeadNode().getAsLong()).size() > 2) {
+                roundaboutCounter++;
+            }
+
             if (iterable.get(i).getStreet().getName() != null) { //TODO veje uden navne ignoreres
                 if (prevEdgeName.equals(iterable.get(i).getStreet().getName())) {
                     tempLength += iterable.get(i).getWeight() * 0.56;
@@ -198,6 +204,9 @@ public class MapCanvas extends Canvas {
                         description.add("Take the ramp onto the motorway");
                     } else if (iterable.get(i).getStreet().getRole() != 1 && iterable.get(i).getStreet().getRole() != 3 && prevEdge.getStreet().getRole() == 1) {
                         description.add("Take the off-ramp");
+                    } else if (roundaboutCounter > 0) {
+                        description.add("Take exit number " + roundaboutCounter + " in the roundabout");
+                        roundaboutCounter = 0;
                     }
 
 
