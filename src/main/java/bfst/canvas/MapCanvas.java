@@ -185,14 +185,7 @@ public class MapCanvas extends Canvas {
                     tempLength += iterable.get(i).getWeight() * 0.56;
 
                     if (i == iterable.size() - 1) {
-                        BigDecimal bd = new BigDecimal(tempLength);
-                        bd = bd.round(new MathContext(2));
-                        int roundedLength = bd.intValue();
-                        if (roundedLength > 1000) {
-                            description.add("Follow " + prevEdgeName + " for " + (double) roundedLength / 1000 + " km");
-                        } else {
-                            description.add("Follow " + prevEdgeName + " for " + roundedLength + " m");
-                        }
+                        addInstruction(prevEdgeName, tempLength);
                     }
 
 
@@ -204,14 +197,7 @@ public class MapCanvas extends Canvas {
                     double directionPrev = Math.atan((prevHead.getLat() - prevTail.getLat()) / (prevHead.getLon() - prevTail.getLon()));
                     double directionCurr = Math.atan((currHead.getLat() - prevHead.getLat()) / (currHead.getLon() - prevHead.getLon()));
 
-                    BigDecimal bd = new BigDecimal(tempLength);
-                    bd = bd.round(new MathContext(2));
-                    int roundedLength = bd.intValue();
-                    if (roundedLength > 1000) {
-                        description.add("Follow " + prevEdgeName + " for " + (double) roundedLength / 1000 + " km");
-                    } else {
-                        description.add("Follow " + prevEdgeName + " for " + roundedLength + " m");
-                    }
+                    addInstruction(prevEdgeName, tempLength);
 
                     if (iterable.get(i).getStreet().getRole() == 3 && prevEdge.getStreet().getRole() == 1) {
                         description.add("Take the ramp onto the motorway");
@@ -277,6 +263,17 @@ public class MapCanvas extends Canvas {
 
         description.add("Total distance: " + distanceString);
         description.add("Estimated time: " + timeString);
+    }
+
+    private void addInstruction(String prevEdgeName, double tempLength) {
+        BigDecimal bd = new BigDecimal(tempLength);
+        bd = bd.round(new MathContext(2));
+        int roundedLength = bd.intValue();
+        if (roundedLength > 1000) {
+            description.add("Follow " + prevEdgeName + " for " + (double) roundedLength / 1000 + " km");
+        } else {
+            description.add("Follow " + prevEdgeName + " for " + roundedLength + " m");
+        }
     }
 
     public void clearRoute() {
