@@ -174,15 +174,17 @@ public class MapCanvas extends Canvas {
         Edge prevEdge = first;
         int roundaboutCounter = 0;
 
-        for (int i = 0; i < iterable.size(); i++) {
+        for (int i = 0; i < iterable.size(); i++) { //TODO fejl når vejnavn er det samme på begge sider af rundkørsel
+            Edge currEdge = iterable.get(i);
 
             if (iterable.get(i).getStreet().getRole() == 2 && model.getGraph().getOutDegree(iterable.get(i).getHeadNode().getAsLong(), vehicle) > 1) {
                 roundaboutCounter++;
             }
 
             if (iterable.get(i).getStreet().getName() != null) { //TODO veje uden navne ignoreres
-                if (prevEdgeName.equals(iterable.get(i).getStreet().getName())) {
-                    tempLength += iterable.get(i).getWeight() * 0.56;
+
+                if (prevEdgeName.equals(currEdge.getStreet().getName())) {
+                    tempLength += currEdge.getWeight() * 0.56;
 
                     if (i == iterable.size() - 1) {
                         addInstruction(prevEdgeName, tempLength);
@@ -192,16 +194,16 @@ public class MapCanvas extends Canvas {
                 } else {
                     Node prevHead = prevEdge.getHeadNode();
                     Node prevTail = prevEdge.getTailNode();
-                    Node currHead = iterable.get(i).getHeadNode();
+                    Node currHead = currEdge.getHeadNode();
                     //TODO noget med når man drejer
                     double directionPrev = Math.atan((prevHead.getLat() - prevTail.getLat()) / (prevHead.getLon() - prevTail.getLon()));
                     double directionCurr = Math.atan((currHead.getLat() - prevHead.getLat()) / (currHead.getLon() - prevHead.getLon()));
 
                     addInstruction(prevEdgeName, tempLength);
 
-                    if (iterable.get(i).getStreet().getRole() == 3 && prevEdge.getStreet().getRole() == 1) {
+                    if (currEdge.getStreet().getRole() == 3 && prevEdge.getStreet().getRole() == 1) {
                         description.add("Take the ramp onto the motorway");
-                    } else if (iterable.get(i).getStreet().getRole() != 1 && iterable.get(i).getStreet().getRole() != 3 && prevEdge.getStreet().getRole() == 1) {
+                    } else if (currEdge.getStreet().getRole() != 1 && currEdge.getStreet().getRole() != 3 && prevEdge.getStreet().getRole() == 1) {
                         description.add("Take the off-ramp");
                     } else if (roundaboutCounter > 0) {
                         description.add("Take exit number " + roundaboutCounter + " in the roundabout");
@@ -209,20 +211,20 @@ public class MapCanvas extends Canvas {
                     }
 
 
-                    prevEdgeName = iterable.get(i).getStreet().getName();
-                    tempLength = iterable.get(i).getWeight() * 0.56;
+                    prevEdgeName = currEdge.getStreet().getName();
+                    tempLength = currEdge.getWeight() * 0.56;
                 }
         }
 
 
             prevEdge = iterable.get(i);
 
-            double distance = iterable.get(i).getWeight() * 0.56;
+            double distance = currEdge.getWeight() * 0.56;
             routeDistance += distance;
 
             switch (vehicle) {
                 case "Car":
-                    routeTime += distance / (iterable.get(i).getStreet().getMaxspeed() / 3.6);
+                    routeTime += distance / (currEdge.getStreet().getMaxspeed() / 3.6);
                     break;
                 case "Walk":
                     routeTime += distance / 1.1; //estimate for walking speed, 1.1 m/s.
