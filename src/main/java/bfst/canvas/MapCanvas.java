@@ -174,28 +174,39 @@ public class MapCanvas extends Canvas {
         Edge prevEdge = first;
 
         for (int i = 0; i < iterable.size(); i++) {
-            //TODO hvis street ikke har noget navn, skal gøres noget andet
-            if (iterable.get(i).getStreet().getName() == null || prevEdgeName.equals(iterable.get(i).getStreet().getName())) {
-                tempLength += iterable.get(i).getWeight() * 0.56;
+            if (iterable.get(i).getStreet().getName() != null) { //TODO veje uden navne ignoreres
+                if (prevEdgeName.equals(iterable.get(i).getStreet().getName())) {
+                    tempLength += iterable.get(i).getWeight() * 0.56;
 
-                if (i == iterable.size() - 1) {
+                    if (i == iterable.size() - 1) {
+                        description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+                    }
+
+
+                } else {
+                    Node prevHead = prevEdge.getHeadNode();
+                    Node prevTail = prevEdge.getTailNode();
+                    Node currHead = iterable.get(i).getHeadNode();
+                    //TODO noget med når man drejer
+                    double directionPrev = Math.atan((prevHead.getLat() - prevTail.getLat()) / (prevHead.getLon() - prevTail.getLon()));
+                    double directionCurr = Math.atan((currHead.getLat() - prevHead.getLat()) / (currHead.getLon() - prevHead.getLon()));
+
+
                     description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
+
+                    if (iterable.get(i).getStreet().getRole() == 3 && prevEdge.getStreet().getRole() == 1) {
+                        description.add("Take the ramp onto the motorway");
+                    } else if (iterable.get(i).getStreet().getRole() != 1 && iterable.get(i).getStreet().getRole() != 3 && prevEdge.getStreet().getRole() == 1) {
+                        description.add("Take the off-ramp");
+                    }
+
+
+                    prevEdgeName = iterable.get(i).getStreet().getName();
+                    tempLength = iterable.get(i).getWeight() * 0.56;
                 }
-            } else {
-                Node prevHead = prevEdge.getHeadNode();
-                Node prevTail = prevEdge.getTailNode();
-                Node currHead = iterable.get(i).getHeadNode();
-                //TODO noget med når man drejer
-                double directionPrev = Math.atan((prevHead.getLat() - prevTail.getLat()) / (prevHead.getLon() - prevTail.getLon()));
-                double directionCurr = Math.atan((currHead.getLat() - prevHead.getLat()) / (currHead.getLon() - prevHead.getLon()));
+        }
 
 
-                description.add("Follow " + prevEdgeName + " for " + tempLength + " meters");
-
-
-                prevEdgeName = iterable.get(i).getStreet().getName();
-                tempLength = iterable.get(i).getWeight() * 0.56;
-            }
             prevEdge = iterable.get(i);
 
             double distance = iterable.get(i).getWeight() * 0.56;

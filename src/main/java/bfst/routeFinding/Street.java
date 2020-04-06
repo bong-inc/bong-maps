@@ -12,6 +12,7 @@ public class Street implements Serializable {
     private boolean onewayBicycle = false;
     private int maxspeed = 0;
     private String name;
+    private int role = 0; //0, no role, 1 motorway link, 2 roundabout, 3 motorway
 
     public Street(ArrayList<String> tags, int defaultSpeed) {
 
@@ -32,13 +33,19 @@ public class Street implements Serializable {
                             walking = true;
                             bicycle = true;
                             break;
+                        case "motorway":
+                            car = true;
+                            role = 3;
+                            break;
                         case "primary":
                         case "secondary":
                         case "tertiary":
-                        case "motorway":
                         case "service":
+                            car = true;
+                            break;
                         case "motorway_link":
                             car = true;
+                            role = 1;
                             break;
                         case "residential":
                             walking = true;
@@ -48,6 +55,7 @@ public class Street implements Serializable {
                         case "unclassified":
                             bicycle = true;
                             car = true;
+                            break;
                     }
                     break;
                 case "maxspeed":
@@ -82,6 +90,13 @@ public class Street implements Serializable {
                 case "bicycle":
                     if (value.equals("yes") || value.equals("designated")) {
                         bicycle = true;
+                    }
+                    break;
+                case "junction":
+                    if (value.equals("roundabout")) {
+                        onewayCar = true;
+                        onewayBicycle = true;
+                        role = 2;
                     }
                     break;
             }
@@ -119,5 +134,9 @@ public class Street implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public int getRole() {
+        return role;
     }
 }
