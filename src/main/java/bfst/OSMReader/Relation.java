@@ -49,7 +49,7 @@ public class Relation implements LongSupplier {
     public ArrayList<Way> getWays(){ return ways; }
     public ArrayList<Long> getIds(){ return ids; }
 
-    public void collectRelation(){
+    public void collectRelation(NodeContainer nodeContainer){
         int counter = 0;
         int amtOuter =  outer.size();
         ArrayList<Way> tempOuters = new ArrayList<>();
@@ -87,8 +87,8 @@ public class Relation implements LongSupplier {
                 collector.remove(after.last());
             }
             way = Way.merge(Way.merge(before, way), after);
-            collector.put(way.first(), way);
-            collector.put(way.last(), way);
+            collector.put(nodeContainer.get(way.first()), way);
+            collector.put(nodeContainer.get(way.last()), way);
         }
 
         for(Map.Entry<Node, Way> entry : collector.entrySet()){
