@@ -123,7 +123,7 @@ public class OSMReader {
                                             Edge edge = new Edge(nodes.get(j - 1), nodes.get(j), currentStreet);
                                             graph.addEdge(edge);
                                         }
-                                        break;
+                                        break; 
                                     }
                                 }
 
