@@ -154,7 +154,7 @@ public class OSMReader {
                                 type = Type.UNKNOWN;
                                 break;
                             case "relation":
-                                relationHolder.collectRelation();
+                                relationHolder.collectRelation(tempNodes);
                                 if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
                                 if(relationHolder.getWays() != null) drawableByType.get(type).add(new PolyLinePath(relationHolder, type, tempNodes));
                                 type = Type.UNKNOWN;
@@ -165,7 +165,7 @@ public class OSMReader {
                                     if(entry.getValue().first() == entry.getValue().last()){
                                         coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE,tempNodes));
                                     } else {
-                                        //fixCoastline(entry.getValue());
+                                        fixCoastline(entry.getValue());
                                         coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE,tempNodes));
                                     }
                                 }
