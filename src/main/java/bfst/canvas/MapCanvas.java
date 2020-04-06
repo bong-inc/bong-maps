@@ -176,7 +176,7 @@ public class MapCanvas extends Canvas {
 
         for (int i = 0; i < iterable.size(); i++) {
 
-            if (iterable.get(i).getStreet().getRole() == 2 && model.getGraph().getAdj().get(iterable.get(i).getHeadNode().getAsLong()).size() > 2) {
+            if (iterable.get(i).getStreet().getRole() == 2 && model.getGraph().getOutDegree(iterable.get(i).getHeadNode().getAsLong(), vehicle) > 1) {
                 roundaboutCounter++;
             }
 
