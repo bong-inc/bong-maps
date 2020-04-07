@@ -12,7 +12,7 @@ public class Street implements Serializable {
     private boolean onewayBicycle = false;
     private int maxspeed = 0;
     private String name;
-    private int role = 0; //0, no role, 1 motorway link, 2 roundabout, 3 motorway
+    private int role = 0; //0 no role, 1 motorway link, 2 roundabout, 3 motorway
 
     public Street(ArrayList<String> tags, int defaultSpeed) {
 

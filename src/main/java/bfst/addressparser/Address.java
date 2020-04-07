@@ -19,18 +19,18 @@ public class Address implements Serializable, Comparable<Address> {
             Node _node
     ) {
         if (_street != null) {
-            street = _street;
+            street = _street.intern();
         } else {
             street = _street;
         }
 
         if (_house != null) {
-            house = _house;
+            house = _house.intern();
         } else {
             house = _house;
         }
         if (_postcode != null) {
-            postcode = _postcode;
+            postcode = _postcode.intern();
         } else {
             postcode = _postcode;
         }
@@ -40,7 +40,7 @@ public class Address implements Serializable, Comparable<Address> {
             city = _city;
         }
         if (_municipality != null) {
-            municipality = _municipality;
+            municipality = _municipality.intern();
         } else {
             municipality = _municipality;
         }

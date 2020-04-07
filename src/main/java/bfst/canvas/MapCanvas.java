@@ -174,24 +174,16 @@ public class MapCanvas extends Canvas {
         Edge prevEdge = first;
         int roundaboutCounter = 0;
 
-        for (int i = 0; i < iterable.size(); i++) { //TODO fejl når vejnavn er det samme på begge sider af rundkørsel
+        for (int i = 0; i < iterable.size(); i++) {
             Edge currEdge = iterable.get(i);
 
-            if (iterable.get(i).getStreet().getRole() == 2 && model.getGraph().getOutDegree(iterable.get(i).getHeadNode().getAsLong(), vehicle) > 1) {
+            if (currEdge.getStreet().getRole() == 2 && model.getGraph().getOutDegree(currEdge.getHeadNode().getAsLong(), vehicle) > 1) {
                 roundaboutCounter++;
             }
 
-            if (iterable.get(i).getStreet().getName() != null) { //TODO veje uden navne ignoreres
+            if (currEdge.getStreet().getName() != null) { //TODO veje uden navne ignoreres
 
-                if (prevEdgeName.equals(currEdge.getStreet().getName())) {
-                    tempLength += currEdge.getWeight() * 0.56;
-
-                    if (i == iterable.size() - 1) {
-                        addInstruction(prevEdgeName, tempLength);
-                    }
-
-
-                } else {
+                if (!prevEdgeName.equals(currEdge.getStreet().getName()) || (currEdge.getStreet().getRole() != 2 && prevEdge.getStreet().getRole() == 2)) {
                     Node prevHead = prevEdge.getHeadNode();
                     Node prevTail = prevEdge.getTailNode();
                     Node currHead = currEdge.getHeadNode();
@@ -210,11 +202,19 @@ public class MapCanvas extends Canvas {
                         roundaboutCounter = 0;
                     }
 
-
                     prevEdgeName = currEdge.getStreet().getName();
                     tempLength = currEdge.getWeight() * 0.56;
+                } else {
+                    tempLength += currEdge.getWeight() * 0.56;
+
+                    if (i == iterable.size() - 1) {
+                        addInstruction(prevEdgeName, tempLength);
+                    }
+
                 }
-        }
+            } else {
+                tempLength += currEdge.getWeight() * 0.56;
+            }
 
 
             prevEdge = iterable.get(i);
@@ -271,7 +271,9 @@ public class MapCanvas extends Canvas {
         BigDecimal bd = new BigDecimal(tempLength);
         bd = bd.round(new MathContext(2));
         int roundedLength = bd.intValue();
-        if (roundedLength > 1000) {
+        if (roundedLength >= 10000) {
+            description.add("Follow " + prevEdgeName + " for " + roundedLength / 1000 + " km");
+        } else if (roundedLength > 1000) {
             description.add("Follow " + prevEdgeName + " for " + (double) roundedLength / 1000 + " km");
         } else {
             description.add("Follow " + prevEdgeName + " for " + roundedLength + " m");
