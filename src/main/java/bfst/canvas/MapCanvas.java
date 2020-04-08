@@ -137,28 +137,45 @@ public class MapCanvas extends Canvas {
         ArrayList<Edge> secondPart = dijkstra.pathTo(dijkstra.getLastNode(), 2);
         Collections.reverse(secondPart);
         route.addAll(secondPart);
+        route = singleDirectRoute(route);
 
-        float[] floats = new float[route.size() * 2 + 4];
+        float[] floats = new float[route.size() * 2 + 2];
 
         Edge firstEdge = route.get(0);
+
         floats[0] = firstEdge.getTailNode().getLon();
         floats[1] = firstEdge.getTailNode().getLat();
-        floats[2] = firstEdge.getHeadNode().getLon();
-        floats[3] = firstEdge.getHeadNode().getLat();
 
-        for (int i = 4; i < route.size() * 2 + 2; i += 2) {
+        for (int i = 2; i < route.size() * 2 + 2; i += 2) {
             Node currentNode = route.get((i - 2) / 2).getHeadNode();
             floats[i] = currentNode.getLon();
             floats[i + 1] = currentNode.getLat();
         }
 
-        Node last = route.get(route.size() - 1).getTailNode();
-        floats[floats.length - 2] = last.getLon();
-        floats[floats.length - 1] = last.getLat();
-
         drawableRoute = new LinePath(floats);
 
         repaint();
+    }
+
+    public ArrayList<Edge> singleDirectRoute(ArrayList<Edge> route) {
+        ArrayList<Edge> singleDirectedRoute = new ArrayList<>();
+
+        Edge firstEdge = route.get(0);
+        Node prevNode;
+
+        if (firstEdge.getTailNode().getAsLong() == route.get(1).getHeadNode().getAsLong()) {
+            prevNode = firstEdge.getHeadNode();
+        } else {
+            prevNode = firstEdge.getTailNode();
+        }
+
+        for (Edge edge : route) {
+            Node otherNode = edge.otherNode(prevNode.getAsLong());
+            Edge newEdge = new Edge(prevNode, otherNode, edge.getStreet());
+            singleDirectedRoute.add(newEdge);
+            prevNode = otherNode;
+        }
+        return  singleDirectedRoute;
     }
 
     //TODO har egentlig ikke noget med canvas at gøre, så skal nok flyttes
@@ -184,12 +201,13 @@ public class MapCanvas extends Canvas {
             if (currEdge.getStreet().getName() != null) { //TODO veje uden navne ignoreres
 
                 if (!prevEdgeName.equals(currEdge.getStreet().getName()) || (currEdge.getStreet().getRole() != 2 && prevEdge.getStreet().getRole() == 2)) {
-                    Node prevHead = prevEdge.getHeadNode();
-                    Node prevTail = prevEdge.getTailNode();
-                    Node currHead = currEdge.getHeadNode();
-                    //TODO noget med når man drejer
-                    double directionPrev = Math.atan((prevHead.getLat() - prevTail.getLat()) / (prevHead.getLon() - prevTail.getLon()));
-                    double directionCurr = Math.atan((currHead.getLat() - prevHead.getLat()) / (currHead.getLon() - prevHead.getLon()));
+
+                    Point2D prevVector = new Point2D(prevEdge.getHeadNode().getLon() - prevEdge.getTailNode().getLon(), prevEdge.getHeadNode().getLat() - prevEdge.getTailNode().getLat());
+                    Point2D currVector = new Point2D(currEdge.getHeadNode().getLon() - currEdge.getTailNode().getLon(), currEdge.getHeadNode().getLat() - currEdge.getTailNode().getLat());
+                    Point2D prevUnitVector = new Point2D(prevVector.getX() / prevVector.magnitude(), prevVector.getY() / prevVector.magnitude());
+                    Point2D currUnitVector = new Point2D(currVector.getX() / currVector.magnitude(), currVector.getY() / currVector.magnitude());
+                    Point2D resultingVector = new Point2D(currUnitVector.getX() - prevUnitVector.getX(), currUnitVector.getY() -  prevUnitVector.getY());
+                    double turn = Math.atan2(resultingVector.getX(), resultingVector.getY()) * 180 / Math.PI;
 
                     addInstruction(prevEdgeName, tempLength);
 
@@ -200,6 +218,12 @@ public class MapCanvas extends Canvas {
                     } else if (roundaboutCounter > 0) {
                         description.add("Take exit number " + roundaboutCounter + " in the roundabout");
                         roundaboutCounter = 0;
+                    } else if (turn > 20) {
+                        description.add("Angle: " + turn);
+                        description.add("Turn right");
+                    } else if (turn < -20) {
+                        description.add("Angle: " + turn);
+                        description.add("Turn left");
                     }
 
                     prevEdgeName = currEdge.getStreet().getName();
