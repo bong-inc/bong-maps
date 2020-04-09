@@ -179,20 +179,20 @@ public class MapCanvas extends Canvas {
     }
 
     //TODO har egentlig ikke noget med canvas at gøre, så skal nok flyttes
-    public void generateRouteInfo(ArrayList<Edge> iterable, String vehicle) {
+    public void generateRouteInfo(ArrayList<Edge> list, String vehicle) {
 
         description = new ArrayList<>();
         routeDistance = 0;
         routeTime = 0;
 
-        Edge first = iterable.get(0);
+        Edge first = list.get(0);
         String prevEdgeName = first.getStreet().getName();
         double tempLength = 0;
         Edge prevEdge = first;
         int roundaboutCounter = 0;
 
-        for (int i = 0; i < iterable.size(); i++) {
-            Edge currEdge = iterable.get(i);
+        for (int i = 0; i < list.size(); i++) {
+            Edge currEdge = list.get(i);
 
             if (currEdge.getStreet().getRole() == 2 && model.getGraph().getOutDegree(currEdge.getHeadNode().getAsLong(), vehicle) > 1) {
                 roundaboutCounter++;
@@ -204,10 +204,19 @@ public class MapCanvas extends Canvas {
 
                     Point2D prevVector = new Point2D(prevEdge.getHeadNode().getLon() - prevEdge.getTailNode().getLon(), prevEdge.getHeadNode().getLat() - prevEdge.getTailNode().getLat());
                     Point2D currVector = new Point2D(currEdge.getHeadNode().getLon() - currEdge.getTailNode().getLon(), currEdge.getHeadNode().getLat() - currEdge.getTailNode().getLat());
-                    Point2D prevUnitVector = new Point2D(prevVector.getX() / prevVector.magnitude(), prevVector.getY() / prevVector.magnitude());
+                    /*Point2D prevUnitVector = new Point2D(prevVector.getX() / prevVector.magnitude(), prevVector.getY() / prevVector.magnitude());
                     Point2D currUnitVector = new Point2D(currVector.getX() / currVector.magnitude(), currVector.getY() / currVector.magnitude());
-                    Point2D resultingVector = new Point2D(currUnitVector.getX() - prevUnitVector.getX(), currUnitVector.getY() -  prevUnitVector.getY());
-                    double turn = Math.atan2(resultingVector.getX(), resultingVector.getY()) * 180 / Math.PI;
+                    Point2D resultingVector = new Point2D(currUnitVector.getX() - prevUnitVector.getX(), currUnitVector.getY() -  prevUnitVector.getY());*/
+
+                    double prevDirection = Math.atan2(prevVector.getX(), prevVector.getY());
+                    double currDirection = Math.atan2(currVector.getX(), currVector.getY());
+                    double turn = prevDirection - currDirection;
+                    if (turn > Math.PI) {
+                        turn = turn - Math.PI;
+                    }
+                    turn *= 180 / Math.PI;
+
+                    //double turn = Math.atan2(resultingVector.getX(), resultingVector.getY()) * 180 / Math.PI;
 
                     addInstruction(prevEdgeName, tempLength);
 
@@ -218,10 +227,10 @@ public class MapCanvas extends Canvas {
                     } else if (roundaboutCounter > 0) {
                         description.add("Take exit number " + roundaboutCounter + " in the roundabout");
                         roundaboutCounter = 0;
-                    } else if (turn > 20) {
+                    } else if (turn > 20 && turn < 140) {
                         description.add("Angle: " + turn);
                         description.add("Turn right");
-                    } else if (turn < -20) {
+                    } else if (turn < -20 && turn > -140) {
                         description.add("Angle: " + turn);
                         description.add("Turn left");
                     }
@@ -231,7 +240,7 @@ public class MapCanvas extends Canvas {
                 } else {
                     tempLength += currEdge.getWeight() * 0.56;
 
-                    if (i == iterable.size() - 1) {
+                    if (i == list.size() - 1) {
                         addInstruction(prevEdgeName, tempLength);
                     }
 
@@ -241,7 +250,7 @@ public class MapCanvas extends Canvas {
             }
 
 
-            prevEdge = iterable.get(i);
+            prevEdge = list.get(i);
 
             double distance = currEdge.getWeight() * 0.56;
             routeDistance += distance;
