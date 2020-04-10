@@ -33,6 +33,7 @@ public class MapCanvas extends Canvas {
     private LinePath drawableRoute;
     private double routeTime;
     private double routeDistance;
+    private int roundaboutCounter = 0;
 
     ArrayList<String> description;
 
@@ -189,33 +190,19 @@ public class MapCanvas extends Canvas {
         String prevEdgeName = first.getStreet().getName();
         double tempLength = 0;
         Edge prevEdge = first;
-        int roundaboutCounter = 0;
 
         for (int i = 0; i < list.size(); i++) {
             Edge currEdge = list.get(i);
 
-            if (currEdge.getStreet().getRole() == 2 && model.getGraph().getOutDegree(currEdge.getHeadNode().getAsLong(), vehicle) > 1) {
+            if (currEdge.getStreet().getRole() == Street.Role.ROUNDABOUT && model.getGraph().getOutDegree(currEdge.getHeadNode().getAsLong(), vehicle) > 1) {
                 roundaboutCounter++;
             }
 
             if (currEdge.getStreet().getName() != null) { //TODO veje uden navne ignoreres
 
-                if (!prevEdgeName.equals(currEdge.getStreet().getName()) || (currEdge.getStreet().getRole() != 2 && prevEdge.getStreet().getRole() == 2)) {
+                if (!prevEdgeName.equals(currEdge.getStreet().getName()) || (currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT && prevEdge.getStreet().getRole() == Street.Role.ROUNDABOUT)) {
                     addInstruction(prevEdgeName, tempLength);
-                    double turn = calculateTurn(prevEdge, currEdge);
-
-                    if (currEdge.getStreet().getRole() == 3 && prevEdge.getStreet().getRole() == 1) {
-                        description.add("Take the ramp onto the motorway");
-                    } else if (currEdge.getStreet().getRole() != 1 && currEdge.getStreet().getRole() != 3 && prevEdge.getStreet().getRole() == 1) {
-                        description.add("Take the off-ramp");
-                    } else if (roundaboutCounter > 0) {
-                        description.add("Take exit number " + roundaboutCounter + " in the roundabout");
-                        roundaboutCounter = 0;
-                    } else if (turn > 20 && turn < 140) {
-                        description.add("Turn right");
-                    } else if (turn < -20 && turn > -140) {
-                        description.add("Turn left");
-                    }
+                    addActionInstruction(prevEdge, currEdge, roundaboutCounter);
 
                     prevEdgeName = currEdge.getStreet().getName();
                     tempLength = currEdge.getWeight() * 0.56;
@@ -233,36 +220,31 @@ public class MapCanvas extends Canvas {
 
             double distance = currEdge.getWeight() * 0.56;
             routeDistance += distance;
-
-            switch (vehicle) {
-                case "Car":
-                    routeTime += distance / (currEdge.getStreet().getMaxspeed() / 3.6);
-                    break;
-                case "Walk":
-                    routeTime += distance / 1.1; //estimate for walking speed, 1.1 m/s.
-                    break;
-                case "Bicycle":
-                    routeTime += distance / 6; //6 m/s biking speed estimate.
-                    break;
-            }
-
+            addTimeToTotal(vehicle, currEdge, distance);
         }
         description.add("You have arrived at your destination");
+        description.add("Total distance: " + distanceString());
+        description.add("Estimated time: " + timeString());
+    }
 
+    private String distanceString() {
         BigDecimal bd = new BigDecimal(routeDistance);
         bd = bd.round(new MathContext(3));
         int roundedDistance = bd.intValue();
-        double timeInMinutes = routeTime / 60;
-
         String distanceString;
-        String timeString;
-        int hourCount = 0;
 
         if (routeDistance >= 1000) {
             distanceString = (double) roundedDistance / 1000 + " km";
         } else {
             distanceString = roundedDistance + " m";
         }
+        return distanceString;
+    }
+
+    private String timeString() {
+        String timeString;
+        int hourCount = 0;
+        double timeInMinutes = routeTime / 60;
 
         while (timeInMinutes >= 60) {
             hourCount++;
@@ -274,9 +256,21 @@ public class MapCanvas extends Canvas {
         } else {
             timeString = (int) timeInMinutes + " m";
         }
+        return timeString;
+    }
 
-        description.add("Total distance: " + distanceString);
-        description.add("Estimated time: " + timeString);
+    private void addTimeToTotal(String vehicle, Edge currEdge, double distance) {
+        switch (vehicle) {
+            case "Car":
+                routeTime += distance / (currEdge.getStreet().getMaxspeed() / 3.6);
+                break;
+            case "Walk":
+                routeTime += distance / 1.1; //estimate for walking speed, 1.1 m/s.
+                break;
+            case "Bicycle":
+                routeTime += distance / 6; //6 m/s biking speed estimate.
+                break;
+        }
     }
 
     private void addInstruction(String prevEdgeName, double tempLength) {
@@ -292,12 +286,29 @@ public class MapCanvas extends Canvas {
         }
     }
 
+    public void addActionInstruction(Edge prevEdge, Edge currEdge, int roundaboutCounter) {
+        double turn = calculateTurn(prevEdge, currEdge);
+        if (currEdge.getStreet().getRole() == Street.Role.MOTORWAY && prevEdge.getStreet().getRole() == Street.Role.MOTORWAY_LINK) {
+            description.add("Take the ramp onto the motorway");
+        } else if (currEdge.getStreet().getRole() != Street.Role.MOTORWAY_LINK && currEdge.getStreet().getRole() != Street.Role.MOTORWAY && prevEdge.getStreet().getRole() == Street.Role.MOTORWAY_LINK) {
+            description.add("Take the off-ramp");
+        } else if (roundaboutCounter > 0) {
+            description.add("Take exit number " + roundaboutCounter + " in the roundabout");
+            resetRoundaboutCounter();
+        } else if (turn > 20 && turn < 140) {
+            description.add("Turn right");
+        } else if (turn < -20 && turn > -140) {
+            description.add("Turn left");
+        }
+    }
+
+    public void resetRoundaboutCounter() {
+        roundaboutCounter = 0;
+    }
+
     public double calculateTurn(Edge prevEdge, Edge currEdge) {
         Point2D prevVector = new Point2D(prevEdge.getHeadNode().getLon() - prevEdge.getTailNode().getLon(), - (prevEdge.getHeadNode().getLat() - prevEdge.getTailNode().getLat()));
         Point2D currVector = new Point2D(currEdge.getHeadNode().getLon() - currEdge.getTailNode().getLon(), - (currEdge.getHeadNode().getLat() - currEdge.getTailNode().getLat()));
-
-        System.out.println("prevVector: " + prevVector);
-        System.out.println("currVector: " + currVector);
 
         double prevDirection = Math.atan2(prevVector.getX(), prevVector.getY());
         double currDirection = Math.atan2(currVector.getX(), currVector.getY());
@@ -307,7 +318,6 @@ public class MapCanvas extends Canvas {
         } else if (turn < - Math.PI) {
             turn = - (turn + Math.PI);
         }
-        System.out.println("Turn: " + turn);
 
         turn *= 180 / Math.PI;
         return turn;

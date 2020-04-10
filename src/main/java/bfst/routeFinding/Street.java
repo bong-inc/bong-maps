@@ -6,13 +6,13 @@ import java.util.ArrayList;
 public class Street implements Serializable {
 
     private boolean onewayCar = false;
-    private boolean bicycle = false; //residential, highway:cycleway, cycleway:track
-    private boolean walking = false; //foot, sidewalk, highway:footway
+    private boolean bicycle = false;
+    private boolean walking = false;
     private boolean car = false;
     private boolean onewayBicycle = false;
     private int maxspeed = 0;
     private String name;
-    private int role = 0; //0 no role, 1 motorway link, 2 roundabout, 3 motorway
+    private Role role = Role.NO_ROLE;
 
     public Street(ArrayList<String> tags, int defaultSpeed) {
 
@@ -35,7 +35,7 @@ public class Street implements Serializable {
                             break;
                         case "motorway":
                             car = true;
-                            role = 3;
+                            role = Role.MOTORWAY;
                             break;
                         case "primary":
                         case "secondary":
@@ -45,7 +45,7 @@ public class Street implements Serializable {
                             break;
                         case "motorway_link":
                             car = true;
-                            role = 1;
+                            role = Role.MOTORWAY_LINK;
                             break;
                         case "residential":
                             walking = true;
@@ -96,7 +96,7 @@ public class Street implements Serializable {
                     if (value.equals("roundabout")) {
                         onewayCar = true;
                         onewayBicycle = true;
-                        role = 2;
+                        role = Role.ROUNDABOUT;
                     }
                     break;
             }
@@ -136,7 +136,14 @@ public class Street implements Serializable {
         return name;
     }
 
-    public int getRole() {
+    public Role getRole() {
         return role;
+    }
+
+    public enum Role {
+        NO_ROLE,
+        MOTORWAY_LINK,
+        ROUNDABOUT,
+        MOTORWAY
     }
 }
