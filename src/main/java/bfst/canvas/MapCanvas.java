@@ -201,24 +201,8 @@ public class MapCanvas extends Canvas {
             if (currEdge.getStreet().getName() != null) { //TODO veje uden navne ignoreres
 
                 if (!prevEdgeName.equals(currEdge.getStreet().getName()) || (currEdge.getStreet().getRole() != 2 && prevEdge.getStreet().getRole() == 2)) {
-
-                    Point2D prevVector = new Point2D(prevEdge.getHeadNode().getLon() - prevEdge.getTailNode().getLon(), prevEdge.getHeadNode().getLat() - prevEdge.getTailNode().getLat());
-                    Point2D currVector = new Point2D(currEdge.getHeadNode().getLon() - currEdge.getTailNode().getLon(), currEdge.getHeadNode().getLat() - currEdge.getTailNode().getLat());
-                    /*Point2D prevUnitVector = new Point2D(prevVector.getX() / prevVector.magnitude(), prevVector.getY() / prevVector.magnitude());
-                    Point2D currUnitVector = new Point2D(currVector.getX() / currVector.magnitude(), currVector.getY() / currVector.magnitude());
-                    Point2D resultingVector = new Point2D(currUnitVector.getX() - prevUnitVector.getX(), currUnitVector.getY() -  prevUnitVector.getY());*/
-
-                    double prevDirection = Math.atan2(prevVector.getX(), prevVector.getY());
-                    double currDirection = Math.atan2(currVector.getX(), currVector.getY());
-                    double turn = prevDirection - currDirection;
-                    if (turn > Math.PI) {
-                        turn = turn - Math.PI;
-                    }
-                    turn *= 180 / Math.PI;
-
-                    //double turn = Math.atan2(resultingVector.getX(), resultingVector.getY()) * 180 / Math.PI;
-
                     addInstruction(prevEdgeName, tempLength);
+                    double turn = calculateTurn(prevEdge, currEdge);
 
                     if (currEdge.getStreet().getRole() == 3 && prevEdge.getStreet().getRole() == 1) {
                         description.add("Take the ramp onto the motorway");
@@ -228,10 +212,8 @@ public class MapCanvas extends Canvas {
                         description.add("Take exit number " + roundaboutCounter + " in the roundabout");
                         roundaboutCounter = 0;
                     } else if (turn > 20 && turn < 140) {
-                        description.add("Angle: " + turn);
                         description.add("Turn right");
                     } else if (turn < -20 && turn > -140) {
-                        description.add("Angle: " + turn);
                         description.add("Turn left");
                     }
 
@@ -239,16 +221,13 @@ public class MapCanvas extends Canvas {
                     tempLength = currEdge.getWeight() * 0.56;
                 } else {
                     tempLength += currEdge.getWeight() * 0.56;
-
                     if (i == list.size() - 1) {
                         addInstruction(prevEdgeName, tempLength);
                     }
-
                 }
             } else {
                 tempLength += currEdge.getWeight() * 0.56;
             }
-
 
             prevEdge = list.get(i);
 
@@ -311,6 +290,27 @@ public class MapCanvas extends Canvas {
         } else {
             description.add("Follow " + prevEdgeName + " for " + roundedLength + " m");
         }
+    }
+
+    public double calculateTurn(Edge prevEdge, Edge currEdge) {
+        Point2D prevVector = new Point2D(prevEdge.getHeadNode().getLon() - prevEdge.getTailNode().getLon(), - (prevEdge.getHeadNode().getLat() - prevEdge.getTailNode().getLat()));
+        Point2D currVector = new Point2D(currEdge.getHeadNode().getLon() - currEdge.getTailNode().getLon(), - (currEdge.getHeadNode().getLat() - currEdge.getTailNode().getLat()));
+
+        System.out.println("prevVector: " + prevVector);
+        System.out.println("currVector: " + currVector);
+
+        double prevDirection = Math.atan2(prevVector.getX(), prevVector.getY());
+        double currDirection = Math.atan2(currVector.getX(), currVector.getY());
+        double turn = currDirection - prevDirection;
+        if (turn > Math.PI) {
+            turn = - (turn - Math.PI);
+        } else if (turn < - Math.PI) {
+            turn = - (turn + Math.PI);
+        }
+        System.out.println("Turn: " + turn);
+
+        turn *= 180 / Math.PI;
+        return turn;
     }
 
     public void clearRoute() {
