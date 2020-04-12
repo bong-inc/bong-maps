@@ -59,14 +59,25 @@ public class NodeContainer {
             sort(0, fill-1);
             sorted = true;
         }
-        int index = BinarySerachIndex(id);
+        int index = BinarySearchIndex(id);
         if(index == -1){
             return null;
         }
         return new Node(ids[index], lons[index], lats[index]);
     }
 
-    private int BinarySerachIndex(long id){
+    public int getIndex(long id){
+        return BinarySearchIndex(id);
+    }
+
+    public float getLonFromIndex(int index){
+        return lons[index];
+    }
+    public float getLatFromIndex(int index){
+        return lats[index];
+    }
+
+    private int BinarySearchIndex(long id){
         int low = 0;
         int high = fill - 1;
         while (low <= high){

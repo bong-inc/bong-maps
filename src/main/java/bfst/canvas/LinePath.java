@@ -17,11 +17,9 @@ public class LinePath implements Drawable, Serializable {
         int nodesSize = way.getSize();
         coords = new float[nodesSize * 2];
         for (int i = 0 ; i < nodesSize ; ++i) {
-            Node nd = nodeContainer.get(nodes[i]);
-            if(nd != null) {
-                coords[i * 2] = nd.getLon();
-                coords[i * 2 + 1] = nd.getLat();
-            }
+            int index = nodeContainer.getIndex(nodes[i]);
+            coords[i * 2] = nodeContainer.getLonFromIndex(index);
+            coords[i * 2 + 1] = nodeContainer.getLatFromIndex(index);
         }
         this.type = type;
     }
@@ -29,17 +27,7 @@ public class LinePath implements Drawable, Serializable {
     public LinePath(float[] coords) {
         this.coords = coords;
     }
-/*
-    public LinePath(Way way) {
-        ArrayList<Node> nodes = way.getNodes();
-        int nodesSize = nodes.size();
-        coords = new float[nodesSize * 2];
-        for (int i = 0 ; i < nodesSize ; ++i) {
-            coords[i*2] = nodes.get(i).getLon();
-            coords[i*2+1] = nodes.get(i).getLat();
-        }
-    }
-*/
+
     public LinePath(Node tail, Node head) {
         coords = new float[4];
         coords[0] = tail.getLon();
