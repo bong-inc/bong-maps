@@ -15,6 +15,26 @@ public class Graph implements Serializable {
         return adj;
     }
 
+    public int getOutDegree(long id, String vehicle) {
+        int count = 0;
+        for (Edge edge : adj.get(id)) {
+            if (vehicle.equals("Car")) {
+                if (edge.getTailNode().getAsLong() == id || !edge.getStreet().isOnewayCar()) {
+                    count++;
+                }
+            } else if(vehicle.equals("Bicycle")) {
+                if (edge.getTailNode().getAsLong() == id || !edge.getStreet().isOnewayBicycle()) {
+                    count++;
+                }
+            } else {
+                if (edge.getTailNode().getAsLong() == id) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     private TreeMap<Long, ArrayList<Edge>> adj;
 
     public Graph() {

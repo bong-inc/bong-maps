@@ -48,4 +48,12 @@ public class Edge implements Serializable {
             return tailNode.getAsLong();
         }
     }
+
+    public Node otherNode (long vertex) {
+        if (vertex == tailNode.getAsLong()) {
+            return headNode;
+        } else {
+            return tailNode;
+        }
+    }
 }
