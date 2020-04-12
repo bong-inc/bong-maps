@@ -1,5 +1,6 @@
 package bfst.canvas;
 
+import bfst.OSMReader.NodeContainer;
 import bfst.OSMReader.Relation;
 import bfst.OSMReader.Way;
 import javafx.scene.canvas.GraphicsContext;
@@ -9,10 +10,10 @@ public class PolyLinePath extends ArrayList<LinePath> implements Drawable {
     private static final long serialVersionUID = -4838798038938840050L;
     Type type;
 
-    public PolyLinePath(Relation relation, Type type) {
+    public PolyLinePath(Relation relation, Type type, NodeContainer nodeContainer) {
         ArrayList<Way> ways = relation.getWays();
         for (var way : ways) {
-            add(new LinePath(way, type));
+            add(new LinePath(way, type, nodeContainer));
         }
         this.type = type;
     }

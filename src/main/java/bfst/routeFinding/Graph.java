@@ -7,17 +7,38 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Graph implements Serializable {
 
-    public HashMap<Long, ArrayList<Edge>> getAdj() {
+    public TreeMap<Long, ArrayList<Edge>> getAdj() {
         return adj;
     }
 
-    private HashMap<Long, ArrayList<Edge>> adj;
+    public int getOutDegree(long id, String vehicle) {
+        int count = 0;
+        for (Edge edge : adj.get(id)) {
+            if (vehicle.equals("Car")) {
+                if (edge.getTailNode().getAsLong() == id || !edge.getStreet().isOnewayCar()) {
+                    count++;
+                }
+            } else if(vehicle.equals("Bicycle")) {
+                if (edge.getTailNode().getAsLong() == id || !edge.getStreet().isOnewayBicycle()) {
+                    count++;
+                }
+            } else {
+                if (edge.getTailNode().getAsLong() == id) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private TreeMap<Long, ArrayList<Edge>> adj;
 
     public Graph() {
-        adj = new HashMap<>();
+        adj = new TreeMap<>();
     }
 
     public void addEdge(Edge edge) {

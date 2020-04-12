@@ -6,12 +6,13 @@ import java.util.ArrayList;
 public class Street implements Serializable {
 
     private boolean onewayCar = false;
-    private boolean bicycle = false; //residential, highway:cycleway, cycleway:track
-    private boolean walking = false; //foot, sidewalk, highway:footway
+    private boolean bicycle = false;
+    private boolean walking = false;
     private boolean car = false;
     private boolean onewayBicycle = false;
     private int maxspeed = 0;
     private String name;
+    private Role role = Role.NO_ROLE;
 
     public Street(ArrayList<String> tags, int defaultSpeed) {
 
@@ -32,13 +33,19 @@ public class Street implements Serializable {
                             walking = true;
                             bicycle = true;
                             break;
+                        case "motorway":
+                            car = true;
+                            role = Role.MOTORWAY;
+                            break;
                         case "primary":
                         case "secondary":
                         case "tertiary":
-                        case "motorway":
                         case "service":
+                            car = true;
+                            break;
                         case "motorway_link":
                             car = true;
+                            role = Role.MOTORWAY_LINK;
                             break;
                         case "residential":
                             walking = true;
@@ -48,6 +55,7 @@ public class Street implements Serializable {
                         case "unclassified":
                             bicycle = true;
                             car = true;
+                            break;
                     }
                     break;
                 case "maxspeed":
@@ -82,6 +90,13 @@ public class Street implements Serializable {
                 case "bicycle":
                     if (value.equals("yes") || value.equals("designated")) {
                         bicycle = true;
+                    }
+                    break;
+                case "junction":
+                    if (value.equals("roundabout")) {
+                        onewayCar = true;
+                        onewayBicycle = true;
+                        role = Role.ROUNDABOUT;
                     }
                     break;
             }
@@ -119,5 +134,16 @@ public class Street implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public enum Role {
+        NO_ROLE,
+        MOTORWAY_LINK,
+        ROUNDABOUT,
+        MOTORWAY
     }
 }

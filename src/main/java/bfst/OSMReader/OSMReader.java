@@ -18,11 +18,10 @@ import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 public class OSMReader {
-
-    private SortedArrayList<Node> tempNodes = new SortedArrayList<>();
+    private NodeContainer tempNodes = new NodeContainer();
     private SortedArrayList<Way> tempWays = new SortedArrayList<>();
     private SortedArrayList<Relation> tempRelations = new SortedArrayList<>();
-    private HashMap<Node, Way> tempCoastlines = new HashMap<>();
+    private HashMap<Long, Way> tempCoastlines = new HashMap<>();
     private Bound bound;
     private bfst.canvas.Type type;
     private Node nodeHolder;
@@ -78,20 +77,21 @@ public class OSMReader {
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
-                        String element = reader.getLocalName();
+                        String element = reader.getLocalName().intern();
                         parseElement(reader, element);
                         break;
                     case END_ELEMENT:
-                        element = reader.getLocalName();
+                        element = reader.getLocalName().intern();
                         switch (element) {
                             case "node":
                                 if(!builder.isEmpty()) {
                                     addresses.add(builder.build());
                                 } else {
-                                    tempNodes.add(nodeHolder);
+                                    tempNodes.add(nodeHolder.getAsLong(), nodeHolder.getLon(), nodeHolder.getLat());
                                 }
                                 break;
                             case "way":
+                                wayHolder.trim();
                                 for (int i = 0; i < tagList.size(); i += 2) {
 
                                     if (tagList.get(i).equals("access")) {
@@ -116,23 +116,24 @@ public class OSMReader {
                                                 break;
                                         }
 
-                                        ArrayList<Node> nodes = wayHolder.getNodes();
+                                        long[] nodes = wayHolder.getNodes();
                                         currentStreet = new Street(tagList, defaultSpeed);
 
-                                        for (int j = 1; j < nodes.size(); j++){
-                                            Edge edge = new Edge(nodes.get(j - 1), nodes.get(j), currentStreet);
+                                        for (int j = 1; j < nodes.length; j++){
+                                            Edge edge = new Edge(tempNodes.get(nodes[j-1]), tempNodes.get(nodes[j]), currentStreet);
                                             graph.addEdge(edge);
                                         }
-                                        break;
+                                        break; 
                                     }
                                 }
 
                                 if(type != Type.COASTLINE) {
-                                    if (wayHolder.getNodes().size() > 0) {
+                                    if (wayHolder.getSize() > 0) {
                                         if (!drawableByType.containsKey(type))
                                             drawableByType.put(type, new ArrayList<>());
-                                        drawableByType.get(type).add(new LinePath(wayHolder, type));
+                                        drawableByType.get(type).add(new LinePath(wayHolder, type, tempNodes));
                                     }
+                                    
                                 } else {
                                     Way before = tempCoastlines.remove(wayHolder.first());
                                     if (before != null) {
@@ -144,35 +145,37 @@ public class OSMReader {
                                         tempCoastlines.remove(after.first());
                                         tempCoastlines.remove(after.last());
                                     }
-                                    wayHolder = Way.merge(Way.merge(before, wayHolder), after);
+                                    wayHolder = Way.merge(before, wayHolder);
+                                    wayHolder = Way.merge(wayHolder, after);
+
                                     tempCoastlines.put(wayHolder.first(), wayHolder);
                                     tempCoastlines.put(wayHolder.last(), wayHolder);
                                 }
                                 type = Type.UNKNOWN;
                                 break;
                             case "relation":
-                                relationHolder.collectRelation();
+                                relationHolder.collectRelation(tempNodes);
                                 if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
-                                if(relationHolder.getWays() != null) drawableByType.get(type).add(new PolyLinePath(relationHolder, type));
+                                if(relationHolder.getWays() != null) drawableByType.get(type).add(new PolyLinePath(relationHolder, type, tempNodes));
                                 type = Type.UNKNOWN;
                                 break;
                             case "osm":
                                 ArrayList<Drawable> coastlines = new ArrayList<>();
-                                for(Map.Entry<Node,Way> entry : tempCoastlines.entrySet()){
+                                for(Map.Entry<Long,Way> entry : tempCoastlines.entrySet()){
                                     if(entry.getValue().first() == entry.getValue().last()){
-                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
+                                        coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE,tempNodes));
                                     } else {
                                         fixCoastline(entry.getValue());
-                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE));
+                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE,tempNodes));
                                     }
                                 }
                                 if(coastlines.size() == 0){
                                     Way land = new Way();
-                                    land.addNode(new Node(0, bound.getMinLon(), bound.getMinLat()));
-                                    land.addNode(new Node(0, bound.getMinLon(), bound.getMaxLat()));
-                                    land.addNode(new Node(0, bound.getMaxLon(), bound.getMaxLat()));
-                                    land.addNode(new Node(0, bound.getMaxLon(), bound.getMinLat()));
-                                    coastlines.add(new LinePath(land, Type.COASTLINE));
+                                    land.addNode(-1);
+                                    land.addNode(-2);
+                                    land.addNode(-3);
+                                    land.addNode(-4);
+                                    coastlines.add(new LinePath(land, Type.COASTLINE, tempNodes));
                                 }
                                 drawableByType.put(Type.COASTLINE,coastlines);
                                 break;
@@ -200,6 +203,10 @@ public class OSMReader {
                         min.getLon(),
                         max.getLon()
                 );
+                tempNodes.add(-1, bound.getMinLon(), bound.getMinLat()); //TOPLEFT
+                tempNodes.add(-2, bound.getMinLon(), bound.getMaxLat()); //BOTTOMLEFT
+                tempNodes.add(-3, bound.getMaxLon(), bound.getMaxLat()); //BOTTOMRIGHT
+                tempNodes.add(-4, bound.getMaxLon(), bound.getMinLat()); //TOPRIGHT
                 break;
             case "node":
                 builder = new Address.Builder();
@@ -223,8 +230,8 @@ public class OSMReader {
                 tempRelations.add(relationHolder);
                 break;
             case "tag":
-                String k = reader.getAttributeValue(null, "k");
-                String v = reader.getAttributeValue(null, "v");
+                String k = reader.getAttributeValue(null, "k").intern();
+                String v = reader.getAttributeValue(null, "v").intern();
 
                 tagList.add(k);
                 tagList.add(v);
@@ -235,8 +242,8 @@ public class OSMReader {
             case "nd":
                 long ref = Long.parseLong(reader.getAttributeValue(null, "ref"));
                 if(wayHolder != null){
+                    if(tempNodes.get(ref) != null) wayHolder.addNode(ref);
                     Node node = tempNodes.get(ref);
-                    if(tempNodes.get(ref) != null) wayHolder.addNode(node);
                     cityBuilder.node(node);
                 }
                 break;
@@ -319,7 +326,7 @@ public class OSMReader {
                             relationHolder.addWay(tempWays.get(memberRef));
                             break;
                     }
-                    cityBuilder.node(tempWay.last());
+                    cityBuilder.node(tempNodes.get(tempWay.last()));
                 }
                 break;
             case "relation":
@@ -329,40 +336,42 @@ public class OSMReader {
     }
 
     private void fixCoastline(Way coastline){
-
-        ArrayList<Node> coastlineNodes = coastline.getNodes();
-        Node savedNd = coastline.first();
+        long[] coastlineNodes;
+        Node savedNd;
         Node currentNd;
         for(int i = 1;;){
-            if(coastlineNodes.size() <= 1) return;
-            currentNd = coastlineNodes.get(i);
+            coastlineNodes = coastline.getNodes();
+            if(coastlineNodes.length <= 1) return;
+            currentNd = tempNodes.get(coastlineNodes[i]);
             float lon = currentNd.getLon();
             float lat = currentNd.getLat();
             if(lon <= bound.getMaxLon() && lon >= bound.getMinLon() && lat <= bound.getMaxLat() && lat >= bound.getMinLat()){ //Is inside bound
                 break;
             }
             else{
-                coastlineNodes.remove(savedNd);
+                coastline.remove(currentNd.getAsLong());
                 savedNd = currentNd;
             }
         }
-        savedNd = coastline.last();
-        int size = coastlineNodes.size();
+        savedNd = tempNodes.get(coastline.last());
+        int size = coastlineNodes.length;
         for(int i = size-1; i >= 0; i--){
-            currentNd = coastlineNodes.get(i);
+            coastlineNodes = coastline.getNodes();
+            currentNd = tempNodes.get(coastlineNodes[i]);
+            if(currentNd == null) continue;
             float lon = currentNd.getLon();
             float lat = currentNd.getLat();
             if(lon <= bound.getMaxLon() && lon >= bound.getMinLon() && lat <= bound.getMaxLat() && lat >= bound.getMinLat()){ //Is inside bound
                 break;
             }
             else{
-                coastlineNodes.remove(savedNd);
+                coastline.remove(savedNd.getAsLong());
                 savedNd = currentNd;
             }
         }
 
-        Node first = coastline.first();
-        Node last = coastline.last();
+        Node first = tempNodes.get(coastline.first());
+        Node last = tempNodes.get(coastline.last());
         float midLon = (bound.getMaxLon() + bound.getMinLon())/2;
         float midLat = (bound.getMaxLat() + bound.getMinLat())/2;
 
@@ -371,61 +380,69 @@ public class OSMReader {
         if((first.getLon() < bound.getMaxLon() && first.getLon() > bound.getMinLon()) && (last.getLon() < bound.getMaxLon() && last.getLon() > bound.getMinLon())) {
             if( (first.getLat() < midLat && last.getLat() < midLat && first.getLon() < last.getLon()) ||
                     (first.getLat() > midLat && last.getLat() > midLat && first.getLon() > last.getLon())) {
-                coastline.addNode(last);
+                coastline.addNode(last.getAsLong());
                 fixed = true;
             }
         }
         else if((first.getLat() < bound.getMaxLat() && first.getLat() > bound.getMinLat()) && (last.getLat() < bound.getMaxLat() && last.getLat() > bound.getMinLat())){
             if( (first.getLon() < midLon && last.getLon() < midLon && first.getLat() > last.getLat()) ||
                     (first.getLon() > midLon && last.getLon() > midLon && first.getLat() < last.getLat())){
-                coastline.addNode(last);
+                coastline.addNode(last.getAsLong());
                 fixed = true;
             }
         }
         if(!fixed){
             Node[] boundNodes = new Node[4];
-            boundNodes[0] = new Node(0, bound.getMinLon(), bound.getMinLat()); //TOPLEFT
-            boundNodes[1] = new Node(0, bound.getMinLon(), bound.getMaxLat()); //BOTTOMLEFT
-            boundNodes[2] = new Node(0, bound.getMaxLon(), bound.getMaxLat()); //BOTTOMRIGHT
-            boundNodes[3] = new Node(0, bound.getMaxLon(), bound.getMinLat()); //TOPRIGHT
+            boundNodes[0] = new Node(-1, bound.getMinLon(), bound.getMinLat()); //TOPLEFT == -1
+            boundNodes[1] = new Node(-2, bound.getMinLon(), bound.getMaxLat()); //BOTTOMLEFT == -2
+            boundNodes[2] = new Node(-3, bound.getMaxLon(), bound.getMaxLat()); //BOTTOMRIGHT == -3
+            boundNodes[3] = new Node(-4, bound.getMaxLon(), bound.getMinLat()); //TOPRIGHT == -4
 
             if(first.getLat() <= bound.getMinLat()){ //TOP
-                coastline.addNodeToFront(boundNodes[3]);
+                coastline.addNodeToFront(-4L);
             }
             else if(first.getLat() >= bound.getMaxLat()){ //BOTTOM
-                coastline.addNodeToFront(boundNodes[1]);
+                coastline.addNodeToFront(-2L);
             }
             else if(first.getLon() <= bound.getMinLon()){ //LEFT
-                coastline.addNodeToFront(boundNodes[0]);
+                coastline.addNodeToFront(-1L);
             }
             else if(first.getLon() >= bound.getMaxLon()){ //RIGHT
-                coastline.addNodeToFront(boundNodes[2]);
+                coastline.addNodeToFront(-3L);
             }
 
-            int lastNode = 10;
+            long lastNode = 10;
             if(last.getLat() <= bound.getMinLat()){ //TOP
-                coastline.addNode(boundNodes[0]);
-                lastNode = 0;
+                coastline.addNode(-1L);
+                lastNode = -1L;
             }
             else if(last.getLat() >= bound.getMaxLat()){ //BOTTOM
-                coastline.addNode(boundNodes[2]);
-                lastNode = 2;
+                coastline.addNode(-3L);
+                lastNode = -3L;
             }
             else if(last.getLon() <= bound.getMinLon()){ //LEFT
-                coastline.addNode(boundNodes[1]);
-                lastNode = 1;
+                coastline.addNode(-2L);
+                lastNode = -2L;
             }
             else if(last.getLon() >= bound.getMaxLon()){ //RIGHT
-                coastline.addNode(boundNodes[3]);
-                lastNode = 3;
+                coastline.addNode(-4L);
+                lastNode = -4L;
             }
 
             if(lastNode != 10){
-                for(int i = lastNode; coastline.first() != coastline.last(); i++) {
-                    coastline.addNode(boundNodes[i]);
-                    if (i == 3) i = -1;
+                for(long i = lastNode; coastline.first() != coastline.last(); i--) {
+                    coastline.addNode(i);
+                    if (i == -4L) i = 0;
                 }
             }
+            coastline.trim();
         }
+    }
+
+    public void destroy(){
+        tempNodes = null;
+        tempWays = null;
+        tempRelations = null;
+        tempCoastlines = null;
     }
 }

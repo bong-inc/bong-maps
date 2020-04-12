@@ -296,6 +296,8 @@ public class MainController {
 
                 OSMReader reader = new OSMReader(is);
                 this.model = new Model(reader);
+                reader.destroy();
+                reader = null;
                 mapCanvasWrapper.mapCanvas.setModel(model);
 
                 time += System.nanoTime();

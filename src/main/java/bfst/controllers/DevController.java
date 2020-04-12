@@ -123,7 +123,6 @@ public class DevController {
 
         findRoute.setOnAction(e -> {
             canvas.setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
-            canvas.setRoute();
         });
 
         clearRoute.setOnAction(e -> {
