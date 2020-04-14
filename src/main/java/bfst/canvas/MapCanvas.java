@@ -466,18 +466,7 @@ public class MapCanvas extends Canvas {
         pointsOfInterest.add(poi);
     }
 
-    public void addPointOfInterest() {
-        if (pointsOfInterest == null) {
-            pointsOfInterest = new ArrayList<>();
-        }
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setContentText("Save point of interest");
-        dialog.setHeaderText("Enter the name of the point");
-        dialog.setContentText("Name:");
-        Optional<String> givenName = dialog.showAndWait();
-
-        if (givenName.isPresent()) {
-            pointsOfInterest.add(new PointOfInterest(currentPin.centerX, currentPin.centerY, givenName.get()));
-        }
+    public void setPOI(ArrayList<PointOfInterest> poi) {
+        pointsOfInterest = poi;
     }
 }

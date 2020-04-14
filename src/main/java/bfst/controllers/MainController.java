@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,7 +57,7 @@ public class MainController {
     public void setDefaultMap(){
         try {
             InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/copenhagen.bin");
-            loadBinary(is);
+            setModelFromBinary(is);
         }catch (Exception e){
             System.out.println("Failed to set default map");
         }
@@ -79,6 +80,7 @@ public class MainController {
     public void initialize() {
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> {
             setDefaultMap();
+            loadPointsOfInterest();
         });
 
         loadClick.setOnAction(this::loadFileOnClick);
@@ -296,7 +298,7 @@ public class MainController {
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
         switch (fileExtension) {
             case ".bin":
-                loadBinary(is);
+                setModelFromBinary(is);
                 break;
             case ".osm":
                 canvas.setTypesToBeDrawn(new ArrayList<>());
@@ -323,17 +325,20 @@ public class MainController {
         is.close();
     }
 
-    private void loadBinary(InputStream is) throws IOException, ClassNotFoundException {
+    private void setModelFromBinary(InputStream is) throws IOException, ClassNotFoundException {
         long time = -System.nanoTime();
-
-        ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
-        Object temp = ois.readObject();
-        this.model = (Model) temp;
-        ois.close();
+        this.model = (Model) loadBinary(is);
         mapCanvasWrapper.mapCanvas.setModel(model);
 
         time += System.nanoTime();
         System.out.println("load binary: " + time/1000000f + "ms");
+    }
+
+    private Object loadBinary(InputStream is) throws IOException, ClassNotFoundException {
+        ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
+        Object temp = ois.readObject();
+        ois.close();
+        return temp;
     }
 
     public void saveBinary(File file, Serializable toBeSaved) throws IOException {
@@ -389,5 +394,16 @@ public class MainController {
             canvas.addToPOI(new PointOfInterest(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), givenName.get()));
         }
         savePointsOfInterest();
+    }
+
+    public void loadPointsOfInterest() {
+        ArrayList<PointOfInterest> list = new ArrayList<>();
+        try {
+            InputStream is = new FileInputStream(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "POI.bin");
+            list = (ArrayList<PointOfInterest>) loadBinary(is);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        canvas.setPOI(list);
     }
 }
