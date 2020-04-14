@@ -29,6 +29,12 @@
                 <MenuItem mnemonicParsing="false" text="Open Dev Tools..." />
             </items>
         </Menu>
+        <Menu mnemonicParsing="false" text="Points of interest" fx:id="POI">
+            <items>
+                <MenuItem mnemonicParsing="false" text="Add point" fx:id="addPOI"/>
+            </items>
+        </Menu>
+
       </menus>
     </MenuBar>
     <StackPane VBox.vgrow="ALWAYS" fx:id="stackPane">

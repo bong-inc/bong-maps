@@ -35,7 +35,7 @@ public class MapCanvas extends Canvas {
     private double routeTime;
     private double routeDistance;
     private int roundaboutCounter = 0;
-    private ArrayList<PointOfInterest> pointsOfInterest;
+    private ArrayList<PointOfInterest> pointsOfInterest = new ArrayList<>();
 
     private ArrayList<String> description;
 
@@ -56,6 +56,10 @@ public class MapCanvas extends Canvas {
 
     public ArrayList<PointOfInterest> getPointsOfInterest() {
         return pointsOfInterest;
+    }
+
+    public Pin getCurrentPin() {
+        return currentPin;
     }
 
     public MapCanvas() {
@@ -456,6 +460,10 @@ public class MapCanvas extends Canvas {
     public void nullPin () {
         currentPin = null;
         repaint();
+    }
+
+    public void addToPOI(PointOfInterest poi) {
+        pointsOfInterest.add(poi);
     }
 
     public void addPointOfInterest() {

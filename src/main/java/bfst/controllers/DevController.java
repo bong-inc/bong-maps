@@ -58,8 +58,6 @@ public class DevController {
     @FXML
     private Button routeDescription;
     @FXML
-    private Button addPOI;
-    @FXML
     private Button printPOI;
 
     @FXML
@@ -140,10 +138,6 @@ public class DevController {
             for (String string : canvas.getDescription()) {
                 System.out.println(string);
             }
-        });
-
-        addPOI.setOnAction(e -> {
-            canvas.addPointOfInterest();
         });
 
         printPOI.setOnAction(e -> {

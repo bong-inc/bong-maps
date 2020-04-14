@@ -8,6 +8,7 @@ import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.MapCanvasWrapper;
+import bfst.canvas.PointOfInterest;
 import bfst.canvas.Type;
 import bfst.exceptions.FileTypeNotSupportedException;
 import javafx.event.ActionEvent;
@@ -19,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
@@ -34,6 +36,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -68,6 +71,7 @@ public class MainController {
     @FXML MenuItem devtools;
     @FXML TextField searchField;
     @FXML VBox suggestions;
+    @FXML MenuItem addPOI;
 
     String tempQuery = "";
 
@@ -170,6 +174,10 @@ public class MainController {
                 suggestions.getChildren().clear();
             }
         });
+
+        addPOI.setOnAction(e -> {
+            addPointOfInterest();
+        });
     }
 
     private void query(String query) {
@@ -254,7 +262,7 @@ public class MainController {
         try {
             File file = new FileChooser().showSaveDialog(stage);
             if(file != null){
-                saveBinary(file);
+                saveBinary(file, model);
             }
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
@@ -328,9 +336,9 @@ public class MainController {
         System.out.println("load binary: " + time/1000000f + "ms");
     }
 
-    public void saveBinary(File file) throws IOException {
+    public void saveBinary(File file, Serializable toBeSaved) throws IOException {
         ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-        oos.writeObject(model);
+        oos.writeObject(toBeSaved);
         oos.close();
     }
 
@@ -358,5 +366,28 @@ public class MainController {
 
         loadFile(new File(destFolder + File.separator + fileName));
 
+    }
+
+    private void savePointsOfInterest() {
+        String destFolder = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "POI.bin";
+        File file = new File(destFolder);
+        try {
+            saveBinary(file, canvas.getPointsOfInterest());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addPointOfInterest() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setContentText("Save point of interest");
+        dialog.setHeaderText("Enter the name of the point");
+        dialog.setContentText("Name:");
+        Optional<String> givenName = dialog.showAndWait();
+
+        if (givenName.isPresent()) {
+            canvas.addToPOI(new PointOfInterest(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), givenName.get()));
+        }
+        savePointsOfInterest();
     }
 }
