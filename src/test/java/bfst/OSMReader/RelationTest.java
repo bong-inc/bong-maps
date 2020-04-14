@@ -29,8 +29,10 @@ public class RelationTest {
     @Test
     public void RelationWayTest(){
         Way w1 = new Way();
-        w1.addNode(new Node(0, 10, 10));
-        w1.addNode(new Node(1, 20, 20));
+        Node nd0 = new Node(0, 10, 10);
+        Node nd1 = new Node(1, 20, 20);
+        w1.addNode(nd0.getAsLong());
+        w1.addNode(nd1.getAsLong());
         Relation r = new Relation();
         r.addWay(w1);
 
