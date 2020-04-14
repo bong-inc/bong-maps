@@ -10,6 +10,7 @@ import bfst.routeFinding.*;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.text.Font;
@@ -34,8 +35,9 @@ public class MapCanvas extends Canvas {
     private double routeTime;
     private double routeDistance;
     private int roundaboutCounter = 0;
+    private ArrayList<PointOfInterest> pointsOfInterest;
 
-    ArrayList<String> description;
+    private ArrayList<String> description;
 
     private Pin currentPin;
 
@@ -50,6 +52,10 @@ public class MapCanvas extends Canvas {
 
     public ArrayList<String> getDescription() {
         return description;
+    }
+
+    public ArrayList<PointOfInterest> getPointsOfInterest() {
+        return pointsOfInterest;
     }
 
     public MapCanvas() {
@@ -450,5 +456,20 @@ public class MapCanvas extends Canvas {
     public void nullPin () {
         currentPin = null;
         repaint();
+    }
+
+    public void addPointOfInterest() {
+        if (pointsOfInterest == null) {
+            pointsOfInterest = new ArrayList<>();
+        }
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setContentText("Save point of interest");
+        dialog.setHeaderText("Enter the name of the point");
+        dialog.setContentText("Name:");
+        Optional<String> givenName = dialog.showAndWait();
+
+        if (givenName.isPresent()) {
+            pointsOfInterest.add(new PointOfInterest(currentPin.centerX, currentPin.centerY, givenName.get()));
+        }
     }
 }

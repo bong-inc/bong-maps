@@ -1,6 +1,7 @@
 package bfst.controllers;
 
 import bfst.canvas.MapCanvas;
+import bfst.canvas.PointOfInterest;
 import bfst.canvas.Type;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -56,6 +57,10 @@ public class DevController {
     private CheckBox shortestRoute;
     @FXML
     private Button routeDescription;
+    @FXML
+    private Button addPOI;
+    @FXML
+    private Button printPOI;
 
     @FXML
     public void initialize() {
@@ -135,10 +140,16 @@ public class DevController {
             for (String string : canvas.getDescription()) {
                 System.out.println(string);
             }
-            /*
-            for (String string : canvas.getRouteDescription(canvas.getRoute())) {
-                System.out.println(string);
-            }*/
+        });
+
+        addPOI.setOnAction(e -> {
+            canvas.addPointOfInterest();
+        });
+
+        printPOI.setOnAction(e -> {
+            for (PointOfInterest poi : canvas.getPointsOfInterest()) {
+                System.out.println(poi.toString());
+            }
         });
     }
 
