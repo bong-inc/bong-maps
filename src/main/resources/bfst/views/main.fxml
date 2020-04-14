@@ -32,6 +32,8 @@
         <Menu mnemonicParsing="false" text="Points of interest" fx:id="POI">
             <items>
                 <MenuItem mnemonicParsing="false" text="Add point" fx:id="addPOI"/>
+                <Menu mnemonicParsing="false" text="My points" fx:id="myPoints">
+                </Menu>
             </items>
         </Menu>
 

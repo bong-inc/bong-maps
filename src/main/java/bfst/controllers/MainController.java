@@ -17,10 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
@@ -73,6 +70,7 @@ public class MainController {
     @FXML TextField searchField;
     @FXML VBox suggestions;
     @FXML MenuItem addPOI;
+    @FXML Menu myPoints;
 
     String tempQuery = "";
 
@@ -81,6 +79,10 @@ public class MainController {
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> {
             setDefaultMap();
             loadPointsOfInterest();
+
+            for (PointOfInterest poi : canvas.getPointsOfInterest()) {
+                addItemToMyPoints(poi);
+            }
         });
 
         loadClick.setOnAction(this::loadFileOnClick);
@@ -180,6 +182,14 @@ public class MainController {
         addPOI.setOnAction(e -> {
             addPointOfInterest();
         });
+    }
+
+    private void addItemToMyPoints(PointOfInterest poi) {
+        MenuItem item = new MenuItem(poi.getName());
+        item.setOnAction(a -> {
+            canvas.setPin(poi.getLon(), poi.getLat());
+        });
+        myPoints.getItems().add(item);
     }
 
     private void query(String query) {
@@ -383,7 +393,7 @@ public class MainController {
         }
     }
 
-    public void addPointOfInterest() {
+    private void addPointOfInterest() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setContentText("Save point of interest");
         dialog.setHeaderText("Enter the name of the point");
@@ -391,18 +401,20 @@ public class MainController {
         Optional<String> givenName = dialog.showAndWait();
 
         if (givenName.isPresent()) {
-            canvas.addToPOI(new PointOfInterest(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), givenName.get()));
+            PointOfInterest poi = new PointOfInterest(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), givenName.get());
+            canvas.addToPOI(poi);
+            addItemToMyPoints(poi);
         }
         savePointsOfInterest();
     }
 
-    public void loadPointsOfInterest() {
+    private void loadPointsOfInterest() {
         ArrayList<PointOfInterest> list = new ArrayList<>();
         try {
             InputStream is = new FileInputStream(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "POI.bin");
             list = (ArrayList<PointOfInterest>) loadBinary(is);
-        } catch (Exception e){
-            e.printStackTrace();
+        } catch (Exception ignored){
+
         }
         canvas.setPOI(list);
     }

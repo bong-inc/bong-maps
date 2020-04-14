@@ -17,4 +17,16 @@ public class PointOfInterest implements Serializable {
     public String toString() {
         return name + " lon: " + lon + " lat: " + lat;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getLon() {
+        return lon;
+    }
+
+    public float getLat() {
+        return lat;
+    }
 }
