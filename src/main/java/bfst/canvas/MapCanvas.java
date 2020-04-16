@@ -396,8 +396,14 @@ public class MapCanvas extends Canvas {
     }
 
     public void zoom(double factor, double x, double y) {
-        trans.prependScale(factor, factor, x, y);
-        repaint();
+        if (shouldZoom(factor)) {
+            trans.prependScale(factor, factor, x, y);
+            repaint();
+        }
+    }
+
+    public boolean shouldZoom(double factor) {
+        return (factor > 1 && trans.getMxx() < 2.2) || (factor < 1 && trans.getMxx() > 0.0005);
     }
 
     private void paintDrawablesOfType(Type type, double pixelwidth, boolean useRegularColors) {
