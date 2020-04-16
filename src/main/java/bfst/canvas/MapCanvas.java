@@ -452,6 +452,14 @@ public class MapCanvas extends Canvas {
         pan(getWidth() / 2, getHeight() / 2);
         repaint();
     }
+    
+    public void zoomToPoint (float lon, float lat){
+        trans.setToIdentity();
+        pan(-lon, -lat);
+        zoom(1, 0, 0);
+        pan(getWidth() / 2, getHeight() / 2);
+        repaint();
+    }
 
     public void setPin (Node node){
         currentPin = new Pin(node.getLon(), node.getLat(), 1);

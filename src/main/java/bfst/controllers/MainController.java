@@ -25,6 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.transform.NonInvertibleTransformException;
+import javafx.scene.transform.Translate;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -69,8 +70,10 @@ public class MainController {
     @FXML MenuItem devtools;
     @FXML TextField searchField;
     @FXML VBox suggestions;
-    @FXML MenuItem addPOI;
+
     @FXML Menu myPoints;
+    @FXML VBox POItest;
+    @FXML Button POIButton;
 
     String tempQuery = "";
 
@@ -95,6 +98,7 @@ public class MainController {
 
         canvas.setOnMouseDragged(e -> {
             hasBeenDragged = true;
+
             canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
             lastMouse = new Point2D(e.getX(), e.getY());
         });
@@ -104,6 +108,8 @@ public class MainController {
                 try {
                     Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
                     canvas.setPin((float) point2D.getX(), (float) point2D.getY());
+
+                    showAddPOIButton();
 
                 } catch (NonInvertibleTransformException ex) {
                     ex.printStackTrace();
@@ -150,6 +156,7 @@ public class MainController {
         });
 
         searchField.textProperty().addListener((obs,oldVal,newVal) -> {
+            hideAddPOIButton();
             if (searchField.isFocused()) setTempQuery(searchField.getText());
             canvas.nullPin();
             System.out.println("CHANGED");
@@ -176,10 +183,11 @@ public class MainController {
                 canvas.zoomToNode(a.node);
                 canvas.setPin(a.node);
                 suggestions.getChildren().clear();
+                showAddPOIButton();
             }
         });
 
-        addPOI.setOnAction(e -> {
+        POIButton.setOnAction(e -> {
             addPointOfInterest();
         });
     }
@@ -188,6 +196,7 @@ public class MainController {
         MenuItem item = new MenuItem(poi.getName());
         item.setOnAction(a -> {
             canvas.setPin(poi.getLon(), poi.getLat());
+            canvas.zoomToPoint(poi.getLon(), poi.getLat());
         });
         myPoints.getItems().add(item);
     }
@@ -251,6 +260,15 @@ public class MainController {
             }
         }
         updateSuggestions(bs);
+    }
+
+    public void showAddPOIButton() {
+        POItest.setTranslateY(10);
+        POItest.setVisible(true);
+    }
+
+    public void hideAddPOIButton(){
+        POItest.setVisible(false);
     }
 
     public void updateSuggestions(ArrayList<TextFlow> bs){

@@ -29,11 +29,9 @@
                 <MenuItem mnemonicParsing="false" text="Open Dev Tools..." />
             </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Points of interest" fx:id="POI">
+        <Menu mnemonicParsing="false" text="Points of interest" fx:id="myPoints">
             <items>
-                <MenuItem mnemonicParsing="false" text="Add point" fx:id="addPOI"/>
-                <Menu mnemonicParsing="false" text="My points" fx:id="myPoints">
-                </Menu>
+
             </items>
         </Menu>
 
@@ -53,6 +51,9 @@
             </HBox>
             <VBox fx:id="suggestions" styleClass="suggestions">
             </VBox>
+          </VBox>
+          <VBox fx:id="POItest" style="visibility: false">
+              <Button fx:id="POIButton">add POI</Button>
           </VBox>
         </VBox>
     </StackPane>
