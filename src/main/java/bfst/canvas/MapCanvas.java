@@ -10,7 +10,6 @@ import bfst.routeFinding.*;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.text.Font;
@@ -36,8 +35,10 @@ public class MapCanvas extends Canvas {
     private double routeDistance;
     private int roundaboutCounter = 0;
     private ArrayList<PointOfInterest> pointsOfInterest = new ArrayList<>();
+    private Node lastInstructionNode;
+    private String lastActionInstruction;
 
-    private ArrayList<String> description;
+    private ArrayList<Instruction> description;
 
     private Pin currentPin;
 
@@ -50,7 +51,7 @@ public class MapCanvas extends Canvas {
         return trans;
     }
 
-    public ArrayList<String> getDescription() {
+    public ArrayList<Instruction> getDescription() {
         return description;
     }
 
@@ -211,15 +212,15 @@ public class MapCanvas extends Canvas {
             if (currEdge.getStreet().getName() != null) { //TODO veje uden navne ignoreres
 
                 if (!prevEdgeName.equals(currEdge.getStreet().getName()) || (currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT && prevEdge.getStreet().getRole() == Street.Role.ROUNDABOUT)) {
-                    addInstruction(prevEdgeName, tempLength);
-                    addActionInstruction(prevEdge, currEdge, roundaboutCounter);
+                    addInstruction(prevEdgeName, tempLength, currEdge);
+                    setActionInstruction(prevEdge, currEdge, roundaboutCounter);
 
                     prevEdgeName = currEdge.getStreet().getName();
                     tempLength = currEdge.getWeight() * 0.56;
                 } else {
                     tempLength += currEdge.getWeight() * 0.56;
                     if (i == list.size() - 1) {
-                        addInstruction(prevEdgeName, tempLength);
+                        addInstruction(prevEdgeName, tempLength, currEdge);
                     }
                 }
             } else {
@@ -232,9 +233,9 @@ public class MapCanvas extends Canvas {
             routeDistance += distance;
             addTimeToTotal(vehicle, currEdge, distance);
         }
-        description.add("You have arrived at your destination");
-        description.add("Total distance: " + distanceString());
-        description.add("Estimated time: " + timeString());
+        description.add(new Instruction("You have arrived at your destination", route.get(route.size() - 1).getHeadNode()));
+        /*description.add("Total distance: " + distanceString());
+        description.add("Estimated time: " + timeString());*/
     }
 
     private String distanceString() {
@@ -283,32 +284,40 @@ public class MapCanvas extends Canvas {
         }
     }
 
-    private void addInstruction(String prevEdgeName, double tempLength) {
+    private void addInstruction(String prevEdgeName, double tempLength, Edge currEdge) {
+        String instruction = "Follow ";
+        if (lastActionInstruction != null) {
+            instruction = lastActionInstruction + " and follow ";
+        }
+
         BigDecimal bd = new BigDecimal(tempLength);
         bd = bd.round(new MathContext(2));
         int roundedLength = bd.intValue();
         if (roundedLength >= 10000) {
-            description.add("Follow " + prevEdgeName + " for " + roundedLength / 1000 + " km");
+            instruction += prevEdgeName + " for " + roundedLength / 1000 + " km";
         } else if (roundedLength > 1000) {
-            description.add("Follow " + prevEdgeName + " for " + (double) roundedLength / 1000 + " km");
+            instruction += prevEdgeName + " for " + (double) roundedLength / 1000 + " km";
         } else {
-            description.add("Follow " + prevEdgeName + " for " + roundedLength + " m");
+            instruction += prevEdgeName + " for " + roundedLength + " m";
         }
+        description.add(new Instruction(instruction, lastInstructionNode));
+        lastActionInstruction = null;
+        lastInstructionNode = currEdge.getTailNode();
     }
 
-    public void addActionInstruction(Edge prevEdge, Edge currEdge, int roundaboutCounter) {
+    public void setActionInstruction(Edge prevEdge, Edge currEdge, int roundaboutCounter) {
         double turn = calculateTurn(prevEdge, currEdge);
         if (currEdge.getStreet().getRole() == Street.Role.MOTORWAY && prevEdge.getStreet().getRole() == Street.Role.MOTORWAY_LINK) {
-            description.add("Take the ramp onto the motorway");
+            lastActionInstruction = "Take the ramp onto the motorway";
         } else if (currEdge.getStreet().getRole() != Street.Role.MOTORWAY_LINK && currEdge.getStreet().getRole() != Street.Role.MOTORWAY && prevEdge.getStreet().getRole() == Street.Role.MOTORWAY_LINK) {
-            description.add("Take the off-ramp");
+            lastActionInstruction = "Take the off-ramp";
         } else if (roundaboutCounter > 0) {
-            description.add("Take exit number " + roundaboutCounter + " in the roundabout");
+            lastActionInstruction = "Take exit number " + roundaboutCounter + " in the roundabout";
             resetRoundaboutCounter();
         } else if (turn > 20 && turn < 140) {
-            description.add("Turn right");
+            lastActionInstruction = "Turn right";
         } else if (turn < -20 && turn > -140) {
-            description.add("Turn left");
+            lastActionInstruction = "Turn left";
         }
     }
 

@@ -12,6 +12,7 @@ import bfst.canvas.MapCanvasWrapper;
 import bfst.canvas.PointOfInterest;
 import bfst.canvas.Type;
 import bfst.exceptions.FileTypeNotSupportedException;
+import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -77,6 +78,8 @@ public class MainController {
     @FXML Button POIButton;
     @FXML Button setAsDestination;
     @FXML Button setAsStart;
+    @FXML ScrollPane directionsScrollPane;
+    @FXML VBox directions;
 
     String tempQuery = "";
 
@@ -213,19 +216,19 @@ public class MainController {
         }
 
         POIButton.setOnAction(e -> {
-        if (POIButton.getText().equals("Add to my points of interest")) {
-            addPointOfInterest();
-            savePointsOfInterest();
-            POIButton.setText("Remove from my points of interest");
-        } else {
-            canvas.removePOI(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
-            savePointsOfInterest();
-            myPoints.getItems().clear();
-            for (PointOfInterest poi : canvas.getPointsOfInterest()) {
-                addItemToMyPoints(poi);
+            if (POIButton.getText().equals("Add to my points of interest")) {
+                addPointOfInterest();
+                savePointsOfInterest();
+                POIButton.setText("Remove from my points of interest");
+            } else {
+                canvas.removePOI(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+                savePointsOfInterest();
+                myPoints.getItems().clear();
+                for (PointOfInterest poi : canvas.getPointsOfInterest()) {
+                    addItemToMyPoints(poi);
+                }
+                POIButton.setText("Add to my points of interest");
             }
-            POIButton.setText("Add to my points of interest");
-        }
         });
     }
 
@@ -294,6 +297,13 @@ public class MainController {
         setPOIButton();
         Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
         pointCoords.setText("Point at " + -unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
+
+        if (canvas.getDescription() != null) {
+            for (Instruction instruction : canvas.getDescription()) {
+                directions.getChildren().add(new Label(instruction.getInstruction()));
+            }
+        }
+
         pinInfo.setTranslateY(10);
         pinInfo.setVisible(true);
     }

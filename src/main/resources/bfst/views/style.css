@@ -82,6 +82,10 @@
     -fx-faint-focus-color: -fx-control-inner-background;
 }
 
+.directions {
+    -fx-max-height: 300px;
+}
+
 .pinInfo {
     -fx-background-color: white;
     -fx-max-width: 400px;

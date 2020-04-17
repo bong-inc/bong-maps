@@ -58,6 +58,9 @@
               <Button fx:id="POIButton"/>
               <Button fx:id="setAsDestination">Set this point as destination</Button>
               <Button fx:id="setAsStart">Set this point as start</Button>
+              <ScrollPane styleClass="directions">
+                  <VBox fx:id="directions"/>
+              </ScrollPane>
           </VBox>
         </VBox>
     </StackPane>
