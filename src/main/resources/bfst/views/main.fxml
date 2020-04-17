@@ -53,7 +53,7 @@
             </VBox>
           </VBox>
           <VBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
-              <Label fx:id="pointAddress" styleClass="pointAddress"/>
+              <Label fx:id="pointAddress" styleClass="pointAddress">Nearest neighbor address goes here</Label>
               <Label fx:id="pointCoords" styleClass="pointCoords"/>
               <Button fx:id="POIButton">Add to my points of interest</Button>
               <Button fx:id="setAsDestination">Set this point as destination</Button>

@@ -1,7 +1,9 @@
 package bfst.controllers;
 
 import bfst.App;
+import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Model;
+import bfst.OSMReader.Node;
 import bfst.OSMReader.OSMReader;
 import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
@@ -109,7 +111,6 @@ public class MainController {
                 try {
                     Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
                     canvas.setPin((float) point2D.getX(), (float) point2D.getY());
-
                     showAddPOIButton();
 
                 } catch (NonInvertibleTransformException ex) {
@@ -198,6 +199,7 @@ public class MainController {
         item.setOnAction(a -> {
             canvas.setPin(poi.getLon(), poi.getLat());
             canvas.zoomToPoint(poi.getLon(), poi.getLat());
+            showAddPOIButton();
         });
         myPoints.getItems().add(item);
     }
@@ -264,6 +266,8 @@ public class MainController {
     }
 
     public void showAddPOIButton() {
+        Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+        pointCoords.setText("Point at " + -unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
         pinInfo.setTranslateY(10);
         pinInfo.setVisible(true);
     }
