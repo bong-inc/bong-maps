@@ -300,7 +300,11 @@ public class MainController {
 
         if (canvas.getDescription() != null) {
             for (Instruction instruction : canvas.getDescription()) {
-                directions.getChildren().add(new Label(instruction.getInstruction()));
+                Button button = new Button(instruction.getInstruction());
+                button.setOnAction(e -> {
+                    canvas.zoomToNode(instruction.getNode());
+                });
+                directions.getChildren().add(button);
             }
         }
 

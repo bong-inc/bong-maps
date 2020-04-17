@@ -145,7 +145,7 @@ public class MapCanvas extends Canvas {
 
     public void setRoute() {
         route = dijkstra.pathTo(dijkstra.getLastNode(), 1);
-
+        lastInstructionNode = route.get(0).getTailNode();
         ArrayList<Edge> secondPart = dijkstra.pathTo(dijkstra.getLastNode(), 2);
         Collections.reverse(secondPart);
         route.addAll(secondPart);
@@ -479,7 +479,7 @@ public class MapCanvas extends Canvas {
         pan(getWidth() / 2, getHeight() / 2);
         repaint();
     }
-    
+
     public void zoomToPoint (float lon, float lat){
         trans.setToIdentity();
         pan(-lon, -lat);
