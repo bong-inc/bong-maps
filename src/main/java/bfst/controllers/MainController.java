@@ -109,9 +109,14 @@ public class MainController {
         canvas.setOnMouseReleased(e -> {
             if (!hasBeenDragged) {
                 try {
-                    Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
-                    canvas.setPin((float) point2D.getX(), (float) point2D.getY());
-                    showAddPOIButton();
+                    if (canvas.getCurrentPin() == null) {
+                        Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
+                        canvas.setPin((float) point2D.getX(), (float) point2D.getY());
+                        showPinMenu();
+                    } else {
+                        canvas.nullPin();
+                        hidePinMenu();
+                    }
 
                 } catch (NonInvertibleTransformException ex) {
                     ex.printStackTrace();
@@ -185,7 +190,7 @@ public class MainController {
                 canvas.zoomToNode(a.node);
                 canvas.setPin(a.node);
                 suggestions.getChildren().clear();
-                showAddPOIButton();
+                showPinMenu();
             }
         });
     }
@@ -195,27 +200,11 @@ public class MainController {
         item.setOnAction(a -> {
             canvas.setPin(poi.getLon(), poi.getLat());
             canvas.zoomToPoint(poi.getLon(), poi.getLat());
-            showAddPOIButton();
+            showPinMenu();
         });
         myPoints.getItems().add(item);
     }
-/*
-    private void makePOIRemovable(PointOfInterest poi) {
-        POIButton.setText("Remove from my points of interest");
-        POIButton.setOnAction(e -> {
-            canvas.removePOI(poi);
-            savePointsOfInterest();
-            makePOIAddable(poi);
-        });
-    }
 
-    private void makePOIAddable(PointOfInterest poi) {
-        POIButton.setText("Add to my points of interest");
-        POIButton.setOnAction(a -> {
-            addPointOfInterest();
-        });
-    }
-*/
     public void setPOIButton() {
         if (canvas.POIContains(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY())) {
             POIButton.setText("Remove from my points of interest");
@@ -301,12 +290,16 @@ public class MainController {
         updateSuggestions(bs);
     }
 
-    public void showAddPOIButton() {
+    public void showPinMenu() {
         setPOIButton();
         Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
         pointCoords.setText("Point at " + -unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
         pinInfo.setTranslateY(10);
         pinInfo.setVisible(true);
+    }
+
+    public void hidePinMenu() {
+        pinInfo.setVisible(false);
     }
 
     public void hideAddPOIButton(){
