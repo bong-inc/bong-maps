@@ -402,6 +402,24 @@ public class MapCanvas extends Canvas {
         }
     }
 
+    public void removePOI(float x, float y) {
+        for (PointOfInterest poi : pointsOfInterest) {
+            if (poi.getLon() ==  x && poi.getLat() == y ) {
+                pointsOfInterest.remove(poi);
+                break;
+            }
+        }
+    }
+
+    public boolean POIContains(float x, float y) {
+        for (PointOfInterest poi : pointsOfInterest) {
+            if (poi.getLon() ==  x && poi.getLat() == y ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean shouldZoom(double factor) {
         return (factor > 1 && trans.getMxx() < 2.2) || (factor < 1 && trans.getMxx() > 0.0005);
     }

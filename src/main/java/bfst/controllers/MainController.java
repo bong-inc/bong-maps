@@ -188,10 +188,6 @@ public class MainController {
                 showAddPOIButton();
             }
         });
-
-        POIButton.setOnAction(e -> {
-            addPointOfInterest();
-        });
     }
 
     private void addItemToMyPoints(PointOfInterest poi) {
@@ -202,6 +198,46 @@ public class MainController {
             showAddPOIButton();
         });
         myPoints.getItems().add(item);
+    }
+/*
+    private void makePOIRemovable(PointOfInterest poi) {
+        POIButton.setText("Remove from my points of interest");
+        POIButton.setOnAction(e -> {
+            canvas.removePOI(poi);
+            savePointsOfInterest();
+            makePOIAddable(poi);
+        });
+    }
+
+    private void makePOIAddable(PointOfInterest poi) {
+        POIButton.setText("Add to my points of interest");
+        POIButton.setOnAction(a -> {
+            addPointOfInterest();
+        });
+    }
+*/
+    public void setPOIButton() {
+        if (canvas.POIContains(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY())) {
+            POIButton.setText("Remove from my points of interest");
+        } else {
+            POIButton.setText("Add to my points of interest");
+        }
+
+        POIButton.setOnAction(e -> {
+        if (POIButton.getText().equals("Add to my points of interest")) {
+            addPointOfInterest();
+            savePointsOfInterest();
+            POIButton.setText("Remove from my points of interest");
+        } else {
+            canvas.removePOI(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+            savePointsOfInterest();
+            myPoints.getItems().clear();
+            for (PointOfInterest poi : canvas.getPointsOfInterest()) {
+                addItemToMyPoints(poi);
+            }
+            POIButton.setText("Add to my points of interest");
+        }
+        });
     }
 
     private void query(String query) {
@@ -266,6 +302,7 @@ public class MainController {
     }
 
     public void showAddPOIButton() {
+        setPOIButton();
         Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
         pointCoords.setText("Point at " + -unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
         pinInfo.setTranslateY(10);
