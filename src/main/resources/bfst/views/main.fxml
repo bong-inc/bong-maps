@@ -52,8 +52,12 @@
             <VBox fx:id="suggestions" styleClass="suggestions">
             </VBox>
           </VBox>
-          <VBox fx:id="POItest" style="visibility: false">
-              <Button fx:id="POIButton">add POI</Button>
+          <VBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
+              <Label fx:id="pointAddress" styleClass="pointAddress"/>
+              <Label fx:id="pointCoords" styleClass="pointCoords"/>
+              <Button fx:id="POIButton">Add to my points of interest</Button>
+              <Button fx:id="setAsDestination">Set this point as destination</Button>
+              <Button fx:id="setAsStart">Set this point as start</Button>
           </VBox>
         </VBox>
     </StackPane>

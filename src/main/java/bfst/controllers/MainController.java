@@ -1,7 +1,6 @@
 package bfst.controllers;
 
 import bfst.App;
-import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Model;
 import bfst.OSMReader.OSMReader;
 import bfst.addressparser.Address;
@@ -25,13 +24,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.transform.Translate;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,8 +69,12 @@ public class MainController {
     @FXML VBox suggestions;
 
     @FXML Menu myPoints;
-    @FXML VBox POItest;
+    @FXML VBox pinInfo;
+    @FXML Label pointAddress;
+    @FXML Label pointCoords;
     @FXML Button POIButton;
+    @FXML Button setAsDestination;
+    @FXML Button setAsStart;
 
     String tempQuery = "";
 
@@ -263,12 +264,12 @@ public class MainController {
     }
 
     public void showAddPOIButton() {
-        POItest.setTranslateY(10);
-        POItest.setVisible(true);
+        pinInfo.setTranslateY(10);
+        pinInfo.setVisible(true);
     }
 
     public void hideAddPOIButton(){
-        POItest.setVisible(false);
+        pinInfo.setVisible(false);
     }
 
     public void updateSuggestions(ArrayList<TextFlow> bs){
