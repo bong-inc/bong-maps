@@ -238,7 +238,7 @@ public class MapCanvas extends Canvas {
         description.add("Estimated time: " + timeString());*/
     }
 
-    private String distanceString() {
+    public String distanceString() {
         BigDecimal bd = new BigDecimal(routeDistance);
         bd = bd.round(new MathContext(3));
         int roundedDistance = bd.intValue();
@@ -252,7 +252,7 @@ public class MapCanvas extends Canvas {
         return distanceString;
     }
 
-    private String timeString() {
+    public String timeString() {
         String timeString;
         int hourCount = 0;
         double timeInMinutes = routeTime / 60;

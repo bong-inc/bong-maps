@@ -78,7 +78,9 @@ public class MainController {
     @FXML Button POIButton;
     @FXML Button setAsDestination;
     @FXML Button setAsStart;
-    @FXML ScrollPane directionsScrollPane;
+    @FXML VBox routeInfo;
+    @FXML Label routeDistance;
+    @FXML Label routeTime;
     @FXML VBox directions;
 
     String tempQuery = "";
@@ -306,6 +308,14 @@ public class MainController {
                 });
                 directions.getChildren().add(button);
             }
+            routeDistance.setText("Route length: " + canvas.distanceString());
+            routeTime.setText("Expected time: " + canvas.timeString());
+        }
+
+        if (canvas.getRoute() != null) {
+            routeInfo.setVisible(true); //TODO vbox resizer ikke ordentligt
+        } else {
+            routeInfo.setVisible(false);
         }
 
         pinInfo.setTranslateY(10);
