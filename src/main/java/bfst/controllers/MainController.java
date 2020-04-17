@@ -301,6 +301,7 @@ public class MainController {
         pointCoords.setText("Point at " + -unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
 
         if (canvas.getDescription() != null) {
+            directions.getChildren().clear();
             for (Instruction instruction : canvas.getDescription()) {
                 Button button = new Button(instruction.getInstruction());
                 button.setOnAction(e -> {
