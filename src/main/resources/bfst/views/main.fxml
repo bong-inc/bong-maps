@@ -56,8 +56,8 @@
               <Label fx:id="pointAddress" styleClass="pointAddress">Nearest neighbor address goes here</Label>
               <Label fx:id="pointCoords" styleClass="pointCoords"/>
               <Button fx:id="POIButton"/>
-              <Button fx:id="setAsDestination">Set this point as destination</Button>
-              <Button fx:id="setAsStart">Set this point as start</Button>
+              <Button fx:id="setAsDestination" disable="true">Set this point as destination</Button>
+              <Button fx:id="setAsStart" disable="true">Set this point as start</Button>
               <VBox fx:id="routeInfo">
                 <Label fx:id="routeDistance"/>
                 <Label fx:id="routeTime"/>
