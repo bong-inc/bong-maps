@@ -90,6 +90,7 @@
     -fx-background-color: white;
     -fx-max-width: 400px;
     -fx-padding: 5 10;
+    -fx-background-radius: 5;
 }
 
 .icon-button .icon {
