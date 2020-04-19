@@ -3,22 +3,23 @@ package bfst.controllers;
 import bfst.App;
 import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Model;
+import bfst.OSMReader.Node;
 import bfst.OSMReader.OSMReader;
 import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.MapCanvasWrapper;
+import bfst.canvas.PointOfInterest;
 import bfst.canvas.Type;
 import bfst.exceptions.FileTypeNotSupportedException;
+import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
@@ -34,6 +35,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -53,7 +55,7 @@ public class MainController {
     public void setDefaultMap(){
         try {
             InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/copenhagen.bin");
-            loadBinary(is);
+            setModelFromBinary(is);
         }catch (Exception e){
             System.out.println("Failed to set default map");
         }
@@ -69,12 +71,29 @@ public class MainController {
     @FXML TextField searchField;
     @FXML VBox suggestions;
 
+    @FXML Menu myPoints;
+    @FXML VBox pinInfo;
+    @FXML Label pointAddress;
+    @FXML Label pointCoords;
+    @FXML Button POIButton;
+    @FXML Button setAsDestination;
+    @FXML Button setAsStart;
+    @FXML VBox routeInfo;
+    @FXML Label routeDistance;
+    @FXML Label routeTime;
+    @FXML VBox directions;
+
     String tempQuery = "";
 
     @FXML
     public void initialize() {
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> {
             setDefaultMap();
+            loadPointsOfInterest();
+
+            for (PointOfInterest poi : canvas.getPointsOfInterest()) {
+                addItemToMyPoints(poi);
+            }
         });
 
         loadClick.setOnAction(this::loadFileOnClick);
@@ -87,6 +106,7 @@ public class MainController {
 
         canvas.setOnMouseDragged(e -> {
             hasBeenDragged = true;
+
             canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
             lastMouse = new Point2D(e.getX(), e.getY());
         });
@@ -94,8 +114,14 @@ public class MainController {
         canvas.setOnMouseReleased(e -> {
             if (!hasBeenDragged) {
                 try {
-                    Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
-                    canvas.setPin((float) point2D.getX(), (float) point2D.getY());
+                    if (canvas.getCurrentPin() == null) {
+                        Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
+                        canvas.setPin((float) point2D.getX(), (float) point2D.getY());
+                        showPinMenu();
+                    } else {
+                        canvas.nullPin();
+                        hidePinMenu();
+                    }
 
                 } catch (NonInvertibleTransformException ex) {
                     ex.printStackTrace();
@@ -142,6 +168,7 @@ public class MainController {
         });
 
         searchField.textProperty().addListener((obs,oldVal,newVal) -> {
+            hideAddPOIButton();
             if (searchField.isFocused()) setTempQuery(searchField.getText());
             canvas.nullPin();
             System.out.println("CHANGED");
@@ -168,6 +195,41 @@ public class MainController {
                 canvas.zoomToNode(a.node);
                 canvas.setPin(a.node);
                 suggestions.getChildren().clear();
+                showPinMenu();
+            }
+        });
+    }
+
+    private void addItemToMyPoints(PointOfInterest poi) {
+        MenuItem item = new MenuItem(poi.getName());
+        item.setOnAction(a -> {
+            canvas.setPin(poi.getLon(), poi.getLat());
+            canvas.zoomToPoint(poi.getLon(), poi.getLat());
+            showPinMenu();
+        });
+        myPoints.getItems().add(item);
+    }
+
+    public void setPOIButton() {
+        if (canvas.POIContains(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY())) {
+            POIButton.setText("Remove from my points of interest");
+        } else {
+            POIButton.setText("Add to my points of interest");
+        }
+
+        POIButton.setOnAction(e -> {
+            if (POIButton.getText().equals("Add to my points of interest")) {
+                addPointOfInterest();
+                savePointsOfInterest();
+                POIButton.setText("Remove from my points of interest");
+            } else {
+                canvas.removePOI(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+                savePointsOfInterest();
+                myPoints.getItems().clear();
+                for (PointOfInterest poi : canvas.getPointsOfInterest()) {
+                    addItemToMyPoints(poi);
+                }
+                POIButton.setText("Add to my points of interest");
             }
         });
     }
@@ -233,6 +295,42 @@ public class MainController {
         updateSuggestions(bs);
     }
 
+    public void showPinMenu() {
+        setPOIButton();
+        Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+        pointCoords.setText("Point at " + -unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
+
+        if (canvas.getDescription() != null) {
+            directions.getChildren().clear();
+            for (Instruction instruction : canvas.getDescription()) {
+                Button button = new Button(instruction.getInstruction());
+                button.setOnAction(e -> {
+                    canvas.zoomToNode(instruction.getNode());
+                });
+                directions.getChildren().add(button);
+            }
+            routeDistance.setText("Route length: " + canvas.distanceString());
+            routeTime.setText("Expected time: " + canvas.timeString());
+        }
+
+        if (canvas.getRoute() != null) {
+            routeInfo.setVisible(true); //TODO vbox resizer ikke ordentligt
+        } else {
+            routeInfo.setVisible(false);
+        }
+
+        pinInfo.setTranslateY(10);
+        pinInfo.setVisible(true);
+    }
+
+    public void hidePinMenu() {
+        pinInfo.setVisible(false);
+    }
+
+    public void hideAddPOIButton(){
+        pinInfo.setVisible(false);
+    }
+
     public void updateSuggestions(ArrayList<TextFlow> bs){
         suggestions.getChildren().clear();
         for (TextFlow b : bs) suggestions.getChildren().add(b);
@@ -254,7 +352,7 @@ public class MainController {
         try {
             File file = new FileChooser().showSaveDialog(stage);
             if(file != null){
-                saveBinary(file);
+                saveBinary(file, model);
             }
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
@@ -288,7 +386,7 @@ public class MainController {
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
         switch (fileExtension) {
             case ".bin":
-                loadBinary(is);
+                setModelFromBinary(is);
                 break;
             case ".osm":
                 canvas.setTypesToBeDrawn(new ArrayList<>());
@@ -315,22 +413,25 @@ public class MainController {
         is.close();
     }
 
-    private void loadBinary(InputStream is) throws IOException, ClassNotFoundException {
+    private void setModelFromBinary(InputStream is) throws IOException, ClassNotFoundException {
         long time = -System.nanoTime();
-
-        ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
-        Object temp = ois.readObject();
-        this.model = (Model) temp;
-        ois.close();
+        this.model = (Model) loadBinary(is);
         mapCanvasWrapper.mapCanvas.setModel(model);
 
         time += System.nanoTime();
         System.out.println("load binary: " + time/1000000f + "ms");
     }
 
-    public void saveBinary(File file) throws IOException {
+    private Object loadBinary(InputStream is) throws IOException, ClassNotFoundException {
+        ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
+        Object temp = ois.readObject();
+        ois.close();
+        return temp;
+    }
+
+    public void saveBinary(File file, Serializable toBeSaved) throws IOException {
         ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-        oos.writeObject(model);
+        oos.writeObject(toBeSaved);
         oos.close();
     }
 
@@ -358,5 +459,41 @@ public class MainController {
 
         loadFile(new File(destFolder + File.separator + fileName));
 
+    }
+
+    private void savePointsOfInterest() {
+        String destFolder = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "POI.bin";
+        File file = new File(destFolder);
+        try {
+            saveBinary(file, canvas.getPointsOfInterest());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addPointOfInterest() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setContentText("Save point of interest");
+        dialog.setHeaderText("Enter the name of the point");
+        dialog.setContentText("Name:");
+        Optional<String> givenName = dialog.showAndWait();
+
+        if (givenName.isPresent()) {
+            PointOfInterest poi = new PointOfInterest(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), givenName.get());
+            canvas.addToPOI(poi);
+            addItemToMyPoints(poi);
+        }
+        savePointsOfInterest();
+    }
+
+    private void loadPointsOfInterest() {
+        ArrayList<PointOfInterest> list = new ArrayList<>();
+        try {
+            InputStream is = new FileInputStream(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "POI.bin");
+            list = (ArrayList<PointOfInterest>) loadBinary(is);
+        } catch (Exception ignored){
+
+        }
+        canvas.setPOI(list);
     }
 }

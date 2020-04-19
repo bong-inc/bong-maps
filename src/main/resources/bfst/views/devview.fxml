@@ -26,5 +26,6 @@
     <Button fx:id="findRoute">Find route</Button>
     <Button fx:id="clearRoute">Clear route</Button>
     <Button fx:id="routeDescription">Print route description</Button>
+    <Button fx:id="printPOI">Print points of interest</Button>
   </FlowPane>
 </VBox>

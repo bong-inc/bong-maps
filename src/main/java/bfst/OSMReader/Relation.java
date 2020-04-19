@@ -101,7 +101,6 @@ public class Relation implements LongSupplier {
         }
 
         ways.addAll(resOuters);
-        ways.addAll(tempOuters);
         ways.addAll(inner);
     }
 

@@ -15,6 +15,15 @@ public class Graph implements Serializable {
         return adj;
     }
 
+    public Node getNode(long id) {
+        if (adj.get(id).get(0).getTailNode().getAsLong() == id) {
+            return adj.get(id).get(0).getTailNode();
+        } else {
+            return adj.get(id).get(0).getHeadNode();
+        }
+    }
+
+
     public int getOutDegree(long id, String vehicle) {
         int count = 0;
         for (Edge edge : adj.get(id)) {
