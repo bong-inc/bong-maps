@@ -1,5 +1,8 @@
 package bfst.routeFinding;
 
+import bfst.OSMReader.MercatorProjector;
+import bfst.OSMReader.Node;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
@@ -13,6 +16,9 @@ public class Dijkstra {
     private IndexMinPQ pq;
     private IndexMinPQ pq2;
     private int currDijkstra = 1;
+    private Node startNode;
+    private Node endNode;
+    private Graph G;
 
     public long getLastNode() {
         return lastNode;
@@ -26,6 +32,10 @@ public class Dijkstra {
         distTo2 = new HashMap<>();
         edgeTo2 = new HashMap<>();
 
+        this.G = G;
+
+        startNode = G.getNode(s);
+        endNode = G.getNode(t);
 
         distTo.put(s, 0.0);
         distTo2.put(t, 0.0);
@@ -49,12 +59,12 @@ public class Dijkstra {
                 }
                 currDijkstra = 1;
             }
-            lastNode = determineRelax(currDijkstra, G, vehicle, shortestRoute);
+            lastNode = determineRelax(currDijkstra, vehicle, shortestRoute);
         }
 
     }
 
-    private long determineRelax(int currDijkstra, Graph G, String vehicle, boolean shortestRoute) {
+    private long determineRelax(int currDijkstra, String vehicle, boolean shortestRoute) {
         long v;
         if (currDijkstra == 1) {
             v = pq.delMin();
@@ -108,14 +118,10 @@ public class Dijkstra {
 
         if (currDijkstra == 1) {
             if (distTo2.containsKey(v)) {
-                //distTo.putAll(distTo2);
-                //edgeTo.putAll(edgeTo2);
                 return v;
             }
         } else {
             if (distTo.containsKey(v)) {
-                //distTo.putAll(distTo2);
-                //edgeTo.putAll(edgeTo2);
                 return v;
             }
         }
@@ -128,20 +134,31 @@ public class Dijkstra {
             distTo.put(w, Double.POSITIVE_INFINITY);
         }
 
+        double distanceToDestination;
+        Node currNode = G.getNode(w);
+        if (currDijkstra == 1) {
+            distanceToDestination = Math.sqrt(Math.pow(endNode.getLat() - currNode.getLat(), 2) + Math.pow(endNode.getLon() - currNode.getLon(), 2));
+        } else {
+            distanceToDestination = Math.sqrt(Math.pow(startNode.getLat() - currNode.getLat(), 2) + Math.pow(startNode.getLon() - currNode.getLon(), 2));
+        }
+
         double weight;
         if (shortestRoute) {
             weight = edge.getWeight();
         } else {
             weight = edge.getWeight() / edge.getStreet().getMaxspeed();
+            //distanceToDestination = distanceToDestination / 350; //TODO fix A* for hurtigste vej
+            distanceToDestination = 0; //TODO A* deaktiveret for hurtigste rute
         }
+
 
         if(distTo.get(w) > distTo.get(v) + edge.getWeight()) {
             distTo.put(w, distTo.get(v) + weight);
             edgeTo.put(w, edge);
             if (pq.contains(w)) {
-                pq.decreaseKey(w, distTo.get(w));
+                pq.decreaseKey(w, distTo.get(w) + distanceToDestination);
             } else {
-                pq.insert(w, distTo.get(w));
+                pq.insert(w, distTo.get(w) + distanceToDestination);
             }
         }
     }

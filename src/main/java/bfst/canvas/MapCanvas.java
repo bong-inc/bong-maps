@@ -234,8 +234,6 @@ public class MapCanvas extends Canvas {
             addTimeToTotal(vehicle, currEdge, distance);
         }
         description.add(new Instruction("You have arrived at your destination", route.get(route.size() - 1).getHeadNode()));
-        /*description.add("Total distance: " + distanceString());
-        description.add("Estimated time: " + timeString());*/
     }
 
     public String distanceString() {
@@ -244,7 +242,9 @@ public class MapCanvas extends Canvas {
         int roundedDistance = bd.intValue();
         String distanceString;
 
-        if (routeDistance >= 1000) {
+        if (routeDistance >= 100000) {
+            distanceString = roundedDistance / 1000 + " km";
+        } else if (routeDistance >= 1000) {
             distanceString = (double) roundedDistance / 1000 + " km";
         } else {
             distanceString = roundedDistance + " m";
