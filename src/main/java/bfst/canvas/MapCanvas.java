@@ -34,8 +34,11 @@ public class MapCanvas extends Canvas {
     private double routeTime;
     private double routeDistance;
     private int roundaboutCounter = 0;
+    private ArrayList<PointOfInterest> pointsOfInterest = new ArrayList<>();
+    private Node lastInstructionNode;
+    private String lastActionInstruction;
 
-    ArrayList<String> description;
+    private ArrayList<Instruction> description;
 
     private Pin currentPin;
 
@@ -48,8 +51,16 @@ public class MapCanvas extends Canvas {
         return trans;
     }
 
-    public ArrayList<String> getDescription() {
+    public ArrayList<Instruction> getDescription() {
         return description;
+    }
+
+    public ArrayList<PointOfInterest> getPointsOfInterest() {
+        return pointsOfInterest;
+    }
+
+    public Pin getCurrentPin() {
+        return currentPin;
     }
 
     public MapCanvas() {
@@ -134,7 +145,7 @@ public class MapCanvas extends Canvas {
 
     public void setRoute() {
         route = dijkstra.pathTo(dijkstra.getLastNode(), 1);
-
+        lastInstructionNode = route.get(0).getTailNode();
         ArrayList<Edge> secondPart = dijkstra.pathTo(dijkstra.getLastNode(), 2);
         Collections.reverse(secondPart);
         route.addAll(secondPart);
@@ -201,15 +212,15 @@ public class MapCanvas extends Canvas {
             if (currEdge.getStreet().getName() != null) { //TODO veje uden navne ignoreres
 
                 if (!prevEdgeName.equals(currEdge.getStreet().getName()) || (currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT && prevEdge.getStreet().getRole() == Street.Role.ROUNDABOUT)) {
-                    addInstruction(prevEdgeName, tempLength);
-                    addActionInstruction(prevEdge, currEdge, roundaboutCounter);
+                    addInstruction(prevEdgeName, tempLength, currEdge);
+                    setActionInstruction(prevEdge, currEdge, roundaboutCounter);
 
                     prevEdgeName = currEdge.getStreet().getName();
                     tempLength = currEdge.getWeight() * 0.56;
                 } else {
                     tempLength += currEdge.getWeight() * 0.56;
                     if (i == list.size() - 1) {
-                        addInstruction(prevEdgeName, tempLength);
+                        addInstruction(prevEdgeName, tempLength, currEdge);
                     }
                 }
             } else {
@@ -222,18 +233,18 @@ public class MapCanvas extends Canvas {
             routeDistance += distance;
             addTimeToTotal(vehicle, currEdge, distance);
         }
-        description.add("You have arrived at your destination");
-        description.add("Total distance: " + distanceString());
-        description.add("Estimated time: " + timeString());
+        description.add(new Instruction("You have arrived at your destination", route.get(route.size() - 1).getHeadNode()));
     }
 
-    private String distanceString() {
+    public String distanceString() {
         BigDecimal bd = new BigDecimal(routeDistance);
         bd = bd.round(new MathContext(3));
         int roundedDistance = bd.intValue();
         String distanceString;
 
-        if (routeDistance >= 1000) {
+        if (routeDistance >= 100000) {
+            distanceString = roundedDistance / 1000 + " km";
+        } else if (routeDistance >= 1000) {
             distanceString = (double) roundedDistance / 1000 + " km";
         } else {
             distanceString = roundedDistance + " m";
@@ -241,7 +252,7 @@ public class MapCanvas extends Canvas {
         return distanceString;
     }
 
-    private String timeString() {
+    public String timeString() {
         String timeString;
         int hourCount = 0;
         double timeInMinutes = routeTime / 60;
@@ -273,32 +284,40 @@ public class MapCanvas extends Canvas {
         }
     }
 
-    private void addInstruction(String prevEdgeName, double tempLength) {
+    private void addInstruction(String prevEdgeName, double tempLength, Edge currEdge) {
+        String instruction = "Follow ";
+        if (lastActionInstruction != null) {
+            instruction = lastActionInstruction + " and follow ";
+        }
+
         BigDecimal bd = new BigDecimal(tempLength);
         bd = bd.round(new MathContext(2));
         int roundedLength = bd.intValue();
         if (roundedLength >= 10000) {
-            description.add("Follow " + prevEdgeName + " for " + roundedLength / 1000 + " km");
+            instruction += prevEdgeName + " for " + roundedLength / 1000 + " km";
         } else if (roundedLength > 1000) {
-            description.add("Follow " + prevEdgeName + " for " + (double) roundedLength / 1000 + " km");
+            instruction += prevEdgeName + " for " + (double) roundedLength / 1000 + " km";
         } else {
-            description.add("Follow " + prevEdgeName + " for " + roundedLength + " m");
+            instruction += prevEdgeName + " for " + roundedLength + " m";
         }
+        description.add(new Instruction(instruction, lastInstructionNode));
+        lastActionInstruction = null;
+        lastInstructionNode = currEdge.getTailNode();
     }
 
-    public void addActionInstruction(Edge prevEdge, Edge currEdge, int roundaboutCounter) {
+    public void setActionInstruction(Edge prevEdge, Edge currEdge, int roundaboutCounter) {
         double turn = calculateTurn(prevEdge, currEdge);
         if (currEdge.getStreet().getRole() == Street.Role.MOTORWAY && prevEdge.getStreet().getRole() == Street.Role.MOTORWAY_LINK) {
-            description.add("Take the ramp onto the motorway");
+            lastActionInstruction = "Take the ramp onto the motorway";
         } else if (currEdge.getStreet().getRole() != Street.Role.MOTORWAY_LINK && currEdge.getStreet().getRole() != Street.Role.MOTORWAY && prevEdge.getStreet().getRole() == Street.Role.MOTORWAY_LINK) {
-            description.add("Take the off-ramp");
+            lastActionInstruction = "Take the off-ramp";
         } else if (roundaboutCounter > 0) {
-            description.add("Take exit number " + roundaboutCounter + " in the roundabout");
+            lastActionInstruction = "Take exit number " + roundaboutCounter + " in the roundabout";
             resetRoundaboutCounter();
         } else if (turn > 20 && turn < 140) {
-            description.add("Turn right");
+            lastActionInstruction = "Turn right";
         } else if (turn < -20 && turn > -140) {
-            description.add("Turn left");
+            lastActionInstruction = "Turn left";
         }
     }
 
@@ -386,8 +405,32 @@ public class MapCanvas extends Canvas {
     }
 
     public void zoom(double factor, double x, double y) {
-        trans.prependScale(factor, factor, x, y);
-        repaint();
+        if (shouldZoom(factor)) {
+            trans.prependScale(factor, factor, x, y);
+            repaint();
+        }
+    }
+
+    public void removePOI(float x, float y) {
+        for (PointOfInterest poi : pointsOfInterest) {
+            if (poi.getLon() ==  x && poi.getLat() == y ) {
+                pointsOfInterest.remove(poi);
+                break;
+            }
+        }
+    }
+
+    public boolean POIContains(float x, float y) {
+        for (PointOfInterest poi : pointsOfInterest) {
+            if (poi.getLon() ==  x && poi.getLat() == y ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean shouldZoom(double factor) {
+        return (factor > 1 && trans.getMxx() < 2.2) || (factor < 1 && trans.getMxx() > 0.0005);
     }
 
     private void paintDrawablesOfType(Type type, double pixelwidth, boolean useRegularColors) {
@@ -437,6 +480,14 @@ public class MapCanvas extends Canvas {
         repaint();
     }
 
+    public void zoomToPoint (float lon, float lat){
+        trans.setToIdentity();
+        pan(-lon, -lat);
+        zoom(1, 0, 0);
+        pan(getWidth() / 2, getHeight() / 2);
+        repaint();
+    }
+
     public void setPin (Node node){
         currentPin = new Pin(node.getLon(), node.getLat(), 1);
         repaint();
@@ -450,5 +501,13 @@ public class MapCanvas extends Canvas {
     public void nullPin () {
         currentPin = null;
         repaint();
+    }
+
+    public void addToPOI(PointOfInterest poi) {
+        pointsOfInterest.add(poi);
+    }
+
+    public void setPOI(ArrayList<PointOfInterest> poi) {
+        pointsOfInterest = poi;
     }
 }

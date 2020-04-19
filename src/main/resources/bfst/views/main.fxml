@@ -29,6 +29,12 @@
                 <MenuItem mnemonicParsing="false" text="Open Dev Tools..." />
             </items>
         </Menu>
+        <Menu mnemonicParsing="false" text="Points of interest" fx:id="myPoints">
+            <items>
+
+            </items>
+        </Menu>
+
       </menus>
     </MenuBar>
     <StackPane VBox.vgrow="ALWAYS" fx:id="stackPane">
@@ -45,6 +51,20 @@
             </HBox>
             <VBox fx:id="suggestions" styleClass="suggestions">
             </VBox>
+          </VBox>
+          <VBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
+              <Label fx:id="pointAddress" styleClass="pointAddress">Nearest neighbor address goes here</Label>
+              <Label fx:id="pointCoords" styleClass="pointCoords"/>
+              <Button fx:id="POIButton"/>
+              <Button fx:id="setAsDestination" disable="true">Set this point as destination</Button>
+              <Button fx:id="setAsStart" disable="true">Set this point as start</Button>
+              <VBox fx:id="routeInfo">
+                <Label fx:id="routeDistance"/>
+                <Label fx:id="routeTime"/>
+                <ScrollPane styleClass="directions">
+                  <VBox fx:id="directions"/>
+                </ScrollPane>
+              </VBox>
           </VBox>
         </VBox>
     </StackPane>

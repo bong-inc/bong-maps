@@ -226,7 +226,7 @@ public class OSMReader {
                 break;
             case "relation":
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
-                relationHolder = new Relation();
+                relationHolder = new Relation(currentID);
                 tempRelations.add(relationHolder);
                 break;
             case "tag":

@@ -60,7 +60,6 @@
 .searchBar {
     -fx-background-color: white;
     -fx-max-width: 400;
-    -fx-border-radius: 5;
     -fx-background-radius: 5;
 }
 
@@ -81,6 +80,17 @@
 .searchField:focused {
     -fx-focus-color: -fx-control-inner-background;
     -fx-faint-focus-color: -fx-control-inner-background;
+}
+
+.directions {
+    -fx-max-height: 300px;
+}
+
+.pinInfo {
+    -fx-background-color: white;
+    -fx-max-width: 400px;
+    -fx-padding: 5 10;
+    -fx-background-radius: 5;
 }
 
 .icon-button .icon {

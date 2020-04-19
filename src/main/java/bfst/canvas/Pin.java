@@ -8,7 +8,18 @@ import java.util.regex.Pattern;
 
 public class Pin {
 
-  float centerX, centerY, radius;
+  float centerX;
+
+    public float getCenterX() {
+        return centerX;
+    }
+
+    public float getCenterY() {
+        return centerY;
+    }
+
+    float centerY;
+    float radius;
 
     public void changeRadius(float r){
         radius = r;
