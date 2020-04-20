@@ -29,10 +29,10 @@
                 <MenuItem mnemonicParsing="false" text="Open Dev Tools..." />
             </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Points of interest" fx:id="myPoints">
-            <items>
-
-            </items>
+        <Menu mnemonicParsing="false" text="Points of interest" fx:id="myPoints"/>
+        <Menu mnemonicParsing="false" text="View" fx:id="view">
+            <CheckMenuItem mnemonicParsing="false" text="Public transport" fx:id="publicTransport"/>
+            <CheckMenuItem mnemonicParsing="false" text="Dark mode" fx:id="darkMode"/>
         </Menu>
 
       </menus>

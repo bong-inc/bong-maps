@@ -82,6 +82,9 @@ public class MainController {
     @FXML Label routeDistance;
     @FXML Label routeTime;
     @FXML VBox directions;
+    @FXML Menu view;
+    @FXML CheckMenuItem publicTransport;
+    @FXML CheckMenuItem darkMode;
 
     String tempQuery = "";
 
@@ -198,6 +201,31 @@ public class MainController {
                 showPinMenu();
             }
         });
+
+        publicTransport.setSelected(true);
+        publicTransport.setOnAction(e -> {
+            updateShowPublicTransport(publicTransport.isSelected());
+        });
+
+        darkMode.setSelected(false);
+        darkMode.setOnAction(e -> {
+            canvas.setUseRegularColors(!darkMode.isSelected());
+        });
+    }
+
+    private void updateShowPublicTransport(boolean showPublicTransport) {
+        ArrayList<Type> typesToBeDrawn = new ArrayList<>();
+            if (showPublicTransport) {
+                typesToBeDrawn.addAll(Arrays.asList(Type.getTypes()));
+            } else {
+                for (Type type : Type.getTypes()) {
+                    if (type != Type.RAILWAY) {
+                        typesToBeDrawn.add(type);
+                    }
+                }
+            }
+
+        canvas.setTypesToBeDrawn(typesToBeDrawn);
     }
 
     private void addItemToMyPoints(PointOfInterest poi) {
@@ -304,6 +332,7 @@ public class MainController {
             directions.getChildren().clear();
             for (Instruction instruction : canvas.getDescription()) {
                 Button button = new Button(instruction.getInstruction());
+                button.getStyleClass().add("instruction");
                 button.setOnAction(e -> {
                     canvas.zoomToNode(instruction.getNode());
                 });

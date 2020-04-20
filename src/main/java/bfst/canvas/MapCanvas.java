@@ -75,9 +75,9 @@ public class MapCanvas extends Canvas {
 
         gc.setTransform(new Affine());
         if (useRegularColors) {
-            gc.setFill(Color.valueOf("#ade1ff"));
+            gc.setFill(Type.WATER.getColor());
         } else {
-            gc.setFill(Color.AQUA);
+            gc.setFill(Type.WATER.getAlternateColor());
         }
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);

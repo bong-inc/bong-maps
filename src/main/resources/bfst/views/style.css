@@ -186,6 +186,10 @@ Button:hover {
     -fx-background-color: transparent;
 }
 
+.instruction {
+    /*TODO style instruction-buttons*/
+}
+
 .scroll-bar .increment-button {
     visibility: hidden;
 }
