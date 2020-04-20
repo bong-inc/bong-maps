@@ -37,6 +37,7 @@ public class MapCanvas extends Canvas {
     private ArrayList<PointOfInterest> pointsOfInterest = new ArrayList<>();
     private Node lastInstructionNode;
     private String lastActionInstruction;
+    private long time = System.nanoTime();
 
     private ArrayList<Instruction> description;
 
@@ -71,7 +72,6 @@ public class MapCanvas extends Canvas {
     }
 
     public void repaint() {
-        long time = -System.nanoTime();
 
         gc.setTransform(new Affine());
         if (useRegularColors) {
@@ -121,8 +121,8 @@ public class MapCanvas extends Canvas {
         scaleBar.updateScaleBar(this);
         scaleBar.draw(gc, pixelwidth, false);
 
-        time += System.nanoTime();
-        System.out.println("repaint: " + time / 1000000f + "ms");
+        System.out.println("repaint: " + (System.nanoTime() - time) / 1000000f + "ms");
+        time = System.nanoTime();
     }
 
     public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
