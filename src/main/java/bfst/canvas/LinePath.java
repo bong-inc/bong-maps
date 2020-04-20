@@ -1,14 +1,16 @@
 package bfst.canvas;
 
+import bfst.OSMReader.CanvasElement;
 import bfst.OSMReader.Node;
 import bfst.OSMReader.NodeContainer;
 import bfst.OSMReader.Way;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class LinePath implements Drawable, Serializable {
+public class LinePath extends CanvasElement  implements Drawable, Serializable {
     private float[] coords;
     private Type type;
 
@@ -69,7 +71,7 @@ public class LinePath implements Drawable, Serializable {
             float diffY = nextY - lastY;
             double hypotenuse = Math.sqrt(Math.pow(diffX,2) + Math.pow(diffY,2));
             double distToNext = scale * hypotenuse;
-            if(2 < distToNext){
+            if(3 < distToNext){
                 gc.lineTo(nextX,nextY);
                 lastX = nextX;
                 lastY = nextY;
@@ -77,5 +79,10 @@ public class LinePath implements Drawable, Serializable {
         }
 
         gc.lineTo(coords[coords.length-2],coords[coords.length-1]);
+    }
+
+    @Override
+    public Point2D getCentroid() {
+        return new Point2D(coords[0], coords[1]);
     }
 }
