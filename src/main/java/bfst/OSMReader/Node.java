@@ -7,6 +7,7 @@ public class Node implements LongSupplier, Serializable {
     private long id;
     private float lon;
     private float lat;
+    private static final long serialVersionUID = 4076268921174823754L;
 
     public Node(long id, float lon, float lat){
         this.id = id;

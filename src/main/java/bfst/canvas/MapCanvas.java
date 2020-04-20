@@ -269,7 +269,7 @@ public class MapCanvas extends Canvas {
                     setActionInstruction(prevEdge, currEdge, roundaboutCounter);
 
                     prevEdgeName = currEdge.getStreet().getName();
-                    tempLength = currEdge.getWeight() * 0.56;
+                    tempLength = currEdge.getWeight() * 0.56; //TODO 0.56 er en grov værdi, skal erstattes
                 } else {
                     tempLength += currEdge.getWeight() * 0.56;
                     if (i == list.size() - 1) {
