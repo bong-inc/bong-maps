@@ -7,10 +7,7 @@ import bfst.OSMReader.Node;
 import bfst.OSMReader.OSMReader;
 import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
-import bfst.canvas.MapCanvas;
-import bfst.canvas.MapCanvasWrapper;
-import bfst.canvas.PointOfInterest;
-import bfst.canvas.Type;
+import bfst.canvas.*;
 import bfst.exceptions.FileTypeNotSupportedException;
 import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
@@ -115,6 +112,26 @@ public class MainController {
             if (shouldPan) {
                 canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
                 lastMouse = new Point2D(e.getX(), e.getY());
+            } else {
+                try {
+                    Point2D corner0 = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
+                    Point2D corner1 = canvas.getTrans().inverseTransform(lastMouse.getX(), e.getY());
+                    Point2D corner2 = canvas.getTrans().inverseTransform(e.getX(), e.getY());
+                    Point2D corner3 = canvas.getTrans().inverseTransform(e.getX(), lastMouse.getY());
+
+                    float[] floats = {
+                            (float) corner0.getX(), (float) corner0.getY(),
+                            (float) corner1.getX(), (float) corner1.getY(),
+                            (float) corner2.getX(), (float) corner2.getY(),
+                            (float) corner3.getX(), (float) corner3.getY(),
+                            (float) corner0.getX(), (float) corner0.getY(),
+                    };
+                    LinePath linePath = new LinePath(floats);
+                    canvas.setDraggedSquare(linePath);
+                } catch (NonInvertibleTransformException ex) {
+                    ex.printStackTrace();
+                }
+
             }
         });
 
@@ -141,6 +158,7 @@ public class MainController {
 
             shouldPan = true;
             hasBeenDragged = false;
+            canvas.setDraggedSquare(null);
         });
 
         loadDefaultMap.setOnAction(e -> {
