@@ -225,6 +225,7 @@ public class MainController {
         zoomToArea.setOnAction(e ->  {
             shouldPan = false;
         });
+
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
@@ -272,10 +273,13 @@ public class MainController {
         } else {
             factor = Math.abs((canvas.getHeight() / (end.getY() -  lastMouse.getY()) * canvas.getTrans().getMxx()));
         }
-
-        canvas.zoomToPoint(factor, (float) centerPoint.getX(), (float) centerPoint.getY());
-
-
+        if (factor > 2.2) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setHeaderText("Selected area too small");
+            alert.showAndWait();
+        } else {
+            canvas.zoomToPoint(factor, (float) centerPoint.getX(), (float) centerPoint.getY());
+        }
 
     }
 
