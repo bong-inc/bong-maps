@@ -119,7 +119,7 @@ public class MainController {
         });
 
         canvas.setOnMouseReleased(e -> {
-            if (!hasBeenDragged) {
+            if (!hasBeenDragged && shouldPan) {
                 try {
                     if (canvas.getCurrentPin() == null) {
                         Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
@@ -230,15 +230,15 @@ public class MainController {
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
         ArrayList<Type> typesToBeDrawn = new ArrayList<>();
-            if (showPublicTransport) {
-                typesToBeDrawn.addAll(Arrays.asList(Type.getTypes()));
-            } else {
-                for (Type type : Type.getTypes()) {
-                    if (type != Type.RAILWAY) {
-                        typesToBeDrawn.add(type);
-                    }
+        if (showPublicTransport) {
+            typesToBeDrawn.addAll(Arrays.asList(Type.getTypes()));
+        } else {
+            for (Type type : Type.getTypes()) {
+                if (type != Type.RAILWAY) {
+                    typesToBeDrawn.add(type);
                 }
             }
+        }
 
         canvas.setTypesToBeDrawn(typesToBeDrawn);
     }
@@ -257,8 +257,8 @@ public class MainController {
         Point2D inversedStart = null;
         Point2D inversedEnd = null;
         try {
-        inversedStart = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
-        inversedEnd = canvas.getTrans().inverseTransform(end.getX(), end.getY());
+            inversedStart = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
+            inversedEnd = canvas.getTrans().inverseTransform(end.getX(), end.getY());
         } catch (NonInvertibleTransformException e) {
             e.printStackTrace();
         }
@@ -274,12 +274,10 @@ public class MainController {
             factor = Math.abs((canvas.getHeight() / (end.getY() -  lastMouse.getY()) * canvas.getTrans().getMxx()));
         }
         if (factor > 2.2) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setHeaderText("Selected area too small");
-            alert.showAndWait();
-        } else {
-            canvas.zoomToPoint(factor, (float) centerPoint.getX(), (float) centerPoint.getY());
+            factor = 2.2;
         }
+        canvas.zoomToPoint(factor, (float) centerPoint.getX(), (float) centerPoint.getY());
+
 
     }
 
@@ -427,6 +425,9 @@ public class MainController {
             File file = new FileChooser().showSaveDialog(stage);
             if(file != null){
                 saveBinary(file, model);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Saved successfully");
+                alert.showAndWait();
             }
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
@@ -444,8 +445,8 @@ public class MainController {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("File type not supported: " + exception.getFileType());
             alert.showAndWait();
-        } catch (NullPointerException exception){
-            exception.printStackTrace();
+        } catch (NullPointerException ignored){ //For when filechooser is opened and closed with no file.
+
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("Something unexpected happened, please try again");
