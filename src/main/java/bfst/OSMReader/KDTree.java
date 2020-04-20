@@ -129,7 +129,7 @@ public class KDTree implements Serializable {
 
   public void draw(GraphicsContext gc, double scale, boolean smartTrace, boolean shouldHaveFill, Range range){
     // print number of trees visited
-    System.out.print("*");
+    // System.out.print("*");
 
     // draw CanvasElements in leafValues
     if(this.doOverlap(range)){
