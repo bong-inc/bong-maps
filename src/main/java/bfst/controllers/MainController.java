@@ -85,8 +85,10 @@ public class MainController {
     @FXML Menu view;
     @FXML CheckMenuItem publicTransport;
     @FXML CheckMenuItem darkMode;
+    @FXML MenuItem zoomToArea;
 
-    String tempQuery = "";
+    private boolean shouldPan = true;
+    private String tempQuery = "";
 
     @FXML
     public void initialize() {
@@ -110,8 +112,10 @@ public class MainController {
         canvas.setOnMouseDragged(e -> {
             hasBeenDragged = true;
 
-            canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
-            lastMouse = new Point2D(e.getX(), e.getY());
+            if (shouldPan) {
+                canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
+                lastMouse = new Point2D(e.getX(), e.getY());
+            }
         });
 
         canvas.setOnMouseReleased(e -> {
@@ -130,6 +134,12 @@ public class MainController {
                     ex.printStackTrace();
                 }
             }
+            if (!shouldPan) {
+                Point2D end = new Point2D(e.getX(), e.getY());
+                zoomToArea(end);
+            }
+
+            shouldPan = true;
             hasBeenDragged = false;
         });
 
@@ -211,6 +221,10 @@ public class MainController {
         darkMode.setOnAction(e -> {
             canvas.setUseRegularColors(!darkMode.isSelected());
         });
+
+        zoomToArea.setOnAction(e ->  {
+            shouldPan = false;
+        });
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
@@ -232,10 +246,37 @@ public class MainController {
         MenuItem item = new MenuItem(poi.getName());
         item.setOnAction(a -> {
             canvas.setPin(poi.getLon(), poi.getLat());
-            canvas.zoomToPoint(poi.getLon(), poi.getLat());
+            canvas.zoomToPoint(1, poi.getLon(), poi.getLat());
             showPinMenu();
         });
         myPoints.getItems().add(item);
+    }
+
+    private void zoomToArea(Point2D end) {
+        Point2D inversedStart = null;
+        Point2D inversedEnd = null;
+        try {
+        inversedStart = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
+        inversedEnd = canvas.getTrans().inverseTransform(end.getX(), end.getY());
+        } catch (NonInvertibleTransformException e) {
+            e.printStackTrace();
+        }
+        Point2D centerPoint = new Point2D((inversedEnd.getX() + inversedStart.getX()) / 2, (inversedEnd.getY() + inversedStart.getY()) / 2);
+
+        double windowAspectRatio = canvas.getWidth() / canvas.getHeight();
+        double markedAspectRatio = (end.getX() - lastMouse.getX()) / (end.getY() - lastMouse.getY());
+        double factor;
+
+        if (windowAspectRatio < markedAspectRatio) {
+            factor = Math.abs((canvas.getWidth() / (end.getX() -  lastMouse.getX())) * canvas.getTrans().getMxx());
+        } else {
+            factor = Math.abs((canvas.getHeight() / (end.getY() -  lastMouse.getY()) * canvas.getTrans().getMxx()));
+        }
+
+        canvas.zoomToPoint(factor, (float) centerPoint.getX(), (float) centerPoint.getY());
+
+
+
     }
 
     public void setPOIButton() {

@@ -33,6 +33,7 @@
         <Menu mnemonicParsing="false" text="View" fx:id="view">
             <CheckMenuItem mnemonicParsing="false" text="Public transport" fx:id="publicTransport"/>
             <CheckMenuItem mnemonicParsing="false" text="Dark mode" fx:id="darkMode"/>
+            <MenuItem  mnemonicParsing="false" text="Zoom to area" fx:id="zoomToArea"/>
         </Menu>
 
       </menus>
