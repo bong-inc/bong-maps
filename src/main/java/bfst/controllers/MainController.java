@@ -206,7 +206,6 @@ public class MainController {
             hideAddPOIButton();
             if (searchField.isFocused()) setTempQuery(searchField.getText());
             canvas.nullPin();
-            System.out.println("CHANGED");
         });
 
         searchField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
@@ -222,7 +221,6 @@ public class MainController {
         });
 
         searchField.setOnAction(e -> {
-            System.out.println("action");
             if(suggestions.getChildren().size() > 0) {
                 Address a = (Address) suggestions.getChildren().get(0).getUserData();
                 searchField.setText(a.toString());

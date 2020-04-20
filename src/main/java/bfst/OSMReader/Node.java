@@ -26,4 +26,9 @@ public class Node implements LongSupplier, Serializable {
     public long getAsLong() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "Node, lat:" + lat + " lon:" + lon + " ID:" + id;
+    }
 }
