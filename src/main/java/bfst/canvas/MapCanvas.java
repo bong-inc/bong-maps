@@ -40,7 +40,7 @@ public class MapCanvas extends Canvas {
     private ArrayList<PointOfInterest> pointsOfInterest = new ArrayList<>();
     private Node lastInstructionNode;
     private String lastActionInstruction;
-    private boolean renderFullScreen;
+    private boolean renderFullScreen = true;
     private LinePath draggedSquare;
 
     private ArrayList<Instruction> description;
@@ -120,7 +120,10 @@ public class MapCanvas extends Canvas {
                 gc.setFill(Color.DARKGREY);
                 for (City city : model.getCities()) {
                     CityType type = city.getType();
-                    gc.setFont(new Font(pixelwidth * type.getFontSize()));
+                    Font font = new Font(pixelwidth * type.getFontSize());
+                    gc.setFont(font);
+
+
                     if (trans.getMxx() < type.getMaxMxx() && trans.getMxx() > type.getMinMxx()) {
                         city.draw(gc, pixelwidth, false);
                     }
@@ -132,9 +135,6 @@ public class MapCanvas extends Canvas {
         scaleBar.draw(gc, pixelwidth, false);
 
         if(!renderFullScreen) renderRange.draw(gc, pixelwidth);
-
-        time += System.nanoTime();
-        System.out.println("repaint: " + time / 1000000f + "ms");
 
         if (useRegularColors) {
             gc.setStroke(Color.BLACK);
@@ -459,7 +459,6 @@ public class MapCanvas extends Canvas {
         if (shouldZoom(factor)) {
             trans.prependScale(factor, factor, x, y);
             repaint();
-            System.out.println("factor: " + factor);
         }
     }
 
