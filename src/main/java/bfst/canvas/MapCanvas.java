@@ -74,10 +74,10 @@ public class MapCanvas extends Canvas {
         this.gc = getGraphicsContext2D();
         this.trans = new Affine();
         this.scaleBar = new ScaleBar();
-        repaint();
     }
 
-    public void repaint() {
+    public void repaint(int i) {
+        long time = System.nanoTime();
 
         gc.setTransform(new Affine());
         if (useRegularColors) {
@@ -144,11 +144,13 @@ public class MapCanvas extends Canvas {
         if (draggedSquare != null) {
             draggedSquare.draw(gc, pixelwidth, false);
         }
+
+        System.out.println("Repaint: " + ((System.nanoTime() - time) / 1000000.0 + " ms at " + i));
     }
 
     public void setDraggedSquare(LinePath linePath) {
         draggedSquare = linePath;
-        repaint();
+        repaint(1);
     }
 
     public void updateSearchRange(double pixelwidth) {
@@ -217,7 +219,7 @@ public class MapCanvas extends Canvas {
 
         drawableRoute = new LinePath(floats);
 
-        repaint();
+        repaint(16);
     }
 
     public ArrayList<Edge> singleDirectRoute(ArrayList<Edge> route) {
@@ -397,32 +399,32 @@ public class MapCanvas extends Canvas {
         route = null;
         dijkstra = null;
         drawableRoute = null;
-        repaint();
+        repaint(2);
     }
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn) {
         this.typesToBeDrawn = typesToBeDrawn;
-        repaint();
+        repaint(3);
     }
 
     public void setUseRegularColors(boolean shouldUseRegularColors) {
         useRegularColors = shouldUseRegularColors;
-        repaint();
+        repaint(4);
     }
 
     public void setTraceType(boolean shouldSmartTrace) {
         smartTrace = shouldSmartTrace;
-        repaint();
+        repaint(5);
     }
 
     public void setShowCities(boolean shouldShowCities) {
         showCities = shouldShowCities;
-        repaint();
+        repaint(6);
     }
 
     public void setUseDependentDraw(boolean shouldUseDependentDraw) {
         useDependentDraw = shouldUseDependentDraw;
-        repaint();
+        repaint(7);
     }
 
     public Iterable<Edge> getRoute() {
@@ -452,13 +454,13 @@ public class MapCanvas extends Canvas {
 
     public void pan(double dx, double dy) {
         trans.prependTranslation(dx, dy);
-        repaint();
+        repaint(8);
     }
 
     public void zoom(double factor, double x, double y) {
         if (shouldZoom(factor)) {
             trans.prependScale(factor, factor, x, y);
-            repaint();
+            repaint(9);
         }
     }
 
@@ -548,7 +550,7 @@ public class MapCanvas extends Canvas {
         pan(-node.getLon(), -node.getLat());
         zoom(1, 0, 0);
         pan(getWidth() / 2, getHeight() / 2);
-        repaint();
+        repaint(14);
     }
 
     public void zoomToPoint (double factor, float lon, float lat){
@@ -556,22 +558,22 @@ public class MapCanvas extends Canvas {
         pan(-lon, -lat);
         zoom(factor, 0, 0);
         pan(getWidth() / 2, getHeight() / 2);
-        repaint();
+        repaint(10);
     }
 
     public void setPin (Node node){
         currentPin = new Pin(node.getLon(), node.getLat(), 1);
-        repaint();
+        repaint(11);
     }
 
     public void setPin (float lon, float lat){
         currentPin = new Pin(lon, lat, 1);
-        repaint();
+        repaint(12);
     }
 
     public void nullPin () {
         currentPin = null;
-        repaint();
+        repaint(13);
     }
 
     public void addToPOI(PointOfInterest poi) {

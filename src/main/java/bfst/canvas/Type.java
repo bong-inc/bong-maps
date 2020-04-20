@@ -10,7 +10,7 @@ public enum Type {
     RESIDENTIAL("landuse",new String[]{"residential","industrial"},Color.valueOf("#e8e8e8"),0,true, Color.valueOf("#525252"), 0.001f, 0.5f),
     FARMFIELD("landuse",new String[]{"farmland"},Color.valueOf("#f7f6eb"),0,true, Color.valueOf("#6e6649"), 0.05f, 5f),
     BEACH("natural",new String[]{"beach"},Color.BEIGE,0,true, Color.valueOf("#706024"), 0.01f, 5f),
-    FOREST("landuse",new String[]{"forest","meadow","grass"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#102C10"), 0.01f, 5f),
+    FOREST("landuse",new String[]{"forest","meadow","grass"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#102C10"), 0.03f, 5f),
     NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#102C10"), 0.03f, 5f),
     LEISURE("leisure",new String[]{"park"},Color.valueOf("#c8f2bb"),0,true, Color.valueOf("#102C10"), 0.03f, 5f),
     WATER("natural",new String[]{"water"},Color.valueOf("#ade1ff"),0,true, Color.valueOf("#103C5D"), 0.01f, 5f),

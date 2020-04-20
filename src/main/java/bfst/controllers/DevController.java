@@ -152,7 +152,7 @@ public class DevController {
         fullscreenRange.selectedProperty().set(canvas.getRenderFullScreen());
         fullscreenRange.setOnAction(e -> {
             canvas.setRenderFullScreen(fullscreenRange.isSelected());
-            canvas.repaint();
+            canvas.repaint(15);
         });
     }
 
