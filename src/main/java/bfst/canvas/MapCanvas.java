@@ -39,6 +39,7 @@ public class MapCanvas extends Canvas {
     private ArrayList<PointOfInterest> pointsOfInterest = new ArrayList<>();
     private Node lastInstructionNode;
     private String lastActionInstruction;
+    private boolean renderFullScreen;
 
     private ArrayList<Instruction> description;
 
@@ -49,7 +50,7 @@ public class MapCanvas extends Canvas {
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
-    Range renderBound;
+    Range renderRange;
 
     public Affine getTrans() {
         return trans;
@@ -88,14 +89,7 @@ public class MapCanvas extends Canvas {
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setFillRule(FillRule.EVEN_ODD);
 
-        float w = (float) this.getWidth();
-        float h = (float) this.getHeight();
-        renderBound = new Range(
-            (float) ((-trans.getTx() + w/2-100)* pixelwidth),
-            (float) ((-trans.getTy() + h/2-100)* pixelwidth),
-            (float) ((-trans.getTx() + w/2+100)* pixelwidth),
-            (float) ((-trans.getTy() + h/2+100)* pixelwidth)
-        );
+        updateSearchRange(pixelwidth);
 
         if (model != null) {
             paintCoastLines(pixelwidth, useRegularColors);
@@ -136,10 +130,35 @@ public class MapCanvas extends Canvas {
         scaleBar.updateScaleBar(this);
         scaleBar.draw(gc, pixelwidth, false);
 
-        renderBound.draw(gc, pixelwidth);
+        if(!renderFullScreen) renderRange.draw(gc, pixelwidth);
 
         time += System.nanoTime();
         System.out.println("repaint: " + time / 1000000f + "ms");
+    }
+
+    public void updateSearchRange(double pixelwidth) {
+        float w = (float) this.getWidth();
+        float h = (float) this.getHeight();
+        if(renderFullScreen){
+            renderRange = new Range(
+                (float) ((-trans.getTx())* pixelwidth),
+                (float) ((-trans.getTy())* pixelwidth),
+                (float) ((-trans.getTx() + w)* pixelwidth),
+                (float) ((-trans.getTy() + h)* pixelwidth)
+            );
+        } else {
+            renderRange = new Range(
+                (float) ((-trans.getTx() + w/2-100)* pixelwidth),
+                (float) ((-trans.getTy() + h/2-100)* pixelwidth),
+                (float) ((-trans.getTx() + w/2+100)* pixelwidth),
+                (float) ((-trans.getTy() + h/2+100)* pixelwidth)
+            );
+        }
+        
+    }
+
+    public void setRenderFullScreen(boolean bool){
+        renderFullScreen = bool;
     }
 
     public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
@@ -463,7 +482,7 @@ public class MapCanvas extends Canvas {
                 if (type.shouldHaveFill()) gc.setFill(type.getAlternateColor());
                 if (type.shouldHaveStroke()) gc.setStroke(type.getAlternateColor());
             }
-            kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderBound);
+            kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderRange);
         }
         
     }
@@ -546,5 +565,9 @@ public class MapCanvas extends Canvas {
 
     public void setPOI(ArrayList<PointOfInterest> poi) {
         pointsOfInterest = poi;
+    }
+
+    public boolean getRenderFullScreen(){
+        return renderFullScreen;
     }
 }

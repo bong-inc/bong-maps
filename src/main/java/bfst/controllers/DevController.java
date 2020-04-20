@@ -60,6 +60,8 @@ public class DevController {
     private Button routeDescription;
     @FXML
     private Button printPOI;
+    @FXML
+    private CheckBox fullscreenRange;
 
     @FXML
     public void initialize() {
@@ -145,6 +147,12 @@ public class DevController {
             for (PointOfInterest poi : canvas.getPointsOfInterest()) {
                 System.out.println(poi.toString());
             }
+        });
+
+        fullscreenRange.selectedProperty().set(canvas.getRenderFullScreen());
+        fullscreenRange.setOnAction(e -> {
+            canvas.setRenderFullScreen(fullscreenRange.isSelected());
+            canvas.repaint();
         });
     }
 

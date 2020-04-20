@@ -14,7 +14,7 @@ import javafx.scene.paint.Color;
 
 public class KDTree implements Serializable {
   ArrayList<CanvasElement> leafValues;
-  int maxNumOfLeafValues = 1000; // max size of leafValues
+  int maxNumOfLeafValues = 100; // max size of leafValues
   double x, y, w, h;
   KDTree low;
   KDTree high;
@@ -129,7 +129,7 @@ public class KDTree implements Serializable {
 
   public void draw(GraphicsContext gc, double scale, boolean smartTrace, boolean shouldHaveFill, Range range){
     // print number of trees visited
-    System.out.print("*");
+    // System.out.print("*");
 
     // draw CanvasElements in leafValues
     if(this.doOverlap(range)){
