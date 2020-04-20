@@ -12,6 +12,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -38,6 +39,7 @@ public class MapCanvas extends Canvas {
     private Node lastInstructionNode;
     private String lastActionInstruction;
     private long time = System.nanoTime();
+    private LinePath draggedSquare;
 
     private ArrayList<Instruction> description;
 
@@ -123,6 +125,20 @@ public class MapCanvas extends Canvas {
 
         System.out.println("repaint: " + (System.nanoTime() - time) / 1000000f + "ms");
         time = System.nanoTime();
+
+        if (useRegularColors) {
+            gc.setStroke(Color.BLACK);
+        } else {
+            gc.setStroke(Color.WHITE);
+        }
+        if (draggedSquare != null) {
+            draggedSquare.draw(gc, pixelwidth, false);
+        }
+    }
+
+    public void setDraggedSquare(LinePath linePath) {
+        draggedSquare = linePath;
+        repaint();
     }
 
     public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
