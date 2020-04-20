@@ -71,7 +71,7 @@ public class LinePath extends CanvasElement  implements Drawable, Serializable {
             float diffY = nextY - lastY;
             double hypotenuse = Math.sqrt(Math.pow(diffX,2) + Math.pow(diffY,2));
             double distToNext = scale * hypotenuse;
-            if(2 < distToNext){
+            if(3 < distToNext){
                 gc.lineTo(nextX,nextY);
                 lastX = nextX;
                 lastY = nextY;

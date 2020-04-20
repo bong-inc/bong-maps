@@ -96,7 +96,7 @@ public class MapCanvas extends Canvas {
             for (Type type : typesToBeDrawn) {
                 if (type != Type.UNKNOWN) {
                     if (useDependentDraw) {
-                        if (type.getMinMxx() < trans.getMxx()) {
+                        if (type.getMinMxx() < trans.getMxx() && trans.getMxx() < type.getMaxMxx()) {
                             paintDrawablesOfType(type, pixelwidth, useRegularColors);
                         }
                     } else {
@@ -131,6 +131,8 @@ public class MapCanvas extends Canvas {
         scaleBar.draw(gc, pixelwidth, false);
 
         if(!renderFullScreen) renderRange.draw(gc, pixelwidth);
+
+        System.out.println("Mxx: " + trans.getMxx());
 
         time += System.nanoTime();
         System.out.println("repaint: " + time / 1000000f + "ms");
