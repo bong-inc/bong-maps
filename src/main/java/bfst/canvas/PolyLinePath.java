@@ -6,9 +6,11 @@ import bfst.OSMReader.Relation;
 import bfst.OSMReader.Way;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PolyLinePath extends CanvasElement implements Drawable {
+public class PolyLinePath extends CanvasElement implements Drawable, Serializable {
     private static final long serialVersionUID = -4838798038938840050L;
     ArrayList<LinePath> linePaths;
     Type type;

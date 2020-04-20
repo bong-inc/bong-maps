@@ -1,5 +1,6 @@
 package bfst.OSMReader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,7 +12,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class KDTree {
+public class KDTree implements Serializable {
   ArrayList<CanvasElement> leafValues;
   int maxNumOfLeafValues = 1000; // max size of leafValues
   double x, y, w, h;
