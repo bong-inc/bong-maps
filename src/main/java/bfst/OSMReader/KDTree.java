@@ -14,7 +14,7 @@ import javafx.scene.paint.Color;
 
 public class KDTree implements Serializable {
   ArrayList<CanvasElement> leafValues;
-  int maxNumOfLeafValues = 1000; // max size of leafValues
+  int maxNumOfLeafValues = 100; // max size of leafValues
   double x, y, w, h;
   KDTree low;
   KDTree high;
