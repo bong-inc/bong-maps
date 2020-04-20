@@ -42,9 +42,9 @@ public class OSMReader {
     private String previousName;
 
     private long currentID;
-    private HashMap<Type, ArrayList<Drawable>> drawableByType = new HashMap<>();
+    private HashMap<Type, ArrayList<CanvasElement>> drawableByType = new HashMap<>();
 
-    public HashMap<Type, ArrayList<Drawable>> getDrawableByType(){
+    public HashMap<Type, ArrayList<CanvasElement>> getDrawableByType(){
         return drawableByType;
     }
 
@@ -160,7 +160,7 @@ public class OSMReader {
                                 type = Type.UNKNOWN;
                                 break;
                             case "osm":
-                                ArrayList<Drawable> coastlines = new ArrayList<>();
+                                ArrayList<CanvasElement> coastlines = new ArrayList<>();
                                 for(Map.Entry<Long,Way> entry : tempCoastlines.entrySet()){
                                     if(entry.getValue().first() == entry.getValue().last()){
                                         coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE,tempNodes));

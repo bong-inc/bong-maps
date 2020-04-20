@@ -1,6 +1,8 @@
 package bfst.canvas;
 
 import bfst.OSMReader.Bound;
+import bfst.OSMReader.CanvasElement;
+import bfst.OSMReader.KDTree;
 import bfst.OSMReader.Model;
 
 import bfst.OSMReader.Node;
@@ -47,6 +49,8 @@ public class MapCanvas extends Canvas {
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
+    Range renderBound;
+
     public Affine getTrans() {
         return trans;
     }
@@ -83,7 +87,18 @@ public class MapCanvas extends Canvas {
         gc.setTransform(trans);
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setFillRule(FillRule.EVEN_ODD);
+
+        float w = (float) this.getWidth();
+        float h = (float) this.getHeight();
+        renderBound = new Range(
+            (float) ((-trans.getTx() + w/2-100)* pixelwidth),
+            (float) ((-trans.getTy() + h/2-100)* pixelwidth),
+            (float) ((-trans.getTx() + w/2+100)* pixelwidth),
+            (float) ((-trans.getTy() + h/2+100)* pixelwidth)
+        );
+
         if (model != null) {
+            paintCoastLines(pixelwidth, useRegularColors);
             for (Type type : typesToBeDrawn) {
                 if (type != Type.UNKNOWN) {
                     if (useDependentDraw) {
@@ -120,6 +135,8 @@ public class MapCanvas extends Canvas {
 
         scaleBar.updateScaleBar(this);
         scaleBar.draw(gc, pixelwidth, false);
+
+        renderBound.draw(gc, pixelwidth);
 
         time += System.nanoTime();
         System.out.println("repaint: " + time / 1000000f + "ms");
@@ -434,10 +451,10 @@ public class MapCanvas extends Canvas {
     }
 
     private void paintDrawablesOfType(Type type, double pixelwidth, boolean useRegularColors) {
-        ArrayList<Drawable> drawables = model.getDrawablesOfType(type);
+        KDTree kdTree = model.getKDTreeOfType(type);
         gc.setStroke(Color.TRANSPARENT);
         gc.setFill(Color.TRANSPARENT);
-        if (drawables != null) {
+        if (kdTree != null) {
             gc.setLineWidth(type.getWidth() * pixelwidth);
             if (useRegularColors) {
                 if (type.shouldHaveFill()) gc.setFill(type.getColor());
@@ -446,11 +463,31 @@ public class MapCanvas extends Canvas {
                 if (type.shouldHaveFill()) gc.setFill(type.getAlternateColor());
                 if (type.shouldHaveStroke()) gc.setStroke(type.getAlternateColor());
             }
-            for (Drawable drawable : drawables) {
-                drawable.draw(gc, 1 / pixelwidth, smartTrace);
+            kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderBound);
+        }
+        
+    }
+
+    private void paintCoastLines(double pixelwidth, boolean useRegularColors) {
+        ArrayList<CanvasElement> coastLines = model.getCoastLines();
+        Type type = Type.COASTLINE;
+        gc.setStroke(Color.TRANSPARENT);
+        gc.setFill(Color.TRANSPARENT);
+        if (coastLines != null) {
+            gc.setLineWidth(type.getWidth() * pixelwidth);
+            if (useRegularColors) {
+                if (type.shouldHaveFill()) gc.setFill(type.getColor());
+                if (type.shouldHaveStroke()) gc.setStroke(type.getColor());
+            } else {
+                if (type.shouldHaveFill()) gc.setFill(type.getAlternateColor());
+                if (type.shouldHaveStroke()) gc.setStroke(type.getAlternateColor());
+            }
+            for(CanvasElement c : model.getCoastLines()){
+                c.draw(gc, 1/pixelwidth, smartTrace);
                 if (type.shouldHaveFill()) gc.fill();
             }
         }
+        
     }
 
     public void setModel(Model model) {

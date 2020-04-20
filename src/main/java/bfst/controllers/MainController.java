@@ -1,6 +1,7 @@
 package bfst.controllers;
 
 import bfst.App;
+import bfst.OSMReader.CanvasElement;
 import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Model;
 import bfst.OSMReader.Node;
@@ -47,6 +48,9 @@ public class MainController {
     private Point2D lastMouse;
     private ArrayList<Address> tempBest = new ArrayList<>();
     private boolean hasBeenDragged = false;
+
+    public static CanvasElement champion;
+    public static CanvasElement champion2;
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
