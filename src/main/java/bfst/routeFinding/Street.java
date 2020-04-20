@@ -24,6 +24,9 @@ public class Street implements Serializable {
                     switch (value) {
                         case "footway":
                         case "steps":
+                        case "pedestrian":
+                        case "corridor":
+                        case "crossing":
                             walking = true;
                             break;
                         case "cycleway":
@@ -41,6 +44,11 @@ public class Street implements Serializable {
                         case "secondary":
                         case "tertiary":
                         case "service":
+                        case "trunk":
+                        case "trunk_link":
+                        case "primary_link":
+                        case "secondary_link":
+                        case "tertiary_link":
                             car = true;
                             break;
                         case "motorway_link":
@@ -48,6 +56,7 @@ public class Street implements Serializable {
                             role = Role.MOTORWAY_LINK;
                             break;
                         case "residential":
+                        case "living_street":
                             walking = true;
                             bicycle = true;
                             car = true;
@@ -55,6 +64,11 @@ public class Street implements Serializable {
                         case "unclassified":
                             bicycle = true;
                             car = true;
+                            break;
+                        case "mini_roundabout":
+                            onewayCar = true;
+                            onewayBicycle = true;
+                            role = Role.ROUNDABOUT;
                             break;
                     }
                     break;

@@ -86,12 +86,19 @@
     -fx-max-height: 300px;
 }
 
+.directionButtons {
+    -fx-background-color: white;
+}
+
 .pinInfo {
     -fx-background-color: white;
     -fx-max-width: 400px;
     -fx-padding: 5 10;
     -fx-background-radius: 5;
+    -fx-spacing: 10;
 }
+
+
 
 .icon-button .icon {
     -fx-background-color: #ddd;
@@ -184,6 +191,10 @@ Button:hover {
 }
 .scroll-pane {
     -fx-background-color: transparent;
+}
+
+.instruction {
+    /*TODO style instruction-buttons*/
 }
 
 .scroll-bar .increment-button {

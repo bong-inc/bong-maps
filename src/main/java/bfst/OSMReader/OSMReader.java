@@ -109,6 +109,7 @@ public class OSMReader {
                                             case "primary":
                                             case "secondary":
                                             case "tertiary":
+                                            case "trunk":
                                                 defaultSpeed = 80;
                                                 break;
                                             default:

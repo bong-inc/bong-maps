@@ -1,7 +1,5 @@
 package bfst.canvas;
 
-import java.io.Serializable;
-
 public enum CityType {
 
     CITY(0.001000246664f, 0.02400591994f, 20),

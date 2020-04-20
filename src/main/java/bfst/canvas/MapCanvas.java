@@ -14,6 +14,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -40,6 +41,7 @@ public class MapCanvas extends Canvas {
     private Node lastInstructionNode;
     private String lastActionInstruction;
     private boolean renderFullScreen;
+    private LinePath draggedSquare;
 
     private ArrayList<Instruction> description;
 
@@ -76,13 +78,12 @@ public class MapCanvas extends Canvas {
     }
 
     public void repaint() {
-        long time = -System.nanoTime();
 
         gc.setTransform(new Affine());
         if (useRegularColors) {
-            gc.setFill(Color.valueOf("#ade1ff"));
+            gc.setFill(Type.WATER.getColor());
         } else {
-            gc.setFill(Color.AQUA);
+            gc.setFill(Type.WATER.getAlternateColor());
         }
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
@@ -132,10 +133,22 @@ public class MapCanvas extends Canvas {
 
         if(!renderFullScreen) renderRange.draw(gc, pixelwidth);
 
-        System.out.println("Mxx: " + trans.getMxx());
-
         time += System.nanoTime();
         System.out.println("repaint: " + time / 1000000f + "ms");
+
+        if (useRegularColors) {
+            gc.setStroke(Color.BLACK);
+        } else {
+            gc.setStroke(Color.WHITE);
+        }
+        if (draggedSquare != null) {
+            draggedSquare.draw(gc, pixelwidth, false);
+        }
+    }
+
+    public void setDraggedSquare(LinePath linePath) {
+        draggedSquare = linePath;
+        repaint();
     }
 
     public void updateSearchRange(double pixelwidth) {
@@ -446,6 +459,7 @@ public class MapCanvas extends Canvas {
         if (shouldZoom(factor)) {
             trans.prependScale(factor, factor, x, y);
             repaint();
+            System.out.println("factor: " + factor);
         }
     }
 
@@ -538,10 +552,10 @@ public class MapCanvas extends Canvas {
         repaint();
     }
 
-    public void zoomToPoint (float lon, float lat){
+    public void zoomToPoint (double factor, float lon, float lat){
         trans.setToIdentity();
         pan(-lon, -lat);
-        zoom(1, 0, 0);
+        zoom(factor, 0, 0);
         pan(getWidth() / 2, getHeight() / 2);
         repaint();
     }
