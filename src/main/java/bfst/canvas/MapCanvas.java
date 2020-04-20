@@ -75,9 +75,9 @@ public class MapCanvas extends Canvas {
 
         gc.setTransform(new Affine());
         if (useRegularColors) {
-            gc.setFill(Color.valueOf("#ade1ff"));
+            gc.setFill(Type.WATER.getColor());
         } else {
-            gc.setFill(Color.AQUA);
+            gc.setFill(Type.WATER.getAlternateColor());
         }
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
@@ -408,6 +408,7 @@ public class MapCanvas extends Canvas {
         if (shouldZoom(factor)) {
             trans.prependScale(factor, factor, x, y);
             repaint();
+            System.out.println("factor: " + factor);
         }
     }
 
@@ -480,10 +481,10 @@ public class MapCanvas extends Canvas {
         repaint();
     }
 
-    public void zoomToPoint (float lon, float lat){
+    public void zoomToPoint (double factor, float lon, float lat){
         trans.setToIdentity();
         pan(-lon, -lat);
-        zoom(1, 0, 0);
+        zoom(factor, 0, 0);
         pan(getWidth() / 2, getHeight() / 2);
         repaint();
     }

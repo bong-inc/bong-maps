@@ -82,8 +82,13 @@ public class MainController {
     @FXML Label routeDistance;
     @FXML Label routeTime;
     @FXML VBox directions;
+    @FXML Menu view;
+    @FXML CheckMenuItem publicTransport;
+    @FXML CheckMenuItem darkMode;
+    @FXML MenuItem zoomToArea;
 
-    String tempQuery = "";
+    private boolean shouldPan = true;
+    private String tempQuery = "";
 
     @FXML
     public void initialize() {
@@ -107,12 +112,14 @@ public class MainController {
         canvas.setOnMouseDragged(e -> {
             hasBeenDragged = true;
 
-            canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
-            lastMouse = new Point2D(e.getX(), e.getY());
+            if (shouldPan) {
+                canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
+                lastMouse = new Point2D(e.getX(), e.getY());
+            }
         });
 
         canvas.setOnMouseReleased(e -> {
-            if (!hasBeenDragged) {
+            if (!hasBeenDragged && shouldPan) {
                 try {
                     if (canvas.getCurrentPin() == null) {
                         Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
@@ -127,6 +134,12 @@ public class MainController {
                     ex.printStackTrace();
                 }
             }
+            if (!shouldPan) {
+                Point2D end = new Point2D(e.getX(), e.getY());
+                zoomToArea(end);
+            }
+
+            shouldPan = true;
             hasBeenDragged = false;
         });
 
@@ -198,16 +211,74 @@ public class MainController {
                 showPinMenu();
             }
         });
+
+        publicTransport.setSelected(true);
+        publicTransport.setOnAction(e -> {
+            updateShowPublicTransport(publicTransport.isSelected());
+        });
+
+        darkMode.setSelected(false);
+        darkMode.setOnAction(e -> {
+            canvas.setUseRegularColors(!darkMode.isSelected());
+        });
+
+        zoomToArea.setOnAction(e ->  {
+            shouldPan = false;
+        });
+
+    }
+
+    private void updateShowPublicTransport(boolean showPublicTransport) {
+        ArrayList<Type> typesToBeDrawn = new ArrayList<>();
+        if (showPublicTransport) {
+            typesToBeDrawn.addAll(Arrays.asList(Type.getTypes()));
+        } else {
+            for (Type type : Type.getTypes()) {
+                if (type != Type.RAILWAY) {
+                    typesToBeDrawn.add(type);
+                }
+            }
+        }
+
+        canvas.setTypesToBeDrawn(typesToBeDrawn);
     }
 
     private void addItemToMyPoints(PointOfInterest poi) {
         MenuItem item = new MenuItem(poi.getName());
         item.setOnAction(a -> {
             canvas.setPin(poi.getLon(), poi.getLat());
-            canvas.zoomToPoint(poi.getLon(), poi.getLat());
+            canvas.zoomToPoint(1, poi.getLon(), poi.getLat());
             showPinMenu();
         });
         myPoints.getItems().add(item);
+    }
+
+    private void zoomToArea(Point2D end) {
+        Point2D inversedStart = null;
+        Point2D inversedEnd = null;
+        try {
+            inversedStart = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
+            inversedEnd = canvas.getTrans().inverseTransform(end.getX(), end.getY());
+        } catch (NonInvertibleTransformException e) {
+            e.printStackTrace();
+        }
+        Point2D centerPoint = new Point2D((inversedEnd.getX() + inversedStart.getX()) / 2, (inversedEnd.getY() + inversedStart.getY()) / 2);
+
+        double windowAspectRatio = canvas.getWidth() / canvas.getHeight();
+        double markedAspectRatio = (end.getX() - lastMouse.getX()) / (end.getY() - lastMouse.getY());
+        double factor;
+
+        if (windowAspectRatio < markedAspectRatio) {
+            factor = Math.abs((canvas.getWidth() / (end.getX() -  lastMouse.getX())) * canvas.getTrans().getMxx());
+        } else {
+            factor = Math.abs((canvas.getHeight() / (end.getY() -  lastMouse.getY()) * canvas.getTrans().getMxx()));
+        }
+        if (factor > 2.2) {
+            factor = 2.2;
+        }
+        canvas.zoomToPoint(factor, (float) centerPoint.getX(), (float) centerPoint.getY());
+
+
     }
 
     public void setPOIButton() {
@@ -304,6 +375,7 @@ public class MainController {
             directions.getChildren().clear();
             for (Instruction instruction : canvas.getDescription()) {
                 Button button = new Button(instruction.getInstruction());
+                button.getStyleClass().add("instruction");
                 button.setOnAction(e -> {
                     canvas.zoomToNode(instruction.getNode());
                 });
@@ -353,6 +425,9 @@ public class MainController {
             File file = new FileChooser().showSaveDialog(stage);
             if(file != null){
                 saveBinary(file, model);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Saved successfully");
+                alert.showAndWait();
             }
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
@@ -370,8 +445,8 @@ public class MainController {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("File type not supported: " + exception.getFileType());
             alert.showAndWait();
-        } catch (NullPointerException exception){
-            exception.printStackTrace();
+        } catch (NullPointerException ignored){ //For when filechooser is opened and closed with no file.
+
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("Something unexpected happened, please try again");
