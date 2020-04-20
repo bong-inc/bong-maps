@@ -62,7 +62,7 @@
                 <Label fx:id="routeDistance"/>
                 <Label fx:id="routeTime"/>
                 <ScrollPane styleClass="directions">
-                  <VBox fx:id="directions"/>
+                  <VBox fx:id="directions" styleClass="directionButtons"/>
                 </ScrollPane>
               </VBox>
           </VBox>
