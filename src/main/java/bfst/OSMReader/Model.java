@@ -26,21 +26,23 @@ public class Model implements Serializable {
     private Bound bound;
 
     public Model(OSMReader reader){
-        this.drawablesByType = reader.getDrawableByType();
         this.bound = reader.getBound();
         this.addresses = reader.getAddresses();
         this.cities = reader.getCities();
         this.graph = reader.getGraph();
         Collections.sort(addresses);
         Collections.sort(cities);
-        this.coastLines = getDrawablesOfType(Type.COASTLINE);
-        this.kdtreeByType = createKdtreeByType();
+        addresses.trimToSize();
+        cities.trimToSize();
+        this.coastLines = reader.getDrawableByType().get(Type.COASTLINE);
+        this.kdtreeByType = createKdtreeByType(reader.getDrawableByType());
     }
 
-    public Map<Type, KDTree> createKdtreeByType(){
+    public Map<Type, KDTree> createKdtreeByType(Map<Type, ArrayList<CanvasElement>> drawablesByType){
         kdtreeByType = new HashMap<Type, KDTree>();
         for(Entry<Type, ArrayList<CanvasElement>> e : drawablesByType.entrySet()){
             if(e.getKey() == Type.COASTLINE) continue;
+            e.getValue().trimToSize();
             KDTree current = new KDTree(e.getValue(),bound.getMinLon(),bound.getMinLat(),bound.getMaxLon() - bound.getMinLon(), bound.getMaxLat() - bound.getMinLat());
             kdtreeByType.put(e.getKey(), current);
         }
@@ -54,11 +56,7 @@ public class Model implements Serializable {
     public KDTree getKDTreeOfType(Type type){
         return kdtreeByType.get(type);
     }
-
-    public ArrayList<CanvasElement> getDrawablesOfType(Type type){
-        return drawablesByType.get(type);
-    }
-
+    
     public ArrayList<Address> getAddresses(){
         return addresses;
     }

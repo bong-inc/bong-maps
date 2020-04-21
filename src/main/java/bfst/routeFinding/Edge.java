@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Edge implements Serializable {
 
-    private double weight;
+    private float weight;
     private Street street;
 
     private Node tailNode;
@@ -22,7 +22,7 @@ public class Edge implements Serializable {
         this.tailNode = tailNode;
         this.headNode = headNode;
         this.street = street;
-        weight = Math.sqrt(Math.pow(this.tailNode.getLon() - this.headNode.getLon(), 2) + Math.pow(this.tailNode.getLat() - this.headNode.getLat(), 2));
+        weight = (float) Math.sqrt(Math.pow(this.tailNode.getLon() - this.headNode.getLon(), 2) + Math.pow(this.tailNode.getLat() - this.headNode.getLat(), 2));
     }
 
     public Node getTailNode() {

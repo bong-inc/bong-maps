@@ -225,8 +225,8 @@ public class MainController {
                 Address a = (Address) suggestions.getChildren().get(0).getUserData();
                 searchField.setText(a.toString());
                 searchField.positionCaret(searchField.getText().length());
-                canvas.zoomToNode(a.node);
-                canvas.setPin(a.node);
+                canvas.zoomToPoint(1, a.getLon(),  a.getLat());
+                canvas.setPin(a.getLon(), a.getLat());
                 suggestions.getChildren().clear();
                 showPinMenu();
             }
