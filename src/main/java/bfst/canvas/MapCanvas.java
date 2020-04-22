@@ -1,11 +1,6 @@
 package bfst.canvas;
 
-import bfst.OSMReader.Bound;
-import bfst.OSMReader.CanvasElement;
-import bfst.OSMReader.KDTree;
-import bfst.OSMReader.Model;
-
-import bfst.OSMReader.Node;
+import bfst.OSMReader.*;
 
 import bfst.routeFinding.*;
 
@@ -257,27 +252,28 @@ public class MapCanvas extends Canvas {
 
         for (int i = 0; i < list.size(); i++) {
             Edge currEdge = list.get(i);
+            double meterMultiplier = - (MercatorProjector.unproject(currEdge.getTailNode().getLon(), currEdge.getTailNode().getLat()).getLat()) / 100;
 
             if (currEdge.getStreet().getRole() == Street.Role.ROUNDABOUT && model.getGraph().getOutDegree(currEdge.getHeadNode().getAsLong(), vehicle) > 1) {
                 roundaboutCounter++;
             }
 
-            if (currEdge.getStreet().getName() != null) { //TODO veje uden navne ignoreres
+            if (currEdge.getStreet().getName() != null) {
 
                 if (!prevEdgeName.equals(currEdge.getStreet().getName()) || (currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT && prevEdge.getStreet().getRole() == Street.Role.ROUNDABOUT)) {
                     addInstruction(prevEdgeName, tempLength, currEdge);
                     setActionInstruction(prevEdge, currEdge, roundaboutCounter);
 
                     prevEdgeName = currEdge.getStreet().getName();
-                    tempLength = currEdge.getWeight() * 0.56; //TODO 0.56 er en grov værdi, skal erstattes
+                    tempLength = currEdge.getWeight() * meterMultiplier;
                 } else {
-                    tempLength += currEdge.getWeight() * 0.56;
+                    tempLength += currEdge.getWeight() * meterMultiplier;
                     if (i == list.size() - 1) {
                         addInstruction(prevEdgeName, tempLength, currEdge);
                     }
                 }
             } else {
-                tempLength += currEdge.getWeight() * 0.56;
+                tempLength += currEdge.getWeight() * meterMultiplier;
             }
 
             prevEdge = list.get(i);
@@ -543,11 +539,7 @@ public class MapCanvas extends Canvas {
     }
 
     public void zoomToNode (Node node){
-        trans.setToIdentity();
-        pan(-node.getLon(), -node.getLat());
-        zoom(1, 0, 0);
-        pan(getWidth() / 2, getHeight() / 2);
-        repaint(14);
+        zoomToPoint(1, node.getLon(), node.getLat());
     }
 
     public void zoomToPoint (double factor, float lon, float lat){
@@ -556,11 +548,6 @@ public class MapCanvas extends Canvas {
         zoom(factor, 0, 0);
         pan(getWidth() / 2, getHeight() / 2);
         repaint(10);
-    }
-
-    public void setPin (Node node){
-        currentPin = new Pin(node.getLon(), node.getLat(), 1);
-        repaint(11);
     }
 
     public void setPin (float lon, float lat){
