@@ -487,7 +487,7 @@ public class MapCanvas extends Canvas {
     }
 
     private void paintDrawablesOfType(Type type, double pixelwidth, boolean useRegularColors) {
-        KDTree kdTree = model.getKDTreeOfType(type);
+        KDTree kdTree = model.getKDTreeByType(type);
         gc.setStroke(Color.TRANSPARENT);
         gc.setFill(Color.TRANSPARENT);
         if (kdTree != null) {
