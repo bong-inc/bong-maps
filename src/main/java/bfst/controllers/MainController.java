@@ -28,6 +28,7 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Pair;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -66,6 +67,8 @@ public class MainController {
     @FXML MenuItem loadDefaultMap;
     @FXML MenuItem saveAs;
     @FXML MenuItem devtools;
+    @FXML MenuItem about;
+    @FXML MenuItem help;
     @FXML TextField searchField;
     @FXML VBox suggestions;
 
@@ -174,19 +177,25 @@ public class MainController {
         });
 
         devtools.setOnAction(e -> {
-            try {
-                Stage devStage = new Stage();
-                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/devview.fxml"));
-                DevController devController = new DevController(devStage, canvas);
-                fxmlLoader.setController(devController);
-                Parent root = fxmlLoader.load();
-                devStage.setTitle("dev tools");
-                Scene scene = new Scene(root);
-                scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
-                devStage.setScene(scene);
-                devStage.show();
-            } catch (Exception ex){
-                ex.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setHeaderText("Open dev tools?");
+            alert.setContentText("Dev tools are only supposed to be used by developers or advanced users");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                try {
+                    Stage devStage = new Stage();
+                    FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/devview.fxml"));
+                    DevController devController = new DevController(devStage, canvas);
+                    fxmlLoader.setController(devController);
+                    Parent root = fxmlLoader.load();
+                    devStage.setTitle("dev tools");
+                    Scene scene = new Scene(root);
+                    scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+                    devStage.setScene(scene);
+                    devStage.show();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -222,8 +231,8 @@ public class MainController {
                 Address a = (Address) suggestions.getChildren().get(0).getUserData();
                 searchField.setText(a.toString());
                 searchField.positionCaret(searchField.getText().length());
-                canvas.zoomToNode(a.node);
-                canvas.setPin(a.node);
+                canvas.zoomToPoint(1, a.getLon(),  a.getLat());
+                canvas.setPin(a.getLon(), a.getLat());
                 suggestions.getChildren().clear();
                 showPinMenu();
             }
@@ -243,6 +252,35 @@ public class MainController {
             shouldPan = false;
         });
 
+        about.setOnAction(e -> {
+            try {
+                Stage aboutStage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/about.fxml"));
+                Parent root = fxmlLoader.load();
+                aboutStage.setTitle("About");
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+                aboutStage.setScene(scene);
+                aboutStage.show();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        help.setOnAction(e -> {
+            try {
+                Stage helpStage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/help.fxml"));
+                Parent root = fxmlLoader.load();
+                helpStage.setTitle("Help");
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+                helpStage.setScene(scene);
+                helpStage.show();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {

@@ -20,7 +20,6 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 public class OSMReader {
     private NodeContainer tempNodes = new NodeContainer();
     private SortedArrayList<Way> tempWays = new SortedArrayList<>();
-    private SortedArrayList<Relation> tempRelations = new SortedArrayList<>();
     private HashMap<Long, Way> tempCoastlines = new HashMap<>();
     private Bound bound;
     private bfst.canvas.Type type;
@@ -187,6 +186,10 @@ public class OSMReader {
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
+
+        for (var entry : graph.getAdj().entrySet()) {
+            entry.getValue().trimToSize();
+        }
     }
 
     private void parseElement(XMLStreamReader reader, String element) {
@@ -216,7 +219,8 @@ public class OSMReader {
                 float tempLon = Float.parseFloat(reader.getAttributeValue(null, "lon"));
                 float tempLat = Float.parseFloat(reader.getAttributeValue(null, "lat"));
                 nodeHolder = MercatorProjector.project(currentID, tempLon, -tempLat);
-                builder.node(nodeHolder);
+                builder.lat(nodeHolder.getLat());
+                builder.lon(nodeHolder.getLon());
                 cityBuilder.node(nodeHolder);
                 break;
             case "way":
@@ -228,7 +232,7 @@ public class OSMReader {
             case "relation":
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 relationHolder = new Relation(currentID);
-                tempRelations.add(relationHolder);
+                //tempRelations.add(relationHolder);
                 break;
             case "tag":
                 String k = reader.getAttributeValue(null, "k").intern();
@@ -443,7 +447,8 @@ public class OSMReader {
     public void destroy(){
         tempNodes = null;
         tempWays = null;
-        tempRelations = null;
+        //tempRelations = null;
         tempCoastlines = null;
+        drawableByType = null;
     }
 }

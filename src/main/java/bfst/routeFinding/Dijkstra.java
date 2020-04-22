@@ -147,8 +147,7 @@ public class Dijkstra {
             weight = edge.getWeight();
         } else {
             weight = edge.getWeight() / edge.getStreet().getMaxspeed();
-            //distanceToDestination = distanceToDestination / 350; //TODO fix A* for hurtigste vej
-            distanceToDestination = 0; //TODO A* deaktiveret for hurtigste rute
+            distanceToDestination = 0;
         }
 
 

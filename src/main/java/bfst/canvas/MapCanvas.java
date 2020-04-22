@@ -1,11 +1,6 @@
 package bfst.canvas;
 
-import bfst.OSMReader.Bound;
-import bfst.OSMReader.CanvasElement;
-import bfst.OSMReader.KDTree;
-import bfst.OSMReader.Model;
-
-import bfst.OSMReader.Node;
+import bfst.OSMReader.*;
 
 import bfst.routeFinding.*;
 
@@ -228,7 +223,7 @@ public class MapCanvas extends Canvas {
         Edge firstEdge = route.get(0);
         Node prevNode;
 
-        if (firstEdge.getTailNode().getAsLong() == route.get(1).getHeadNode().getAsLong()) {
+        if (firstEdge.getTailNode().getAsLong() == route.get(1).getHeadNode().getAsLong() || firstEdge.getTailNode().getAsLong() == route.get(1).getTailNode().getAsLong()) {
             prevNode = firstEdge.getHeadNode();
         } else {
             prevNode = firstEdge.getTailNode();
@@ -257,27 +252,28 @@ public class MapCanvas extends Canvas {
 
         for (int i = 0; i < list.size(); i++) {
             Edge currEdge = list.get(i);
+            double meterMultiplier = - (MercatorProjector.unproject(currEdge.getTailNode().getLon(), currEdge.getTailNode().getLat()).getLat()) / 100;
 
             if (currEdge.getStreet().getRole() == Street.Role.ROUNDABOUT && model.getGraph().getOutDegree(currEdge.getHeadNode().getAsLong(), vehicle) > 1) {
                 roundaboutCounter++;
             }
 
-            if (currEdge.getStreet().getName() != null) { //TODO veje uden navne ignoreres
+            if (currEdge.getStreet().getName() != null) {
 
                 if (!prevEdgeName.equals(currEdge.getStreet().getName()) || (currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT && prevEdge.getStreet().getRole() == Street.Role.ROUNDABOUT)) {
                     addInstruction(prevEdgeName, tempLength, currEdge);
                     setActionInstruction(prevEdge, currEdge, roundaboutCounter);
 
                     prevEdgeName = currEdge.getStreet().getName();
-                    tempLength = currEdge.getWeight() * 0.56; //TODO 0.56 er en grov værdi, skal erstattes
+                    tempLength = currEdge.getWeight() * meterMultiplier;
                 } else {
-                    tempLength += currEdge.getWeight() * 0.56;
+                    tempLength += currEdge.getWeight() * meterMultiplier;
                     if (i == list.size() - 1) {
                         addInstruction(prevEdgeName, tempLength, currEdge);
                     }
                 }
             } else {
-                tempLength += currEdge.getWeight() * 0.56;
+                tempLength += currEdge.getWeight() * meterMultiplier;
             }
 
             prevEdge = list.get(i);
@@ -367,10 +363,10 @@ public class MapCanvas extends Canvas {
         } else if (roundaboutCounter > 0) {
             lastActionInstruction = "Take exit number " + roundaboutCounter + " in the roundabout";
             resetRoundaboutCounter();
-        } else if (turn > 20 && turn < 140) {
-            lastActionInstruction = "Turn right";
-        } else if (turn < -20 && turn > -140) {
+        } else if (turn > 20 && turn < 140) { //Left right is inverted
             lastActionInstruction = "Turn left";
+        } else if (turn < -20 && turn > -140) {
+            lastActionInstruction = "Turn right";
         }
     }
 
@@ -379,8 +375,8 @@ public class MapCanvas extends Canvas {
     }
 
     public double calculateTurn(Edge prevEdge, Edge currEdge) {
-        Point2D prevVector = new Point2D(prevEdge.getHeadNode().getLon() - prevEdge.getTailNode().getLon(), - (prevEdge.getHeadNode().getLat() - prevEdge.getTailNode().getLat()));
-        Point2D currVector = new Point2D(currEdge.getHeadNode().getLon() - currEdge.getTailNode().getLon(), - (currEdge.getHeadNode().getLat() - currEdge.getTailNode().getLat()));
+        Point2D prevVector = new Point2D(prevEdge.getHeadNode().getLon() - prevEdge.getTailNode().getLon(), prevEdge.getHeadNode().getLat() - prevEdge.getTailNode().getLat());
+        Point2D currVector = new Point2D(currEdge.getHeadNode().getLon() - currEdge.getTailNode().getLon(), currEdge.getHeadNode().getLat() - currEdge.getTailNode().getLat());
 
         double prevDirection = Math.atan2(prevVector.getX(), prevVector.getY());
         double currDirection = Math.atan2(currVector.getX(), currVector.getY());
@@ -491,17 +487,21 @@ public class MapCanvas extends Canvas {
         gc.setStroke(Color.TRANSPARENT);
         gc.setFill(Color.TRANSPARENT);
         if (kdTree != null) {
-            gc.setLineWidth(type.getWidth() * pixelwidth);
-            if (useRegularColors) {
-                if (type.shouldHaveFill()) gc.setFill(type.getColor());
-                if (type.shouldHaveStroke()) gc.setStroke(type.getColor());
-            } else {
-                if (type.shouldHaveFill()) gc.setFill(type.getAlternateColor());
-                if (type.shouldHaveStroke()) gc.setStroke(type.getAlternateColor());
-            }
+            setFillAndStroke(type, pixelwidth, useRegularColors);
             kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderRange);
         }
         
+    }
+
+    private void setFillAndStroke(Type type, double pixelwidth, boolean useRegularColors) {
+        gc.setLineWidth(type.getWidth() * pixelwidth);
+        if (useRegularColors) {
+            if (type.shouldHaveFill()) gc.setFill(type.getColor());
+            if (type.shouldHaveStroke()) gc.setStroke(type.getColor());
+        } else {
+            if (type.shouldHaveFill()) gc.setFill(type.getAlternateColor());
+            if (type.shouldHaveStroke()) gc.setStroke(type.getAlternateColor());
+        }
     }
 
     private void paintCoastLines(double pixelwidth, boolean useRegularColors) {
@@ -510,14 +510,7 @@ public class MapCanvas extends Canvas {
         gc.setStroke(Color.TRANSPARENT);
         gc.setFill(Color.TRANSPARENT);
         if (coastLines != null) {
-            gc.setLineWidth(type.getWidth() * pixelwidth);
-            if (useRegularColors) {
-                if (type.shouldHaveFill()) gc.setFill(type.getColor());
-                if (type.shouldHaveStroke()) gc.setStroke(type.getColor());
-            } else {
-                if (type.shouldHaveFill()) gc.setFill(type.getAlternateColor());
-                if (type.shouldHaveStroke()) gc.setStroke(type.getAlternateColor());
-            }
+            setFillAndStroke(type, pixelwidth, useRegularColors);
             for(CanvasElement c : model.getCoastLines()){
                 c.draw(gc, 1/pixelwidth, smartTrace);
                 if (type.shouldHaveFill()) gc.fill();
@@ -546,11 +539,7 @@ public class MapCanvas extends Canvas {
     }
 
     public void zoomToNode (Node node){
-        trans.setToIdentity();
-        pan(-node.getLon(), -node.getLat());
-        zoom(1, 0, 0);
-        pan(getWidth() / 2, getHeight() / 2);
-        repaint(14);
+        zoomToPoint(1, node.getLon(), node.getLat());
     }
 
     public void zoomToPoint (double factor, float lon, float lat){
@@ -559,11 +548,6 @@ public class MapCanvas extends Canvas {
         zoom(factor, 0, 0);
         pan(getWidth() / 2, getHeight() / 2);
         repaint(10);
-    }
-
-    public void setPin (Node node){
-        currentPin = new Pin(node.getLon(), node.getLat(), 1);
-        repaint(11);
     }
 
     public void setPin (float lon, float lat){
@@ -586,5 +570,13 @@ public class MapCanvas extends Canvas {
 
     public boolean getRenderFullScreen(){
         return renderFullScreen;
+    }
+
+    public void setRouteTime(double newTime) {
+        routeTime = newTime;
+    }
+
+    public void setRouteDistance(double newDistance) {
+        routeDistance = newDistance;
     }
 }

@@ -24,16 +24,16 @@
             <MenuItem mnemonicParsing="false" text="Save As…" fx:id="saveAs"/>
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Dev Tools" fx:id="devtools">
-            <items>
-                <MenuItem mnemonicParsing="false" text="Open Dev Tools..." />
-            </items>
-        </Menu>
         <Menu mnemonicParsing="false" text="Points of interest" fx:id="myPoints"/>
         <Menu mnemonicParsing="false" text="View" fx:id="view">
             <CheckMenuItem mnemonicParsing="false" text="Public transport" fx:id="publicTransport"/>
             <CheckMenuItem mnemonicParsing="false" text="Dark mode" fx:id="darkMode"/>
             <MenuItem  mnemonicParsing="false" text="Zoom to area" fx:id="zoomToArea"/>
+        </Menu>
+        <Menu mnemonicParsing="false" text="More">
+            <MenuItem mnemonicParsing="false" text="About" fx:id="about"/>
+            <MenuItem mnemonicParsing="false" text="Help" fx:id="help"/>
+            <MenuItem mnemonicParsing="false" text="Dev Tools" fx:id="devtools"/>
         </Menu>
 
       </menus>

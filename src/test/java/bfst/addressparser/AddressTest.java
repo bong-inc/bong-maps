@@ -94,9 +94,9 @@ public class AddressTest {
         Address parsed;
         parsed = Address.parse(inputAddress);
         parsed = Address.parse(onlyStreet);
-        assertEquals(addressParts[1], parsed.street);
+        assertEquals(addressParts[1], parsed.getStreet());
         parsed = Address.parse(withHouse);
-        assertEquals(addressParts[2], parsed.house);
+        assertEquals(addressParts[2], parsed.getHouse());
         parsed = Address.parse(withFloor);
 
         // assertEquals(addressParts[3], parsed.floor);
@@ -104,8 +104,8 @@ public class AddressTest {
         // assertEquals(addressParts[4], parsed.side);
 
         parsed = Address.parse(withPostcode);
-        assertEquals(addressParts[5], parsed.postcode);
+        assertEquals(addressParts[5], parsed.getPostcode());
         parsed = Address.parse(withCity);
-        assertEquals(addressParts[6], parsed.city);
+        assertEquals(addressParts[6], parsed.getCity());
     }
 }
