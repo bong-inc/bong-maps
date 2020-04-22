@@ -56,4 +56,27 @@ public class RelationTest {
 
         assertEquals(r1, r.getRelations().get(0));
     }
+
+    @Test
+    public void CollectRelationTest(){
+        NodeContainer ndc = new NodeContainer();
+        ndc.add(1,1,1);
+        ndc.add(2,2,1);
+        ndc.add(3,2,2);
+
+        Way w1 = new Way(1);
+        w1.addNode(1);
+        w1.addNode(2);
+        w1.addNode(3);
+
+        Way w2 = new Way(2);
+        w2.addNode(3);
+        w2.addNode(1);
+
+        Relation r = new Relation();
+        r.addToOuter(w1);
+        r.addToOuter(w2);
+
+        r.collectRelation(ndc);
+    }
 }
