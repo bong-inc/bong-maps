@@ -47,9 +47,6 @@ public class MainController {
     private ArrayList<Address> tempBest = new ArrayList<>();
     private boolean hasBeenDragged = false;
 
-    public static CanvasElement champion;
-    public static CanvasElement champion2;
-
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
     }
@@ -503,8 +500,8 @@ public class MainController {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("File type not supported: " + exception.getFileType());
             alert.showAndWait();
-        } catch (NullPointerException ignored){ //For when filechooser is opened and closed with no file.
-
+        } catch (NullPointerException exception){ //For when filechooser is opened and closed with no file.
+            exception.printStackTrace();
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("Something unexpected happened, please try again");

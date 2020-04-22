@@ -156,7 +156,7 @@ public class OSMReader {
                             case "relation":
                                 relationHolder.collectRelation(tempNodes);
                                 if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
-                                if(relationHolder.getWays() != null) drawableByType.get(type).add(new PolyLinePath(relationHolder, type, tempNodes));
+                                if(relationHolder.getWays().size() > 0) drawableByType.get(type).add(new PolyLinePath(relationHolder, type, tempNodes));
                                 type = Type.UNKNOWN;
                                 break;
                             case "osm":
