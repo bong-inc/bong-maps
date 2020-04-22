@@ -495,12 +495,14 @@ public class MainController {
     public void loadFileOnClick(ActionEvent e){
         try {
             File file = new FileChooser().showOpenDialog(stage);
-            loadFile(file);
+            if (file != null) {
+                loadFile(file);
+            }
         } catch(FileTypeNotSupportedException exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("File type not supported: " + exception.getFileType());
             alert.showAndWait();
-        } catch (NullPointerException exception){ //For when filechooser is opened and closed with no file.
+        } catch (NullPointerException exception){
             exception.printStackTrace();
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
