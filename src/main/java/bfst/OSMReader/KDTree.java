@@ -1,57 +1,46 @@
 package bfst.OSMReader;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import bfst.canvas.Range;
-import bfst.controllers.MainController;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class KDTree implements Serializable {
-  ArrayList<CanvasElement> leafValues;
-  int maxNumOfLeafValues = 100; // max size of leafValues
-  double x, y, w, h;
+public class KDTree {
+  List<CanvasElement> elements;
+  int maxNumOfElements = 500; // max size of elements
+  Range bound;
   KDTree low;
   KDTree high;
-  int depth;
   Type type;
-  Double split;
-  CanvasElement splitPoint;
-  KDTree root;
+  int depth;
 
   private enum Type {
     PARENT, LEAF
   }
 
   /** first instance is root and depth 0 */
-  public KDTree(ArrayList<CanvasElement> leafValues, double x, double y, double w, double h){
-    this(leafValues,x,y,w,h,0,Type.LEAF);
+  public KDTree(List<CanvasElement> elements, Range bound){
+    this(elements,bound,0,Type.LEAF);
   }
 
   /** Recursive constructor for intermediate nodes */
-  public KDTree(ArrayList<CanvasElement> leafValues, double x, double y, double w, double h, int depth, Type type){
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-    this.depth = depth;
-    this.leafValues = leafValues;
+  public KDTree(List<CanvasElement> elements, Range bound, int depth, Type type){
+    this.bound = bound;
+    this.elements = elements;
     this.type = type;
-    int size = this.leafValues.size();
+    this.depth = depth;
+    int size = this.elements.size();
 
-    if(this.leafValues.size() >= maxNumOfLeafValues){
-
+    if(this.elements.size() >= maxNumOfElements){
       if(this.isEvenDepth()){
-
-        // Split leafValues in half
-
         // sort by x
-        Collections.sort(this.leafValues, new Comparator<CanvasElement>() {
+        Collections.sort(this.elements, new Comparator<CanvasElement>() {
           @Override
           public int compare(CanvasElement o1, CanvasElement o2) {
             if(o1.getCentroid().getX() > o2.getCentroid().getX()) return 1;
@@ -59,84 +48,64 @@ public class KDTree implements Serializable {
             return 0;
           }
         });
-        ArrayList<CanvasElement> lower = new ArrayList<>(this.leafValues.subList(0, (size) / 2 + 1));
-        ArrayList<CanvasElement> upper = new ArrayList<>(this.leafValues.subList((size) / 2 + 1, size));
-
-        // set split value to last x value of lower array (lower half)
-        splitPoint = (lower.size()>0) ? lower.get(lower.size()-1) : null;
-        split = (splitPoint != null) ? splitPoint.getCentroid().getX() : null;
-
-        // set dimentions of new subtree (low)
-        double lowerX = this.x;
-        double lowerY = this.y;
-        double lowerW = lower.get(lower.size() - 1).getCentroid().getX() - this.x;
-        double lowerH = this.h;
-        this.low = new KDTree(lower, lowerX, lowerY, lowerW, lowerH, this.depth + 1, Type.LEAF);
-
-        // set dimentions of new subtree (high)
-        double upperX = lowerW + lowerX;
-        double upperY = this.y;
-        double upperW = this.w - lowerW;
-        double upperH = this.h;
-        this.high = new KDTree(upper, upperX, upperY, upperW, upperH, this.depth + 1, Type.LEAF);
-        
-        // set this to parent node
-        this.leafValues = null;
-        this.type = Type.PARENT;
       } else {
-
-        // Split leafValues in half
-
-        // sort by y
-        Collections.sort(this.leafValues, new Comparator<CanvasElement>() {
+        Collections.sort(this.elements, new Comparator<CanvasElement>() {
           @Override
           public int compare(CanvasElement o1, CanvasElement o2) {
-            Point2D o1Centroid = o1.getCentroid();
-            Point2D o2Centroid = o2.getCentroid();
-            if(o1Centroid.getY() > o2Centroid.getY()) return 1;
-            if(o1Centroid.getY() < o2Centroid.getY()) return -1;
+            if(o1.getCentroid().getY() > o2.getCentroid().getY()) return 1;
+            if(o1.getCentroid().getY() < o2.getCentroid().getY()) return -1;
             return 0;
           }
         });
-        ArrayList<CanvasElement> lower = new ArrayList<>(this.leafValues.subList(0, (size) / 2 + 1));
-        ArrayList<CanvasElement> upper = new ArrayList<>(this.leafValues.subList((size) / 2 + 1, size));
-
-        // set split value to last y value of lower array (lower half)
-        splitPoint = (lower.size()>0) ? lower.get(lower.size()-1) : null;
-        split = (splitPoint != null) ? splitPoint.getCentroid().getY() : null;
-
-        // set dimentions of new subtree (low)
-        double lowerX = this.x;
-        double lowerY = this.y;
-        double lowerW = this.w;
-        double lowerH = lower.get(lower.size() - 1).getCentroid().getY() - this.y;
-        this.low = new KDTree(lower, lowerX, lowerY, lowerW, lowerH, this.depth + 1, Type.LEAF);
-
-        // set dimentions of new subtree (high)
-        double upperX = this.x;
-        double upperY = lowerH + lowerY;
-        double upperW = this.w;
-        double upperH = this.h - lowerH;
-        this.high = new KDTree(upper, upperX, upperY, upperW, upperH, this.depth + 1, Type.LEAF);
-        
-        // set this to parent node
-        this.leafValues = null;
-        this.type = Type.PARENT;
       }
+      // Split elements in half
+      ArrayList<CanvasElement> lower = new ArrayList<>(this.elements.subList(0, (size) / 2 + 1));
+      ArrayList<CanvasElement> higher = new ArrayList<>(this.elements.subList((size) / 2 + 1, size));
+
+      // set dimentions of new subtree (low)
+      this.low = new KDTree(lower, boundingRangeOf(lower), this.depth + 1, Type.LEAF);
+
+      // set dimentions of new subtree (high)
+      this.high = new KDTree(higher, boundingRangeOf(higher), this.depth + 1, Type.LEAF);
       
+      // set this to parent node
+      this.elements = null;
+      this.type = Type.PARENT;
     }
+  }
+
+  private Range boundingRangeOf(ArrayList<CanvasElement> list){
+    if(list.size() < 1) throw new RuntimeException("Empty list cannot have bounding range");
+    Float minX = Float.MAX_VALUE;
+    Float minY = Float.MAX_VALUE;
+    Float maxX = Float.MIN_VALUE;
+    Float maxY = Float.MIN_VALUE;
+    for(CanvasElement c : list){
+      Range boundingBox = c.getBoundingBox();
+      if(boundingBox.minX < minX) minX = boundingBox.minX;
+      if(boundingBox.minY < minY) minY = boundingBox.minY;
+      if(boundingBox.maxX > maxX) maxX = boundingBox.maxX;
+      if(boundingBox.maxY > maxY) maxY = boundingBox.maxY;
+    }
+    return new Range(minX, minY, maxX, maxY);
+  }
+
+  private boolean isEvenDepth() {
+    return this.depth % 2 == 0;
   }
 
   public void draw(GraphicsContext gc, double scale, boolean smartTrace, boolean shouldHaveFill, Range range){
     // print number of trees visited
-    // System.out.print("*");
+    // System.out.print("draw");
 
     // draw CanvasElements in leafValues
-    if(this.doOverlap(range)){
+    if(doOverlap(range,bound)){
       if(this.isLeaf()){
-        for(CanvasElement c : leafValues){
-          c.draw(gc, scale, smartTrace);
-          if (shouldHaveFill) gc.fill();
+        for(CanvasElement c : elements){
+          if(doOverlap(range, c.getBoundingBox())){
+            c.draw(gc, scale, smartTrace);
+            if (shouldHaveFill) gc.fill();
+          }
         }
       } else {
         if(low != null) low.draw(gc, scale, smartTrace, shouldHaveFill, range);
@@ -155,26 +124,15 @@ public class KDTree implements Serializable {
     }    
   }
 
-  private boolean isSplitOnX() {
-    return isEvenDepth();
-  }
-
-  private boolean isEvenDepth() {
-    return this.depth % 2 == 0;
-  }
-
   private boolean isLeaf() {
     return this.type == Type.LEAF;
   }
 
-  public boolean doOverlap(Range range){
-    double maxX = x+w;
-    double maxY = y+h;
-
-    if (maxY < range.minY || maxX < range.minX)
+  public boolean doOverlap(Range r1, Range r2){
+    if (r2.maxY < r1.minY || r2.maxX < r1.minX)
       return false;
 
-    if (range.maxY < y || range.maxX < x) 
+    if (r1.maxY < r2.minY || r1.maxX < r2.minX) 
       return false;
 
     return true;
@@ -189,25 +147,48 @@ public class KDTree implements Serializable {
   }
 
   public double distanceToBox(Point2D query){
-    if(isSplitOnX()){
-      return Math.abs(query.getX() - splitPoint.getCentroid().getX());
-    } else {
-      return Math.abs(query.getY() - splitPoint.getCentroid().getY());
+    if(pointInsideRange(query,bound)){
+      return 0.0;
     }
+    double[] boundDists = new double[]{
+      distToSegment(query, new Point2D(bound.minX, bound.minY), new Point2D(bound.maxX, bound.minY)),
+      distToSegment(query, new Point2D(bound.maxX, bound.minY), new Point2D(bound.maxX, bound.maxY)),
+      distToSegment(query, new Point2D(bound.maxX, bound.maxY), new Point2D(bound.minX, bound.maxY)),
+      distToSegment(query, new Point2D(bound.minX, bound.maxY), new Point2D(bound.minX, bound.minY)),
+    };
+    Arrays.sort(boundDists);
+    return boundDists[0];
   }
 
-  public boolean isLower(Point2D query){
-    if(isSplitOnX()){
-      return query.getX() < splitPoint.getCentroid().getX();
-    } else {
-      return query.getY() < splitPoint.getCentroid().getY();
-    }
+  double distToSegment(Point2D query, Point2D start, Point2D end){
+    var dx = end.getX() - start.getX();
+    var dy = end.getY() - start.getY();
+    var l2 = dx * dx + dy * dy;
+    
+    if (l2 == 0)
+        return this.dist(query, start);
+
+    var t = ((query.getX() - start.getX()) * dx + (query.getY() - start.getY()) * dy) / l2;
+    t = Math.max(0, Math.min(1, t));
+
+    return this.dist(query, new Point2D(start.getX() + t * dx, start.getY() + t * dy));
   }
 
-  public CanvasElement bestInLeafValues(Point2D query){
-    CanvasElement best = leafValues.get(0);
+  double dist(Point2D p1, Point2D p2){
+    var dx = p2.getX() - p1.getX();
+    var dy = p2.getY() - p1.getY();
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  private boolean pointInsideRange(Point2D point, Range range) {
+    return range.minX < point.getX() && point.getX() < range.maxX 
+    && range.minY < point.getY() && point.getY() < range.maxY;
+  }
+
+  public CanvasElement bestInElements(Point2D query){
+    CanvasElement best = elements.get(0);
     double bestDist = distance(query, best.getCentroid());
-    for(CanvasElement c : leafValues){
+    for(CanvasElement c : elements){
       double newDist = distance(query, c.getCentroid());
       if(newDist < bestDist){
         bestDist = newDist;
@@ -217,39 +198,41 @@ public class KDTree implements Serializable {
     return best;
   }
 
-  public void nearestNeighbor(Point2D query) {
+  public CanvasElement nearestNeighbor(Point2D query, double bestDist) {
+    KDTree first, last;
     if(!isLeaf()){
-      if(MainController.champion == null) MainController.champion = splitPoint;
-      double dist = distance(query, splitPoint.getCentroid());
-      double currentDist = distance(query, MainController.champion.getCentroid());
-      if(dist < currentDist){
-        MainController.champion = splitPoint;
-      }
-    }
+      CanvasElement result = null;
 
-    if(!isLeaf()){ 
-      boolean searchLowFirst = isLower(query);
-      if(searchLowFirst){
-        if(low != null) low.nearestNeighbor(query);
-        if(distanceToBox(query) < distance(query, MainController.champion.getCentroid())) high.nearestNeighbor(query);
-      } else {
-        if(high != null) high.nearestNeighbor(query);
-        if(distanceToBox(query) < distance(query, MainController.champion.getCentroid())) low.nearestNeighbor(query);
-      }
-    }
+      first = low.distanceToBox(query) < high.distanceToBox(query) ? low : high;
+      last = low.distanceToBox(query) > high.distanceToBox(query) ? low : high;
 
-    if(isLeaf()){
-      if(leafValues.size() > 0){
-        if(MainController.champion2 == null){
-          MainController.champion2 = bestInLeafValues(query);
-        } else {
-          CanvasElement bestInLeafValues = bestInLeafValues(query);
-          if(distance(query, bestInLeafValues.getCentroid()) < distance(query, MainController.champion2.getCentroid())){
-            MainController.champion2 = bestInLeafValues;
-          }
+      if(first.distanceToBox(query) < bestDist){
+        result = first.nearestNeighbor(query, bestDist);
+        if(result != null) bestDist = distance(query, result.getCentroid());
+      }
+      CanvasElement temp;
+      if(last.distanceToBox(query) < bestDist){
+        temp = last.nearestNeighbor(query, bestDist);
+        if(temp != null){
+          result = temp;
         }
       }
+      return result;
     }
+
+
+    if(isLeaf() && elements.size() > 0){
+      CanvasElement result = null;
+      CanvasElement c = bestInElements(query);
+      if(distance(query, c.getCentroid()) < bestDist){
+        result = c;
+        bestDist = distance(query, c.getCentroid());
+      }
+
+      return result;
+    }
+
+    return null;
   }
 
 }

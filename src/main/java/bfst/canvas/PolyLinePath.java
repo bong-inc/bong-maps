@@ -14,6 +14,7 @@ public class PolyLinePath extends CanvasElement implements Drawable, Serializabl
     private static final long serialVersionUID = -4838798038938840050L;
     ArrayList<LinePath> linePaths;
     Type type;
+    private Range boundingBox;
 
     public PolyLinePath(Relation relation, Type type, NodeContainer nodeContainer) {
         linePaths = new ArrayList<>();
@@ -22,6 +23,7 @@ public class PolyLinePath extends CanvasElement implements Drawable, Serializabl
             linePaths.add(new LinePath(way, type, nodeContainer));
         }
         this.type = type;
+        setBoundingBox();
     }
 
     @Override
@@ -35,10 +37,33 @@ public class PolyLinePath extends CanvasElement implements Drawable, Serializabl
 
     @Override
     public Point2D getCentroid() {
-        if(linePaths.size() > 0){
-            return linePaths.get(0).getCentroid();
-        } else {
-            return new Point2D(0, 0); //TODO why is there a polyline path with 0 linepaths??
+        if(boundingBox == null)
+            return null;
+        return getCenterFromRange(boundingBox);
+    }
+
+    @Override
+    public Range getBoundingBox() {
+        return boundingBox;
+    }
+
+    private Range mergeBoundingBoxes() {
+        if(linePaths.size() < 1) return null;
+        float minX = Float.MAX_VALUE;
+        float maxX = Float.MIN_VALUE;
+        float minY = Float.MAX_VALUE;
+        float maxY = Float.MIN_VALUE;
+        for(LinePath l : linePaths){
+            if(l.getBoundingBox().minX < minX) minX = l.getBoundingBox().minX;
+            if(l.getBoundingBox().maxX > maxX) maxX = l.getBoundingBox().maxX;
+            if(l.getBoundingBox().minY < minY) minY = l.getBoundingBox().minY;
+            if(l.getBoundingBox().maxY > maxY) maxY = l.getBoundingBox().maxY;
         }
+        return new Range(minX, minY, maxX, maxY);
+    }
+
+    @Override
+    public void setBoundingBox() {
+        boundingBox = mergeBoundingBoxes();
     }
 }
