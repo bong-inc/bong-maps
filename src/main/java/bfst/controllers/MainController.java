@@ -257,19 +257,33 @@ public class MainController {
 
         about.setOnAction(e -> {
             try {
-                Stage devStage = new Stage();
+                Stage aboutStage = new Stage();
                 FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/about.fxml"));
                 Parent root = fxmlLoader.load();
-                devStage.setTitle("About");
+                aboutStage.setTitle("About");
                 Scene scene = new Scene(root);
                 scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
-                devStage.setScene(scene);
-                devStage.show();
+                aboutStage.setScene(scene);
+                aboutStage.show();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
+        help.setOnAction(e -> {
+            try {
+                Stage helpStage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/help.fxml"));
+                Parent root = fxmlLoader.load();
+                helpStage.setTitle("Help");
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+                helpStage.setScene(scene);
+                helpStage.show();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
