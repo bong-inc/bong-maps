@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.regex.*;
 
 public class Address implements Serializable, Comparable<Address> {
+
     private final String street, house, postcode, city, municipality;
 
     //public final int postcode;
@@ -123,6 +124,25 @@ public class Address implements Serializable, Comparable<Address> {
         return lon;
     }
 
+    public String getStreet() {
+        return street;
+    }
+
+    public String getHouse() {
+        return house;
+    }
+
+    public String getPostcode() {
+        return postcode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getMunicipality() {
+        return municipality;
+    }
 
     public static class Builder {
         private String street, house, postcode, city, municipality, floor, side;
