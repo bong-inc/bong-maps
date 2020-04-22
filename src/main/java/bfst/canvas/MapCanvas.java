@@ -228,7 +228,7 @@ public class MapCanvas extends Canvas {
         Edge firstEdge = route.get(0);
         Node prevNode;
 
-        if (firstEdge.getTailNode().getAsLong() == route.get(1).getHeadNode().getAsLong()) {
+        if (firstEdge.getTailNode().getAsLong() == route.get(1).getHeadNode().getAsLong() || firstEdge.getTailNode().getAsLong() == route.get(1).getTailNode().getAsLong()) {
             prevNode = firstEdge.getHeadNode();
         } else {
             prevNode = firstEdge.getTailNode();
@@ -367,10 +367,10 @@ public class MapCanvas extends Canvas {
         } else if (roundaboutCounter > 0) {
             lastActionInstruction = "Take exit number " + roundaboutCounter + " in the roundabout";
             resetRoundaboutCounter();
-        } else if (turn > 20 && turn < 140) {
-            lastActionInstruction = "Turn right";
-        } else if (turn < -20 && turn > -140) {
+        } else if (turn > 20 && turn < 140) { //Left right is inverted
             lastActionInstruction = "Turn left";
+        } else if (turn < -20 && turn > -140) {
+            lastActionInstruction = "Turn right";
         }
     }
 
@@ -379,8 +379,8 @@ public class MapCanvas extends Canvas {
     }
 
     public double calculateTurn(Edge prevEdge, Edge currEdge) {
-        Point2D prevVector = new Point2D(prevEdge.getHeadNode().getLon() - prevEdge.getTailNode().getLon(), - (prevEdge.getHeadNode().getLat() - prevEdge.getTailNode().getLat()));
-        Point2D currVector = new Point2D(currEdge.getHeadNode().getLon() - currEdge.getTailNode().getLon(), - (currEdge.getHeadNode().getLat() - currEdge.getTailNode().getLat()));
+        Point2D prevVector = new Point2D(prevEdge.getHeadNode().getLon() - prevEdge.getTailNode().getLon(), prevEdge.getHeadNode().getLat() - prevEdge.getTailNode().getLat());
+        Point2D currVector = new Point2D(currEdge.getHeadNode().getLon() - currEdge.getTailNode().getLon(), currEdge.getHeadNode().getLat() - currEdge.getTailNode().getLat());
 
         double prevDirection = Math.atan2(prevVector.getX(), prevVector.getY());
         double currDirection = Math.atan2(currVector.getX(), currVector.getY());
@@ -491,17 +491,21 @@ public class MapCanvas extends Canvas {
         gc.setStroke(Color.TRANSPARENT);
         gc.setFill(Color.TRANSPARENT);
         if (kdTree != null) {
-            gc.setLineWidth(type.getWidth() * pixelwidth);
-            if (useRegularColors) {
-                if (type.shouldHaveFill()) gc.setFill(type.getColor());
-                if (type.shouldHaveStroke()) gc.setStroke(type.getColor());
-            } else {
-                if (type.shouldHaveFill()) gc.setFill(type.getAlternateColor());
-                if (type.shouldHaveStroke()) gc.setStroke(type.getAlternateColor());
-            }
+            setFillAndStroke(type, pixelwidth, useRegularColors);
             kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderRange);
         }
         
+    }
+
+    private void setFillAndStroke(Type type, double pixelwidth, boolean useRegularColors) {
+        gc.setLineWidth(type.getWidth() * pixelwidth);
+        if (useRegularColors) {
+            if (type.shouldHaveFill()) gc.setFill(type.getColor());
+            if (type.shouldHaveStroke()) gc.setStroke(type.getColor());
+        } else {
+            if (type.shouldHaveFill()) gc.setFill(type.getAlternateColor());
+            if (type.shouldHaveStroke()) gc.setStroke(type.getAlternateColor());
+        }
     }
 
     private void paintCoastLines(double pixelwidth, boolean useRegularColors) {
@@ -510,14 +514,7 @@ public class MapCanvas extends Canvas {
         gc.setStroke(Color.TRANSPARENT);
         gc.setFill(Color.TRANSPARENT);
         if (coastLines != null) {
-            gc.setLineWidth(type.getWidth() * pixelwidth);
-            if (useRegularColors) {
-                if (type.shouldHaveFill()) gc.setFill(type.getColor());
-                if (type.shouldHaveStroke()) gc.setStroke(type.getColor());
-            } else {
-                if (type.shouldHaveFill()) gc.setFill(type.getAlternateColor());
-                if (type.shouldHaveStroke()) gc.setStroke(type.getAlternateColor());
-            }
+            setFillAndStroke(type, pixelwidth, useRegularColors);
             for(CanvasElement c : model.getCoastLines()){
                 c.draw(gc, 1/pixelwidth, smartTrace);
                 if (type.shouldHaveFill()) gc.fill();
@@ -586,5 +583,13 @@ public class MapCanvas extends Canvas {
 
     public boolean getRenderFullScreen(){
         return renderFullScreen;
+    }
+
+    public void setRouteTime(double newTime) {
+        routeTime = newTime;
+    }
+
+    public void setRouteDistance(double newDistance) {
+        routeDistance = newDistance;
     }
 }
