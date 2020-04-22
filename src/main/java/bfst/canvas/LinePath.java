@@ -104,13 +104,13 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
     @Override
     public void setBoundingBox() {
         float minX = Float.MAX_VALUE;
-        float maxX = Float.MIN_VALUE;
+        float maxX = Float.NEGATIVE_INFINITY;
         for (int x = 0; x < coords_.length; x += 2) {
             if(coords_[x] < minX) minX = coords_[x];
             if(coords_[x] > maxX) maxX = coords_[x];
         }
         float minY = Float.MAX_VALUE;
-        float maxY = Float.MIN_VALUE;
+        float maxY = Float.NEGATIVE_INFINITY;
         for (int y = 1; y < coords_.length; y += 2) {
             if(coords_[y] < minY) minY = coords_[y];
             if(coords_[y] > maxY) maxY = coords_[y];

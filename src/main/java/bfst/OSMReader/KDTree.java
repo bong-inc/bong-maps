@@ -1,5 +1,6 @@
 package bfst.OSMReader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,8 +11,10 @@ import bfst.canvas.Range;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
-public class KDTree {
+public class KDTree implements Serializable {
+  private static final long serialVersionUID = 8179750180455602356L;
   List<CanvasElement> elements;
   int maxNumOfElements = 500; // max size of elements
   Range bound;
@@ -19,6 +22,7 @@ public class KDTree {
   KDTree high;
   Type type;
   int depth;
+  public static boolean drawBoundingBox;
 
   private enum Type {
     PARENT, LEAF
@@ -78,8 +82,8 @@ public class KDTree {
     if(list.size() < 1) throw new RuntimeException("Empty list cannot have bounding range");
     Float minX = Float.MAX_VALUE;
     Float minY = Float.MAX_VALUE;
-    Float maxX = Float.MIN_VALUE;
-    Float maxY = Float.MIN_VALUE;
+    Float maxX = Float.NEGATIVE_INFINITY;
+    Float maxY = Float.NEGATIVE_INFINITY;
     for(CanvasElement c : list){
       Range boundingBox = c.getBoundingBox();
       if(boundingBox.minX < minX) minX = boundingBox.minX;
@@ -99,43 +103,42 @@ public class KDTree {
     // System.out.print("draw");
 
     // draw CanvasElements in leafValues
+    boolean isEnclosed = isEnclosed(range,bound);
     if(doOverlap(range,bound)){
       if(this.isLeaf()){
         for(CanvasElement c : elements){
-          if(doOverlap(range, c.getBoundingBox())){
+          Range boundingBox = c.getBoundingBox();
+          if(isEnclosed || doOverlap(range, boundingBox)){
             c.draw(gc, scale, smartTrace);
             if (shouldHaveFill) gc.fill();
+
+            if(drawBoundingBox){
+              Paint tempColor = gc.getStroke();
+              gc.setStroke(Color.PINK);
+              gc.strokeRect(boundingBox.minX, boundingBox.minY, boundingBox.maxX -boundingBox.minX, boundingBox.maxY -boundingBox.minY);
+              gc.stroke();
+              gc.setStroke(tempColor);
+              gc.stroke();
+            }
           }
         }
       } else {
         if(low != null) low.draw(gc, scale, smartTrace, shouldHaveFill, range);
         if(high != null) high.draw(gc, scale, smartTrace, shouldHaveFill, range);
       }
-
-      // draw outline/dimentions of all kdtrees
-      // gc.setLineWidth(1/scale);
-      // if(this.isEvenDepth()){
-      //   gc.setStroke(Color.BLACK);
-      // } else {
-      //   gc.setStroke(Color.RED);
-      // }
-      // gc.strokeRect(x, y, w, h);
-      // gc.stroke();
     }    
-  }
+  }  
 
   private boolean isLeaf() {
     return this.type == Type.LEAF;
   }
 
+  private boolean isEnclosed(Range r1, Range r2) {
+    return r1.minX < r2.minX && r1.maxX > r2.maxX && r1.minY < r2.minY && r1.maxY > r2.maxY;
+  }
+
   public boolean doOverlap(Range r1, Range r2){
-    if (r2.maxY < r1.minY || r2.maxX < r1.minX)
-      return false;
-
-    if (r1.maxY < r2.minY || r1.maxX < r2.minX) 
-      return false;
-
-    return true;
+    return !(r2.minX > r1.maxX || r1.minX > r2.maxX || r2.minY > r1.maxY || r1.minY > r2.maxY);
   }
 
   public double distance(Point2D point1, Point2D point2){

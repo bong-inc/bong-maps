@@ -50,9 +50,9 @@ public class PolyLinePath extends CanvasElement implements Drawable, Serializabl
     private Range mergeBoundingBoxes() {
         if(linePaths.size() < 1) return null;
         float minX = Float.MAX_VALUE;
-        float maxX = Float.MIN_VALUE;
+        float maxX = Float.NEGATIVE_INFINITY;
         float minY = Float.MAX_VALUE;
-        float maxY = Float.MIN_VALUE;
+        float maxY = Float.NEGATIVE_INFINITY;
         for(LinePath l : linePaths){
             if(l.getBoundingBox().minX < minX) minX = l.getBoundingBox().minX;
             if(l.getBoundingBox().maxX > maxX) maxX = l.getBoundingBox().maxX;
