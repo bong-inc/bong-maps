@@ -23,6 +23,8 @@ public class Model implements Serializable {
     private ArrayList<City> cities;
     private Graph graph;
     private KDTree addressKDTree;
+    private KDTree roadKDTree;
+
 
     private Bound bound;
 
@@ -38,6 +40,7 @@ public class Model implements Serializable {
         this.coastLines = reader.getDrawableByType().get(Type.COASTLINE);
         this.kdtreeByType = createKdtreeByType(reader.getDrawableByType());
         this.addressKDTree = createKDTreeFromAddresses();
+        this.roadKDTree = new KDTree(reader.getRoadNodes(), new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
     }
 
     public Map<Type, KDTree> createKdtreeByType(Map<Type, ArrayList<CanvasElement>> drawablesByType){
@@ -82,5 +85,9 @@ public class Model implements Serializable {
 
     public KDTree getAddressKDTree() {
         return addressKDTree;
+    }
+
+    public KDTree getRoadKDTree() {
+        return roadKDTree;
     }
 }

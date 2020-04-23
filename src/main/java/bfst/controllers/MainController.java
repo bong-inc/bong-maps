@@ -1,7 +1,6 @@
 package bfst.controllers;
 
 import bfst.App;
-import bfst.OSMReader.CanvasElement;
 import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Model;
 import bfst.OSMReader.Node;
@@ -28,7 +27,6 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Pair;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -47,6 +45,9 @@ public class MainController {
     private Point2D lastMouse;
     private ArrayList<Address> tempBest = new ArrayList<>();
     private boolean hasBeenDragged = false;
+    private Address destinationAddress;
+    private Address startAddress;
+    private Address currentAddress;
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
@@ -88,6 +89,7 @@ public class MainController {
     @FXML CheckMenuItem publicTransport;
     @FXML CheckMenuItem darkMode;
     @FXML MenuItem zoomToArea;
+    @FXML Button findRoute;
 
     private boolean shouldPan = true;
     private String tempQuery = "";
@@ -282,6 +284,21 @@ public class MainController {
                 ex.printStackTrace();
             }
         });
+
+        setAsDestination.setOnAction(e -> {
+            destinationAddress = currentAddress;
+        });
+
+        setAsStart.setOnAction(e -> {
+            startAddress = currentAddress;
+        });
+
+        findRoute.setOnAction(e -> {
+            long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startAddress.getCentroid(), Double.POSITIVE_INFINITY)).getAsLong();
+            long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), Double.POSITIVE_INFINITY)).getAsLong(); //TODO refactor as method
+
+            canvas.setDijkstra(startRoadId, destinationRoadId, "Car", true);
+        });
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
@@ -447,7 +464,9 @@ public class MainController {
             routeInfo.setVisible(false);
         }
 
-        pointAddress.setText(model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()), Double.POSITIVE_INFINITY).toString());
+        //TODO vis "ingen adresse fundet" hvis der er for langt til nærmeste adresse.
+        currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()), Double.POSITIVE_INFINITY);
+        pointAddress.setText(currentAddress.toString());
 
         pinInfo.setTranslateY(10);
         pinInfo.setVisible(true);

@@ -1,9 +1,13 @@
 package bfst.OSMReader;
 
+import bfst.canvas.Range;
+import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
+
 import java.io.Serializable;
 import java.util.function.LongSupplier;
 
-public class Node implements LongSupplier, Serializable {
+public class Node extends CanvasElement implements LongSupplier, Serializable {
     private long id;
     private float lon;
     private float lat;
@@ -31,5 +35,25 @@ public class Node implements LongSupplier, Serializable {
     @Override
     public String toString() {
         return "Node, lat:" + lat + " lon:" + lon + " ID:" + id;
+    }
+
+    @Override
+    public Point2D getCentroid() {
+        return new Point2D(this.lon, this.lat);
+    }
+
+    @Override
+    public Range getBoundingBox() {
+        return new Range(this.lon, this.lat, this.lon, this.lat);
+    }
+
+    @Override
+    public void setBoundingBox() {
+        //Ignored
+    }
+
+    @Override
+    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+
     }
 }
