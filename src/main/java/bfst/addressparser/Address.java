@@ -1,6 +1,6 @@
 package bfst.addressparser;
 
-import bfst.OSMReader.CanvasElement;
+import bfst.canvas.CanvasElement;
 import bfst.OSMReader.Node;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;

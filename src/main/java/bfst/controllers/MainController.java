@@ -294,10 +294,14 @@ public class MainController {
         });
 
         findRoute.setOnAction(e -> {
-            long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startAddress.getCentroid(), Double.POSITIVE_INFINITY)).getAsLong();
-            long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), Double.POSITIVE_INFINITY)).getAsLong(); //TODO refactor as method
-
-            canvas.setDijkstra(startRoadId, destinationRoadId, "Car", true);
+            String vehicle = "Car";
+            long startRoadId = ((Node) model
+            .getRoadKDTree()
+            .nearestNeighbor(startAddress
+            .getCentroid(), Double.POSITIVE_INFINITY, vehicle))
+            .getAsLong();
+            long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), Double.POSITIVE_INFINITY, vehicle)).getAsLong(); //TODO refactor as method
+            canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, true);
         });
     }
 

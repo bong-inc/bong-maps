@@ -1,4 +1,4 @@
-package bfst.OSMReader;
+package bfst.canvas;
 
 import bfst.canvas.Drawable;
 import bfst.canvas.Range;
@@ -10,6 +10,6 @@ public abstract class CanvasElement implements Drawable {
   public abstract void setBoundingBox();
 
   public Point2D getCenterFromRange(Range range){
-    return new Point2D(range.minX + (range.maxX-range.minX)/2, range.minY + (range.maxY-range.minY)/2);
+    return new Point2D((range.maxX+range.minX)/2, (range.maxY+range.minY)/2);
   }
 }

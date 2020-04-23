@@ -29,7 +29,7 @@ public class OSMReader {
     private Relation relationHolder;
     private ArrayList<String> tagList = new ArrayList<>();
     private Street currentStreet;
-    private ArrayList<CanvasElement> roadNodes = new ArrayList<>();
+    private ArrayList<Edge> roadEdges = new ArrayList<>();
 
     int counter = 0; //TODO bruges kun til videreudvikling, skal fjernes fra endelige produkt
 
@@ -63,8 +63,8 @@ public class OSMReader {
 
     public Bound getBound(){return bound;}
 
-    public List<CanvasElement> getRoadNodes() {
-        return roadNodes;
+    public List<Edge> getRoadEdges() {
+        return roadEdges;
     }
 
     public OSMReader(InputStream inputStream){
@@ -124,13 +124,12 @@ public class OSMReader {
 
                                         long[] nodes = wayHolder.getNodes();
                                         currentStreet = new Street(tagList, defaultSpeed);
-                                        roadNodes.add(tempNodes.get(nodes[0]));
 
                                         for (int j = 1; j < nodes.length; j++){
                                             Node currentNode = tempNodes.get(nodes[j]);
-                                            roadNodes.add(currentNode);
                                             Edge edge = new Edge(tempNodes.get(nodes[j-1]), currentNode, currentStreet);
                                             graph.addEdge(edge);
+                                            roadEdges.add(edge);
                                         }
 
                                         break; 

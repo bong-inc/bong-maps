@@ -1,5 +1,6 @@
 package bfst.OSMReader;
 
+import bfst.canvas.CanvasElement;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;

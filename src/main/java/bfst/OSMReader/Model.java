@@ -1,6 +1,7 @@
 package bfst.OSMReader;
 
 import bfst.addressparser.Address;
+import bfst.canvas.CanvasElement;
 import bfst.canvas.City;
 import bfst.canvas.Drawable;
 import bfst.canvas.Range;
@@ -23,7 +24,7 @@ public class Model implements Serializable {
     private ArrayList<City> cities;
     private Graph graph;
     private KDTree addressKDTree;
-    private KDTree roadKDTree;
+    private KDTreeForEdges roadKDTree;
 
 
     private Bound bound;
@@ -40,7 +41,7 @@ public class Model implements Serializable {
         this.coastLines = reader.getDrawableByType().get(Type.COASTLINE);
         this.kdtreeByType = createKdtreeByType(reader.getDrawableByType());
         this.addressKDTree = createKDTreeFromAddresses();
-        this.roadKDTree = new KDTree(reader.getRoadNodes(), new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
+        this.roadKDTree = new KDTreeForEdges(reader.getRoadEdges(), new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
     }
 
     public Map<Type, KDTree> createKdtreeByType(Map<Type, ArrayList<CanvasElement>> drawablesByType){
@@ -87,7 +88,7 @@ public class Model implements Serializable {
         return addressKDTree;
     }
 
-    public KDTree getRoadKDTree() {
+    public KDTreeForEdges getRoadKDTree() {
         return roadKDTree;
     }
 }

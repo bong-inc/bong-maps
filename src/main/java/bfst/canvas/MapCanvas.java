@@ -4,6 +4,7 @@ import bfst.OSMReader.*;
 
 import bfst.routeFinding.*;
 
+import bfst.canvas.CanvasElement;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
