@@ -12,9 +12,6 @@ import bfst.canvas.CanvasElement;
 import bfst.routeFinding.Edge;
 import bfst.routeFinding.Street;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 public class KDTreeForEdges implements Serializable {
   private static final long serialVersionUID = 8179750180455602356L;

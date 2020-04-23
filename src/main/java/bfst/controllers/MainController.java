@@ -288,17 +288,17 @@ public class MainController {
 
         setAsDestination.setOnAction(e -> {
             destinationAddress = currentAddress;
+            canvas.setRouteDestination(destinationAddress.getLon(), destinationAddress.getLat());
         });
 
         setAsStart.setOnAction(e -> {
             startAddress = currentAddress;
+            canvas.setRouteOrigin(startAddress.getLon(), startAddress.getLat());
         });
 
         findRoute.setOnAction(e -> {
             String vehicle = "Car";
-            KDTreeForEdges kd =  model.getRoadKDTree();
-            CanvasElement nearestNode = kd.nearestNeighbor(startAddress.getCentroid(), vehicle);
-            long startRoadId = ((Node) nearestNode).getAsLong();
+            long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startAddress.getCentroid(), vehicle)).getAsLong();
             long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), vehicle)).getAsLong(); //TODO refactor as method
             canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, true);
         });

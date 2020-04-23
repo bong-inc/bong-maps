@@ -42,6 +42,8 @@ public class MapCanvas extends Canvas {
     private ArrayList<Instruction> description;
 
     private Pin currentPin;
+    private RouteOrigin currentRouteOrigin;
+    private RouteDestination currentRouteDestination;
 
     private boolean showCities = true;
     private boolean useDependentDraw = true;
@@ -64,6 +66,14 @@ public class MapCanvas extends Canvas {
 
     public Pin getCurrentPin() {
         return currentPin;
+    }
+    
+    public RouteOrigin getCurrentRouteOrigin() {
+        return currentRouteOrigin;
+    }
+
+    public RouteDestination getCurrentRouteDestination() {
+        return currentRouteDestination;
     }
 
     public MapCanvas() {
@@ -110,6 +120,8 @@ public class MapCanvas extends Canvas {
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
 
+            if (currentRouteOrigin != null) currentRouteOrigin.draw(gc, pixelwidth);
+            if (currentRouteDestination != null) currentRouteDestination.draw(gc, pixelwidth);
             if (currentPin != null) currentPin.draw(gc, pixelwidth);
 
             if (showCities) {
@@ -195,6 +207,7 @@ public class MapCanvas extends Canvas {
     public void setRoute() {
         route = dijkstra.pathTo(dijkstra.getLastNode(), 1);
         lastInstructionNode = route.get(0).getTailNode();
+        new RouteInstruction(lastInstructionNode.getLon(), lastInstructionNode.getLat(), 1).draw(gc);
         ArrayList<Edge> secondPart = dijkstra.pathTo(dijkstra.getLastNode(), 2);
         Collections.reverse(secondPart);
         route.addAll(secondPart);
@@ -559,6 +572,26 @@ public class MapCanvas extends Canvas {
     public void nullPin () {
         currentPin = null;
         repaint(13);
+    }
+
+    public void setRouteOrigin (float lon, float lat){
+        currentRouteOrigin = new RouteOrigin(lon, lat, 1);
+        repaint(27);
+    }
+
+    public void nullRouteOrigin () {
+        currentRouteOrigin = null;
+        repaint(28);
+    }
+
+    public void setRouteDestination (float lon, float lat){
+        currentRouteDestination = new RouteDestination(lon, lat, 1);
+        repaint(29);
+    }
+
+    public void nullRouteDestination () {
+        currentRouteDestination = null;
+        repaint(30);
     }
 
     public void addToPOI(PointOfInterest poi) {
