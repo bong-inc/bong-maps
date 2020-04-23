@@ -34,6 +34,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -477,7 +478,11 @@ public class MainController {
 
     public void saveFileOnClick(ActionEvent e){
         try {
-            File file = new FileChooser().showSaveDialog(stage);
+            FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Binary file (*.bin)", "*.bin");
+            fileChooser.getExtensionFilters().add(extFilter);
+            fileChooser.setInitialFileName("myMap");
+            File file = fileChooser.showSaveDialog(stage);
             if(file != null){
                 saveBinary(file, model);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -494,7 +499,16 @@ public class MainController {
 
     public void loadFileOnClick(ActionEvent e){
         try {
-            File file = new FileChooser().showOpenDialog(stage);
+            List<String> acceptedFileTypes = new ArrayList<>();
+            acceptedFileTypes.add("*.bin");
+            acceptedFileTypes.add("*.osm");
+            acceptedFileTypes.add("*.zip");
+                
+            FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Binary, OSM or ZIP file", acceptedFileTypes);
+            fileChooser.getExtensionFilters().add(extFilter);
+            fileChooser.setInitialFileName("myMap");
+            File file = fileChooser.showOpenDialog(stage);           
             if (file != null) {
                 loadFile(file);
             }
