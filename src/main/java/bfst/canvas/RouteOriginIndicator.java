@@ -53,7 +53,7 @@ public class RouteOriginIndicator extends Pin {
     }
 
     public String scaleSvgPath(String text, double factor) {
-        return getScaledString(text, factor);
+        return RouteInstructionIndicator.getScaledString(text, factor);
     }
 
 }

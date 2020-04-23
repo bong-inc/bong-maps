@@ -68,7 +68,7 @@ public class RouteDestinationIndicator {
         String out = "";
         String regex = "([Mmcl]{1}[0-9,\\-\\.]+)|(z)";
 
-        return regexedString(text, factor, out, regex);
+        return RouteInstructionIndicator.regexedString(text, factor, out, regex);
     }
 
 }
