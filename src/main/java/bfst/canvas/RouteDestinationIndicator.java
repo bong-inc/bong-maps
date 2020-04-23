@@ -68,27 +68,7 @@ public class RouteDestinationIndicator {
         String out = "";
         String regex = "([Mmcl]{1}[0-9,\\-\\.]+)|(z)";
 
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(text);
-
-        while (matcher.find()) {
-            String str = matcher.group();
-            String c = str.substring(0,1);
-
-            String regex2 = "(-?\\d+\\.?\\d*)";
-            Pattern pattern2 = Pattern.compile(regex2);
-            Matcher matcher2 = pattern2.matcher(str);
-
-            String out1 = c;
-            while (matcher2.find()) {
-                double d = Double.parseDouble(matcher2.group());
-                d = d * factor;
-                out1 += d + " ";
-            }
-            out += out1;
-        }
-
-        return out;
+        return regexedString(text, factor, out, regex);
     }
 
 }

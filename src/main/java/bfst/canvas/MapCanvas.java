@@ -67,7 +67,7 @@ public class MapCanvas extends Canvas {
     public Pin getCurrentPin() {
         return currentPin;
     }
-    
+
     public RouteOriginIndicator getCurrentRouteOrigin() {
         return currentRouteOrigin;
     }
@@ -171,20 +171,20 @@ public class MapCanvas extends Canvas {
         float h = (float) this.getHeight();
         if(renderFullScreen){
             renderRange = new Range(
-                (float) ((-trans.getTx())* pixelwidth),
-                (float) ((-trans.getTy())* pixelwidth),
-                (float) ((-trans.getTx() + w)* pixelwidth),
-                (float) ((-trans.getTy() + h)* pixelwidth)
+                    (float) ((-trans.getTx())* pixelwidth),
+                    (float) ((-trans.getTy())* pixelwidth),
+                    (float) ((-trans.getTx() + w)* pixelwidth),
+                    (float) ((-trans.getTy() + h)* pixelwidth)
             );
         } else {
             renderRange = new Range(
-                (float) ((-trans.getTx() + w/2-100)* pixelwidth),
-                (float) ((-trans.getTy() + h/2-100)* pixelwidth),
-                (float) ((-trans.getTx() + w/2+100)* pixelwidth),
-                (float) ((-trans.getTy() + h/2+100)* pixelwidth)
+                    (float) ((-trans.getTx() + w/2-100)* pixelwidth),
+                    (float) ((-trans.getTy() + h/2-100)* pixelwidth),
+                    (float) ((-trans.getTx() + w/2+100)* pixelwidth),
+                    (float) ((-trans.getTy() + h/2+100)* pixelwidth)
             );
         }
-        
+
     }
 
     public void setRenderFullScreen(boolean bool){
@@ -276,32 +276,30 @@ public class MapCanvas extends Canvas {
                 roundaboutCounter++;
             }
 
+            if (prevEdgeName == null) {
+                prevEdgeName = "road";
+            }
+            String currEdgeName = currEdge.getStreet().getName();
 
+            if (currEdgeName == null) {
+                currEdgeName = "road";
+            }
 
-                if (prevEdgeName == null) {
-                    prevEdgeName = "road";
+            if ((!prevEdgeName.equals(currEdgeName) && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) || (currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT && prevEdge.getStreet().getRole() == Street.Role.ROUNDABOUT)) {
+                addInstruction(prevEdgeName, tempLength, currEdge);
+                setActionInstruction(prevEdge, currEdge, roundaboutCounter);
+
+                if (i == list.size() - 1) {
+                    addInstruction(currEdgeName, currEdge.getWeight(), currEdge);
                 }
-                String currEdgeName = currEdge.getStreet().getName();
 
-                if (currEdgeName == null) {
-                    currEdgeName = "road";
-                }
-
-                if (!prevEdgeName.equals(currEdgeName) || (currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT && prevEdge.getStreet().getRole() == Street.Role.ROUNDABOUT)) {
+                tempLength = currEdge.getWeight() * meterMultiplier;
+            } else {
+                tempLength += currEdge.getWeight() * meterMultiplier;
+                if (i == list.size() - 1) {
                     addInstruction(prevEdgeName, tempLength, currEdge);
-                    setActionInstruction(prevEdge, currEdge, roundaboutCounter);
-
-                    if (i == list.size() - 1) {
-                        addInstruction(currEdgeName, currEdge.getWeight(), currEdge);
-                    }
-
-                    tempLength = currEdge.getWeight() * meterMultiplier;
-                } else {
-                    tempLength += currEdge.getWeight() * meterMultiplier;
-                    if (i == list.size() - 1) {
-                        addInstruction(prevEdgeName, tempLength, currEdge);
-                    }
                 }
+            }
 
             prevEdgeName = currEdgeName;
             prevEdge = list.get(i);
@@ -391,9 +389,9 @@ public class MapCanvas extends Canvas {
         } else if (roundaboutCounter > 0) {
             lastActionInstruction = "Take exit number " + roundaboutCounter + " in the roundabout";
             resetRoundaboutCounter();
-        } else if (turn > 20 && turn < 140) { //Left right is inverted
+        } else if (turn > 20 && turn < 160 && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) { //Left right is inverted
             lastActionInstruction = "Turn left";
-        } else if (turn < -20 && turn > -140) {
+        } else if (turn < -20 && turn > -160 && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) {
             lastActionInstruction = "Turn right";
         }
     }
@@ -519,7 +517,7 @@ public class MapCanvas extends Canvas {
             setFillAndStroke(type, pixelwidth, useRegularColors);
             kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderRange);
         }
-        
+
     }
 
     private void setFillAndStroke(Type type, double pixelwidth, boolean useRegularColors) {
@@ -545,7 +543,7 @@ public class MapCanvas extends Canvas {
                 if (type.shouldHaveFill()) gc.fill();
             }
         }
-        
+
     }
 
     public void setModel(Model model) {
