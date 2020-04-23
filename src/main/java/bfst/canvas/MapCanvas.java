@@ -39,10 +39,10 @@ public class MapCanvas extends Canvas {
     private boolean renderFullScreen = true;
     private LinePath draggedSquare;
 
-    private ArrayList<Instruction> description;
+    private ArrayList<Instruction> descriptions;
 
     private Pin currentPin;
-    private RouteOrigin currentRouteOrigin;
+    private RouteOriginIndicator currentRouteOrigin;
     private RouteDestinationIndicator currentRouteDestination;
 
     private boolean showCities = true;
@@ -57,7 +57,7 @@ public class MapCanvas extends Canvas {
     }
 
     public ArrayList<Instruction> getDescription() {
-        return description;
+        return descriptions;
     }
 
     public ArrayList<PointOfInterest> getPointsOfInterest() {
@@ -68,7 +68,7 @@ public class MapCanvas extends Canvas {
         return currentPin;
     }
     
-    public RouteOrigin getCurrentRouteOrigin() {
+    public RouteOriginIndicator getCurrentRouteOrigin() {
         return currentRouteOrigin;
     }
 
@@ -113,8 +113,13 @@ public class MapCanvas extends Canvas {
             }
 
             if (route != null) {
-                gc.setStroke(Color.RED);
-                drawableRoute.draw(gc, pixelwidth, smartTrace);
+                gc.setStroke(Color.BLUE);
+                drawableRoute.draw(gc, pixelwidth*5, smartTrace);
+                if(descriptions != null){
+                    for(Instruction instruction : descriptions){
+                        instruction.getIndicator().draw(gc,pixelwidth);
+                    }
+                }
             }
 
             gc.setStroke(Color.BLACK);
@@ -207,7 +212,6 @@ public class MapCanvas extends Canvas {
     public void setRoute() {
         route = dijkstra.pathTo(dijkstra.getLastNode(), 1);
         lastInstructionNode = route.get(0).getTailNode();
-        new RouteInstruction(lastInstructionNode.getLon(), lastInstructionNode.getLat(), 1).draw(gc);
         ArrayList<Edge> secondPart = dijkstra.pathTo(dijkstra.getLastNode(), 2);
         Collections.reverse(secondPart);
         route.addAll(secondPart);
@@ -255,7 +259,7 @@ public class MapCanvas extends Canvas {
     //TODO har egentlig ikke noget med canvas at gøre, så skal nok flyttes
     public void generateRouteInfo(ArrayList<Edge> list, String vehicle) {
 
-        description = new ArrayList<>();
+        descriptions = new ArrayList<>();
         routeDistance = 0;
         routeTime = 0;
 
@@ -306,7 +310,7 @@ public class MapCanvas extends Canvas {
             routeDistance += distance;
             addTimeToTotal(vehicle, currEdge, distance);
         }
-        description.add(new Instruction("You have arrived at your destination", route.get(route.size() - 1).getHeadNode()));
+        descriptions.add(new Instruction("You have arrived at your destination", route.get(route.size() - 1).getHeadNode()));
     }
 
     public String distanceString() {
@@ -373,7 +377,7 @@ public class MapCanvas extends Canvas {
         } else {
             instruction += prevEdgeName + " for " + roundedLength + " m";
         }
-        description.add(new Instruction(instruction, lastInstructionNode));
+        descriptions.add(new Instruction(instruction, lastInstructionNode));
         lastActionInstruction = null;
         lastInstructionNode = currEdge.getTailNode();
     }
@@ -585,7 +589,7 @@ public class MapCanvas extends Canvas {
     }
 
     public void setRouteOrigin (float lon, float lat){
-        currentRouteOrigin = new RouteOrigin(lon, lat, 1);
+        currentRouteOrigin = new RouteOriginIndicator(lon, lat, 1);
         repaint(27);
     }
 

@@ -7,7 +7,7 @@ import javafx.scene.shape.FillRule;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RouteOrigin extends Pin {
+public class RouteInstructionIndicator extends Pin {
 
     public float getCenterX() {
         return centerX;
@@ -21,7 +21,7 @@ public class RouteOrigin extends Pin {
         radius = r;
     }
 
-    public RouteOrigin(float centerX, float centerY, float radius) {
+    public RouteInstructionIndicator(float centerX, float centerY, float radius) {
         super(centerX,centerY,radius);
     }
 
@@ -34,14 +34,14 @@ public class RouteOrigin extends Pin {
 
         gc.setFill(Color.BLACK);
         gc.beginPath();
-        String translated = circlePath(centerX,centerY,(float) factor*12);
+        String translated = circlePath(centerX,centerY,(float) factor*5);
         gc.appendSVGPath(translated);
         gc.closePath();
         gc.fill();
 
         gc.setFill(Color.WHITE);
         gc.beginPath();
-        translated = circlePath(centerX,centerY,(float) factor*8);
+        translated = circlePath(centerX,centerY,(float) (factor*4));
         gc.appendSVGPath(translated);
         gc.closePath();
         gc.fill();
