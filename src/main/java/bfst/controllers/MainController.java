@@ -1,6 +1,7 @@
 package bfst.controllers;
 
 import bfst.App;
+import bfst.OSMReader.KDTreeForEdges;
 import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Model;
 import bfst.OSMReader.Node;
@@ -295,12 +296,10 @@ public class MainController {
 
         findRoute.setOnAction(e -> {
             String vehicle = "Car";
-            long startRoadId = ((Node) model
-            .getRoadKDTree()
-            .nearestNeighbor(startAddress
-            .getCentroid(), Double.POSITIVE_INFINITY, vehicle))
-            .getAsLong();
-            long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), Double.POSITIVE_INFINITY, vehicle)).getAsLong(); //TODO refactor as method
+            KDTreeForEdges kd =  model.getRoadKDTree();
+            CanvasElement nearestNode = kd.nearestNeighbor(startAddress.getCentroid(), vehicle);
+            long startRoadId = ((Node) nearestNode).getAsLong();
+            long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), vehicle)).getAsLong(); //TODO refactor as method
             canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, true);
         });
     }
@@ -469,7 +468,7 @@ public class MainController {
         }
 
         //TODO vis "ingen adresse fundet" hvis der er for langt til nærmeste adresse.
-        currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()), Double.POSITIVE_INFINITY);
+        currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
         pointAddress.setText(currentAddress.toString());
 
         pinInfo.setTranslateY(10);

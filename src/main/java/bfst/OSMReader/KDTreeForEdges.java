@@ -166,9 +166,7 @@ public class KDTreeForEdges implements Serializable {
     double bestDist = Double.POSITIVE_INFINITY;
     for(Edge e : elements) {
       Street s = e.getStreet();
-      if(!(vehicle.equals("Car") && s.isCar())) continue;
-      if(!(vehicle.equals("Bicycle") && s.isBicycle())) continue;
-      if(!(vehicle.equals("Walk") && s.isWalking())) continue;
+      if(!(vehicle.equals("Car") && s.isCar() || vehicle.equals("Bicycle") && s.isBicycle() || vehicle.equals("Walk") && s.isWalking())) continue;
 
       Node newNode = bestNodeInEdge(query, e);
       double newDist = distance(query.getX(), query.getY(), newNode.getLon(), newNode.getLat());
@@ -187,7 +185,11 @@ public class KDTreeForEdges implements Serializable {
     return distToTail < distToHead ? edge.getTailNode() : edge.getHeadNode();
   }
 
-  public Node nearestNeighbor(Point2D query, double bestDist, String vehicle) {
+  public CanvasElement nearestNeighbor(Point2D query, String vehicle){
+    return nearestNeighbor(query, Double.POSITIVE_INFINITY, vehicle);
+  }
+
+  private Node nearestNeighbor(Point2D query, double bestDist, String vehicle) {
     KDTreeForEdges first, last;
     if(!isLeaf()){
       Node result = null;

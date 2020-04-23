@@ -202,7 +202,11 @@ public class KDTree implements Serializable {
     return best;
   }
 
-  public CanvasElement nearestNeighbor(Point2D query, double bestDist) {
+  public CanvasElement nearestNeighbor(Point2D query){
+    return nearestNeighbor(query, Double.POSITIVE_INFINITY);
+  }
+
+  private CanvasElement nearestNeighbor(Point2D query, double bestDist) {
     KDTree first, last;
     if(!isLeaf()){
       CanvasElement result = null;
