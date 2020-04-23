@@ -39,7 +39,7 @@ public class MapCanvas extends Canvas {
     private boolean renderFullScreen = true;
     private LinePath draggedSquare;
 
-    private ArrayList<Instruction> descriptions;
+    private ArrayList<Instruction> instructions;
 
     private Pin currentPin;
     private RouteOriginIndicator currentRouteOrigin;
@@ -57,7 +57,7 @@ public class MapCanvas extends Canvas {
     }
 
     public ArrayList<Instruction> getDescription() {
-        return descriptions;
+        return instructions;
     }
 
     public ArrayList<PointOfInterest> getPointsOfInterest() {
@@ -114,9 +114,9 @@ public class MapCanvas extends Canvas {
 
             if (route != null) {
                 gc.setStroke(Color.BLUE);
-                drawableRoute.draw(gc, pixelwidth*5, smartTrace);
-                if(descriptions != null){
-                    for(Instruction instruction : descriptions){
+                drawableRoute.draw(gc, pixelwidth, smartTrace);
+                if(instructions != null){
+                    for(Instruction instruction : instructions){
                         instruction.getIndicator().draw(gc,pixelwidth);
                     }
                 }
@@ -259,7 +259,7 @@ public class MapCanvas extends Canvas {
     //TODO har egentlig ikke noget med canvas at gøre, så skal nok flyttes
     public void generateRouteInfo(ArrayList<Edge> list, String vehicle) {
 
-        descriptions = new ArrayList<>();
+        instructions = new ArrayList<>();
         routeDistance = 0;
         routeTime = 0;
 
@@ -310,7 +310,7 @@ public class MapCanvas extends Canvas {
             routeDistance += distance;
             addTimeToTotal(vehicle, currEdge, distance);
         }
-        descriptions.add(new Instruction("You have arrived at your destination", route.get(route.size() - 1).getHeadNode()));
+        instructions.add(new Instruction("You have arrived at your destination", route.get(route.size() - 1).getHeadNode()));
     }
 
     public String distanceString() {
@@ -377,7 +377,7 @@ public class MapCanvas extends Canvas {
         } else {
             instruction += prevEdgeName + " for " + roundedLength + " m";
         }
-        descriptions.add(new Instruction(instruction, lastInstructionNode));
+        instructions.add(new Instruction(instruction, lastInstructionNode));
         lastActionInstruction = null;
         lastInstructionNode = currEdge.getTailNode();
     }
@@ -421,6 +421,7 @@ public class MapCanvas extends Canvas {
 
     public void clearRoute() {
         route = null;
+        instructions = null;
         dijkstra = null;
         drawableRoute = null;
         repaint(2);
