@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RouteDestination {
+public class RouteDestinationIndicator {
 
   float centerX;
 
@@ -25,7 +25,7 @@ public class RouteDestination {
         radius = r;
     }
 
-    public RouteDestination(float centerX, float centerY, float radius) {
+    public RouteDestinationIndicator(float centerX, float centerY, float radius) {
         this.centerX = centerX;
         this.centerY = centerY;
         this.radius = radius;

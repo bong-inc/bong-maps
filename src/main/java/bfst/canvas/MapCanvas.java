@@ -43,7 +43,7 @@ public class MapCanvas extends Canvas {
 
     private Pin currentPin;
     private RouteOrigin currentRouteOrigin;
-    private RouteDestination currentRouteDestination;
+    private RouteDestinationIndicator currentRouteDestination;
 
     private boolean showCities = true;
     private boolean useDependentDraw = true;
@@ -72,7 +72,7 @@ public class MapCanvas extends Canvas {
         return currentRouteOrigin;
     }
 
-    public RouteDestination getCurrentRouteDestination() {
+    public RouteDestinationIndicator getCurrentRouteDestination() {
         return currentRouteDestination;
     }
 
@@ -263,7 +263,7 @@ public class MapCanvas extends Canvas {
         String prevEdgeName = first.getStreet().getName();
         double tempLength = 0;
         Edge prevEdge = first;
-
+        lastInstructionNode = route.get(0).getTailNode();
         for (int i = 0; i < list.size(); i++) {
             Edge currEdge = list.get(i);
             double meterMultiplier = - (MercatorProjector.unproject(currEdge.getTailNode().getLon(), currEdge.getTailNode().getLat()).getLat()) / 100;
@@ -272,13 +272,25 @@ public class MapCanvas extends Canvas {
                 roundaboutCounter++;
             }
 
-            if (currEdge.getStreet().getName() != null) {
 
-                if (!prevEdgeName.equals(currEdge.getStreet().getName()) || (currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT && prevEdge.getStreet().getRole() == Street.Role.ROUNDABOUT)) {
+
+                if (prevEdgeName == null) {
+                    prevEdgeName = "road";
+                }
+                String currEdgeName = currEdge.getStreet().getName();
+
+                if (currEdgeName == null) {
+                    currEdgeName = "road";
+                }
+
+                if (!prevEdgeName.equals(currEdgeName) || (currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT && prevEdge.getStreet().getRole() == Street.Role.ROUNDABOUT)) {
                     addInstruction(prevEdgeName, tempLength, currEdge);
                     setActionInstruction(prevEdge, currEdge, roundaboutCounter);
 
-                    prevEdgeName = currEdge.getStreet().getName();
+                    if (i == list.size() - 1) {
+                        addInstruction(currEdgeName, currEdge.getWeight(), currEdge);
+                    }
+
                     tempLength = currEdge.getWeight() * meterMultiplier;
                 } else {
                     tempLength += currEdge.getWeight() * meterMultiplier;
@@ -286,10 +298,8 @@ public class MapCanvas extends Canvas {
                         addInstruction(prevEdgeName, tempLength, currEdge);
                     }
                 }
-            } else {
-                tempLength += currEdge.getWeight() * meterMultiplier;
-            }
 
+            prevEdgeName = currEdgeName;
             prevEdge = list.get(i);
 
             double distance = currEdge.getWeight() * 0.56;
@@ -585,7 +595,7 @@ public class MapCanvas extends Canvas {
     }
 
     public void setRouteDestination (float lon, float lat){
-        currentRouteDestination = new RouteDestination(lon, lat, 1);
+        currentRouteDestination = new RouteDestinationIndicator(lon, lat, 1);
         repaint(29);
     }
 
