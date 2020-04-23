@@ -17,12 +17,12 @@ import java.util.Map.Entry;
 public class Model implements Serializable {
     private static final long serialVerionUID = 101010101010100l;
 
-    private Map<Type, ArrayList<CanvasElement>> drawablesByType;
     private ArrayList<CanvasElement> coastLines;
     private Map<Type, KDTree> kdtreeByType;
     private ArrayList<Address> addresses;
     private ArrayList<City> cities;
     private Graph graph;
+    private KDTree addressKDTree;
 
     private Bound bound;
 
@@ -37,6 +37,7 @@ public class Model implements Serializable {
         cities.trimToSize();
         this.coastLines = reader.getDrawableByType().get(Type.COASTLINE);
         this.kdtreeByType = createKdtreeByType(reader.getDrawableByType());
+        this.addressKDTree = createKDTreeFromAddresses();
     }
 
     public Map<Type, KDTree> createKdtreeByType(Map<Type, ArrayList<CanvasElement>> drawablesByType){
@@ -56,6 +57,11 @@ public class Model implements Serializable {
 
     public KDTree getKDTreeByType(Type type){
         return kdtreeByType.get(type);
+    }
+
+    private KDTree createKDTreeFromAddresses(){
+        ArrayList<CanvasElement> list = new ArrayList<CanvasElement>(addresses);
+        return new KDTree(list, bound.getMinLon(), bound.getMinLat(), bound.getMaxLon() - bound.getMinLon(), bound.getMaxLat() - bound.getMinLat());
     }
     
     public ArrayList<Address> getAddresses(){
