@@ -60,8 +60,8 @@ public class Model implements Serializable {
     }
 
     private KDTree createKDTreeFromAddresses(){
-        ArrayList<CanvasElement> list = new ArrayList<CanvasElement>(addresses);
-        return new KDTree(list, bound.getMinLon(), bound.getMinLat(), bound.getMaxLon() - bound.getMinLon(), bound.getMaxLat() - bound.getMinLat());
+        ArrayList<CanvasElement> list = new ArrayList<>(addresses);
+        return new KDTree(list, new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
     }
     
     public ArrayList<Address> getAddresses(){
@@ -78,5 +78,9 @@ public class Model implements Serializable {
 
     public Graph getGraph() {
         return graph;
+    }
+
+    public KDTree getAddressKDTree() {
+        return addressKDTree;
     }
 }

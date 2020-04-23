@@ -447,6 +447,8 @@ public class MainController {
             routeInfo.setVisible(false);
         }
 
+        pointAddress.setText(model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()), Double.POSITIVE_INFINITY).toString());
+
         pinInfo.setTranslateY(10);
         pinInfo.setVisible(true);
     }
