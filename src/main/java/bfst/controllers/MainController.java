@@ -91,11 +91,13 @@ public class MainController {
     @FXML Menu view;
     @FXML CheckMenuItem publicTransport;
     @FXML CheckMenuItem darkMode;
+    @FXML CheckMenuItem hoverToShowStreet;
     @FXML MenuItem zoomToArea;
     @FXML Button findRoute;
     @FXML Label streetNearMouse;
 
     private boolean shouldPan = true;
+    private boolean showStreetOnHover = true;
     private String tempQuery = "";
 
     @FXML
@@ -255,6 +257,12 @@ public class MainController {
             canvas.setUseRegularColors(!darkMode.isSelected());
         });
 
+        hoverToShowStreet.setSelected(showStreetOnHover);
+        hoverToShowStreet.setOnAction(e -> {
+            showStreetOnHover = hoverToShowStreet.isSelected();
+            canvas.repaint(26);
+        });
+
         zoomToArea.setOnAction(e ->  {
             shouldPan = false;
         });
@@ -309,34 +317,36 @@ public class MainController {
         });
 
         canvas.setOnMouseMoved(e -> {
-            try {
-                Point2D translatedCoords = canvas.getTrans().inverseTransform(e.getX(), e.getY());
-                Node nearestPoint = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Car");
-                long nodeAsLong = nearestPoint.getAsLong();
-                Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
+            if (showStreetOnHover) {
+                try {
+                    Point2D translatedCoords = canvas.getTrans().inverseTransform(e.getX(), e.getY());
+                    Node nearestPoint = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Car");
+                    long nodeAsLong = nearestPoint.getAsLong();
+                    Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
 
-                double shortestDist = Double.POSITIVE_INFINITY;
+                    double shortestDist = Double.POSITIVE_INFINITY;
 
-                for (Edge edge : model.getGraph().getAdj().get(nearestPoint.getAsLong())) {
-                    Node otherNode = edge.otherNode(nodeAsLong);
-                    double currDist = distToNode(nearestPoint, otherNode, translatedCoords);
+                    for (Edge edge : model.getGraph().getAdj().get(nearestPoint.getAsLong())) {
+                        Node otherNode = edge.otherNode(nodeAsLong);
+                        double currDist = distToNode(nearestPoint, otherNode, translatedCoords);
 
-                    if (currDist < shortestDist && edge.getStreet().isCar()) {
-                        shortestDist = currDist;
-                        streetEdge = edge;
+                        if (currDist < shortestDist && edge.getStreet().isCar()) {
+                            shortestDist = currDist;
+                            streetEdge = edge;
+                        }
                     }
-                }
 
 
-                String streetName = streetEdge.getStreet().getName();
-                //if (streetName != null) {
+                    String streetName = streetEdge.getStreet().getName();
+                    //if (streetName != null) {
                     canvas.repaint(25);
                     streetNearMouse.setText("Street near mouse: " + streetName);
                     canvas.drawEdge(streetEdge);
                     canvas.drawNode(nearestPoint);
-               // }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                    // }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
     }

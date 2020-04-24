@@ -28,6 +28,7 @@
         <Menu mnemonicParsing="false" text="View" fx:id="view">
             <CheckMenuItem mnemonicParsing="false" text="Public transport" fx:id="publicTransport"/>
             <CheckMenuItem mnemonicParsing="false" text="Dark mode" fx:id="darkMode"/>
+            <CheckMenuItem mnemonicParsing="false" text="Hover to show street" fx:id="hoverToShowStreet"/>
             <MenuItem  mnemonicParsing="false" text="Zoom to area" fx:id="zoomToArea"/>
         </Menu>
         <Menu mnemonicParsing="false" text="More">
