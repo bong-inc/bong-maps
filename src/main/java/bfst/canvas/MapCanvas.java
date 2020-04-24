@@ -48,6 +48,7 @@ public class MapCanvas extends Canvas {
 
     private boolean showCities = true;
     private boolean useDependentDraw = true;
+    private boolean showStreetNodeCloseToMouse = false;
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
@@ -67,6 +68,14 @@ public class MapCanvas extends Canvas {
 
     public Pin getCurrentPin() {
         return currentPin;
+    }
+
+    public void setShowStreetNodeCloseToMouse(boolean newValue) {
+        showStreetNodeCloseToMouse = newValue;
+    }
+
+    public boolean getShowStreetNodeCloseToMouse() {
+        return showStreetNodeCloseToMouse;
     }
 
     public RouteOriginIndicator getCurrentRouteOrigin() {

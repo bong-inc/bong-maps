@@ -320,17 +320,17 @@ public class MainController {
             if (showStreetOnHover) {
                 try {
                     Point2D translatedCoords = canvas.getTrans().inverseTransform(e.getX(), e.getY());
-                    Node nearestPoint = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Car");
-                    long nodeAsLong = nearestPoint.getAsLong();
+                    Node nearestNode = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Car");
+                    long nodeAsLong = nearestNode.getAsLong();
                     Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
                     double bestAngle = Double.POSITIVE_INFINITY;
 
 
-                    Point2D mouseRelativeToNodeVector = new Point2D(translatedCoords.getX() - nearestPoint.getLon(), translatedCoords.getY() - nearestPoint.getLat());
+                    Point2D mouseRelativeToNodeVector = new Point2D(translatedCoords.getX() - nearestNode.getLon(), translatedCoords.getY() - nearestNode.getLat());
 
-                    for (Edge edge : model.getGraph().getAdj().get(nearestPoint.getAsLong())) {
+                    for (Edge edge : model.getGraph().getAdj().get(nearestNode.getAsLong())) {
                         Node otherNode = edge.otherNode(nodeAsLong);
-                        Point2D otherNodeRelativeToNodeVector = new Point2D(otherNode.getLon() - nearestPoint.getLon(), otherNode.getLat() - nearestPoint.getLat());
+                        Point2D otherNodeRelativeToNodeVector = new Point2D(otherNode.getLon() - nearestNode.getLon(), otherNode.getLat() - nearestNode.getLat());
 
                         double angle = Math.acos((mouseRelativeToNodeVector.getX() * otherNodeRelativeToNodeVector.getX() + mouseRelativeToNodeVector.getY() * otherNodeRelativeToNodeVector.getY()) / (mouseRelativeToNodeVector.magnitude() * otherNodeRelativeToNodeVector.magnitude()));
 
@@ -347,6 +347,10 @@ public class MainController {
                     canvas.repaint(25);
                     streetNearMouse.setText(streetName);
                     canvas.drawEdge(streetEdge);
+
+                    if (canvas.getShowStreetNodeCloseToMouse()) {
+                        canvas.drawNode(nearestNode);
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
