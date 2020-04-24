@@ -9,6 +9,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -207,6 +208,19 @@ public class MapCanvas extends Canvas {
                 new LinePath(entry.getValue().getTailNode(), entry.getValue().getHeadNode()).draw(gc, 1, false);
             }
         }
+    }
+
+    public void drawEdge(Edge edge) {
+        Paint prevStroke = gc.getStroke();
+        gc.setStroke(Color.RED);
+        new LinePath(edge.getTailNode(), edge.getHeadNode()).draw(gc, 1, false);
+        gc.setStroke(prevStroke);
+    }
+
+    public void drawNode(Node node) {
+        gc.setStroke(Color.GREEN);
+        gc.setLineWidth(20);
+        new LinePath(node, node).draw(gc, 10, false);
     }
 
     public void setRoute() {

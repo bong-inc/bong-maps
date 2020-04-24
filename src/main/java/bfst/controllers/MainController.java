@@ -10,6 +10,7 @@ import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
 import bfst.canvas.*;
 import bfst.exceptions.FileTypeNotSupportedException;
+import bfst.routeFinding.Edge;
 import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -91,6 +93,7 @@ public class MainController {
     @FXML CheckMenuItem darkMode;
     @FXML MenuItem zoomToArea;
     @FXML Button findRoute;
+    @FXML Label streetNearMouse;
 
     private boolean shouldPan = true;
     private String tempQuery = "";
@@ -304,6 +307,45 @@ public class MainController {
             long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), vehicle)).getAsLong(); //TODO refactor as method
             canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, true);
         });
+
+        canvas.setOnMouseMoved(e -> {
+            try {
+                Point2D translatedCoords = canvas.getTrans().inverseTransform(e.getX(), e.getY());
+                Node nearestPoint = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Car");
+                long nodeAsLong = nearestPoint.getAsLong();
+                Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
+
+                double shortestDist = Double.POSITIVE_INFINITY;
+
+                for (Edge edge : model.getGraph().getAdj().get(nearestPoint.getAsLong())) {
+                    Node otherNode = edge.otherNode(nodeAsLong);
+                    double currDist = distToNode(nearestPoint, otherNode, translatedCoords);
+
+                    if (currDist < shortestDist && edge.getStreet().isCar()) {
+                        shortestDist = currDist;
+                        streetEdge = edge;
+                    }
+                }
+
+
+                String streetName = streetEdge.getStreet().getName();
+                //if (streetName != null) {
+                    canvas.repaint(25);
+                    streetNearMouse.setText("Street near mouse: " + streetName);
+                    canvas.drawEdge(streetEdge);
+                    canvas.drawNode(nearestPoint);
+               // }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+
+    private double distToNode(Node nearestPoint, Node node, Point2D point) {
+        //return Math.sqrt(Math.pow(point.getX() - node.getLon(), 2) + Math.pow(point.getY() - node.getLat(), 2));
+
+        return Math.abs((node.getLat() - nearestPoint.getLat()) * point.getX() - (node.getLon() - nearestPoint.getLon()) * point.getY() + node.getLon() * nearestPoint.getLat() - node.getLat() * nearestPoint.getLon()) /
+                Math.sqrt(Math.pow(node.getLat() - nearestPoint.getLat(), 2) + Math.pow(node.getLon() - nearestPoint.getLon(), 2));
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
