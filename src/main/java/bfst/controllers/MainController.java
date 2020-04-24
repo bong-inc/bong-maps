@@ -13,6 +13,7 @@ import bfst.exceptions.FileTypeNotSupportedException;
 import bfst.routeFinding.Edge;
 import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
@@ -30,6 +31,7 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -351,10 +353,13 @@ public class MainController {
                     if (canvas.getShowStreetNodeCloseToMouse()) {
                         canvas.drawNode(nearestNode);
                     }
+
+                    canvas.drawStreetName(translatedCoords, streetName);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
+
         });
     }
 
@@ -581,12 +586,12 @@ public class MainController {
             acceptedFileTypes.add("*.bin");
             acceptedFileTypes.add("*.osm");
             acceptedFileTypes.add("*.zip");
-                
+
             FileChooser fileChooser = new FileChooser();
             FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Binary, OSM or ZIP file", acceptedFileTypes);
             fileChooser.getExtensionFilters().add(extFilter);
             fileChooser.setInitialFileName("myMap");
-            File file = fileChooser.showOpenDialog(stage);           
+            File file = fileChooser.showOpenDialog(stage);
             if (file != null) {
                 loadFile(file);
             }

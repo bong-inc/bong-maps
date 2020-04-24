@@ -74,6 +74,11 @@ public class MapCanvas extends Canvas {
         showStreetNodeCloseToMouse = newValue;
     }
 
+    public void drawStreetName(Point2D location, String text) {
+        gc.setFill(Color.BLACK);
+        gc.fillText(text, location.getX() + 15, location.getY() - 15);
+    }
+
     public boolean getShowStreetNodeCloseToMouse() {
         return showStreetNodeCloseToMouse;
     }
