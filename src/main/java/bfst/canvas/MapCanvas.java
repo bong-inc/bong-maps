@@ -404,9 +404,9 @@ public class MapCanvas extends Canvas {
             lastActionInstruction = "Take exit number " + roundaboutCounter + " in the roundabout";
             resetRoundaboutCounter();
         } else if (turn > 20 && turn < 160 && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) { //Left right is inverted
-            lastActionInstruction = "Turn left";
-        } else if (turn < -20 && turn > -160 && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) {
             lastActionInstruction = "Turn right";
+        } else if (turn < -20 && turn > -160 && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) {
+            lastActionInstruction = "Turn left";
         }
     }
 
@@ -418,8 +418,8 @@ public class MapCanvas extends Canvas {
         Point2D prevVector = new Point2D(prevEdge.getHeadNode().getLon() - prevEdge.getTailNode().getLon(), prevEdge.getHeadNode().getLat() - prevEdge.getTailNode().getLat());
         Point2D currVector = new Point2D(currEdge.getHeadNode().getLon() - currEdge.getTailNode().getLon(), currEdge.getHeadNode().getLat() - currEdge.getTailNode().getLat());
 
-        double prevDirection = Math.atan2(prevVector.getX(), prevVector.getY());
-        double currDirection = Math.atan2(currVector.getX(), currVector.getY());
+        double prevDirection = Math.atan2(prevVector.getY(), prevVector.getX());
+        double currDirection = Math.atan2(currVector.getY(), currVector.getX());
         double turn = currDirection - prevDirection;
         if (turn > Math.PI) {
             turn = - (turn - Math.PI);

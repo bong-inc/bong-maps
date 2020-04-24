@@ -323,39 +323,35 @@ public class MainController {
                     Node nearestPoint = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Car");
                     long nodeAsLong = nearestPoint.getAsLong();
                     Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
+                    double bestAngle = Double.POSITIVE_INFINITY;
 
-                    double shortestDist = Double.POSITIVE_INFINITY;
+
+                    Point2D mouseRelativeToNodeVector = new Point2D(translatedCoords.getX() - nearestPoint.getLon(), translatedCoords.getY() - nearestPoint.getLat());
 
                     for (Edge edge : model.getGraph().getAdj().get(nearestPoint.getAsLong())) {
                         Node otherNode = edge.otherNode(nodeAsLong);
-                        double currDist = distToNode(nearestPoint, otherNode, translatedCoords);
+                        Point2D otherNodeRelativeToNodeVector = new Point2D(otherNode.getLon() - nearestPoint.getLon(), otherNode.getLat() - nearestPoint.getLat());
 
-                        if (currDist < shortestDist && edge.getStreet().isCar()) {
-                            shortestDist = currDist;
+                        double angle = Math.acos((mouseRelativeToNodeVector.getX() * otherNodeRelativeToNodeVector.getX() + mouseRelativeToNodeVector.getY() * otherNodeRelativeToNodeVector.getY()) / (mouseRelativeToNodeVector.magnitude() * otherNodeRelativeToNodeVector.magnitude()));
+
+                        if (angle < bestAngle) {
+                            bestAngle = angle;
                             streetEdge = edge;
                         }
                     }
 
-
                     String streetName = streetEdge.getStreet().getName();
-                    //if (streetName != null) {
+                    if (streetName == null) {
+                        streetName = "Unnamed street";
+                    }
                     canvas.repaint(25);
-                    streetNearMouse.setText("Street near mouse: " + streetName);
+                    streetNearMouse.setText(streetName);
                     canvas.drawEdge(streetEdge);
-                    canvas.drawNode(nearestPoint);
-                    // }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         });
-    }
-
-    private double distToNode(Node nearestPoint, Node node, Point2D point) {
-        //return Math.sqrt(Math.pow(point.getX() - node.getLon(), 2) + Math.pow(point.getY() - node.getLat(), 2));
-
-        return Math.abs((node.getLat() - nearestPoint.getLat()) * point.getX() - (node.getLon() - nearestPoint.getLon()) * point.getY() + node.getLon() * nearestPoint.getLat() - node.getLat() * nearestPoint.getLon()) /
-                Math.sqrt(Math.pow(node.getLat() - nearestPoint.getLat(), 2) + Math.pow(node.getLon() - nearestPoint.getLon(), 2));
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
