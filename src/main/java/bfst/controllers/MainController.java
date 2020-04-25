@@ -21,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -50,6 +51,15 @@ public class MainController {
     private Address destinationAddress;
     private Address startAddress;
     private Address currentAddress;
+
+    ToggleGroup vehicleGroup = new ToggleGroup();
+    RadioButton carButton = new RadioButton("Car");
+    RadioButton bikeButton = new RadioButton("Bicycle");
+    RadioButton walkButton = new RadioButton("Walk");
+
+    ToggleGroup shortFastGroup = new ToggleGroup();
+    RadioButton shortButton = new RadioButton("Shortest");
+    RadioButton fastButton = new RadioButton("Fastest");
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
@@ -96,6 +106,8 @@ public class MainController {
     @FXML VBox directionsInfo;
     @FXML Label startLabel;
     @FXML Label destinationLabel;
+    @FXML HBox vehicleSelection;
+    @FXML HBox shortestFastestSelection;
 
     private boolean shouldPan = true;
     private boolean showStreetOnHover = true;
@@ -313,10 +325,14 @@ public class MainController {
         });
 
         findRoute.setOnAction(e -> {
-            String vehicle = "Car";
+            RadioButton selectedVehicleButton = (RadioButton) vehicleGroup.getSelectedToggle();
+            String vehicle = selectedVehicleButton.getText();
+            RadioButton selectedShortFastButton = (RadioButton) shortFastGroup.getSelectedToggle();
+            boolean shortestRoute = selectedShortFastButton.getText().equals("Shortest");
+
             long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startAddress.getCentroid(), vehicle)).getAsLong();
             long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), vehicle)).getAsLong(); //TODO refactor as method
-            canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, true);
+            canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
             showDirectionsMenu();
         });
 
@@ -363,6 +379,18 @@ public class MainController {
 
         });
         stackPane.setAlignment(pinInfo, Pos.BOTTOM_CENTER);
+
+        carButton.setToggleGroup(vehicleGroup);
+        bikeButton.setToggleGroup(vehicleGroup);
+        walkButton.setToggleGroup(vehicleGroup);
+        carButton.setSelected(true);
+        vehicleSelection.getChildren().addAll(carButton, bikeButton, walkButton);
+
+        shortButton.setToggleGroup(shortFastGroup);
+        fastButton.setToggleGroup(shortFastGroup);
+        shortButton.setSelected(true);
+        shortestFastestSelection.getChildren().addAll(shortButton, fastButton);
+
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
