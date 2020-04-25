@@ -386,11 +386,28 @@ public class MainController {
         carButton.setSelected(true);
         vehicleSelection.getChildren().addAll(carButton, bikeButton, walkButton);
 
+        bikeButton.setOnAction(e -> {
+            disableShortFastChoice();
+        });
+        walkButton.setOnAction(e -> {
+            disableShortFastChoice();
+        });
+        carButton.setOnAction(e -> {
+            shortButton.setDisable(false);
+            fastButton.setDisable(false);
+        });
+
         shortButton.setToggleGroup(shortFastGroup);
         fastButton.setToggleGroup(shortFastGroup);
         shortButton.setSelected(true);
         shortestFastestSelection.getChildren().addAll(shortButton, fastButton);
 
+    }
+
+    private void disableShortFastChoice() {
+        shortButton.setSelected(true);
+        fastButton.setDisable(true);
+        shortButton.setDisable(true);
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
@@ -559,6 +576,12 @@ public class MainController {
             destinationLabel.setText("Destination: " + destinationAddress.toString());
         } else {
             destinationLabel.setText("Destination: Not set");
+        }
+
+        if (startAddress == null || destinationAddress == null) {
+            findRoute.setDisable(true);
+        } else {
+            findRoute.setDisable(false);
         }
 
         if (canvas.getDescription() != null) {
