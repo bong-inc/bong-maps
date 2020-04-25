@@ -117,6 +117,9 @@ public class OSMReader {
                                             case "trunk":
                                                 defaultSpeed = 80;
                                                 break;
+                                            case "living_street":
+                                                defaultSpeed = 30;
+                                                break;
                                             default:
                                                 defaultSpeed = 50;
                                                 break;
