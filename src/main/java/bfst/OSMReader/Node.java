@@ -35,7 +35,7 @@ public class Node extends CanvasElement implements LongSupplier, Serializable {
 
     @Override
     public String toString() {
-        return "Node, lat:" + lat + " lon:" + lon + " ID:" + id;
+        return "Node, lon:" + lon + " lat:" + lat + " + id:" + id;
     }
 
     @Override

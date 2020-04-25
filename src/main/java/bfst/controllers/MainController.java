@@ -96,7 +96,6 @@ public class MainController {
     @FXML CheckMenuItem hoverToShowStreet;
     @FXML MenuItem zoomToArea;
     @FXML Button findRoute;
-    @FXML Label streetNearMouse;
 
     private boolean shouldPan = true;
     private boolean showStreetOnHover = true;
@@ -347,7 +346,6 @@ public class MainController {
                         streetName = "Unnamed street";
                     }
                     canvas.repaint(25);
-                    streetNearMouse.setText(streetName);
                     canvas.drawEdge(streetEdge);
 
                     if (canvas.getShowStreetNodeCloseToMouse()) {
@@ -529,9 +527,23 @@ public class MainController {
         //TODO vis "ingen adresse fundet" hvis der er for langt til nærmeste adresse.
         currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
         pointAddress.setText(currentAddress.toString());
+        double distance = distance(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
+        System.out.println("distance: " + distance);
+        if (distance > 50) {
+            pointAddress.setText("No nearby address");
+        }
 
         pinInfo.setTranslateY(10);
         pinInfo.setVisible(true);
+    }
+
+    private double distance(float pinX, float pinY, float addressX, float addressY) {
+        System.out.println("clicked: " + pinX + " " +pinY);
+        System.out.println("address: " + addressX + " " + addressY);
+        double meterMultiplier = - (MercatorProjector.unproject(pinX, pinY).getLat()) / 100;
+        System.out.println("multiplier: " + meterMultiplier);
+        double distance = Math.sqrt(Math.pow(pinX - addressX, 2) + Math.pow(pinY - addressY, 2));
+        return distance * meterMultiplier;
     }
 
     public void hidePinMenu() {
