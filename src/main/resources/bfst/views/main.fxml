@@ -54,21 +54,28 @@
             <VBox fx:id="suggestions" styleClass="suggestions">
             </VBox>
           </VBox>
-          <VBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
-              <Label fx:id="pointAddress" styleClass="pointAddress"/>
-              <Label fx:id="pointCoords" styleClass="pointCoords"/>
-              <Button fx:id="POIButton"/>
-              <Button fx:id="setAsDestination">Set this point as destination</Button>
-              <Button fx:id="setAsStart">Set this point as start</Button>
-              <Button fx:id="findRoute">Find route</Button>
-              <VBox fx:id="routeInfo">
-                <Label fx:id="routeDistance"/>
-                <Label fx:id="routeTime"/>
-                <ScrollPane styleClass="directions">
-                  <VBox fx:id="directions" styleClass="directionButtons"/>
-                </ScrollPane>
-              </VBox>
-          </VBox>
+
+            <VBox fx:id="directionsInfo" styleClass="directionsInfo" style="visibility: false">
+                <Label fx:id="startLabel"/>
+                <Label fx:id="destinationLabel"/>
+                <Button fx:id="findRoute">Find route</Button>
+                <VBox fx:id="routeInfo">
+                    <Label fx:id="routeDistance"/>
+                    <Label fx:id="routeTime"/>
+                    <ScrollPane styleClass="directions">
+                        <VBox fx:id="directions" styleClass="directionButtons"/>
+                    </ScrollPane>
+                </VBox>
+            </VBox>
+
+        </VBox>
+
+        <VBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
+            <Label fx:id="pointAddress" styleClass="pointAddress"/>
+            <Label fx:id="pointCoords" styleClass="pointCoords"/>
+            <Button fx:id="POIButton"/>
+            <Button fx:id="setAsDestination">Set this point as destination</Button>
+            <Button fx:id="setAsStart">Set this point as start</Button>
         </VBox>
     </StackPane>
   </children>

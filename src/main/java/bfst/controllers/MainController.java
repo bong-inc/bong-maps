@@ -1,7 +1,6 @@
 package bfst.controllers;
 
 import bfst.App;
-import bfst.OSMReader.KDTreeForEdges;
 import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Model;
 import bfst.OSMReader.Node;
@@ -13,16 +12,15 @@ import bfst.exceptions.FileTypeNotSupportedException;
 import bfst.routeFinding.Edge;
 import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -31,7 +29,6 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Duration;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -96,6 +93,9 @@ public class MainController {
     @FXML CheckMenuItem hoverToShowStreet;
     @FXML MenuItem zoomToArea;
     @FXML Button findRoute;
+    @FXML VBox directionsInfo;
+    @FXML Label startLabel;
+    @FXML Label destinationLabel;
 
     private boolean shouldPan = true;
     private boolean showStreetOnHover = true;
@@ -302,12 +302,14 @@ public class MainController {
             canvas.clearRoute();
             destinationAddress = currentAddress;
             canvas.setRouteDestination(destinationAddress.getLon(), destinationAddress.getLat());
+            showDirectionsMenu();
         });
 
         setAsStart.setOnAction(e -> {
             canvas.clearRoute();
             startAddress = currentAddress;
             canvas.setRouteOrigin(startAddress.getLon(), startAddress.getLat());
+            showDirectionsMenu();
         });
 
         findRoute.setOnAction(e -> {
@@ -315,6 +317,7 @@ public class MainController {
             long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startAddress.getCentroid(), vehicle)).getAsLong();
             long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), vehicle)).getAsLong(); //TODO refactor as method
             canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, true);
+            showDirectionsMenu();
         });
 
         canvas.setOnMouseMoved(e -> {
@@ -359,6 +362,7 @@ public class MainController {
             }
 
         });
+        stackPane.setAlignment(pinInfo, Pos.BOTTOM_CENTER);
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
@@ -504,6 +508,31 @@ public class MainController {
         Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
         pointCoords.setText("Point at " + -unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
 
+        currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
+        pointAddress.setText(currentAddress.toString());
+        double distance = distance(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
+        System.out.println("distance: " + distance);
+        if (distance > 50) {
+            pointAddress.setText("No nearby address");
+        }
+
+        pinInfo.setTranslateY(10);
+        pinInfo.setVisible(true);
+    }
+
+    public void showDirectionsMenu() {
+        if (startAddress != null) {
+            startLabel.setText("Start: " + startAddress.toString());
+        } else {
+            startLabel.setText("Start: Not set");
+        }
+
+        if (destinationAddress != null) {
+            destinationLabel.setText("Destination: " + destinationAddress.toString());
+        } else {
+            destinationLabel.setText("Destination: Not set");
+        }
+
         if (canvas.getDescription() != null) {
             directions.getChildren().clear();
             for (Instruction instruction : canvas.getDescription()) {
@@ -524,17 +553,7 @@ public class MainController {
             routeInfo.setVisible(false);
         }
 
-        //TODO vis "ingen adresse fundet" hvis der er for langt til nærmeste adresse.
-        currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
-        pointAddress.setText(currentAddress.toString());
-        double distance = distance(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
-        System.out.println("distance: " + distance);
-        if (distance > 50) {
-            pointAddress.setText("No nearby address");
-        }
-
-        pinInfo.setTranslateY(10);
-        pinInfo.setVisible(true);
+        directionsInfo.setVisible(true);
     }
 
     private double distance(float pinX, float pinY, float addressX, float addressY) {

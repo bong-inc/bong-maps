@@ -90,15 +90,19 @@
     -fx-background-color: white;
 }
 
-.pinInfo {
+.pinInfo, .directionsInfo {
     -fx-background-color: white;
-    -fx-max-width: 400px;
+    -fx-max-width: 300px;
+    -fx-max-height: 200px;
     -fx-padding: 5 10;
     -fx-background-radius: 5;
     -fx-spacing: 10;
 }
 
-
+.directionsInfo {
+    -fx-max-width: 400px;
+    -fx-max-height: 400px;
+}
 
 .icon-button .icon {
     -fx-background-color: #ddd;
