@@ -1,7 +1,6 @@
 package bfst.controllers;
 
 import bfst.App;
-import bfst.OSMReader.CanvasElement;
 import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Model;
 import bfst.OSMReader.Node;
@@ -10,19 +9,25 @@ import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
 import bfst.canvas.*;
 import bfst.exceptions.FileTypeNotSupportedException;
+import bfst.routeFinding.Edge;
 import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -32,7 +37,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -44,9 +51,18 @@ public class MainController {
     private Point2D lastMouse;
     private ArrayList<Address> tempBest = new ArrayList<>();
     private boolean hasBeenDragged = false;
+    private Address destinationAddress;
+    private Address startAddress;
+    private Address currentAddress;
 
-    public static CanvasElement champion;
-    public static CanvasElement champion2;
+    ToggleGroup vehicleGroup = new ToggleGroup();
+    RadioButton carButton = new RadioButton("Car");
+    RadioButton bikeButton = new RadioButton("Bicycle");
+    RadioButton walkButton = new RadioButton("Walk");
+
+    ToggleGroup shortFastGroup = new ToggleGroup();
+    RadioButton shortButton = new RadioButton("Shortest");
+    RadioButton fastButton = new RadioButton("Fastest");
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
@@ -68,11 +84,13 @@ public class MainController {
     @FXML MenuItem loadDefaultMap;
     @FXML MenuItem saveAs;
     @FXML MenuItem devtools;
+    @FXML MenuItem about;
+    @FXML MenuItem help;
     @FXML TextField searchField;
     @FXML VBox suggestions;
 
     @FXML Menu myPoints;
-    @FXML VBox pinInfo;
+    @FXML HBox pinInfo;
     @FXML Label pointAddress;
     @FXML Label pointCoords;
     @FXML Button POIButton;
@@ -85,9 +103,19 @@ public class MainController {
     @FXML Menu view;
     @FXML CheckMenuItem publicTransport;
     @FXML CheckMenuItem darkMode;
+    @FXML CheckMenuItem hoverToShowStreet;
     @FXML MenuItem zoomToArea;
+    @FXML Button findRoute;
+    @FXML VBox directionsInfo;
+    @FXML Label startLabel;
+    @FXML Label destinationLabel;
+    @FXML HBox vehicleSelection;
+    @FXML HBox shortestFastestSelection;
+    @FXML Label noRouteFound;
+    @FXML Button cancelRoute;
 
     private boolean shouldPan = true;
+    private boolean showStreetOnHover = false;
     private String tempQuery = "";
 
     @FXML
@@ -176,19 +204,25 @@ public class MainController {
         });
 
         devtools.setOnAction(e -> {
-            try {
-                Stage devStage = new Stage();
-                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/devview.fxml"));
-                DevController devController = new DevController(devStage, canvas);
-                fxmlLoader.setController(devController);
-                Parent root = fxmlLoader.load();
-                devStage.setTitle("dev tools");
-                Scene scene = new Scene(root);
-                scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
-                devStage.setScene(scene);
-                devStage.show();
-            } catch (Exception ex){
-                ex.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setHeaderText("Open dev tools?");
+            alert.setContentText("Dev tools are only supposed to be used by developers or advanced users");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                try {
+                    Stage devStage = new Stage();
+                    FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/devview.fxml"));
+                    DevController devController = new DevController(devStage, canvas);
+                    fxmlLoader.setController(devController);
+                    Parent root = fxmlLoader.load();
+                    devStage.setTitle("dev tools");
+                    Scene scene = new Scene(root);
+                    scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+                    devStage.setScene(scene);
+                    devStage.show();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -224,8 +258,8 @@ public class MainController {
                 Address a = (Address) suggestions.getChildren().get(0).getUserData();
                 searchField.setText(a.toString());
                 searchField.positionCaret(searchField.getText().length());
-                canvas.zoomToNode(a.node);
-                canvas.setPin(a.node);
+                canvas.zoomToPoint(1, a.getLon(),  a.getLat());
+                canvas.setPin(a.getLon(), a.getLat());
                 suggestions.getChildren().clear();
                 showPinMenu();
             }
@@ -241,10 +275,156 @@ public class MainController {
             canvas.setUseRegularColors(!darkMode.isSelected());
         });
 
+        hoverToShowStreet.setSelected(showStreetOnHover);
+        hoverToShowStreet.setOnAction(e -> {
+            showStreetOnHover = hoverToShowStreet.isSelected();
+            canvas.repaint(26);
+        });
+
         zoomToArea.setOnAction(e ->  {
             shouldPan = false;
         });
 
+        about.setOnAction(e -> {
+            try {
+                Stage aboutStage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/about.fxml"));
+                Parent root = fxmlLoader.load();
+                aboutStage.setTitle("About");
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+                aboutStage.setScene(scene);
+                aboutStage.show();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        help.setOnAction(e -> {
+            try {
+                Stage helpStage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/help.fxml"));
+                Parent root = fxmlLoader.load();
+                helpStage.setTitle("Help");
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+                helpStage.setScene(scene);
+                helpStage.show();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        setAsDestination.setOnAction(e -> {
+            canvas.clearRoute();
+            destinationAddress = currentAddress;
+            canvas.setRouteDestination(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+            showDirectionsMenu();
+        });
+
+        setAsStart.setOnAction(e -> {
+            canvas.clearRoute();
+            startAddress = currentAddress;
+            canvas.setRouteOrigin(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+            showDirectionsMenu();
+        });
+
+        findRoute.setOnAction(e -> {
+            RadioButton selectedVehicleButton = (RadioButton) vehicleGroup.getSelectedToggle();
+            String vehicle = selectedVehicleButton.getText();
+            RadioButton selectedShortFastButton = (RadioButton) shortFastGroup.getSelectedToggle();
+            boolean shortestRoute = selectedShortFastButton.getText().equals("Shortest");
+
+            long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startAddress.getCentroid(), vehicle)).getAsLong();
+            long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), vehicle)).getAsLong(); //TODO refactor as method
+            try {
+                noRouteFound.setText("");
+                canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
+            } catch (Exception ex) {
+                noRouteFound.setText("No route found");
+            }
+            showDirectionsMenu();
+        });
+
+        canvas.setOnMouseMoved(e -> {
+            if (showStreetOnHover) {
+                try {
+                    Point2D translatedCoords = canvas.getTrans().inverseTransform(e.getX(), e.getY());
+                    Node nearestNode = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Car");
+                    long nodeAsLong = nearestNode.getAsLong();
+                    Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
+                    double bestAngle = Double.POSITIVE_INFINITY;
+
+
+                    Point2D mouseRelativeToNodeVector = new Point2D(translatedCoords.getX() - nearestNode.getLon(), translatedCoords.getY() - nearestNode.getLat());
+
+                    for (Edge edge : model.getGraph().getAdj().get(nearestNode.getAsLong())) {
+                        Node otherNode = edge.otherNode(nodeAsLong);
+                        Point2D otherNodeRelativeToNodeVector = new Point2D(otherNode.getLon() - nearestNode.getLon(), otherNode.getLat() - nearestNode.getLat());
+
+                        double angle = Math.acos((mouseRelativeToNodeVector.getX() * otherNodeRelativeToNodeVector.getX() + mouseRelativeToNodeVector.getY() * otherNodeRelativeToNodeVector.getY()) / (mouseRelativeToNodeVector.magnitude() * otherNodeRelativeToNodeVector.magnitude()));
+
+                        if (angle < bestAngle) {
+                            bestAngle = angle;
+                            streetEdge = edge;
+                        }
+                    }
+
+                    String streetName = streetEdge.getStreet().getName();
+                    if (streetName == null) {
+                        streetName = "Unnamed street";
+                    }
+                    canvas.repaint(25);
+                    canvas.drawEdge(streetEdge);
+
+                    if (canvas.getShowStreetNodeCloseToMouse()) {
+                        canvas.drawNode(nearestNode);
+                    }
+
+                    canvas.drawStreetName(translatedCoords, streetName);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        });
+
+        carButton.setToggleGroup(vehicleGroup);
+        bikeButton.setToggleGroup(vehicleGroup);
+        walkButton.setToggleGroup(vehicleGroup);
+        carButton.setSelected(true);
+        vehicleSelection.getChildren().addAll(carButton, bikeButton, walkButton);
+
+        bikeButton.setOnAction(e -> {
+            disableShortFastChoice();
+        });
+        walkButton.setOnAction(e -> {
+            disableShortFastChoice();
+        });
+        carButton.setOnAction(e -> {
+            shortButton.setDisable(false);
+            fastButton.setDisable(false);
+        });
+
+        shortButton.setToggleGroup(shortFastGroup);
+        fastButton.setToggleGroup(shortFastGroup);
+        shortButton.setSelected(true);
+        shortestFastestSelection.getChildren().addAll(shortButton, fastButton);
+
+        cancelRoute.setOnAction(e -> {
+            canvas.clearRoute();
+            startAddress = null;
+            destinationAddress = null;
+            canvas.clearOriginDestination();
+            directionsInfo.setVisible(false);
+        });
+
+    }
+
+    private void disableShortFastChoice() {
+        shortButton.setSelected(true);
+        fastButton.setDisable(true);
+        shortButton.setDisable(true);
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
@@ -300,18 +480,32 @@ public class MainController {
 
     }
 
+    private SVGPath createPath(String svgString) {
+        SVGPath path = new SVGPath();
+        path.getStyleClass().add("icon");
+        path.setContent(svgString);
+        return path;
+    }
+
     public void setPOIButton() {
+        AtomicBoolean POIExists = new AtomicBoolean(false);
+
         if (canvas.POIContains(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY())) {
-            POIButton.setText("Remove from my points of interest");
+            POIExists.set(true);
+            POIButton.getStyleClass().removeAll("POIButton-add");
+            POIButton.getStyleClass().add("POIButton-remove");
         } else {
-            POIButton.setText("Add to my points of interest");
+            POIExists.set(false);
+            POIButton.getStyleClass().removeAll("POIButton-remove");
+            POIButton.getStyleClass().add("POIButton-add");
         }
 
         POIButton.setOnAction(e -> {
-            if (POIButton.getText().equals("Add to my points of interest")) {
+            if (!POIExists.get()) {
                 addPointOfInterest();
                 savePointsOfInterest();
-                POIButton.setText("Remove from my points of interest");
+                POIExists.set(true);
+                setPOIButton();
             } else {
                 canvas.removePOI(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
                 savePointsOfInterest();
@@ -319,7 +513,8 @@ public class MainController {
                 for (PointOfInterest poi : canvas.getPointsOfInterest()) {
                     addItemToMyPoints(poi);
                 }
-                POIButton.setText("Add to my points of interest");
+                POIExists.set(false);
+                setPOIButton();
             }
         });
     }
@@ -396,7 +591,38 @@ public class MainController {
     public void showPinMenu() {
         setPOIButton();
         Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
-        pointCoords.setText("Point at " + -unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
+        pointCoords.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
+
+        currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
+        pointAddress.setText(currentAddress.toString());
+        double distance = distance(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
+        System.out.println("distance: " + distance);
+        if (distance > 50) {
+            pointAddress.setText("No nearby address");
+        }
+
+        pinInfo.setTranslateY(10);
+        pinInfo.setVisible(true);
+    }
+
+    public void showDirectionsMenu() {
+        if (startAddress != null) {
+            startLabel.setText("Start: " + startAddress.toString());
+        } else {
+            startLabel.setText("Start: Not set");
+        }
+
+        if (destinationAddress != null) {
+            destinationLabel.setText("Destination: " + destinationAddress.toString());
+        } else {
+            destinationLabel.setText("Destination: Not set");
+        }
+
+        if (startAddress == null || destinationAddress == null) {
+            findRoute.setDisable(true);
+        } else {
+            findRoute.setDisable(false);
+        }
 
         if (canvas.getDescription() != null) {
             directions.getChildren().clear();
@@ -413,13 +639,23 @@ public class MainController {
         }
 
         if (canvas.getRoute() != null) {
-            routeInfo.setVisible(true); //TODO vbox resizer ikke ordentligt
+            routeInfo.setVisible(true);
+            routeInfo.setManaged(true);
         } else {
             routeInfo.setVisible(false);
+            routeInfo.setManaged(false);
         }
 
-        pinInfo.setTranslateY(10);
-        pinInfo.setVisible(true);
+        directionsInfo.setVisible(true);
+    }
+
+    private double distance(float pinX, float pinY, float addressX, float addressY) {
+        System.out.println("clicked: " + pinX + " " +pinY);
+        System.out.println("address: " + addressX + " " + addressY);
+        double meterMultiplier = - (MercatorProjector.unproject(pinX, pinY).getLat()) / 100;
+        System.out.println("multiplier: " + meterMultiplier);
+        double distance = Math.sqrt(Math.pow(pinX - addressX, 2) + Math.pow(pinY - addressY, 2));
+        return distance * meterMultiplier;
     }
 
     public void hidePinMenu() {
@@ -444,7 +680,11 @@ public class MainController {
 
     public void saveFileOnClick(ActionEvent e){
         try {
-            File file = new FileChooser().showSaveDialog(stage);
+            FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Binary file (*.bin)", "*.bin");
+            fileChooser.getExtensionFilters().add(extFilter);
+            fileChooser.setInitialFileName("myMap");
+            File file = fileChooser.showSaveDialog(stage);
             if(file != null){
                 saveBinary(file, model);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -461,14 +701,25 @@ public class MainController {
 
     public void loadFileOnClick(ActionEvent e){
         try {
-            File file = new FileChooser().showOpenDialog(stage);
-            loadFile(file);
+            List<String> acceptedFileTypes = new ArrayList<>();
+            acceptedFileTypes.add("*.bin");
+            acceptedFileTypes.add("*.osm");
+            acceptedFileTypes.add("*.zip");
+
+            FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Binary, OSM or ZIP file", acceptedFileTypes);
+            fileChooser.getExtensionFilters().add(extFilter);
+            fileChooser.setInitialFileName("myMap");
+            File file = fileChooser.showOpenDialog(stage);
+            if (file != null) {
+                loadFile(file);
+            }
         } catch(FileTypeNotSupportedException exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("File type not supported: " + exception.getFileType());
             alert.showAndWait();
-        } catch (NullPointerException ignored){ //For when filechooser is opened and closed with no file.
-
+        } catch (NullPointerException exception){
+            exception.printStackTrace();
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("Something unexpected happened, please try again");

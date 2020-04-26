@@ -1,5 +1,6 @@
 package bfst.controllers;
 
+import bfst.OSMReader.KDTree;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.PointOfInterest;
 import bfst.canvas.Type;
@@ -62,6 +63,12 @@ public class DevController {
     private Button printPOI;
     @FXML
     private CheckBox fullscreenRange;
+    @FXML
+    private CheckBox drawBoundingBox;
+    @FXML
+    private CheckBox showClosestNode;
+    @FXML
+    private CheckBox drawBound;
 
     @FXML
     public void initialize() {
@@ -153,6 +160,22 @@ public class DevController {
         fullscreenRange.setOnAction(e -> {
             canvas.setRenderFullScreen(fullscreenRange.isSelected());
             canvas.repaint(15);
+        });
+
+        drawBoundingBox.selectedProperty().set(KDTree.drawBoundingBox);
+        drawBoundingBox.setOnAction(e -> {
+            KDTree.drawBoundingBox = drawBoundingBox.isSelected();
+            canvas.repaint(21);
+        });
+
+        showClosestNode.setSelected(false);
+        showClosestNode.setOnAction(e -> {
+            canvas.setShowStreetNodeCloseToMouse(showClosestNode.isSelected());
+        });
+
+        drawBound.setSelected(canvas.getDrawBound());
+        drawBound.setOnAction(e -> {
+            canvas.setDrawBound(drawBound.isSelected());
         });
     }
 

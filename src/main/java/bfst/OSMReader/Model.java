@@ -1,8 +1,10 @@
 package bfst.OSMReader;
 
 import bfst.addressparser.Address;
+import bfst.canvas.CanvasElement;
 import bfst.canvas.City;
 import bfst.canvas.Drawable;
+import bfst.canvas.Range;
 import bfst.canvas.Type;
 import bfst.routeFinding.*;
 
@@ -16,32 +18,38 @@ import java.util.Map.Entry;
 public class Model implements Serializable {
     private static final long serialVerionUID = 101010101010100l;
 
-    private Map<Type, ArrayList<CanvasElement>> drawablesByType;
     private ArrayList<CanvasElement> coastLines;
     private Map<Type, KDTree> kdtreeByType;
     private ArrayList<Address> addresses;
     private ArrayList<City> cities;
     private Graph graph;
+    private KDTree addressKDTree;
+    private KDTreeForEdges roadKDTree;
+
 
     private Bound bound;
 
     public Model(OSMReader reader){
-        this.drawablesByType = reader.getDrawableByType();
         this.bound = reader.getBound();
         this.addresses = reader.getAddresses();
         this.cities = reader.getCities();
         this.graph = reader.getGraph();
         Collections.sort(addresses);
         Collections.sort(cities);
-        this.coastLines = getDrawablesOfType(Type.COASTLINE);
-        this.kdtreeByType = createKdtreeByType();
+        addresses.trimToSize();
+        cities.trimToSize();
+        this.coastLines = reader.getDrawableByType().get(Type.COASTLINE);
+        this.kdtreeByType = createKdtreeByType(reader.getDrawableByType());
+        this.addressKDTree = createKDTreeFromAddresses();
+        this.roadKDTree = new KDTreeForEdges(reader.getRoadEdges(), new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
     }
 
-    public Map<Type, KDTree> createKdtreeByType(){
+    public Map<Type, KDTree> createKdtreeByType(Map<Type, ArrayList<CanvasElement>> drawablesByType){
         kdtreeByType = new HashMap<Type, KDTree>();
         for(Entry<Type, ArrayList<CanvasElement>> e : drawablesByType.entrySet()){
             if(e.getKey() == Type.COASTLINE) continue;
-            KDTree current = new KDTree(e.getValue(),bound.getMinLon(),bound.getMinLat(),bound.getMaxLon() - bound.getMinLon(), bound.getMaxLat() - bound.getMinLat());
+            e.getValue().trimToSize();
+            KDTree current = new KDTree(e.getValue(), new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
             kdtreeByType.put(e.getKey(), current);
         }
         return kdtreeByType;
@@ -51,14 +59,15 @@ public class Model implements Serializable {
         return coastLines;
     }
 
-    public KDTree getKDTreeOfType(Type type){
+    public KDTree getKDTreeByType(Type type){
         return kdtreeByType.get(type);
     }
 
-    public ArrayList<CanvasElement> getDrawablesOfType(Type type){
-        return drawablesByType.get(type);
+    private KDTree createKDTreeFromAddresses(){
+        ArrayList<CanvasElement> list = new ArrayList<>(addresses);
+        return new KDTree(list, new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
     }
-
+    
     public ArrayList<Address> getAddresses(){
         return addresses;
     }
@@ -73,5 +82,13 @@ public class Model implements Serializable {
 
     public Graph getGraph() {
         return graph;
+    }
+
+    public KDTree getAddressKDTree() {
+        return addressKDTree;
+    }
+
+    public KDTreeForEdges getRoadKDTree() {
+        return roadKDTree;
     }
 }

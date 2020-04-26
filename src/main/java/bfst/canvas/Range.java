@@ -1,9 +1,11 @@
 package bfst.canvas;
 
+import java.io.Serializable;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Range {
+public class Range implements Serializable {
   public float minX, minY, maxX, maxY;
 
   public Range(float minX, float minY, float maxX, float maxY) {

@@ -12,6 +12,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
@@ -20,7 +21,6 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 public class OSMReader {
     private NodeContainer tempNodes = new NodeContainer();
     private SortedArrayList<Way> tempWays = new SortedArrayList<>();
-    private SortedArrayList<Relation> tempRelations = new SortedArrayList<>();
     private HashMap<Long, Way> tempCoastlines = new HashMap<>();
     private Bound bound;
     private bfst.canvas.Type type;
@@ -29,6 +29,7 @@ public class OSMReader {
     private Relation relationHolder;
     private ArrayList<String> tagList = new ArrayList<>();
     private Street currentStreet;
+    private ArrayList<Edge> roadEdges = new ArrayList<>();
 
     int counter = 0; //TODO bruges kun til videreudvikling, skal fjernes fra endelige produkt
 
@@ -61,6 +62,10 @@ public class OSMReader {
     }
 
     public Bound getBound(){return bound;}
+
+    public List<Edge> getRoadEdges() {
+        return roadEdges;
+    }
 
     public OSMReader(InputStream inputStream){
         try {
@@ -112,6 +117,9 @@ public class OSMReader {
                                             case "trunk":
                                                 defaultSpeed = 80;
                                                 break;
+                                            case "living_street":
+                                                defaultSpeed = 30;
+                                                break;
                                             default:
                                                 defaultSpeed = 50;
                                                 break;
@@ -121,9 +129,12 @@ public class OSMReader {
                                         currentStreet = new Street(tagList, defaultSpeed);
 
                                         for (int j = 1; j < nodes.length; j++){
-                                            Edge edge = new Edge(tempNodes.get(nodes[j-1]), tempNodes.get(nodes[j]), currentStreet);
+                                            Node currentNode = tempNodes.get(nodes[j]);
+                                            Edge edge = new Edge(tempNodes.get(nodes[j-1]), currentNode, currentStreet);
                                             graph.addEdge(edge);
+                                            roadEdges.add(edge);
                                         }
+
                                         break; 
                                     }
                                 }
@@ -157,7 +168,7 @@ public class OSMReader {
                             case "relation":
                                 relationHolder.collectRelation(tempNodes);
                                 if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
-                                if(relationHolder.getWays() != null) drawableByType.get(type).add(new PolyLinePath(relationHolder, type, tempNodes));
+                                if(relationHolder.getWays().size() > 0) drawableByType.get(type).add(new PolyLinePath(relationHolder, type, tempNodes));
                                 type = Type.UNKNOWN;
                                 break;
                             case "osm":
@@ -186,6 +197,10 @@ public class OSMReader {
             }
         } catch (XMLStreamException e) {
             e.printStackTrace();
+        }
+
+        for (var entry : graph.getAdj().entrySet()) {
+            entry.getValue().trimToSize();
         }
     }
 
@@ -216,7 +231,8 @@ public class OSMReader {
                 float tempLon = Float.parseFloat(reader.getAttributeValue(null, "lon"));
                 float tempLat = Float.parseFloat(reader.getAttributeValue(null, "lat"));
                 nodeHolder = MercatorProjector.project(currentID, tempLon, -tempLat);
-                builder.node(nodeHolder);
+                builder.lat(nodeHolder.getLat());
+                builder.lon(nodeHolder.getLon());
                 cityBuilder.node(nodeHolder);
                 break;
             case "way":
@@ -228,7 +244,7 @@ public class OSMReader {
             case "relation":
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 relationHolder = new Relation(currentID);
-                tempRelations.add(relationHolder);
+                //tempRelations.add(relationHolder);
                 break;
             case "tag":
                 String k = reader.getAttributeValue(null, "k").intern();
@@ -443,7 +459,8 @@ public class OSMReader {
     public void destroy(){
         tempNodes = null;
         tempWays = null;
-        tempRelations = null;
+        //tempRelations = null;
         tempCoastlines = null;
+        drawableByType = null;
     }
 }
