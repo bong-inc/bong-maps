@@ -314,14 +314,14 @@ public class MainController {
         setAsDestination.setOnAction(e -> {
             canvas.clearRoute();
             destinationAddress = currentAddress;
-            canvas.setRouteDestination(destinationAddress.getLon(), destinationAddress.getLat());
+            canvas.setRouteDestination(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
             showDirectionsMenu();
         });
 
         setAsStart.setOnAction(e -> {
             canvas.clearRoute();
             startAddress = currentAddress;
-            canvas.setRouteOrigin(startAddress.getLon(), startAddress.getLat());
+            canvas.setRouteOrigin(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
             showDirectionsMenu();
         });
 
