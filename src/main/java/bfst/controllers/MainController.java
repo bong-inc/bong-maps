@@ -112,7 +112,7 @@ public class MainController {
     @FXML Button cancelRoute;
 
     private boolean shouldPan = true;
-    private boolean showStreetOnHover = true;
+    private boolean showStreetOnHover = false;
     private String tempQuery = "";
 
     @FXML
@@ -385,7 +385,6 @@ public class MainController {
             }
 
         });
-        stackPane.setAlignment(pinInfo, Pos.BOTTOM_CENTER);
 
         carButton.setToggleGroup(vehicleGroup);
         bikeButton.setToggleGroup(vehicleGroup);

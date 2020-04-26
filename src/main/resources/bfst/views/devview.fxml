@@ -15,6 +15,7 @@
   <FlowPane>
     <Button fx:id="selectall">Select All</Button>
     <Button fx:id="deselectall">Deselect All</Button>
+    <CheckBox fx:id="drawBound">Draw OSM bound</CheckBox>
     <CheckBox fx:id="smartTraceToggle">Use smart trace</CheckBox>
     <CheckBox fx:id="colorToggle">Use regular colors</CheckBox>
     <CheckBox fx:id="citiesToggle">Show citites</CheckBox>

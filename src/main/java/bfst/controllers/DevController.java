@@ -67,6 +67,8 @@ public class DevController {
     private CheckBox drawBoundingBox;
     @FXML
     private CheckBox showClosestNode;
+    @FXML
+    private CheckBox drawBound;
 
     @FXML
     public void initialize() {
@@ -169,6 +171,11 @@ public class DevController {
         showClosestNode.setSelected(false);
         showClosestNode.setOnAction(e -> {
             canvas.setShowStreetNodeCloseToMouse(showClosestNode.isSelected());
+        });
+
+        drawBound.setSelected(canvas.getDrawBound());
+        drawBound.setOnAction(e -> {
+            canvas.setDrawBound(drawBound.isSelected());
         });
     }
 

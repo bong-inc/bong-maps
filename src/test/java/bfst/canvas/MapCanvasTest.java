@@ -17,14 +17,14 @@ class MapCanvasTest {
 
         double expected;
         double actual;
-        expected = 104.03624346792648;
+        expected = -104.03624346792648;
         actual = canvas.calculateTurn(prevEdge1, currEdge1);
         Assertions.assertEquals(expected, actual);
 
         Edge prevEdge2 = new Edge(new Node(1, 5, 6), new Node(2, 9, 10), null);
         Edge currEdge2 = new Edge(new Node(2, 9, 10), new Node(2, 7, 12), null);
         actual = canvas.calculateTurn(prevEdge2, currEdge2);
-        expected = -90.0;
+        expected = 90.0;
         Assertions.assertEquals(expected, actual);
     }
 

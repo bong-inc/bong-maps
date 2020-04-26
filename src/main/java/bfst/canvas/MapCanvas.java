@@ -49,10 +49,12 @@ public class MapCanvas extends Canvas {
     private boolean showCities = true;
     private boolean useDependentDraw = true;
     private boolean showStreetNodeCloseToMouse = false;
+    private boolean drawBound = false;
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
-
+    
     Range renderRange;
+    
 
     public Affine getTrans() {
         return trans;
@@ -143,8 +145,10 @@ public class MapCanvas extends Canvas {
                 }
             }
 
-            gc.setStroke(Color.BLACK);
-            model.getBound().draw(gc, pixelwidth, false);
+            if(drawBound) {
+                gc.setStroke(Color.BLACK);
+                model.getBound().draw(gc, pixelwidth, false);
+            }
 
             if (currentRouteOrigin != null) currentRouteOrigin.draw(gc, pixelwidth);
             if (currentRouteDestination != null) currentRouteDestination.draw(gc, pixelwidth);
@@ -659,5 +663,13 @@ public class MapCanvas extends Canvas {
 
     public void setRouteDistance(double newDistance) {
         routeDistance = newDistance;
+    }
+
+    public void setDrawBound(boolean drawBound){
+        this.drawBound = drawBound;
+    }
+
+    public boolean getDrawBound(){
+        return drawBound;
     }
 }
