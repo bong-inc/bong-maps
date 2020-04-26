@@ -28,6 +28,7 @@
         <Menu mnemonicParsing="false" text="View" fx:id="view">
             <CheckMenuItem mnemonicParsing="false" text="Public transport" fx:id="publicTransport"/>
             <CheckMenuItem mnemonicParsing="false" text="Dark mode" fx:id="darkMode"/>
+            <CheckMenuItem mnemonicParsing="false" text="Hover to show street" fx:id="hoverToShowStreet"/>
             <MenuItem  mnemonicParsing="false" text="Zoom to area" fx:id="zoomToArea"/>
         </Menu>
         <Menu mnemonicParsing="false" text="More">
@@ -53,20 +54,32 @@
             <VBox fx:id="suggestions" styleClass="suggestions">
             </VBox>
           </VBox>
-          <VBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
-              <Label fx:id="pointAddress" styleClass="pointAddress">Nearest neighbor address goes here</Label>
-              <Label fx:id="pointCoords" styleClass="pointCoords"/>
-              <Button fx:id="POIButton"/>
-              <Button fx:id="setAsDestination" disable="true">Set this point as destination</Button>
-              <Button fx:id="setAsStart" disable="true">Set this point as start</Button>
-              <VBox fx:id="routeInfo">
-                <Label fx:id="routeDistance"/>
-                <Label fx:id="routeTime"/>
-                <ScrollPane styleClass="directions">
-                  <VBox fx:id="directions" styleClass="directionButtons"/>
-                </ScrollPane>
-              </VBox>
-          </VBox>
+
+            <VBox fx:id="directionsInfo" styleClass="directionsInfo" style="visibility: false">
+                <Label fx:id="startLabel"/>
+                <Label fx:id="destinationLabel"/>
+                <HBox fx:id="vehicleSelection" styleClass="hBox"/>
+                <HBox fx:id="shortestFastestSelection" styleClass="hBox"/>
+                <Button fx:id="findRoute">Find route</Button>
+                <Label fx:id="noRouteFound"/>
+                <VBox fx:id="routeInfo">
+                    <Label fx:id="routeDistance"/>
+                    <Label fx:id="routeTime"/>
+                    <ScrollPane styleClass="directions">
+                        <VBox fx:id="directions" styleClass="directionButtons"/>
+                    </ScrollPane>
+                </VBox>
+                <Button fx:id="cancelRoute">Cancel</Button>
+            </VBox>
+
+        </VBox>
+
+        <VBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
+            <Label fx:id="pointAddress" styleClass="pointAddress"/>
+            <Label fx:id="pointCoords" styleClass="pointCoords"/>
+            <Button fx:id="POIButton"/>
+            <Button fx:id="setAsDestination">Set this point as destination</Button>
+            <Button fx:id="setAsStart">Set this point as start</Button>
         </VBox>
     </StackPane>
   </children>

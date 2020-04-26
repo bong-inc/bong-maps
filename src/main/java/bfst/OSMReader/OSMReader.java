@@ -12,6 +12,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
@@ -28,6 +29,7 @@ public class OSMReader {
     private Relation relationHolder;
     private ArrayList<String> tagList = new ArrayList<>();
     private Street currentStreet;
+    private ArrayList<Edge> roadEdges = new ArrayList<>();
 
     int counter = 0; //TODO bruges kun til videreudvikling, skal fjernes fra endelige produkt
 
@@ -60,6 +62,10 @@ public class OSMReader {
     }
 
     public Bound getBound(){return bound;}
+
+    public List<Edge> getRoadEdges() {
+        return roadEdges;
+    }
 
     public OSMReader(InputStream inputStream){
         try {
@@ -111,6 +117,9 @@ public class OSMReader {
                                             case "trunk":
                                                 defaultSpeed = 80;
                                                 break;
+                                            case "living_street":
+                                                defaultSpeed = 30;
+                                                break;
                                             default:
                                                 defaultSpeed = 50;
                                                 break;
@@ -120,9 +129,12 @@ public class OSMReader {
                                         currentStreet = new Street(tagList, defaultSpeed);
 
                                         for (int j = 1; j < nodes.length; j++){
-                                            Edge edge = new Edge(tempNodes.get(nodes[j-1]), tempNodes.get(nodes[j]), currentStreet);
+                                            Node currentNode = tempNodes.get(nodes[j]);
+                                            Edge edge = new Edge(tempNodes.get(nodes[j-1]), currentNode, currentStreet);
                                             graph.addEdge(edge);
+                                            roadEdges.add(edge);
                                         }
+
                                         break; 
                                     }
                                 }

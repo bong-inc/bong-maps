@@ -65,6 +65,8 @@ public class DevController {
     private CheckBox fullscreenRange;
     @FXML
     private CheckBox drawBoundingBox;
+    @FXML
+    private CheckBox showClosestNode;
 
     @FXML
     public void initialize() {
@@ -162,6 +164,11 @@ public class DevController {
         drawBoundingBox.setOnAction(e -> {
             KDTree.drawBoundingBox = drawBoundingBox.isSelected();
             canvas.repaint(21);
+        });
+
+        showClosestNode.setSelected(false);
+        showClosestNode.setOnAction(e -> {
+            canvas.setShowStreetNodeCloseToMouse(showClosestNode.isSelected());
         });
     }
 

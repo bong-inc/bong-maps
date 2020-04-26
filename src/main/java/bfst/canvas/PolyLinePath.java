@@ -1,6 +1,6 @@
 package bfst.canvas;
 
-import bfst.OSMReader.CanvasElement;
+import bfst.canvas.CanvasElement;
 import bfst.OSMReader.NodeContainer;
 import bfst.OSMReader.Relation;
 import bfst.OSMReader.Way;

@@ -1,16 +1,21 @@
 package bfst.addressparser;
 
+import bfst.canvas.CanvasElement;
 import bfst.OSMReader.Node;
+import bfst.canvas.Range;
+import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
 
 import java.io.Serializable;
 import java.util.regex.*;
 
-public class Address implements Serializable, Comparable<Address> {
+public class Address extends CanvasElement implements Serializable, Comparable<Address> {
 
     private final String street, house, postcode, city, municipality;
 
     //public final int postcode;
     private final float lat, lon;
+    private Range boundingBox;
 
     private Address(
             String _street,
@@ -50,6 +55,7 @@ public class Address implements Serializable, Comparable<Address> {
         lat = _lat;
         lon = _lon;
 
+        setBoundingBox();
     }
 
     public String toString() {
@@ -142,6 +148,26 @@ public class Address implements Serializable, Comparable<Address> {
 
     public String getMunicipality() {
         return municipality;
+    }
+
+    @Override
+    public Point2D getCentroid() {
+        return new Point2D(this.lon, this.lat);
+    }
+
+    @Override
+    public Range getBoundingBox() {
+        return boundingBox;
+    }
+
+    @Override
+    public void setBoundingBox() {
+        this.boundingBox = new Range(this.lon, this.lat, this.lon, this.lat);
+    }
+
+    @Override
+    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+
     }
 
     public static class Builder {

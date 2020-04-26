@@ -1,7 +1,6 @@
 package bfst.controllers;
 
 import bfst.App;
-import bfst.OSMReader.CanvasElement;
 import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Model;
 import bfst.OSMReader.Node;
@@ -10,16 +9,19 @@ import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
 import bfst.canvas.*;
 import bfst.exceptions.FileTypeNotSupportedException;
+import bfst.routeFinding.Edge;
 import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -28,7 +30,6 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Pair;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -47,6 +48,18 @@ public class MainController {
     private Point2D lastMouse;
     private ArrayList<Address> tempBest = new ArrayList<>();
     private boolean hasBeenDragged = false;
+    private Address destinationAddress;
+    private Address startAddress;
+    private Address currentAddress;
+
+    ToggleGroup vehicleGroup = new ToggleGroup();
+    RadioButton carButton = new RadioButton("Car");
+    RadioButton bikeButton = new RadioButton("Bicycle");
+    RadioButton walkButton = new RadioButton("Walk");
+
+    ToggleGroup shortFastGroup = new ToggleGroup();
+    RadioButton shortButton = new RadioButton("Shortest");
+    RadioButton fastButton = new RadioButton("Fastest");
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
@@ -87,9 +100,19 @@ public class MainController {
     @FXML Menu view;
     @FXML CheckMenuItem publicTransport;
     @FXML CheckMenuItem darkMode;
+    @FXML CheckMenuItem hoverToShowStreet;
     @FXML MenuItem zoomToArea;
+    @FXML Button findRoute;
+    @FXML VBox directionsInfo;
+    @FXML Label startLabel;
+    @FXML Label destinationLabel;
+    @FXML HBox vehicleSelection;
+    @FXML HBox shortestFastestSelection;
+    @FXML Label noRouteFound;
+    @FXML Button cancelRoute;
 
     private boolean shouldPan = true;
+    private boolean showStreetOnHover = true;
     private String tempQuery = "";
 
     @FXML
@@ -249,6 +272,12 @@ public class MainController {
             canvas.setUseRegularColors(!darkMode.isSelected());
         });
 
+        hoverToShowStreet.setSelected(showStreetOnHover);
+        hoverToShowStreet.setOnAction(e -> {
+            showStreetOnHover = hoverToShowStreet.isSelected();
+            canvas.repaint(26);
+        });
+
         zoomToArea.setOnAction(e ->  {
             shouldPan = false;
         });
@@ -282,6 +311,118 @@ public class MainController {
                 ex.printStackTrace();
             }
         });
+
+        setAsDestination.setOnAction(e -> {
+            canvas.clearRoute();
+            destinationAddress = currentAddress;
+            canvas.setRouteDestination(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+            showDirectionsMenu();
+        });
+
+        setAsStart.setOnAction(e -> {
+            canvas.clearRoute();
+            startAddress = currentAddress;
+            canvas.setRouteOrigin(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+            showDirectionsMenu();
+        });
+
+        findRoute.setOnAction(e -> {
+            RadioButton selectedVehicleButton = (RadioButton) vehicleGroup.getSelectedToggle();
+            String vehicle = selectedVehicleButton.getText();
+            RadioButton selectedShortFastButton = (RadioButton) shortFastGroup.getSelectedToggle();
+            boolean shortestRoute = selectedShortFastButton.getText().equals("Shortest");
+
+            long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startAddress.getCentroid(), vehicle)).getAsLong();
+            long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), vehicle)).getAsLong(); //TODO refactor as method
+            try {
+                noRouteFound.setText("");
+                canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
+            } catch (Exception ex) {
+                noRouteFound.setText("No route found");
+            }
+            showDirectionsMenu();
+        });
+
+        canvas.setOnMouseMoved(e -> {
+            if (showStreetOnHover) {
+                try {
+                    Point2D translatedCoords = canvas.getTrans().inverseTransform(e.getX(), e.getY());
+                    Node nearestNode = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Car");
+                    long nodeAsLong = nearestNode.getAsLong();
+                    Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
+                    double bestAngle = Double.POSITIVE_INFINITY;
+
+
+                    Point2D mouseRelativeToNodeVector = new Point2D(translatedCoords.getX() - nearestNode.getLon(), translatedCoords.getY() - nearestNode.getLat());
+
+                    for (Edge edge : model.getGraph().getAdj().get(nearestNode.getAsLong())) {
+                        Node otherNode = edge.otherNode(nodeAsLong);
+                        Point2D otherNodeRelativeToNodeVector = new Point2D(otherNode.getLon() - nearestNode.getLon(), otherNode.getLat() - nearestNode.getLat());
+
+                        double angle = Math.acos((mouseRelativeToNodeVector.getX() * otherNodeRelativeToNodeVector.getX() + mouseRelativeToNodeVector.getY() * otherNodeRelativeToNodeVector.getY()) / (mouseRelativeToNodeVector.magnitude() * otherNodeRelativeToNodeVector.magnitude()));
+
+                        if (angle < bestAngle) {
+                            bestAngle = angle;
+                            streetEdge = edge;
+                        }
+                    }
+
+                    String streetName = streetEdge.getStreet().getName();
+                    if (streetName == null) {
+                        streetName = "Unnamed street";
+                    }
+                    canvas.repaint(25);
+                    canvas.drawEdge(streetEdge);
+
+                    if (canvas.getShowStreetNodeCloseToMouse()) {
+                        canvas.drawNode(nearestNode);
+                    }
+
+                    canvas.drawStreetName(translatedCoords, streetName);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        });
+        stackPane.setAlignment(pinInfo, Pos.BOTTOM_CENTER);
+
+        carButton.setToggleGroup(vehicleGroup);
+        bikeButton.setToggleGroup(vehicleGroup);
+        walkButton.setToggleGroup(vehicleGroup);
+        carButton.setSelected(true);
+        vehicleSelection.getChildren().addAll(carButton, bikeButton, walkButton);
+
+        bikeButton.setOnAction(e -> {
+            disableShortFastChoice();
+        });
+        walkButton.setOnAction(e -> {
+            disableShortFastChoice();
+        });
+        carButton.setOnAction(e -> {
+            shortButton.setDisable(false);
+            fastButton.setDisable(false);
+        });
+
+        shortButton.setToggleGroup(shortFastGroup);
+        fastButton.setToggleGroup(shortFastGroup);
+        shortButton.setSelected(true);
+        shortestFastestSelection.getChildren().addAll(shortButton, fastButton);
+
+        cancelRoute.setOnAction(e -> {
+            canvas.clearRoute();
+            startAddress = null;
+            destinationAddress = null;
+            canvas.clearOriginDestination();
+            directionsInfo.setVisible(false);
+        });
+
+    }
+
+    private void disableShortFastChoice() {
+        shortButton.setSelected(true);
+        fastButton.setDisable(true);
+        shortButton.setDisable(true);
     }
 
     private void updateShowPublicTransport(boolean showPublicTransport) {
@@ -427,6 +568,37 @@ public class MainController {
         Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
         pointCoords.setText("Point at " + -unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
 
+        currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
+        pointAddress.setText(currentAddress.toString());
+        double distance = distance(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
+        System.out.println("distance: " + distance);
+        if (distance > 50) {
+            pointAddress.setText("No nearby address");
+        }
+
+        pinInfo.setTranslateY(10);
+        pinInfo.setVisible(true);
+    }
+
+    public void showDirectionsMenu() {
+        if (startAddress != null) {
+            startLabel.setText("Start: " + startAddress.toString());
+        } else {
+            startLabel.setText("Start: Not set");
+        }
+
+        if (destinationAddress != null) {
+            destinationLabel.setText("Destination: " + destinationAddress.toString());
+        } else {
+            destinationLabel.setText("Destination: Not set");
+        }
+
+        if (startAddress == null || destinationAddress == null) {
+            findRoute.setDisable(true);
+        } else {
+            findRoute.setDisable(false);
+        }
+
         if (canvas.getDescription() != null) {
             directions.getChildren().clear();
             for (Instruction instruction : canvas.getDescription()) {
@@ -447,8 +619,16 @@ public class MainController {
             routeInfo.setVisible(false);
         }
 
-        pinInfo.setTranslateY(10);
-        pinInfo.setVisible(true);
+        directionsInfo.setVisible(true);
+    }
+
+    private double distance(float pinX, float pinY, float addressX, float addressY) {
+        System.out.println("clicked: " + pinX + " " +pinY);
+        System.out.println("address: " + addressX + " " + addressY);
+        double meterMultiplier = - (MercatorProjector.unproject(pinX, pinY).getLat()) / 100;
+        System.out.println("multiplier: " + meterMultiplier);
+        double distance = Math.sqrt(Math.pow(pinX - addressX, 2) + Math.pow(pinY - addressY, 2));
+        return distance * meterMultiplier;
     }
 
     public void hidePinMenu() {
@@ -503,12 +683,12 @@ public class MainController {
             acceptedFileTypes.add("*.bin");
             acceptedFileTypes.add("*.osm");
             acceptedFileTypes.add("*.zip");
-                
+
             FileChooser fileChooser = new FileChooser();
             FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Binary, OSM or ZIP file", acceptedFileTypes);
             fileChooser.getExtensionFilters().add(extFilter);
             fileChooser.setInitialFileName("myMap");
-            File file = fileChooser.showOpenDialog(stage);           
+            File file = fileChooser.showOpenDialog(stage);
             if (file != null) {
                 loadFile(file);
             }

@@ -4,10 +4,12 @@ import bfst.OSMReader.*;
 
 import bfst.routeFinding.*;
 
+import bfst.canvas.CanvasElement;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -38,12 +40,15 @@ public class MapCanvas extends Canvas {
     private boolean renderFullScreen = true;
     private LinePath draggedSquare;
 
-    private ArrayList<Instruction> description;
+    private ArrayList<Instruction> instructions;
 
     private Pin currentPin;
+    private RouteOriginIndicator currentRouteOrigin;
+    private RouteDestinationIndicator currentRouteDestination;
 
     private boolean showCities = true;
     private boolean useDependentDraw = true;
+    private boolean showStreetNodeCloseToMouse = false;
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
 
@@ -53,8 +58,14 @@ public class MapCanvas extends Canvas {
         return trans;
     }
 
+    public void clearOriginDestination() {
+        currentRouteOrigin = null;
+        currentRouteDestination = null;
+        repaint(30);
+    }
+
     public ArrayList<Instruction> getDescription() {
-        return description;
+        return instructions;
     }
 
     public ArrayList<PointOfInterest> getPointsOfInterest() {
@@ -63,6 +74,27 @@ public class MapCanvas extends Canvas {
 
     public Pin getCurrentPin() {
         return currentPin;
+    }
+
+    public void setShowStreetNodeCloseToMouse(boolean newValue) {
+        showStreetNodeCloseToMouse = newValue;
+    }
+
+    public void drawStreetName(Point2D location, String text) {
+        gc.setFill(Color.BLACK);
+        gc.fillText(text, location.getX() + 15, location.getY() - 15);
+    }
+
+    public boolean getShowStreetNodeCloseToMouse() {
+        return showStreetNodeCloseToMouse;
+    }
+
+    public RouteOriginIndicator getCurrentRouteOrigin() {
+        return currentRouteOrigin;
+    }
+
+    public RouteDestinationIndicator getCurrentRouteDestination() {
+        return currentRouteDestination;
     }
 
     public MapCanvas() {
@@ -102,13 +134,20 @@ public class MapCanvas extends Canvas {
             }
 
             if (route != null) {
-                gc.setStroke(Color.RED);
+                gc.setStroke(Color.BLUE);
                 drawableRoute.draw(gc, pixelwidth, smartTrace);
+                if(instructions != null){
+                    for(Instruction instruction : instructions){
+                        instruction.getIndicator().draw(gc,pixelwidth);
+                    }
+                }
             }
 
             gc.setStroke(Color.BLACK);
             model.getBound().draw(gc, pixelwidth, false);
 
+            if (currentRouteOrigin != null) currentRouteOrigin.draw(gc, pixelwidth);
+            if (currentRouteDestination != null) currentRouteDestination.draw(gc, pixelwidth);
             if (currentPin != null) currentPin.draw(gc, pixelwidth);
 
             if (showCities) {
@@ -153,20 +192,20 @@ public class MapCanvas extends Canvas {
         float h = (float) this.getHeight();
         if(renderFullScreen){
             renderRange = new Range(
-                (float) ((-trans.getTx())* pixelwidth),
-                (float) ((-trans.getTy())* pixelwidth),
-                (float) ((-trans.getTx() + w)* pixelwidth),
-                (float) ((-trans.getTy() + h)* pixelwidth)
+                    (float) ((-trans.getTx())* pixelwidth),
+                    (float) ((-trans.getTy())* pixelwidth),
+                    (float) ((-trans.getTx() + w)* pixelwidth),
+                    (float) ((-trans.getTy() + h)* pixelwidth)
             );
         } else {
             renderRange = new Range(
-                (float) ((-trans.getTx() + w/2-100)* pixelwidth),
-                (float) ((-trans.getTy() + h/2-100)* pixelwidth),
-                (float) ((-trans.getTx() + w/2+100)* pixelwidth),
-                (float) ((-trans.getTy() + h/2+100)* pixelwidth)
+                    (float) ((-trans.getTx() + w/2-100)* pixelwidth),
+                    (float) ((-trans.getTy() + h/2-100)* pixelwidth),
+                    (float) ((-trans.getTx() + w/2+100)* pixelwidth),
+                    (float) ((-trans.getTy() + h/2+100)* pixelwidth)
             );
         }
-        
+
     }
 
     public void setRenderFullScreen(boolean bool){
@@ -189,6 +228,19 @@ public class MapCanvas extends Canvas {
                 new LinePath(entry.getValue().getTailNode(), entry.getValue().getHeadNode()).draw(gc, 1, false);
             }
         }
+    }
+
+    public void drawEdge(Edge edge) {
+        Paint prevStroke = gc.getStroke();
+        gc.setStroke(Color.RED);
+        new LinePath(edge.getTailNode(), edge.getHeadNode()).draw(gc, 1, false);
+        gc.setStroke(prevStroke);
+    }
+
+    public void drawNode(Node node) {
+        gc.setStroke(Color.GREEN);
+        gc.setLineWidth(20);
+        new LinePath(node, node).draw(gc, 10, false);
     }
 
     public void setRoute() {
@@ -241,7 +293,7 @@ public class MapCanvas extends Canvas {
     //TODO har egentlig ikke noget med canvas at gøre, så skal nok flyttes
     public void generateRouteInfo(ArrayList<Edge> list, String vehicle) {
 
-        description = new ArrayList<>();
+        instructions = new ArrayList<>();
         routeDistance = 0;
         routeTime = 0;
 
@@ -249,7 +301,7 @@ public class MapCanvas extends Canvas {
         String prevEdgeName = first.getStreet().getName();
         double tempLength = 0;
         Edge prevEdge = first;
-
+        lastInstructionNode = route.get(0).getTailNode();
         for (int i = 0; i < list.size(); i++) {
             Edge currEdge = list.get(i);
             double meterMultiplier = - (MercatorProjector.unproject(currEdge.getTailNode().getLon(), currEdge.getTailNode().getLat()).getLat()) / 100;
@@ -258,31 +310,39 @@ public class MapCanvas extends Canvas {
                 roundaboutCounter++;
             }
 
-            if (currEdge.getStreet().getName() != null) {
+            if (prevEdgeName == null) {
+                prevEdgeName = "road";
+            }
+            String currEdgeName = currEdge.getStreet().getName();
 
-                if (!prevEdgeName.equals(currEdge.getStreet().getName()) || (currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT && prevEdge.getStreet().getRole() == Street.Role.ROUNDABOUT)) {
-                    addInstruction(prevEdgeName, tempLength, currEdge);
-                    setActionInstruction(prevEdge, currEdge, roundaboutCounter);
-
-                    prevEdgeName = currEdge.getStreet().getName();
-                    tempLength = currEdge.getWeight() * meterMultiplier;
-                } else {
-                    tempLength += currEdge.getWeight() * meterMultiplier;
-                    if (i == list.size() - 1) {
-                        addInstruction(prevEdgeName, tempLength, currEdge);
-                    }
-                }
-            } else {
-                tempLength += currEdge.getWeight() * meterMultiplier;
+            if (currEdgeName == null) {
+                currEdgeName = "road";
             }
 
+            if ((!prevEdgeName.equals(currEdgeName) && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) || (currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT && prevEdge.getStreet().getRole() == Street.Role.ROUNDABOUT)) {
+                addInstruction(prevEdgeName, tempLength, currEdge);
+                setActionInstruction(prevEdge, currEdge, roundaboutCounter);
+
+                if (i == list.size() - 1) {
+                    addInstruction(currEdgeName, currEdge.getWeight(), currEdge);
+                }
+
+                tempLength = currEdge.getWeight() * meterMultiplier;
+            } else {
+                tempLength += currEdge.getWeight() * meterMultiplier;
+                if (i == list.size() - 1) {
+                    addInstruction(prevEdgeName, tempLength, currEdge);
+                }
+            }
+
+            prevEdgeName = currEdgeName;
             prevEdge = list.get(i);
 
             double distance = currEdge.getWeight() * 0.56;
             routeDistance += distance;
             addTimeToTotal(vehicle, currEdge, distance);
         }
-        description.add(new Instruction("You have arrived at your destination", route.get(route.size() - 1).getHeadNode()));
+        instructions.add(new Instruction("You have arrived at your destination", route.get(route.size() - 1).getHeadNode()));
     }
 
     public String distanceString() {
@@ -349,7 +409,7 @@ public class MapCanvas extends Canvas {
         } else {
             instruction += prevEdgeName + " for " + roundedLength + " m";
         }
-        description.add(new Instruction(instruction, lastInstructionNode));
+        instructions.add(new Instruction(instruction, lastInstructionNode));
         lastActionInstruction = null;
         lastInstructionNode = currEdge.getTailNode();
     }
@@ -363,10 +423,10 @@ public class MapCanvas extends Canvas {
         } else if (roundaboutCounter > 0) {
             lastActionInstruction = "Take exit number " + roundaboutCounter + " in the roundabout";
             resetRoundaboutCounter();
-        } else if (turn > 20 && turn < 140) { //Left right is inverted
-            lastActionInstruction = "Turn left";
-        } else if (turn < -20 && turn > -140) {
+        } else if (turn > 20 && turn < 160 && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) { //Left right is inverted
             lastActionInstruction = "Turn right";
+        } else if (turn < -20 && turn > -160 && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) {
+            lastActionInstruction = "Turn left";
         }
     }
 
@@ -378,8 +438,8 @@ public class MapCanvas extends Canvas {
         Point2D prevVector = new Point2D(prevEdge.getHeadNode().getLon() - prevEdge.getTailNode().getLon(), prevEdge.getHeadNode().getLat() - prevEdge.getTailNode().getLat());
         Point2D currVector = new Point2D(currEdge.getHeadNode().getLon() - currEdge.getTailNode().getLon(), currEdge.getHeadNode().getLat() - currEdge.getTailNode().getLat());
 
-        double prevDirection = Math.atan2(prevVector.getX(), prevVector.getY());
-        double currDirection = Math.atan2(currVector.getX(), currVector.getY());
+        double prevDirection = Math.atan2(prevVector.getY(), prevVector.getX());
+        double currDirection = Math.atan2(currVector.getY(), currVector.getX());
         double turn = currDirection - prevDirection;
         if (turn > Math.PI) {
             turn = - (turn - Math.PI);
@@ -393,6 +453,7 @@ public class MapCanvas extends Canvas {
 
     public void clearRoute() {
         route = null;
+        instructions = null;
         dijkstra = null;
         drawableRoute = null;
         repaint(2);
@@ -490,7 +551,7 @@ public class MapCanvas extends Canvas {
             setFillAndStroke(type, pixelwidth, useRegularColors);
             kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderRange);
         }
-        
+
     }
 
     private void setFillAndStroke(Type type, double pixelwidth, boolean useRegularColors) {
@@ -516,7 +577,7 @@ public class MapCanvas extends Canvas {
                 if (type.shouldHaveFill()) gc.fill();
             }
         }
-        
+
     }
 
     public void setModel(Model model) {
@@ -558,6 +619,26 @@ public class MapCanvas extends Canvas {
     public void nullPin () {
         currentPin = null;
         repaint(13);
+    }
+
+    public void setRouteOrigin (float lon, float lat){
+        currentRouteOrigin = new RouteOriginIndicator(lon, lat, 1);
+        repaint(27);
+    }
+
+    public void nullRouteOrigin () {
+        currentRouteOrigin = null;
+        repaint(28);
+    }
+
+    public void setRouteDestination (float lon, float lat){
+        currentRouteDestination = new RouteDestinationIndicator(lon, lat, 1);
+        repaint(29);
+    }
+
+    public void nullRouteDestination () {
+        currentRouteDestination = null;
+        repaint(30);
     }
 
     public void addToPOI(PointOfInterest poi) {

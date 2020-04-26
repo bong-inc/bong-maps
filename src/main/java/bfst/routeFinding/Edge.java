@@ -3,6 +3,8 @@ package bfst.routeFinding;
 import bfst.OSMReader.Node;
 import bfst.canvas.Drawable;
 import bfst.canvas.LinePath;
+import bfst.canvas.Range;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.io.Serializable;
@@ -55,5 +57,22 @@ public class Edge implements Serializable {
         } else {
             return tailNode;
         }
+    }
+
+    public Point2D getCentroid(){
+        return new Point2D((tailNode.getLon() + headNode.getLon())/2, (tailNode.getLat() + headNode.getLat())/2);
+    }
+
+    public Range getBoundingBox(){
+        float tailLon = tailNode.getLon();
+        float tailLat = tailNode.getLat();
+        float headLon = headNode.getLon();
+        float headLat = headNode.getLat();
+        return new Range(
+            headLon < tailLon ? headLon : tailLon, // minX
+            headLat < tailLat ? headLat : tailLat, // minY
+            headLon > tailLon ? headLon : tailLon, // maxX
+            headLat > tailLat ? headLat : tailLat  // maxY
+        );
     }
 }
