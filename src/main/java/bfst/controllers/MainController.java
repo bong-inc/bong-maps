@@ -12,6 +12,7 @@ import bfst.exceptions.FileTypeNotSupportedException;
 import bfst.routeFinding.Edge;
 import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
@@ -524,6 +525,11 @@ public class MainController {
         query = query.toLowerCase();
         try {
             inputAdress = Address.parse(query);
+            System.out.println(inputAdress.street);
+            System.out.println(inputAdress.house);
+            System.out.println(inputAdress.postcode);
+            System.out.println(inputAdress.municipality);
+            System.out.println(inputAdress.city);
             int index = Collections.binarySearch(addresses, inputAdress);
             tempBest = new ArrayList<>();
             for (int i = 0; i < 5; i++){
@@ -546,22 +552,18 @@ public class MainController {
 
     public void reGenSuggestions(){
         ArrayList<Address> best = tempBest;
-        ArrayList<TextFlow> bs = new ArrayList<>();
+        ArrayList<javafx.scene.Node> bs = new ArrayList<>();
         for (Address address : best) {
             String addressString = address.toString();
-            int[] matchRange = matches(searchField.getText(), addressString);
-            if (matchRange != null) {
-                TextFlow b = new TextFlow();
+
+                Button b = new Button();
                 b.setUserData(address);
-                b.getChildren().add(new Text(addressString.substring(0,matchRange[0])));
-                Text matched = new Text(addressString.substring(matchRange[0],matchRange[1]));
-                matched.setStyle("-fx-font-weight: bold");
-                b.getChildren().add(matched);
-                b.getChildren().add(new Text(addressString.substring(matchRange[1])));
+
+                b.setText(addressString);
                 b.getStyleClass().add("suggestion");
                 b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
                     if (event.getCode() == KeyCode.TAB) {
-                        setTempQuery(((Address) ((TextFlow) event.getSource()).getUserData()).toString());
+                        setTempQuery(((Address) ((Button) event.getSource()).getUserData()).toString());
                         searchField.requestFocus();
                         searchField.positionCaret(searchField.getText().length());
                         event.consume();
@@ -571,12 +573,19 @@ public class MainController {
                     }
                 });
                 b.focusedProperty().addListener((obs, oldVal, newVal) -> {
-                    if (newVal) searchField.setText((String) b.getUserData().toString());
+                    if (newVal) {
+                        searchField.setText((String) b.getUserData().toString());
+                    }
+                    
                 });
                 bs.add(b);
-            }
         }
         updateSuggestions(bs);
+    }
+
+    public void updateSuggestions(ArrayList<javafx.scene.Node> bs){
+        suggestions.getChildren().clear();
+        for (javafx.scene.Node b : bs) suggestions.getChildren().add(b);
     }
 
     public void showPinMenu() {
@@ -655,11 +664,6 @@ public class MainController {
 
     public void hideAddPOIButton(){
         pinInfo.setVisible(false);
-    }
-
-    public void updateSuggestions(ArrayList<TextFlow> bs){
-        suggestions.getChildren().clear();
-        for (TextFlow b : bs) suggestions.getChildren().add(b);
     }
 
     public int[] matches(String query, String address){
@@ -752,6 +756,7 @@ public class MainController {
                 loadZip(file);
                 break;
             default:
+                is.close();
                 throw new FileTypeNotSupportedException(fileExtension);
         }
         is.close();
