@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.Group?>
+
 <VBox prefHeight="800" prefWidth="1200" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
 
   <children>
@@ -39,7 +40,7 @@
 
       </menus>
     </MenuBar>
-    <StackPane VBox.vgrow="ALWAYS" fx:id="stackPane">
+    <StackPane VBox.vgrow="ALWAYS" fx:id="stackPane" styleClass="stack">
         <MapCanvasWrapper fx:id="mapCanvasWrapper"/>
         <VBox styleClass="UI" pickOnBounds="false">
           <VBox styleClass="searchBar">
@@ -74,13 +75,29 @@
 
         </VBox>
 
-        <VBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
-            <Label fx:id="pointAddress" styleClass="pointAddress"/>
-            <Label fx:id="pointCoords" styleClass="pointCoords"/>
-            <Button fx:id="POIButton"/>
-            <Button fx:id="setAsDestination">Set this point as destination</Button>
-            <Button fx:id="setAsStart">Set this point as start</Button>
-        </VBox>
+        <HBox styleClass="pinInfoWrapper" pickOnBounds="false">
+          <HBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
+              <VBox>
+                <Label fx:id="pointAddress" styleClass="pointAddress"/>
+                <Label fx:id="pointCoords" styleClass="pointCoords"/>
+              </VBox>
+              <Button fx:id="POIButton" styleClass="icon-button">
+                <graphic>
+                  <Region fx:id="searchIcon" styleClass="icon, poi-icon"/>
+                </graphic>
+              </Button>
+              <Button fx:id="setAsStart" styleClass="icon-button">
+                <graphic>
+                  <Region fx:id="searchIcon" styleClass="icon, origin-icon"/>
+                </graphic>
+              </Button>
+              <Button fx:id="setAsDestination" styleClass="icon-button">
+                <graphic>
+                  <Region fx:id="searchIcon" styleClass="icon, destination-icon"/>
+                </graphic>
+              </Button>
+          </HBox>
+        </HBox>
     </StackPane>
   </children>
 </VBox>

@@ -90,13 +90,26 @@
     -fx-background-color: white;
 }
 
+.stack, .pinInfoWrapper {
+    -fx-alignment: bottom-center;
+}
+
+.pinInfoWrapper {
+    -fx-padding: 20;
+}
+
 .pinInfo, .directionsInfo {
     -fx-background-color: white;
-    -fx-max-width: 300px;
-    -fx-max-height: 200px;
+    -fx-max-height: 50px;
+    -fx-pref-height: 0px;
+    -fx-max-width: 600px;
     -fx-padding: 5 10;
     -fx-background-radius: 5;
     -fx-spacing: 10;
+}
+
+.pointAddress, .pointCoords {
+    -fx-display: inline-block;
 }
 
 .hBox {
@@ -140,6 +153,18 @@
 
 .search-icon {
     -fx-shape: "M15.75,15.05l-.7.7a.5.5,0,0,1-.71,0L10.69,12.1a5.46,5.46,0,1,1,1.41-1.41l3.65,3.65a.5.5,0,0,1,0,.71Zm-8.17-4A3.49,3.49,0,1,0,4.1,7.58,3.49,3.49,0,0,0,7.58,11.07Z";
+}
+
+.poi-icon {
+    -fx-shape: "M15.75,15.05l-.7.7a.5.5,0,0,1-.71,0L10.69,12.1a5.46,5.46,0,1,1,1.41-1.41l3.65,3.65a.5.5,0,0,1,0,.71Zm-8.17-4A3.49,3.49,0,1,0,4.1,7.58,3.49,3.49,0,0,0,7.58,11.07Z";
+}
+
+.destination-icon {
+    -fx-shape: "M76.3,0a76.3,76.3,0,1,0,76.3,76.3A76.41,76.41,0,0,0,76.3,0Zm0,135.6a59.3,59.3,0,1,1,59.3-59.3A59.36,59.36,0,0,1,76.3,135.6ZM107.4,76.3A31.1,31.1,0,1,1,76.3,45.2,31.2,31.2,0,0,1,107.4,76.3Z";
+}
+
+.origin-icon {
+    -fx-shape: "M76.3,0a76.3,76.3,0,1,0,76.3,76.3A76.41,76.41,0,0,0,76.3,0Zm0,135.6a59.3,59.3,0,1,1,59.3-59.3A59.36,59.36,0,0,1,76.3,135.6Z";
 }
 
 Button:hover {

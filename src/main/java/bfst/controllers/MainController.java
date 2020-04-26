@@ -87,7 +87,7 @@ public class MainController {
     @FXML VBox suggestions;
 
     @FXML Menu myPoints;
-    @FXML VBox pinInfo;
+    @FXML HBox pinInfo;
     @FXML Label pointAddress;
     @FXML Label pointCoords;
     @FXML Button POIButton;
