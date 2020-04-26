@@ -109,6 +109,7 @@ public class MainController {
     @FXML HBox vehicleSelection;
     @FXML HBox shortestFastestSelection;
     @FXML Label noRouteFound;
+    @FXML Button cancelRoute;
 
     private boolean shouldPan = true;
     private boolean showStreetOnHover = true;
@@ -407,6 +408,14 @@ public class MainController {
         fastButton.setToggleGroup(shortFastGroup);
         shortButton.setSelected(true);
         shortestFastestSelection.getChildren().addAll(shortButton, fastButton);
+
+        cancelRoute.setOnAction(e -> {
+            canvas.clearRoute();
+            startAddress = null;
+            destinationAddress = null;
+            canvas.clearOriginDestination();
+            directionsInfo.setVisible(false);
+        });
 
     }
 

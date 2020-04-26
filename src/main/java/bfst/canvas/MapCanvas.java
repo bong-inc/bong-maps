@@ -58,6 +58,12 @@ public class MapCanvas extends Canvas {
         return trans;
     }
 
+    public void clearOriginDestination() {
+        currentRouteOrigin = null;
+        currentRouteDestination = null;
+        repaint(30);
+    }
+
     public ArrayList<Instruction> getDescription() {
         return instructions;
     }

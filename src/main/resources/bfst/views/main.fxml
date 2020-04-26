@@ -69,6 +69,7 @@
                         <VBox fx:id="directions" styleClass="directionButtons"/>
                     </ScrollPane>
                 </VBox>
+                <Button fx:id="cancelRoute">Cancel</Button>
             </VBox>
 
         </VBox>
