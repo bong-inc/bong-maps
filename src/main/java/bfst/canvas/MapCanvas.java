@@ -224,6 +224,7 @@ public class MapCanvas extends Canvas {
 
         setRoute();
         generateRouteInfo(route, vehicle);
+        repaint(40);
     }
 
     public void showDijkstraTree() {
