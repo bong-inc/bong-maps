@@ -9,23 +9,31 @@
     <Button fx:id="zoomIn">+</Button>
     <Button fx:id="zoomOut">-</Button>
   </FlowPane>
+  <Label style="-fx-padding: 10 0 0 0; -fx-font-weight: bold">Paint options</Label>
   <FlowPane fx:id="filterTypes">
   </FlowPane>
   <FlowPane>
     <Button fx:id="selectall">Select All</Button>
     <Button fx:id="deselectall">Deselect All</Button>
+    <CheckBox fx:id="drawBound">Draw OSM bound</CheckBox>
     <CheckBox fx:id="smartTraceToggle">Use smart trace</CheckBox>
     <CheckBox fx:id="colorToggle">Use regular colors</CheckBox>
     <CheckBox fx:id="citiesToggle">Show citites</CheckBox>
     <CheckBox fx:id="dependentDrawToggle">Use zoom-dependent draw</CheckBox>
-    <TextField fx:id="startPoint"/>
+    <CheckBox fx:id="fullscreenRange">Fullscreen range search</CheckBox>
+    <CheckBox fx:id="drawBoundingBox">Draw bounding boxes</CheckBox>
+  </FlowPane>
+  <Label style="-fx-padding: 10 0 0 0; -fx-font-weight: bold">Addresses and pathfinding</Label>
+  <FlowPane>
     <ComboBox fx:id="vehicle"/>
+    <TextField fx:id="startPoint" promptText="Start point (node)"/>
+    <TextField fx:id="endPoint" promptText="End point (node)"/>
     <CheckBox fx:id="shortestRoute">Shortest route (off means fastest)</CheckBox>
     <Button fx:id="showDijkstra">Show dijkstra</Button>
-    <TextField fx:id="endPoint"/>
     <Button fx:id="findRoute">Find route</Button>
     <Button fx:id="clearRoute">Clear route</Button>
     <Button fx:id="routeDescription">Print route description</Button>
     <Button fx:id="printPOI">Print points of interest</Button>
+    <CheckBox fx:id="showClosestNode">Show closest road-node</CheckBox>
   </FlowPane>
 </VBox>

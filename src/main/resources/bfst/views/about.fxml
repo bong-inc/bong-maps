@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="150" prefWidth="250">
+    <Label>Bong Maps</Label>
+    <Label>May 4th 2020</Label>
+    <Label>Release version 1.0</Label>
+    <Label/>
+    <Label>Developers</Label>
+    <Label>• Emil Jäpelt (emja@itu.dk)</Label>
+    <Label>• Jonas Glerup Røssum (jglr@itu.dk)</Label>
+    <Label>• Frederik Søgren Blunk Raise (frai@itu.dk)</Label>
+    <Label>• Thomas Hoffmann Kilbak (thhk@itu.dk)</Label>
+    <Label>• Kristoffer Bruun Højelse (krbh@itu.dk)</Label>
+</VBox>

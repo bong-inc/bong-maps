@@ -7,23 +7,24 @@ import bfst.OSMReader.Node;
 import bfst.OSMReader.OSMReader;
 import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
-import bfst.canvas.MapCanvas;
-import bfst.canvas.MapCanvasWrapper;
-import bfst.canvas.PointOfInterest;
-import bfst.canvas.Type;
+import bfst.canvas.*;
 import bfst.exceptions.FileTypeNotSupportedException;
+import bfst.routeFinding.Edge;
 import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -35,7 +36,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -47,6 +50,18 @@ public class MainController {
     private Point2D lastMouse;
     private ArrayList<Address> tempBest = new ArrayList<>();
     private boolean hasBeenDragged = false;
+    private Address destinationAddress;
+    private Address startAddress;
+    private Address currentAddress;
+
+    ToggleGroup vehicleGroup = new ToggleGroup();
+    RadioButton carButton = new RadioButton("Car");
+    RadioButton bikeButton = new RadioButton("Bicycle");
+    RadioButton walkButton = new RadioButton("Walk");
+
+    ToggleGroup shortFastGroup = new ToggleGroup();
+    RadioButton shortButton = new RadioButton("Shortest");
+    RadioButton fastButton = new RadioButton("Fastest");
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
@@ -68,11 +83,13 @@ public class MainController {
     @FXML MenuItem loadDefaultMap;
     @FXML MenuItem saveAs;
     @FXML MenuItem devtools;
+    @FXML MenuItem about;
+    @FXML MenuItem help;
     @FXML TextField searchField;
     @FXML VBox suggestions;
 
     @FXML Menu myPoints;
-    @FXML VBox pinInfo;
+    @FXML HBox pinInfo;
     @FXML Label pointAddress;
     @FXML Label pointCoords;
     @FXML Button POIButton;
@@ -82,8 +99,23 @@ public class MainController {
     @FXML Label routeDistance;
     @FXML Label routeTime;
     @FXML VBox directions;
+    @FXML Menu view;
+    @FXML CheckMenuItem publicTransport;
+    @FXML CheckMenuItem darkMode;
+    @FXML CheckMenuItem hoverToShowStreet;
+    @FXML MenuItem zoomToArea;
+    @FXML Button findRoute;
+    @FXML VBox directionsInfo;
+    @FXML Label startLabel;
+    @FXML Label destinationLabel;
+    @FXML HBox vehicleSelection;
+    @FXML HBox shortestFastestSelection;
+    @FXML Label noRouteFound;
+    @FXML Button cancelRoute;
 
-    String tempQuery = "";
+    private boolean shouldPan = true;
+    private boolean showStreetOnHover = false;
+    private String tempQuery = "";
 
     @FXML
     public void initialize() {
@@ -107,12 +139,34 @@ public class MainController {
         canvas.setOnMouseDragged(e -> {
             hasBeenDragged = true;
 
-            canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
-            lastMouse = new Point2D(e.getX(), e.getY());
+            if (shouldPan) {
+                canvas.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
+                lastMouse = new Point2D(e.getX(), e.getY());
+            } else {
+                try {
+                    Point2D corner0 = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
+                    Point2D corner1 = canvas.getTrans().inverseTransform(lastMouse.getX(), e.getY());
+                    Point2D corner2 = canvas.getTrans().inverseTransform(e.getX(), e.getY());
+                    Point2D corner3 = canvas.getTrans().inverseTransform(e.getX(), lastMouse.getY());
+
+                    float[] floats = {
+                            (float) corner0.getX(), (float) corner0.getY(),
+                            (float) corner1.getX(), (float) corner1.getY(),
+                            (float) corner2.getX(), (float) corner2.getY(),
+                            (float) corner3.getX(), (float) corner3.getY(),
+                            (float) corner0.getX(), (float) corner0.getY(),
+                    };
+                    LinePath linePath = new LinePath(floats);
+                    canvas.setDraggedSquare(linePath);
+                } catch (NonInvertibleTransformException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
         });
 
         canvas.setOnMouseReleased(e -> {
-            if (!hasBeenDragged) {
+            if (!hasBeenDragged && shouldPan) {
                 try {
                     if (canvas.getCurrentPin() == null) {
                         Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
@@ -127,7 +181,14 @@ public class MainController {
                     ex.printStackTrace();
                 }
             }
+            if (!shouldPan) {
+                Point2D end = new Point2D(e.getX(), e.getY());
+                zoomToArea(end);
+            }
+
+            shouldPan = true;
             hasBeenDragged = false;
+            canvas.setDraggedSquare(null);
         });
 
         loadDefaultMap.setOnAction(e -> {
@@ -142,19 +203,25 @@ public class MainController {
         });
 
         devtools.setOnAction(e -> {
-            try {
-                Stage devStage = new Stage();
-                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/devview.fxml"));
-                DevController devController = new DevController(devStage, canvas);
-                fxmlLoader.setController(devController);
-                Parent root = fxmlLoader.load();
-                devStage.setTitle("dev tools");
-                Scene scene = new Scene(root);
-                scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
-                devStage.setScene(scene);
-                devStage.show();
-            } catch (Exception ex){
-                ex.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setHeaderText("Open dev tools?");
+            alert.setContentText("Dev tools are only supposed to be used by developers or advanced users");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                try {
+                    Stage devStage = new Stage();
+                    FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/devview.fxml"));
+                    DevController devController = new DevController(devStage, canvas);
+                    fxmlLoader.setController(devController);
+                    Parent root = fxmlLoader.load();
+                    devStage.setTitle("dev tools");
+                    Scene scene = new Scene(root);
+                    scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+                    devStage.setScene(scene);
+                    devStage.show();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -171,7 +238,6 @@ public class MainController {
             hideAddPOIButton();
             if (searchField.isFocused()) setTempQuery(searchField.getText());
             canvas.nullPin();
-            System.out.println("CHANGED");
         });
 
         searchField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
@@ -187,41 +253,258 @@ public class MainController {
         });
 
         searchField.setOnAction(e -> {
-            System.out.println("action");
             if(suggestions.getChildren().size() > 0) {
                 Address a = (Address) suggestions.getChildren().get(0).getUserData();
                 searchField.setText(a.toString());
                 searchField.positionCaret(searchField.getText().length());
-                canvas.zoomToNode(a.node);
-                canvas.setPin(a.node);
+                canvas.zoomToPoint(1, a.getLon(),  a.getLat());
+                canvas.setPin(a.getLon(), a.getLat());
                 suggestions.getChildren().clear();
                 showPinMenu();
             }
         });
+
+        publicTransport.setSelected(true);
+        publicTransport.setOnAction(e -> {
+            updateShowPublicTransport(publicTransport.isSelected());
+        });
+
+        darkMode.setSelected(false);
+        darkMode.setOnAction(e -> {
+            canvas.setUseRegularColors(!darkMode.isSelected());
+        });
+
+        hoverToShowStreet.setSelected(showStreetOnHover);
+        hoverToShowStreet.setOnAction(e -> {
+            showStreetOnHover = hoverToShowStreet.isSelected();
+            canvas.repaint(26);
+        });
+
+        zoomToArea.setOnAction(e ->  {
+            shouldPan = false;
+        });
+
+        about.setOnAction(e -> {
+            try {
+                Stage aboutStage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/about.fxml"));
+                Parent root = fxmlLoader.load();
+                aboutStage.setTitle("About");
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+                aboutStage.setScene(scene);
+                aboutStage.show();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        help.setOnAction(e -> {
+            try {
+                Stage helpStage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/help.fxml"));
+                Parent root = fxmlLoader.load();
+                helpStage.setTitle("Help");
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+                helpStage.setScene(scene);
+                helpStage.show();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        setAsDestination.setOnAction(e -> {
+            canvas.clearRoute();
+            destinationAddress = currentAddress;
+            canvas.setRouteDestination(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+            showDirectionsMenu();
+        });
+
+        setAsStart.setOnAction(e -> {
+            canvas.clearRoute();
+            startAddress = currentAddress;
+            canvas.setRouteOrigin(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+            showDirectionsMenu();
+        });
+
+        findRoute.setOnAction(e -> {
+            RadioButton selectedVehicleButton = (RadioButton) vehicleGroup.getSelectedToggle();
+            String vehicle = selectedVehicleButton.getText();
+            RadioButton selectedShortFastButton = (RadioButton) shortFastGroup.getSelectedToggle();
+            boolean shortestRoute = selectedShortFastButton.getText().equals("Shortest");
+
+            long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startAddress.getCentroid(), vehicle)).getAsLong();
+            long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), vehicle)).getAsLong(); //TODO refactor as method
+            try {
+                noRouteFound.setText("");
+                canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
+            } catch (Exception ex) {
+                noRouteFound.setText("No route found");
+            }
+            showDirectionsMenu();
+        });
+
+        canvas.setOnMouseMoved(e -> {
+            if (showStreetOnHover) {
+                try {
+                    Point2D translatedCoords = canvas.getTrans().inverseTransform(e.getX(), e.getY());
+                    Node nearestNode = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Car");
+                    long nodeAsLong = nearestNode.getAsLong();
+                    Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
+                    double bestAngle = Double.POSITIVE_INFINITY;
+
+
+                    Point2D mouseRelativeToNodeVector = new Point2D(translatedCoords.getX() - nearestNode.getLon(), translatedCoords.getY() - nearestNode.getLat());
+
+                    for (Edge edge : model.getGraph().getAdj().get(nearestNode.getAsLong())) {
+                        Node otherNode = edge.otherNode(nodeAsLong);
+                        Point2D otherNodeRelativeToNodeVector = new Point2D(otherNode.getLon() - nearestNode.getLon(), otherNode.getLat() - nearestNode.getLat());
+
+                        double angle = Math.acos((mouseRelativeToNodeVector.getX() * otherNodeRelativeToNodeVector.getX() + mouseRelativeToNodeVector.getY() * otherNodeRelativeToNodeVector.getY()) / (mouseRelativeToNodeVector.magnitude() * otherNodeRelativeToNodeVector.magnitude()));
+
+                        if (angle < bestAngle) {
+                            bestAngle = angle;
+                            streetEdge = edge;
+                        }
+                    }
+
+                    String streetName = streetEdge.getStreet().getName();
+                    if (streetName == null) {
+                        streetName = "Unnamed street";
+                    }
+                    canvas.repaint(25);
+                    canvas.drawEdge(streetEdge);
+
+                    if (canvas.getShowStreetNodeCloseToMouse()) {
+                        canvas.drawNode(nearestNode);
+                    }
+
+                    canvas.drawStreetName(translatedCoords, streetName);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        });
+
+        carButton.setToggleGroup(vehicleGroup);
+        bikeButton.setToggleGroup(vehicleGroup);
+        walkButton.setToggleGroup(vehicleGroup);
+        carButton.setSelected(true);
+        vehicleSelection.getChildren().addAll(carButton, bikeButton, walkButton);
+
+        bikeButton.setOnAction(e -> {
+            disableShortFastChoice();
+        });
+        walkButton.setOnAction(e -> {
+            disableShortFastChoice();
+        });
+        carButton.setOnAction(e -> {
+            shortButton.setDisable(false);
+            fastButton.setDisable(false);
+        });
+
+        shortButton.setToggleGroup(shortFastGroup);
+        fastButton.setToggleGroup(shortFastGroup);
+        shortButton.setSelected(true);
+        shortestFastestSelection.getChildren().addAll(shortButton, fastButton);
+
+        cancelRoute.setOnAction(e -> {
+            canvas.clearRoute();
+            startAddress = null;
+            destinationAddress = null;
+            canvas.clearOriginDestination();
+            directionsInfo.setVisible(false);
+        });
+
+    }
+
+    private void disableShortFastChoice() {
+        shortButton.setSelected(true);
+        fastButton.setDisable(true);
+        shortButton.setDisable(true);
+    }
+
+    private void updateShowPublicTransport(boolean showPublicTransport) {
+        ArrayList<Type> typesToBeDrawn = new ArrayList<>();
+        if (showPublicTransport) {
+            typesToBeDrawn.addAll(Arrays.asList(Type.getTypes()));
+        } else {
+            for (Type type : Type.getTypes()) {
+                if (type != Type.RAILWAY) {
+                    typesToBeDrawn.add(type);
+                }
+            }
+        }
+
+        canvas.setTypesToBeDrawn(typesToBeDrawn);
     }
 
     private void addItemToMyPoints(PointOfInterest poi) {
         MenuItem item = new MenuItem(poi.getName());
         item.setOnAction(a -> {
             canvas.setPin(poi.getLon(), poi.getLat());
-            canvas.zoomToPoint(poi.getLon(), poi.getLat());
+            canvas.zoomToPoint(1, poi.getLon(), poi.getLat());
             showPinMenu();
         });
         myPoints.getItems().add(item);
     }
 
-    public void setPOIButton() {
-        if (canvas.POIContains(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY())) {
-            POIButton.setText("Remove from my points of interest");
+    private void zoomToArea(Point2D end) {
+        Point2D inversedStart = null;
+        Point2D inversedEnd = null;
+        try {
+            inversedStart = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
+            inversedEnd = canvas.getTrans().inverseTransform(end.getX(), end.getY());
+        } catch (NonInvertibleTransformException e) {
+            e.printStackTrace();
+        }
+        Point2D centerPoint = new Point2D((inversedEnd.getX() + inversedStart.getX()) / 2, (inversedEnd.getY() + inversedStart.getY()) / 2);
+
+        double windowAspectRatio = canvas.getWidth() / canvas.getHeight();
+        double markedAspectRatio = (end.getX() - lastMouse.getX()) / (end.getY() - lastMouse.getY());
+        double factor;
+
+        if (windowAspectRatio < markedAspectRatio) {
+            factor = Math.abs((canvas.getWidth() / (end.getX() -  lastMouse.getX())) * canvas.getTrans().getMxx());
         } else {
-            POIButton.setText("Add to my points of interest");
+            factor = Math.abs((canvas.getHeight() / (end.getY() -  lastMouse.getY()) * canvas.getTrans().getMxx()));
+        }
+        if (factor > 2.2) {
+            factor = 2.2;
+        }
+        canvas.zoomToPoint(factor, (float) centerPoint.getX(), (float) centerPoint.getY());
+
+
+    }
+
+    private SVGPath createPath(String svgString) {
+        SVGPath path = new SVGPath();
+        path.getStyleClass().add("icon");
+        path.setContent(svgString);
+        return path;
+    }
+
+    public void setPOIButton() {
+        AtomicBoolean POIExists = new AtomicBoolean(false);
+
+        if (canvas.POIContains(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY())) {
+            POIExists.set(true);
+            Group svg = new Group(createPath("M88.332,45.154v0.039C89.336,44.46,90,43.289,90,41.954c0-2.246-1.811-4.059-4.023-4.059l-24.57-0.01l-7.604-23.424  c-0.508-1.605-2.031-2.793-3.802-2.793c-1.784,0-3.295,1.188-3.803,2.793l-7.552,23.268L14.06,20.512L10,26.316l16.517,11.569  H14.024c-2.213,0-4.023,1.822-4.023,4.056c0,1.334,0.664,2.52,1.68,3.252v-0.026l19.856,14.478c0,0-7.591,23.421-7.578,23.421  c-0.547,1.631-0.013,3.444,1.445,4.519c1.445,1.042,3.347,0.964,4.714-0.042L50,73.089l19.882,14.453  c1.367,1.006,3.268,1.084,4.713,0.025c1.459-1.058,1.979-2.871,1.459-4.502l-4.402-13.577l14.285,10.003L90,73.685l-20.807-14.57  L88.332,45.154z M50,24.34l6.558,20.208l21.279,0.01l-14.42,10.513L44.356,41.726L50,24.34z M67.191,77.343L50,64.847L32.813,77.34  c2.2-6.8,6.556-20.233,6.556-20.233l-17.22-12.555h13.887l26.552,18.589L67.191,77.343z"));
+            POIButton.setGraphic(svg);
+        } else {
+            POIExists.set(false);
+            Group svg = new Group(createPath("M85.977,37.891h-24.57l-7.598-23.424c-0.508-1.602-2.031-2.8-3.809-2.8s-3.301,1.198-3.809,2.8l-7.598,23.424h-24.57  c-2.207,0-4.023,1.819-4.023,4.053c0,1.331,0.664,2.526,1.68,3.252v-0.02l19.863,14.47c0,0-7.598,23.421-7.578,23.421  c-0.547,1.624-0.02,3.447,1.445,4.524c1.445,1.035,3.34,0.957,4.707-0.039L50,73.099l19.883,14.453  c1.367,0.996,3.281,1.074,4.727,0.02c1.445-1.058,1.992-2.881,1.445-4.505l-7.578-23.421L88.32,45.156v0.039  C89.336,44.47,90,43.274,90,41.943C90,39.71,88.203,37.891,85.977,37.891z M60.647,57.106L67.2,77.36L50,64.856L32.813,77.351  c2.2-6.797,6.563-20.248,6.563-20.248L22.151,44.558h21.286L50,24.333l6.56,20.225h21.275L60.647,57.106z"));
+            POIButton.setGraphic(svg);
         }
 
         POIButton.setOnAction(e -> {
-            if (POIButton.getText().equals("Add to my points of interest")) {
+            if (!POIExists.get()) {
                 addPointOfInterest();
                 savePointsOfInterest();
-                POIButton.setText("Remove from my points of interest");
+                POIExists.set(true);
+                setPOIButton();
             } else {
                 canvas.removePOI(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
                 savePointsOfInterest();
@@ -229,7 +512,8 @@ public class MainController {
                 for (PointOfInterest poi : canvas.getPointsOfInterest()) {
                     addItemToMyPoints(poi);
                 }
-                POIButton.setText("Add to my points of interest");
+                POIExists.set(false);
+                setPOIButton();
             }
         });
     }
@@ -298,12 +582,44 @@ public class MainController {
     public void showPinMenu() {
         setPOIButton();
         Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
-        pointCoords.setText("Point at " + -unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
+        pointCoords.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
+
+        currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
+        pointAddress.setText(currentAddress.toString());
+        double distance = distance(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
+        System.out.println("distance: " + distance);
+        if (distance > 50) {
+            pointAddress.setText("No nearby address");
+        }
+
+        pinInfo.setTranslateY(10);
+        pinInfo.setVisible(true);
+    }
+
+    public void showDirectionsMenu() {
+        if (startAddress != null) {
+            startLabel.setText("Start: " + startAddress.toString());
+        } else {
+            startLabel.setText("Start: Not set");
+        }
+
+        if (destinationAddress != null) {
+            destinationLabel.setText("Destination: " + destinationAddress.toString());
+        } else {
+            destinationLabel.setText("Destination: Not set");
+        }
+
+        if (startAddress == null || destinationAddress == null) {
+            findRoute.setDisable(true);
+        } else {
+            findRoute.setDisable(false);
+        }
 
         if (canvas.getDescription() != null) {
             directions.getChildren().clear();
             for (Instruction instruction : canvas.getDescription()) {
                 Button button = new Button(instruction.getInstruction());
+                button.getStyleClass().add("instruction");
                 button.setOnAction(e -> {
                     canvas.zoomToNode(instruction.getNode());
                 });
@@ -319,8 +635,16 @@ public class MainController {
             routeInfo.setVisible(false);
         }
 
-        pinInfo.setTranslateY(10);
-        pinInfo.setVisible(true);
+        directionsInfo.setVisible(true);
+    }
+
+    private double distance(float pinX, float pinY, float addressX, float addressY) {
+        System.out.println("clicked: " + pinX + " " +pinY);
+        System.out.println("address: " + addressX + " " + addressY);
+        double meterMultiplier = - (MercatorProjector.unproject(pinX, pinY).getLat()) / 100;
+        System.out.println("multiplier: " + meterMultiplier);
+        double distance = Math.sqrt(Math.pow(pinX - addressX, 2) + Math.pow(pinY - addressY, 2));
+        return distance * meterMultiplier;
     }
 
     public void hidePinMenu() {
@@ -350,9 +674,16 @@ public class MainController {
 
     public void saveFileOnClick(ActionEvent e){
         try {
-            File file = new FileChooser().showSaveDialog(stage);
+            FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Binary file (*.bin)", "*.bin");
+            fileChooser.getExtensionFilters().add(extFilter);
+            fileChooser.setInitialFileName("myMap");
+            File file = fileChooser.showSaveDialog(stage);
             if(file != null){
                 saveBinary(file, model);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Saved successfully");
+                alert.showAndWait();
             }
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
@@ -364,8 +695,19 @@ public class MainController {
 
     public void loadFileOnClick(ActionEvent e){
         try {
-            File file = new FileChooser().showOpenDialog(stage);
-            loadFile(file);
+            List<String> acceptedFileTypes = new ArrayList<>();
+            acceptedFileTypes.add("*.bin");
+            acceptedFileTypes.add("*.osm");
+            acceptedFileTypes.add("*.zip");
+
+            FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Binary, OSM or ZIP file", acceptedFileTypes);
+            fileChooser.getExtensionFilters().add(extFilter);
+            fileChooser.setInitialFileName("myMap");
+            File file = fileChooser.showOpenDialog(stage);
+            if (file != null) {
+                loadFile(file);
+            }
         } catch(FileTypeNotSupportedException exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("File type not supported: " + exception.getFileType());

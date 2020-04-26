@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="200" prefWidth="300">
+    <Label>I have problems saving a file</Label>
+    <Label>Make sure to end the file name with .bin</Label>
+    <Label/>
+    <Label>I can't zoom close enough</Label>
+    <Label>The map has a cap on how close or far you can zoom</Label>
+    <Label/>
+    <Label>How do i remove the pin?</Label>
+    <Label>Click anywhere on the map</Label>
+    <Label/>
+    <Label>The map is slow or unresponsize</Label>
+    <Label>Try reducing the size of the window</Label>
+</VBox>

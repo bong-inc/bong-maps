@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.Group?>
+
 <VBox prefHeight="800" prefWidth="1200" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
 
   <children>
@@ -24,20 +25,22 @@
             <MenuItem mnemonicParsing="false" text="Save As…" fx:id="saveAs"/>
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Dev Tools" fx:id="devtools">
-            <items>
-                <MenuItem mnemonicParsing="false" text="Open Dev Tools..." />
-            </items>
+        <Menu mnemonicParsing="false" text="Points of interest" fx:id="myPoints"/>
+        <Menu mnemonicParsing="false" text="View" fx:id="view">
+            <CheckMenuItem mnemonicParsing="false" text="Public transport" fx:id="publicTransport"/>
+            <CheckMenuItem mnemonicParsing="false" text="Dark mode" fx:id="darkMode"/>
+            <CheckMenuItem mnemonicParsing="false" text="Hover to show street" fx:id="hoverToShowStreet"/>
+            <MenuItem  mnemonicParsing="false" text="Zoom to area" fx:id="zoomToArea"/>
         </Menu>
-        <Menu mnemonicParsing="false" text="Points of interest" fx:id="myPoints">
-            <items>
-
-            </items>
+        <Menu mnemonicParsing="false" text="More">
+            <MenuItem mnemonicParsing="false" text="About" fx:id="about"/>
+            <MenuItem mnemonicParsing="false" text="Help" fx:id="help"/>
+            <MenuItem mnemonicParsing="false" text="Dev Tools" fx:id="devtools"/>
         </Menu>
 
       </menus>
     </MenuBar>
-    <StackPane VBox.vgrow="ALWAYS" fx:id="stackPane">
+    <StackPane VBox.vgrow="ALWAYS" fx:id="stackPane" styleClass="stack">
         <MapCanvasWrapper fx:id="mapCanvasWrapper"/>
         <VBox styleClass="UI" pickOnBounds="false">
           <VBox styleClass="searchBar">
@@ -52,21 +55,49 @@
             <VBox fx:id="suggestions" styleClass="suggestions">
             </VBox>
           </VBox>
-          <VBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
-              <Label fx:id="pointAddress" styleClass="pointAddress">Nearest neighbor address goes here</Label>
-              <Label fx:id="pointCoords" styleClass="pointCoords"/>
-              <Button fx:id="POIButton"/>
-              <Button fx:id="setAsDestination" disable="true">Set this point as destination</Button>
-              <Button fx:id="setAsStart" disable="true">Set this point as start</Button>
-              <VBox fx:id="routeInfo">
-                <Label fx:id="routeDistance"/>
-                <Label fx:id="routeTime"/>
-                <ScrollPane styleClass="directions">
-                  <VBox fx:id="directions"/>
-                </ScrollPane>
-              </VBox>
-          </VBox>
+
+            <VBox fx:id="directionsInfo" styleClass="directionsInfo" style="visibility: false">
+                <Label fx:id="startLabel"/>
+                <Label fx:id="destinationLabel"/>
+                <HBox fx:id="vehicleSelection" styleClass="hBox"/>
+                <HBox fx:id="shortestFastestSelection" styleClass="hBox"/>
+                <Button fx:id="findRoute">Find route</Button>
+                <Label fx:id="noRouteFound"/>
+                <VBox fx:id="routeInfo">
+                    <Label fx:id="routeDistance"/>
+                    <Label fx:id="routeTime"/>
+                    <ScrollPane styleClass="directions">
+                        <VBox fx:id="directions" styleClass="directionButtons"/>
+                    </ScrollPane>
+                </VBox>
+                <Button fx:id="cancelRoute">Cancel</Button>
+            </VBox>
+
         </VBox>
+
+        <HBox styleClass="pinInfoWrapper" pickOnBounds="false">
+          <HBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
+              <VBox>
+                <Label fx:id="pointAddress" styleClass="pointAddress"/>
+                <Label fx:id="pointCoords" styleClass="pointCoords"/>
+              </VBox>
+              <Button fx:id="POIButton" styleClass="icon-button, icon">
+                <!--<graphic>
+                  <Region fx:id="searchIcon" styleClass="icon, poi-icon"/>
+                </graphic>-->
+              </Button>
+              <Button fx:id="setAsStart" styleClass="icon-button">
+                <graphic>
+                  <Region fx:id="searchIcon" styleClass="icon, origin-icon"/>
+                </graphic>
+              </Button>
+              <Button fx:id="setAsDestination" styleClass="icon-button">
+                <graphic>
+                  <Region fx:id="searchIcon" styleClass="icon, destination-icon"/>
+                </graphic>
+              </Button>
+          </HBox>
+        </HBox>
     </StackPane>
   </children>
 </VBox>
