@@ -108,6 +108,7 @@ public class MainController {
     @FXML Label destinationLabel;
     @FXML HBox vehicleSelection;
     @FXML HBox shortestFastestSelection;
+    @FXML Label noRouteFound;
 
     private boolean shouldPan = true;
     private boolean showStreetOnHover = true;
@@ -332,7 +333,12 @@ public class MainController {
 
             long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startAddress.getCentroid(), vehicle)).getAsLong();
             long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), vehicle)).getAsLong(); //TODO refactor as method
-            canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
+            try {
+                noRouteFound.setText("");
+                canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
+            } catch (Exception ex) {
+                noRouteFound.setText("No route found");
+            }
             showDirectionsMenu();
         });
 

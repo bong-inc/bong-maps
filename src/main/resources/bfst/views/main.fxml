@@ -61,6 +61,7 @@
                 <HBox fx:id="vehicleSelection" styleClass="hBox"/>
                 <HBox fx:id="shortestFastestSelection" styleClass="hBox"/>
                 <Button fx:id="findRoute">Find route</Button>
+                <Label fx:id="noRouteFound"/>
                 <VBox fx:id="routeInfo">
                     <Label fx:id="routeDistance"/>
                     <Label fx:id="routeTime"/>
