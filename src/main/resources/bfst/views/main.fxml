@@ -81,10 +81,10 @@
                 <Label fx:id="pointAddress" styleClass="pointAddress"/>
                 <Label fx:id="pointCoords" styleClass="pointCoords"/>
               </VBox>
-              <Button fx:id="POIButton" styleClass="icon-button, icon">
-                <!--<graphic>
-                  <Region fx:id="searchIcon" styleClass="icon, poi-icon"/>
-                </graphic>-->
+              <Button fx:id="POIButton" styleClass="icon-button, icon, POIButton">
+                <graphic>
+                  <Region fx:id="searchIcon" styleClass="icon, poi-icon-is-set"/>
+                </graphic>
               </Button>
               <Button fx:id="setAsStart" styleClass="icon-button">
                 <graphic>
