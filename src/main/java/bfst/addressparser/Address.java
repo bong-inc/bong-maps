@@ -81,7 +81,7 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
     }
     //TODO municipality in regex
     static String regex =
-            "^(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1}))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\w?\\d{1,3}))\\.?)?,?(?: (?<postcode>\\d{4}) (?<city>[a-zæøåÆØÅ\\-\\. ]+))?$";
+            "^(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1}))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\w?\\d{1,3}))\\.?)?,?(?: (?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\. ]+))?$";
 
     static Pattern pattern = Pattern.compile(
             regex,
@@ -108,12 +108,7 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
     public int compareTo(Address that) {
         // street house floor side postcode city municipality
 
-        if(!this
-                .street
-                .toLowerCase()
-                .equals(that
-                        .street
-                        .toLowerCase())){
+        if(!this.street.toLowerCase().equals(that.street.toLowerCase())){
             return this.street.toLowerCase().compareTo(that.street.toLowerCase());
         } else if(this.house != null && that.house != null) {
             return this.house.toLowerCase().compareTo(that.house.toLowerCase());

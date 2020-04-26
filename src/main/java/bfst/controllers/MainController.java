@@ -238,6 +238,7 @@ public class MainController {
         searchField.textProperty().addListener((obs,oldVal,newVal) -> {
             hideAddPOIButton();
             if (searchField.isFocused()) setTempQuery(searchField.getText());
+            if(searchField.getText().length() == 0) suggestions.getChildren().clear();
             canvas.nullPin();
         });
 
@@ -525,11 +526,6 @@ public class MainController {
         query = query.toLowerCase();
         try {
             inputAdress = Address.parse(query);
-            System.out.println(inputAdress.street);
-            System.out.println(inputAdress.house);
-            System.out.println(inputAdress.postcode);
-            System.out.println(inputAdress.municipality);
-            System.out.println(inputAdress.city);
             int index = Collections.binarySearch(addresses, inputAdress);
             tempBest = new ArrayList<>();
             for (int i = 0; i < 5; i++){
