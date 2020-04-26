@@ -63,7 +63,7 @@
                 <HBox fx:id="shortestFastestSelection" styleClass="hBox"/>
                 <Button fx:id="findRoute">Find route</Button>
                 <Label fx:id="noRouteFound"/>
-                <VBox fx:id="routeInfo">
+                <VBox fx:id="routeInfo" styleClass="routeInfo">
                     <Label fx:id="routeDistance"/>
                     <Label fx:id="routeTime"/>
                     <ScrollPane styleClass="directions">

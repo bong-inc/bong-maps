@@ -630,9 +630,11 @@ public class MainController {
         }
 
         if (canvas.getRoute() != null) {
-            routeInfo.setVisible(true); //TODO vbox resizer ikke ordentligt
+            routeInfo.setVisible(true);
+            routeInfo.setManaged(true);
         } else {
             routeInfo.setVisible(false);
+            routeInfo.setManaged(false);
         }
 
         directionsInfo.setVisible(true);

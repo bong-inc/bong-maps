@@ -108,6 +108,7 @@
     -fx-spacing: 10;
 }
 
+
 .pointAddress, .pointCoords {
     -fx-display: inline-block;
 }
@@ -118,7 +119,11 @@
 
 .directionsInfo {
     -fx-max-width: 400px;
-    -fx-max-height: 400px;
+    -fx-max-height: 700px;
+}
+
+.routeInfo {
+    -fx-min-height: 200px;
 }
 
 .icon-button .icon {
