@@ -18,6 +18,7 @@ public class City extends CanvasElement implements Serializable, Comparable<City
     private final String name;
     private final Node node;
     private final CityType type;
+    private static boolean drawPrettyCitynames = true;
 
     private City(String _name, Node _node, String _cityType) {
         name = _name;
@@ -49,10 +50,12 @@ public class City extends CanvasElement implements Serializable, Comparable<City
         gc.setFont(font);
 
         if (1/scale < type.getMaxMxx() && 1/scale > type.getMinMxx()) {
-            // Too much performance impact
-            drawPretty(gc, scale);
-
-            // drawNormal(gc, scale);
+            if(drawPrettyCitynames){
+                // performance heavy
+                drawPretty(gc, scale);
+            } else {
+                drawNormal(gc, scale);
+            }
         }
     }
 
@@ -115,5 +118,13 @@ public class City extends CanvasElement implements Serializable, Comparable<City
     @Override
     public void setBoundingBox() {
         // ignore
+    }
+
+    public static void setDrawPrettyCitynames(boolean drawPrettyCitynames){
+        City.drawPrettyCitynames = drawPrettyCitynames;
+    }
+
+    public static boolean getDrawPrettyCitynames(){
+        return drawPrettyCitynames;
     }
 }

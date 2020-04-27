@@ -1,6 +1,7 @@
 package bfst.controllers;
 
 import bfst.OSMReader.KDTree;
+import bfst.canvas.City;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.PointOfInterest;
 import bfst.canvas.Type;
@@ -47,6 +48,7 @@ public class DevController {
     @FXML private CheckBox drawBoundingBox;
     @FXML private CheckBox showClosestNode;
     @FXML private CheckBox drawBound;
+    @FXML private CheckBox drawPrettyCitynames;
 
     @FXML
     public void initialize() {
@@ -154,6 +156,11 @@ public class DevController {
         drawBound.setSelected(canvas.getDrawBound());
         drawBound.setOnAction(e -> {
             canvas.setDrawBound(drawBound.isSelected());
+        });
+        
+        drawPrettyCitynames.setSelected(City.getDrawPrettyCitynames());
+        drawPrettyCitynames.setOnAction(e -> {
+            City.setDrawPrettyCitynames(drawPrettyCitynames.isSelected());
         });
     }
 

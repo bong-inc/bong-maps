@@ -653,4 +653,5 @@ public class MapCanvas extends Canvas {
     public boolean getDrawBound(){
         return drawBound;
     }
+
 }
