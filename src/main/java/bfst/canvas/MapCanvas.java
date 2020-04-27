@@ -156,19 +156,11 @@ public class MapCanvas extends Canvas {
             if (currentPin != null) currentPin.draw(gc, pixelwidth);
 
             if (showCities) {
-                // gc.setStroke(Color.WHITE);
-                // gc.setLineWidth(pixelwidth*2);
+                gc.setStroke(Color.WHITE);
+                gc.setLineWidth(pixelwidth*2);
                 gc.setFill(Color.valueOf("#555555"));
                 gc.setTextAlign(TextAlignment.CENTER);
-                for (City city : model.getCities()) {
-                    CityType type = city.getType();
-                    Font font = new Font(pixelwidth * type.getFontSize());
-                    gc.setFont(font);
-
-                    if (trans.getMxx() < type.getMaxMxx() && trans.getMxx() > type.getMinMxx()) {
-                        city.draw(gc, pixelwidth, false);
-                    }
-                }
+                model.getCitiesKdTree().draw(gc, pixelwidth, smartTrace, false, renderRange);
             }
         }
 
