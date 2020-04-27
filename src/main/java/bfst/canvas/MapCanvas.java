@@ -552,10 +552,6 @@ public class MapCanvas extends Canvas {
     }
 
     private void paintDrawablesOfType(Type type, double pixelwidth, boolean useRegularColors) {
-        if(type == Type.COASTLINE){
-            paintCoastLines(pixelwidth, useRegularColors);
-            return;
-        }
         KDTree kdTree = model.getKDTreeByType(type);
         gc.setStroke(Color.TRANSPARENT);
         gc.setFill(Color.TRANSPARENT);
@@ -575,21 +571,6 @@ public class MapCanvas extends Canvas {
             if (type.shouldHaveFill()) gc.setFill(type.getAlternateColor());
             if (type.shouldHaveStroke()) gc.setStroke(type.getAlternateColor());
         }
-    }
-
-    private void paintCoastLines(double pixelwidth, boolean useRegularColors) {
-        ArrayList<CanvasElement> coastLines = model.getCoastLines();
-        Type type = Type.COASTLINE;
-        gc.setStroke(Color.TRANSPARENT);
-        gc.setFill(Color.TRANSPARENT);
-        if (coastLines != null) {
-            setFillAndStroke(type, pixelwidth, useRegularColors);
-            for(CanvasElement c : model.getCoastLines()){
-                c.draw(gc, 1/pixelwidth, smartTrace);
-                if (type.shouldHaveFill()) gc.fill();
-            }
-        }
-
     }
 
     public void setModel(Model model) {

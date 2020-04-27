@@ -47,7 +47,7 @@ public class Model implements Serializable {
     public Map<Type, KDTree> createKdtreeByType(Map<Type, ArrayList<CanvasElement>> drawablesByType){
         kdtreeByType = new HashMap<Type, KDTree>();
         for(Entry<Type, ArrayList<CanvasElement>> e : drawablesByType.entrySet()){
-            if(e.getKey() == Type.COASTLINE) continue;
+            // if(e.getKey() == Type.COASTLINE) continue;
             e.getValue().trimToSize();
             KDTree current = new KDTree(e.getValue(), new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
             kdtreeByType.put(e.getKey(), current);
