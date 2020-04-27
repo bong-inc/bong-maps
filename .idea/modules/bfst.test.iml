@@ -34,6 +34,7 @@
     <orderEntry type="library" name="Gradle: org.codehaus.mojo:animal-sniffer-annotations:1.18" level="project" />
     <orderEntry type="library" name="Gradle: org.apiguardian:apiguardian-api:1.1.0" level="project" />
     <orderEntry type="library" name="Gradle: org.opentest4j:opentest4j:1.2.0" level="project" />
+    <orderEntry type="library" name="org.junit.jupiter:junit-jupiter:5.6.01" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="bfst.main" />
 </module>
