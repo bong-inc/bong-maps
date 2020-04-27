@@ -266,10 +266,8 @@ public class MainController {
 
         findRoute.setOnAction(e -> {
             try {
-                noRouteFound.setText("Finding route...");
                 findRouteFromGivenInputs();
                 showDirectionsMenu();
-                noRouteFound.setText("");
             } catch (Exception ex) {
                 noRouteFound.setText("No route found");
             }
@@ -657,6 +655,8 @@ public class MainController {
     }
 
     public void showDirectionsMenu() {
+        noRouteFound.setText("");
+
         if (startAddress != null) {
             startLabel.setText("Start: " + startAddress.toString());
         } else {
