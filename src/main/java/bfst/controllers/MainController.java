@@ -65,6 +65,11 @@ public class MainController {
     private RadioButton shortButton = new RadioButton("Shortest");
     private RadioButton fastButton = new RadioButton("Fastest");
 
+    private MapCanvas canvas;
+    private boolean shouldPan = true;
+    private boolean showStreetOnHover = false;
+    private String tempQuery = "";
+
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
     }
@@ -78,81 +83,41 @@ public class MainController {
         }
     }
 
-    @FXML
-    private StackPane stackPane;
-    @FXML
-    private MapCanvasWrapper mapCanvasWrapper;
-    private MapCanvas canvas;
-    @FXML
-    private MenuItem loadClick;
-    @FXML
-    private MenuItem loadDefaultMap;
-    @FXML
-    private MenuItem saveAs;
-    @FXML
-    private MenuItem devtools;
-    @FXML
-    private MenuItem about;
-    @FXML
-    private MenuItem help;
-    @FXML
-    private TextField searchField;
-    @FXML
-    private VBox suggestions;
-
-    @FXML
-    private Menu myPoints;
-    @FXML
-    private HBox pinInfo;
-    @FXML
-    private Label pointAddress;
-    @FXML
-    private Label pointCoords;
-    @FXML
-    private Button POIButton;
-    @FXML
-    private Button setAsDestination;
-    @FXML
-    private Button setAsStart;
-    @FXML
-    private VBox routeInfo;
-    @FXML
-    private Label routeDistance;
-    @FXML
-    private Label routeTime;
-    @FXML
-    private VBox directions;
-    @FXML
-    private Menu view;
-    @FXML
-    private CheckMenuItem publicTransport;
-    @FXML
-    private CheckMenuItem darkMode;
-    @FXML
-    private CheckMenuItem hoverToShowStreet;
-    @FXML
-    private MenuItem zoomToArea;
-    @FXML
-    private Button findRoute;
-    @FXML
-    private VBox directionsInfo;
-    @FXML
-    private Label startLabel;
-    @FXML
-    private Label destinationLabel;
-    @FXML
-    private HBox vehicleSelection;
-    @FXML
-    private HBox shortestFastestSelection;
-    @FXML
-    private Label noRouteFound;
-    @FXML
-    private Button cancelRoute;
-
-    private boolean shouldPan = true;
-    private boolean showStreetOnHover = false;
-    private String tempQuery = "";
-
+    @FXML private StackPane stackPane;
+    @FXML private MapCanvasWrapper mapCanvasWrapper;
+    @FXML private MenuItem loadClick;
+    @FXML private MenuItem loadDefaultMap;
+    @FXML private MenuItem saveAs;
+    @FXML private MenuItem devtools;
+    @FXML private MenuItem about;
+    @FXML private MenuItem help;
+    @FXML private TextField searchField;
+    @FXML private VBox suggestions;
+    @FXML private Menu myPoints;
+    @FXML private HBox pinInfo;
+    @FXML private Label pointAddress;
+    @FXML private Label pointCoords;
+    @FXML private Button POIButton;
+    @FXML private Button setAsDestination;
+    @FXML private Button setAsStart;
+    @FXML private VBox routeInfo;
+    @FXML private Label routeDistance;
+    @FXML private Label routeTime;
+    @FXML private VBox directions;
+    @FXML private Menu view;
+    @FXML private CheckMenuItem publicTransport;
+    @FXML private CheckMenuItem darkMode;
+    @FXML private CheckMenuItem hoverToShowStreet;
+    @FXML private MenuItem zoomToArea;
+    @FXML private Button findRoute;
+    @FXML private VBox directionsInfo;
+    @FXML private Label startLabel;
+    @FXML private Label destinationLabel;
+    @FXML private HBox vehicleSelection;
+    @FXML private HBox shortestFastestSelection;
+    @FXML private Label noRouteFound;
+    @FXML private Button cancelRoute;
+    
     @FXML
     public void initialize() {
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> {
