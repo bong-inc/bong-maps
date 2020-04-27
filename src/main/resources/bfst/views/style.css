@@ -247,7 +247,7 @@ Button:hover {
 
 .radio-button:selected {
     -fx-text-fill: white;
-    -fx-background-color: #88aaff;
+    -fx-background-color: "#69c7ff";
 }
 
 .radio-button:hover {
