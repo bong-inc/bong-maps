@@ -837,7 +837,7 @@ public class MainController {
                 canvas.setTypesToBeDrawn(list);
                 break;
             case ".zip":
-                loadZip(file);
+                loadFile(loadZip(file));
                 break;
             default:
                 is.close();
@@ -855,20 +855,20 @@ public class MainController {
         System.out.println("load binary: " + time/1000000f + "ms");
     }
 
-    private Object loadBinary(InputStream is) throws IOException, ClassNotFoundException {
+    public static Object loadBinary(InputStream is) throws IOException, ClassNotFoundException {
         ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
         Object temp = ois.readObject();
         ois.close();
         return temp;
     }
 
-    public void saveBinary(File file, Serializable toBeSaved) throws IOException {
+    public static void saveBinary(File file, Serializable toBeSaved) throws IOException {
         ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
         oos.writeObject(toBeSaved);
         oos.close();
     }
 
-    private void loadZip(File file) throws Exception {
+    public static File loadZip(File file) throws Exception {
         String fileName = "";
         byte[] buffer = new byte[1024];
         ZipInputStream zis = new ZipInputStream(new FileInputStream(file.getAbsolutePath()));
@@ -890,7 +890,7 @@ public class MainController {
         zis.closeEntry();
         zis.close();
 
-        loadFile(new File(destFolder + File.separator + fileName));
+        return new File(destFolder + File.separator + fileName);
 
     }
 
