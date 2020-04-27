@@ -25,50 +25,28 @@ public class DevController {
         this.canvas = canvas;
     }
 
-    @FXML
-    private Button zoomIn;
-    @FXML
-    private Button zoomOut;
-    @FXML
-    private FlowPane filterTypes;
-    @FXML
-    private Button selectall;
-    @FXML
-    private Button deselectall;
-    @FXML
-    private CheckBox smartTraceToggle;
-    @FXML
-    private CheckBox colorToggle;
-    @FXML
-    private CheckBox citiesToggle;
-    @FXML
-    private CheckBox dependentDrawToggle;
-    @FXML
-    private TextField startPoint;
-    @FXML
-    private Button showDijkstra;
-    @FXML
-    private TextField endPoint;
-    @FXML
-    private Button findRoute;
-    @FXML
-    private ComboBox<String> vehicle;
-    @FXML
-    private Button clearRoute;
-    @FXML
-    private CheckBox shortestRoute;
-    @FXML
-    private Button routeDescription;
-    @FXML
-    private Button printPOI;
-    @FXML
-    private CheckBox fullscreenRange;
-    @FXML
-    private CheckBox drawBoundingBox;
-    @FXML
-    private CheckBox showClosestNode;
-    @FXML
-    private CheckBox drawBound;
+    @FXML private Button zoomIn;
+    @FXML private Button zoomOut;
+    @FXML private FlowPane filterTypes;
+    @FXML private Button selectall;
+    @FXML private Button deselectall;
+    @FXML private CheckBox smartTraceToggle;
+    @FXML private CheckBox colorToggle;
+    @FXML private CheckBox citiesToggle;
+    @FXML private CheckBox dependentDrawToggle;
+    @FXML private TextField startPoint;
+    @FXML private Button showDijkstra;
+    @FXML private TextField endPoint;
+    @FXML private Button findRoute;
+    @FXML private ComboBox<String> vehicle;
+    @FXML private Button clearRoute;
+    @FXML private CheckBox shortestRoute;
+    @FXML private Button routeDescription;
+    @FXML private Button printPOI;
+    @FXML private CheckBox fullscreenRange;
+    @FXML private CheckBox drawBoundingBox;
+    @FXML private CheckBox showClosestNode;
+    @FXML private CheckBox drawBound;
 
     @FXML
     public void initialize() {
