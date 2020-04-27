@@ -55,9 +55,9 @@
           <Label fx:id="startLabel" />
           <Label fx:id="destinationLabel" />
           <HBox fx:id="vehicleSelection" styleClass="hBox">
-            <RadioButton fx:id="carButton">Car</RadioButton>
-            <RadioButton fx:id="bikeButton">Bicycle</RadioButton>
-            <RadioButton fx:id="walkButton">Walk</RadioButton>
+            <RadioButton fx:id="carButton" styleClass="carButton, radioButton"></RadioButton>
+            <RadioButton fx:id="bikeButton" styleClass="bikeButton, radioButton">Bicycle</RadioButton>
+            <RadioButton fx:id="walkButton" styleClass="walkButton, radioButton">Walk</RadioButton>
           </HBox>
           <HBox fx:id="shortestFastestSelection" styleClass="hBox">
             <RadioButton fx:id="shortButton">Shortest</RadioButton>
