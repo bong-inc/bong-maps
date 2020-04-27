@@ -54,8 +54,15 @@
         <VBox fx:id="directionsInfo" styleClass="directionsInfo" style="visibility: false">
           <Label fx:id="startLabel" />
           <Label fx:id="destinationLabel" />
-          <HBox fx:id="vehicleSelection" styleClass="hBox" />
-          <HBox fx:id="shortestFastestSelection" styleClass="hBox" />
+          <HBox fx:id="vehicleSelection" styleClass="hBox">
+            <RadioButton fx:id="carButton">Car</RadioButton>
+            <RadioButton fx:id="bikeButton">Bicycle</RadioButton>
+            <RadioButton fx:id="walkButton">Walk</RadioButton>
+          </HBox>
+          <HBox fx:id="shortestFastestSelection" styleClass="hBox">
+            <RadioButton fx:id="shortButton">Shortest</RadioButton>
+            <RadioButton fx:id="fastButton">Fastest</RadioButton>
+          </HBox>
           <Button fx:id="findRoute">Find route</Button>
           <Label fx:id="noRouteFound" />
           <VBox fx:id="routeInfo" styleClass="routeInfo">

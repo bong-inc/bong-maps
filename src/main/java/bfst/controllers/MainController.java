@@ -56,14 +56,15 @@ public class MainController {
     private Address startAddress;
     private Address currentAddress;
 
+
     private ToggleGroup vehicleGroup = new ToggleGroup();
-    private RadioButton carButton = new RadioButton("Car");
-    private RadioButton bikeButton = new RadioButton("Bicycle");
-    private RadioButton walkButton = new RadioButton("Walk");
+    @FXML private RadioButton carButton = new RadioButton("Car");
+    @FXML private RadioButton bikeButton = new RadioButton("Bicycle");
+    @FXML private RadioButton walkButton = new RadioButton("Walk");
 
     private ToggleGroup shortFastGroup = new ToggleGroup();
-    private RadioButton shortButton = new RadioButton("Shortest");
-    private RadioButton fastButton = new RadioButton("Fastest");
+    @FXML private RadioButton shortButton = new RadioButton("Shortest");
+    @FXML private RadioButton fastButton = new RadioButton("Fastest");
 
     private MapCanvas canvas;
     private boolean shouldPan = true;
@@ -264,8 +265,14 @@ public class MainController {
         });
 
         findRoute.setOnAction(e -> {
-            findRouteFromGivenInputs();
-            showDirectionsMenu();
+            try {
+                noRouteFound.setText("Finding route...");
+                findRouteFromGivenInputs();
+                showDirectionsMenu();
+                noRouteFound.setText("");
+            } catch (Exception ex) {
+                noRouteFound.setText("No route found");
+            }
         });
 
         canvas.setOnMouseMoved(e -> {
@@ -301,7 +308,6 @@ public class MainController {
         bikeButton.setToggleGroup(vehicleGroup);
         walkButton.setToggleGroup(vehicleGroup);
         carButton.setSelected(true);
-        vehicleSelection.getChildren().addAll(carButton, bikeButton, walkButton);
 
         bikeButton.setOnAction(e -> {
             disableShortFastChoice();
@@ -317,7 +323,6 @@ public class MainController {
         shortButton.setToggleGroup(shortFastGroup);
         fastButton.setToggleGroup(shortFastGroup);
         shortButton.setSelected(true);
-        shortestFastestSelection.getChildren().addAll(shortButton, fastButton);
 
         cancelRoute.setOnAction(e -> {
             canvas.clearRoute();
@@ -368,7 +373,7 @@ public class MainController {
         }
     }
 
-    private void findRouteFromGivenInputs() {
+    private void findRouteFromGivenInputs() throws Exception {
         RadioButton selectedVehicleButton = (RadioButton) vehicleGroup.getSelectedToggle();
         String vehicle = selectedVehicleButton.getText();
         RadioButton selectedShortFastButton = (RadioButton) shortFastGroup.getSelectedToggle();
@@ -376,12 +381,9 @@ public class MainController {
 
         long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startAddress.getCentroid(), vehicle)).getAsLong();
         long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), vehicle)).getAsLong(); //TODO refactor as method
-        try {
-            noRouteFound.setText("");
-            canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
-        } catch (Exception ex) {
-            noRouteFound.setText("No route found");
-        }
+
+        canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
+
     }
 
     private void openHelp() {
