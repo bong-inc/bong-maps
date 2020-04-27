@@ -183,7 +183,7 @@ public class MapCanvas extends Canvas {
             draggedSquare.draw(gc, pixelwidth, false);
         }
 
-        System.out.println("Repaint: " + ((System.nanoTime() - time) / 1000000.0 + " ms at " + i));
+        // System.out.println("Repaint: " + ((System.nanoTime() - time) / 1000000.0 + " ms at " + i));
     }
 
     public void setDraggedSquare(LinePath linePath) {

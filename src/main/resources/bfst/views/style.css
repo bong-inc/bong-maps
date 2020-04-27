@@ -85,6 +85,7 @@
 
 .directions {
     -fx-max-height: 300px;
+    -fx-fit-to-width: true;
 }
 
 .directionButtons {
@@ -237,7 +238,41 @@ Button:hover {
 }
 
 .instruction {
-    /*TODO style instruction-buttons*/
+    -fx-padding: 10 20;
+    -fx-background-color: #fff;
+    -fx-alignment: CENTER_LEFT;
+    -fx-focus-traversable: true;
+    -fx-wrap-text: true;
+}
+
+.radio-button:selected {
+    -fx-text-fill: white;
+    -fx-background-color: #88aaff;
+}
+
+.radio-button:hover {
+    -fx-cursor: hand;
+}
+
+.radio-button {
+    -fx-padding: 3;
+    -fx-background-radius: 100;
+}
+
+.radio-button > .radio {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0px;
+    -fx-padding: 0.0em; /* 4 8 4 8 */
+}
+
+.radio-button:selected > .radio > .dot {
+    -fx-background-color: transparent;
+    -fx-managed: false;
+}
+
+.instruction:hover {
+    -fx-background-color: #f8f8f8;
 }
 
 .scroll-bar .increment-button {

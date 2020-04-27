@@ -249,12 +249,7 @@ public class MainController {
         searchField.setOnAction(e -> {
             if(suggestions.getChildren().size() > 0) {
                 Address a = (Address) suggestions.getChildren().get(0).getUserData();
-                searchField.setText(a.toString());
-                searchField.positionCaret(searchField.getText().length());
-                canvas.zoomToPoint(1, a.getLon(),  a.getLat());
-                canvas.setPin(a.getLon(), a.getLat());
-                suggestions.getChildren().clear();
-                showPinMenu();
+                goToAddress(a);
             }
         });
 
@@ -314,6 +309,23 @@ public class MainController {
 
         setRouteOptionButtons();
 
+    }
+
+    private void goToAddress(Address a) {
+        setTempQuery(a.toString());
+        searchField.setText(a.toString());
+        searchField.positionCaret(searchField.getText().length());
+        canvas.zoomToPoint(1, a.getLon(),  a.getLat());
+        canvas.setPin(a.getLon(), a.getLat());
+        suggestions.getChildren().clear();
+        showPinMenu();
+    }
+
+    private void peekAddress(Address a) {
+        searchField.setText(a.toString());
+        canvas.zoomToPoint(1, a.getLon(),  a.getLat());
+        canvas.setPin(a.getLon(), a.getLat());
+        showPinMenu();
     }
 
     private void setRouteOptionButtons() {
@@ -623,6 +635,9 @@ public class MainController {
 
                 b.setText(addressString);
                 b.getStyleClass().add("suggestion");
+                b.setOnAction(e -> {
+                    goToAddress((Address) b.getUserData());
+                });
                 b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
                     if (event.getCode() == KeyCode.TAB) {
                         setTempQuery(((Address) ((Button) event.getSource()).getUserData()).toString());
@@ -636,7 +651,9 @@ public class MainController {
                 });
                 b.focusedProperty().addListener((obs, oldVal, newVal) -> {
                     if (newVal) {
-                        searchField.setText((String) b.getUserData().toString());
+                        Address a = (Address) b.getUserData();
+                        searchField.setText(a.toString());
+                        peekAddress(a);
                     }
                     
                 });
