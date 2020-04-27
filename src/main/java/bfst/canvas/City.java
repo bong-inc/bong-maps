@@ -50,7 +50,7 @@ public class City implements Serializable, Comparable<City>, Drawable {
         if(this.type == type.CITY){
             gc.strokeText(this.name, node.getLon(), node.getLat()-7*scale);
             gc.fillText(this.name, node.getLon(), node.getLat()-7*scale);
-            double radius = 5*scale;
+            double radius = 4*scale;
             gc.strokeOval(node.getLon()-(radius/2), node.getLat()-(radius/2), radius, radius);
             gc.fillOval(node.getLon()-(radius/2), node.getLat()-(radius/2), radius, radius);
         } else {

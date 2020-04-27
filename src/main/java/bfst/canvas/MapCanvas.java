@@ -157,18 +157,16 @@ public class MapCanvas extends Canvas {
             if (currentPin != null) currentPin.draw(gc, pixelwidth);
 
             if (showCities) {
-                gc.setFill(Color.DARKGREY);
+                gc.setStroke(Color.WHITE);
+                gc.setLineWidth(pixelwidth*2);
+                gc.setFill(Color.valueOf("#555555"));
+                gc.setTextAlign(TextAlignment.CENTER);
                 for (City city : model.getCities()) {
                     CityType type = city.getType();
                     Font font = new Font(pixelwidth * type.getFontSize());
                     gc.setFont(font);
 
-
                     if (trans.getMxx() < type.getMaxMxx() && trans.getMxx() > type.getMinMxx()) {
-                        gc.setStroke(Color.WHITE);
-                        gc.setLineWidth(pixelwidth*2);
-                        gc.setFill(Color.valueOf("#555555"));
-                        gc.setTextAlign(TextAlignment.CENTER);
                         city.draw(gc, pixelwidth, false);
                     }
                 }
@@ -189,7 +187,7 @@ public class MapCanvas extends Canvas {
             draggedSquare.draw(gc, pixelwidth, false);
         }
 
-        // System.out.println("Repaint: " + ((System.nanoTime() - time) / 1000000.0 + " ms at " + i));
+        System.out.println("Repaint: " + ((System.nanoTime() - time) / 1000000.0 + " ms at " + i));
     }
 
     public void setDraggedSquare(LinePath linePath) {
