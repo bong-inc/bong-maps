@@ -157,8 +157,8 @@ public class MapCanvas extends Canvas {
             if (currentPin != null) currentPin.draw(gc, pixelwidth);
 
             if (showCities) {
-                gc.setStroke(Color.WHITE);
-                gc.setLineWidth(pixelwidth*2);
+                // gc.setStroke(Color.WHITE);
+                // gc.setLineWidth(pixelwidth*2);
                 gc.setFill(Color.valueOf("#555555"));
                 gc.setTextAlign(TextAlignment.CENTER);
                 for (City city : model.getCities()) {

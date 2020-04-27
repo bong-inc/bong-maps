@@ -47,6 +47,14 @@ public class City implements Serializable, Comparable<City>, Drawable {
 
     @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+
+        // Too much performance impact
+        // drawPretty(gc, scale, smartTrace);
+
+        gc.fillText(this.name, node.getLon(), node.getLat());
+    }
+
+    private void drawPretty(GraphicsContext gc, double scale, boolean smartTrace){
         if(this.type == type.CITY){
             gc.strokeText(this.name, node.getLon(), node.getLat()-7*scale);
             gc.fillText(this.name, node.getLon(), node.getLat()-7*scale);
@@ -57,7 +65,6 @@ public class City implements Serializable, Comparable<City>, Drawable {
             gc.strokeText(this.name, node.getLon(), node.getLat());
             gc.fillText(this.name, node.getLon(), node.getLat());
         }
-        
     }
 
     public CityType getType() {
