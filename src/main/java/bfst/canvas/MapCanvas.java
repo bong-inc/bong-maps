@@ -13,6 +13,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -164,6 +165,10 @@ public class MapCanvas extends Canvas {
 
 
                     if (trans.getMxx() < type.getMaxMxx() && trans.getMxx() > type.getMinMxx()) {
+                        gc.setStroke(Color.WHITE);
+                        gc.setLineWidth(pixelwidth*2);
+                        gc.setFill(Color.valueOf("#555555"));
+                        gc.setTextAlign(TextAlignment.CENTER);
                         city.draw(gc, pixelwidth, false);
                     }
                 }

@@ -2,6 +2,9 @@ package bfst.canvas;
 
 import bfst.OSMReader.Node;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeType;
+import javafx.scene.text.TextAlignment;
 
 import java.io.Serializable;
 
@@ -44,7 +47,17 @@ public class City implements Serializable, Comparable<City>, Drawable {
 
     @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
-        gc.fillText(this.name, node.getLon(), node.getLat());
+        if(this.type == type.CITY){
+            gc.strokeText(this.name, node.getLon(), node.getLat()-7*scale);
+            gc.fillText(this.name, node.getLon(), node.getLat()-7*scale);
+            double radius = 5*scale;
+            gc.strokeOval(node.getLon()-(radius/2), node.getLat()-(radius/2), radius, radius);
+            gc.fillOval(node.getLon()-(radius/2), node.getLat()-(radius/2), radius, radius);
+        } else {
+            gc.strokeText(this.name, node.getLon(), node.getLat());
+            gc.fillText(this.name, node.getLon(), node.getLat());
+        }
+        
     }
 
     public CityType getType() {
