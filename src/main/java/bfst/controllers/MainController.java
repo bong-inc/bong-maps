@@ -224,6 +224,7 @@ public class MainController {
                 searchField.positionCaret(searchField.getText().length());
                 KeyEvent press = new KeyEvent(searchField,searchField,KeyEvent.KEY_PRESSED, "", "", KeyCode.RIGHT, false, false, false, false);
                 searchField.fireEvent(press);
+                searchField.positionCaret(searchField.getText().length());
             }
         });
 
@@ -281,6 +282,7 @@ public class MainController {
             openHelp();
         });
 
+        setAsDestination.setTooltip(new Tooltip("Set as destination"));
         setAsDestination.setOnAction(e -> {
             canvas.clearRoute();
             destinationAddress = currentAddress;
@@ -288,6 +290,7 @@ public class MainController {
             showDirectionsMenu();
         });
 
+        setAsStart.setTooltip(new Tooltip("Set as start"));
         setAsStart.setOnAction(e -> {
             canvas.clearRoute();
             startAddress = currentAddress;
@@ -571,10 +574,12 @@ public class MainController {
 
         if (canvas.POIContains(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY())) {
             POIExists.set(true);
+            POIButton.setTooltip(new Tooltip("Remove point of interest"));
             POIButton.getStyleClass().removeAll("POIButton-add");
             POIButton.getStyleClass().add("POIButton-remove");
         } else {
             POIExists.set(false);
+            POIButton.setTooltip(new Tooltip("Add to points of interest"));
             POIButton.getStyleClass().removeAll("POIButton-remove");
             POIButton.getStyleClass().add("POIButton-add");
         }

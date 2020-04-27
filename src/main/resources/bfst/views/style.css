@@ -271,6 +271,20 @@ Button:hover {
     -fx-managed: false;
 }
 
+.tooltip {
+    -fx-background: rgb(0, 0, 0);
+    -fx-text-fill: white;
+    -fx-background-color: rgba(0, 0, 0, 1);
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0.4em 0.75em 0.4em 0.75em; /* 10px */
+    -fx-effect: none;
+    /*
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.5) , 10, 0.0 , 0 , 3 );
+    */
+    -fx-font-size: 0.85em;
+}
+
 .instruction:hover {
     -fx-background-color: #f8f8f8;
 }
