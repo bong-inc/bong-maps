@@ -123,7 +123,6 @@ public class MapCanvas extends Canvas {
         updateSearchRange(pixelwidth);
 
         if (model != null) {
-            paintCoastLines(pixelwidth, useRegularColors);
             for (Type type : typesToBeDrawn) {
                 if (type != Type.UNKNOWN) {
                     if (useDependentDraw) {
@@ -553,6 +552,10 @@ public class MapCanvas extends Canvas {
     }
 
     private void paintDrawablesOfType(Type type, double pixelwidth, boolean useRegularColors) {
+        if(type == Type.COASTLINE){
+            paintCoastLines(pixelwidth, useRegularColors);
+            return;
+        }
         KDTree kdTree = model.getKDTreeByType(type);
         gc.setStroke(Color.TRANSPARENT);
         gc.setFill(Color.TRANSPARENT);
