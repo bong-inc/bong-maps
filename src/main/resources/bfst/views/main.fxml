@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.HBox ?>
 <?import javafx.scene.layout.Region ?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Label?>
 <VBox prefHeight="800" prefWidth="1200" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar VBox.vgrow="NEVER">
@@ -56,8 +57,8 @@
           <Label fx:id="destinationLabel" />
           <HBox fx:id="vehicleSelection" styleClass="hBox">
             <RadioButton fx:id="carButton" styleClass="carButton, radioButton"></RadioButton>
-            <RadioButton fx:id="bikeButton" styleClass="bikeButton, radioButton">Bicycle</RadioButton>
-            <RadioButton fx:id="walkButton" styleClass="walkButton, radioButton">Walk</RadioButton>
+            <RadioButton fx:id="bikeButton" styleClass="bikeButton, radioButton"></RadioButton>
+            <RadioButton fx:id="walkButton" styleClass="walkButton, radioButton"></RadioButton>
           </HBox>
           <HBox fx:id="shortestFastestSelection" styleClass="hBox">
             <RadioButton fx:id="shortButton">Shortest</RadioButton>
