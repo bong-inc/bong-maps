@@ -16,6 +16,18 @@ public class IndexMinPQ<Key extends Comparable<Key>>  {
         qp = new HashMap<>();
     }
 
+    public Key getFromKeys(long i) {
+        return keys.get(i);
+    }
+
+    public long getFromPq(long i) {
+        return pq.get(i);
+    }
+
+    public long getFromQp(long i) {
+        return qp.get(i);
+    }
+
     public boolean isEmpty() {
         return n == 0;
     }
@@ -57,11 +69,11 @@ public class IndexMinPQ<Key extends Comparable<Key>>  {
         swim(qp.get(i));
     }
 
-    private boolean greater(long i, long j) {
+    public boolean greater(long i, long j) {
         return keys.get(pq.get(i)).compareTo(keys.get(pq.get(j))) > 0;
     }
 
-    private void exch(long i, long j) {
+    public void exch(long i, long j) {
         long swap = pq.get(i);
         pq.put(i, pq.get(j));
         pq.put(j, swap);
