@@ -303,8 +303,11 @@ public class MainController {
 
     private void setRouteOptionButtons() {
         carButton.setToggleGroup(vehicleGroup);
+        carButton.setUserData("Car");
         bikeButton.setToggleGroup(vehicleGroup);
+        bikeButton.setUserData("Bicycle");
         walkButton.setToggleGroup(vehicleGroup);
+        walkButton.setUserData("Walk");
         carButton.setSelected(true);
 
         bikeButton.setOnAction(e -> {
@@ -373,7 +376,7 @@ public class MainController {
 
     private void findRouteFromGivenInputs() throws Exception {
         RadioButton selectedVehicleButton = (RadioButton) vehicleGroup.getSelectedToggle();
-        String vehicle = selectedVehicleButton.getText();
+        String vehicle = (String) selectedVehicleButton.getUserData();
         RadioButton selectedShortFastButton = (RadioButton) shortFastGroup.getSelectedToggle();
         boolean shortestRoute = selectedShortFastButton.getText().equals("Shortest");
 
