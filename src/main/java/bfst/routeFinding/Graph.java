@@ -36,7 +36,7 @@ public class Graph implements Serializable {
                     count++;
                 }
             } else {
-                if (edge.getTailNode().getAsLong() == id) {
+                if (edge.getTailNode().getAsLong() == id || edge.getHeadNode().getAsLong() == id) {
                     count++;
                 }
             }
