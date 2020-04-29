@@ -105,11 +105,14 @@
     -fx-max-height: 50px;
     -fx-pref-height: 0px;
     -fx-max-width: 600px;
-    -fx-padding: 5 10;
+    -fx-padding: 10 10;
     -fx-background-radius: 5;
     -fx-spacing: 10;
 }
 
+.pinInfoClose {
+    -fx-max-height: 2px;
+}
 
 .pointAddress, .pointCoords {
     -fx-display: inline-block;
@@ -157,6 +160,10 @@
     -fx-max-height: 700px;
 }
 
+.directionsInfoStack {
+    -fx-alignment: top-right;
+}
+
 .routeInfo {
     -fx-min-height: 200px;
 }
@@ -187,6 +194,27 @@
     -fx-content-display: graphic-only;
 }
 
+.cross-icon-button {
+    -size: 11;
+    -fx-min-height: -size;
+    -fx-min-width: -size;
+    -fx-max-height: -size;
+    -fx-max-width: -size;
+}
+
+.cross-icon {
+    -fx-background-color: #ddd;
+    -size: 11;
+    -fx-min-height: -size;
+    -fx-min-width: -size;
+    -fx-max-height: -size;
+    -fx-max-width: -size;
+}
+
+.cross-icon:hover {
+    -fx-background-color: #953e3e;
+}
+
 .searchFieldIcon {
 
 }
@@ -209,6 +237,10 @@
 
 .origin-icon {
     -fx-shape: "M76.3,0a76.3,76.3,0,1,0,76.3,76.3A76.41,76.41,0,0,0,76.3,0Zm0,135.6a59.3,59.3,0,1,1,59.3-59.3A59.36,59.36,0,0,1,76.3,135.6Z";
+}
+
+.cross-icon {
+    -fx-shape: "M61.2,50.5l32.1,32.1c3,3,3,7.7,0,10.7c-3,3-7.7,3-10.7,0L50.5,61.2L18.4,93.3c-3,3-7.7,3-10.7,0  c-3-3-3-7.7,0-10.7l32.1-32.1L7.7,18.4c-3-3-3-7.7,0-10.7s7.7-3,10.7,0l32.1,32.1L82.6,7.7c3-3,7.7-3,10.7,0c3,3,3,7.7,0,10.7  L61.2,50.5z";
 }
 
 Button:hover {

@@ -118,6 +118,7 @@ public class MainController {
     @FXML private HBox shortestFastestSelection;
     @FXML private Label noRouteFound;
     @FXML private Button cancelRoute;
+    @FXML private Button pinInfoClose;
     
     @FXML
     public void initialize() {
@@ -151,7 +152,7 @@ public class MainController {
 
         canvas.setOnMouseReleased(e -> {
             if (!hasBeenDragged && shouldPan) {
-                placeOrRemovePin();
+                placePin();
             }
             if (!shouldPan) {
                 Point2D end = new Point2D(e.getX(), e.getY());
@@ -262,6 +263,11 @@ public class MainController {
             startAddress = currentAddress;
             canvas.setRouteOrigin(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
             showDirectionsMenu();
+        });
+
+        pinInfoClose.setOnAction(e -> {
+            canvas.nullPin();
+            hidePinMenu();
         });
 
         findRoute.setOnAction(e -> {
@@ -435,17 +441,11 @@ public class MainController {
         }
     }
 
-    private void placeOrRemovePin() {
+    private void placePin() {
         try {
-            if (canvas.getCurrentPin() == null) {
-                Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
-                canvas.setPin((float) point2D.getX(), (float) point2D.getY());
-                showPinMenu();
-            } else {
-                canvas.nullPin();
-                hidePinMenu();
-            }
-
+            Point2D point2D = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
+            canvas.setPin((float) point2D.getX(), (float) point2D.getY());
+            showPinMenu();
         } catch (NonInvertibleTransformException ex) {
             ex.printStackTrace();
         }

@@ -53,27 +53,35 @@
           <VBox fx:id="suggestions" styleClass="suggestions"></VBox>
         </VBox>
         <VBox fx:id="directionsInfo" styleClass="directionsInfo" style="visibility: false">
-          <Label fx:id="startLabel" />
-          <Label fx:id="destinationLabel" />
-          <HBox fx:id="vehicleSelection" styleClass="hBox">
-            <RadioButton fx:id="carButton" styleClass="carButton, radioButton"></RadioButton>
-            <RadioButton fx:id="bikeButton" styleClass="bikeButton, radioButton"></RadioButton>
-            <RadioButton fx:id="walkButton" styleClass="walkButton, radioButton"></RadioButton>
-          </HBox>
-          <HBox fx:id="shortestFastestSelection" styleClass="hBox">
-            <RadioButton fx:id="shortButton">Shortest</RadioButton>
-            <RadioButton fx:id="fastButton">Fastest</RadioButton>
-          </HBox>
-          <Button fx:id="findRoute">Find route</Button>
-          <Label fx:id="noRouteFound" />
-          <VBox fx:id="routeInfo" styleClass="routeInfo">
-            <Label fx:id="routeDistance" />
-            <Label fx:id="routeTime" />
-            <ScrollPane styleClass="directions">
-              <VBox fx:id="directions" styleClass="directionButtons" />
-            </ScrollPane>
-          </VBox>
-          <Button fx:id="cancelRoute">Cancel</Button>
+          <StackPane styleClass="directionsInfoStack">
+            <VBox styleClass="directionsInfo">
+              <Label fx:id="startLabel" />
+              <Label fx:id="destinationLabel" />
+              <HBox fx:id="vehicleSelection" styleClass="hBox">
+                <RadioButton fx:id="carButton" styleClass="carButton, radioButton"></RadioButton>
+                <RadioButton fx:id="bikeButton" styleClass="bikeButton, radioButton"></RadioButton>
+                <RadioButton fx:id="walkButton" styleClass="walkButton, radioButton"></RadioButton>
+              </HBox>
+              <HBox fx:id="shortestFastestSelection" styleClass="hBox">
+                <RadioButton fx:id="shortButton">Shortest</RadioButton>
+                <RadioButton fx:id="fastButton">Fastest</RadioButton>
+              </HBox>
+              <Button fx:id="findRoute">Find route</Button>
+              <Label fx:id="noRouteFound" />
+              <VBox fx:id="routeInfo" styleClass="routeInfo">
+                <Label fx:id="routeDistance" />
+                <Label fx:id="routeTime" />
+                <ScrollPane styleClass="directions">
+                  <VBox fx:id="directions" styleClass="directionButtons" />
+                </ScrollPane>
+              </VBox>
+            </VBox>
+            <Button fx:id="cancelRoute" styleClass="directionsInfoCancel, icon-button">
+              <graphic>
+                <Region styleClass="cross-icon" />
+              </graphic>
+            </Button>
+          </StackPane>
         </VBox>
       </VBox>
       <HBox styleClass="pinInfoWrapper" pickOnBounds="false">
@@ -95,6 +103,11 @@
           <Button fx:id="setAsDestination" styleClass="icon-button">
             <graphic>
               <Region styleClass="icon, destination-icon" />
+            </graphic>
+          </Button>
+          <Button fx:id="pinInfoClose" styleClass="pinInfoClose, icon-button, cross-icon-button">
+            <graphic>
+              <Region styleClass="cross-icon" />
             </graphic>
           </Button>
         </HBox>
