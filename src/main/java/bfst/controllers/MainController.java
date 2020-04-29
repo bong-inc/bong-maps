@@ -921,4 +921,14 @@ public class MainController {
         canvas.setPOI(list);
     }
 
+    private void swapStartAndDestination() {
+        Address tempAddress = startAddress;
+        Point2D tempPoint = startPoint;
+        startAddress = destinationAddress;
+        startPoint = destinationPoint;
+        destinationAddress = tempAddress;
+        destinationPoint = tempPoint;
+        showDirectionsMenu();
+    }
+
 }
