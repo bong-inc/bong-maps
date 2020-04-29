@@ -55,8 +55,17 @@
         <VBox fx:id="directionsInfo" styleClass="directionsInfo" style="visibility: false">
           <StackPane styleClass="directionsInfoStack">
             <VBox styleClass="directionsInfo">
-              <Label fx:id="startLabel" />
-              <Label fx:id="destinationLabel" />
+              <HBox>
+                <VBox>
+                  <Label fx:id="startLabel" />
+                  <Label fx:id="destinationLabel" />
+                </VBox>
+                <Button styleClass="icon-button, icon">
+                  <graphic>
+                    <Region styleClass="icon, swap-icon" />
+                  </graphic>
+                </Button>
+              </HBox>
               <HBox fx:id="vehicleSelection" styleClass="hBox">
                 <RadioButton fx:id="carButton" styleClass="carButton, radioButton"></RadioButton>
                 <RadioButton fx:id="bikeButton" styleClass="bikeButton, radioButton"></RadioButton>
