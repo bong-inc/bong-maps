@@ -366,7 +366,7 @@ public class OSMReader {
                 break;
             }
             else{
-                coastline.remove(currentNd.getAsLong());
+                coastline.remove(tempNodes.get(coastlineNodes[0]).getAsLong());
                 savedNd = currentNd;
             }
         }
