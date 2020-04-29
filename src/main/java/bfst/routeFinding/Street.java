@@ -109,6 +109,9 @@ public class Street implements Serializable {
                     if (value.equals("yes") || value.equals("designated")) {
                         walking = true;
                     }
+                    if (value.equals("private")) {
+                        walking = false;
+                    }
                     break;
                 case "bicycle":
                     if (value.equals("yes") || value.equals("designated")) {
@@ -122,6 +125,12 @@ public class Street implements Serializable {
                         role = Role.ROUNDABOUT;
                     }
                     break;
+                case "service":
+                    if (value.equals("parking_aisle") || value.equals("emergency_access")) {
+                        car = false;
+                        bicycle = false;
+                        walking = false;
+                    }
             }
 
         }

@@ -100,7 +100,7 @@ public class OSMReader {
                                 for (int i = 0; i < tagList.size(); i += 2) {
 
                                     if (tagList.get(i).equals("access")) {
-                                        if (tagList.get(i + 1).equals("no")) {
+                                        if (!(tagList.get(i + 1).equals("yes") || tagList.get(i + 1).equals("permissive"))) {
                                             break;
                                         }
                                     }

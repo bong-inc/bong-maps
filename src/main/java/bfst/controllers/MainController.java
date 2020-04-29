@@ -685,7 +685,7 @@ public class MainController {
 
         if (startAddress != null) {
             if (dist(startPoint, startAddress.getCentroid()) > 50) {
-                Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+                Node unprojected = MercatorProjector.unproject(startAddress.getCentroid().getX(), startAddress.getCentroid().getY());
                 startLabel.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
             } else {
                 startLabel.setText(startAddress.toString());
@@ -695,7 +695,12 @@ public class MainController {
         }
 
         if (destinationAddress != null) {
-            destinationLabel.setText(destinationAddress.toString());
+            if (dist(destinationPoint, destinationAddress.getCentroid()) > 50) {
+                Node unprojected = MercatorProjector.unproject(destinationAddress.getCentroid().getX(), destinationAddress.getCentroid().getY());
+                destinationLabel.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
+            } else {
+                destinationLabel.setText(destinationAddress.toString());
+            }
         } else {
             destinationLabel.setText("Not set");
         }
