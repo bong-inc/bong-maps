@@ -275,6 +275,7 @@ public class MainController {
                 showDirectionsMenu();
             } catch (Exception ex) {
                 noRouteFound.setText("No route found");
+                ex.printStackTrace();
             }
         });
 
@@ -344,7 +345,7 @@ public class MainController {
     private void showStreetNearMouse(MouseEvent e) {
         try {
             Point2D translatedCoords = canvas.getTrans().inverseTransform(e.getX(), e.getY());
-            Node nearestNode = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Car");
+            Node nearestNode = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Walk");
             long nodeAsLong = nearestNode.getAsLong();
             Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
             double bestAngle = Double.POSITIVE_INFINITY;
