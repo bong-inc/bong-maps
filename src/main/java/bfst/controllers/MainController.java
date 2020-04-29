@@ -55,6 +55,9 @@ public class MainController {
     private Address destinationAddress;
     private Address startAddress;
     private Address currentAddress;
+    private Point2D destinationPoint;
+    private Point2D startPoint;
+    private Point2D currentPoint;
 
 
     private ToggleGroup vehicleGroup = new ToggleGroup();
@@ -252,7 +255,8 @@ public class MainController {
         setAsDestination.setOnAction(e -> {
             canvas.clearRoute();
             destinationAddress = currentAddress;
-            canvas.setRouteDestination(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+            destinationPoint = currentPoint;
+            canvas.setRouteDestination((float) destinationPoint.getX(), (float) destinationPoint.getY());
             showDirectionsMenu();
         });
 
@@ -260,7 +264,8 @@ public class MainController {
         setAsStart.setOnAction(e -> {
             canvas.clearRoute();
             startAddress = currentAddress;
-            canvas.setRouteOrigin(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+            startPoint = currentPoint;
+            canvas.setRouteOrigin((float) startPoint.getX(), (float) startPoint.getY());
             showDirectionsMenu();
         });
 
@@ -329,6 +334,8 @@ public class MainController {
             canvas.clearRoute();
             startAddress = null;
             destinationAddress = null;
+            destinationPoint = null;
+            startPoint = null;
             canvas.clearOriginDestination();
             directionsInfo.setVisible(false);
         });
@@ -380,8 +387,8 @@ public class MainController {
         RadioButton selectedShortFastButton = (RadioButton) shortFastGroup.getSelectedToggle();
         boolean shortestRoute = selectedShortFastButton.getText().equals("Shortest");
 
-        long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startAddress.getCentroid(), vehicle)).getAsLong();
-        long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationAddress.getCentroid(), vehicle)).getAsLong(); //TODO refactor as method
+        long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startPoint, vehicle)).getAsLong();
+        long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationPoint, vehicle)).getAsLong(); //TODO refactor as method
 
         canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
 
@@ -645,7 +652,9 @@ public class MainController {
         Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
         pointCoords.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
 
+
         currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
+        currentPoint = new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
         pointAddress.setText(currentAddress.toString());
         double distance = distance(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
         System.out.println("distance: " + distance);
