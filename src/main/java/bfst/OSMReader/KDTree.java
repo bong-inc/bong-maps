@@ -17,7 +17,7 @@ import javafx.scene.paint.Paint;
 public class KDTree implements Serializable {
   private static final long serialVersionUID = 8179750180455602356L;
   List<CanvasElement> elements;
-  int maxNumOfElements = 500; // max size of elements
+  public static int maxNumOfElements = 500; // max size of elements list in leafs
   Range bound;
   KDTree low;
   KDTree high;
