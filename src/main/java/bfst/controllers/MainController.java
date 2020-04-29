@@ -122,6 +122,7 @@ public class MainController {
     @FXML private Label noRouteFound;
     @FXML private Button cancelRoute;
     @FXML private Button pinInfoClose;
+    @FXML private Button swap;
     
     @FXML
     public void initialize() {
@@ -280,7 +281,8 @@ public class MainController {
                 findRouteFromGivenInputs();
                 showDirectionsMenu();
             } catch (Exception ex) {
-                noRouteFound.setText("No route found");
+                noRouteFound.setVisible(true);
+                noRouteFound.setManaged(true);
                 ex.printStackTrace();
             }
         });
@@ -290,6 +292,10 @@ public class MainController {
                 showStreetNearMouse(e);
             }
 
+        });
+
+        swap.setOnAction(e -> {
+            swapStartAndDestination();
         });
 
         setRouteOptionButtons();
@@ -674,23 +680,24 @@ public class MainController {
     }
 
     public void showDirectionsMenu() {
-        noRouteFound.setText("");
+        noRouteFound.setVisible(false);
+        noRouteFound.setManaged(false);
 
         if (startAddress != null) {
             if (dist(startPoint, startAddress.getCentroid()) > 50) {
                 Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
-                startLabel.setText("Start: " + -unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
+                startLabel.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
             } else {
-                startLabel.setText("Start: " + startAddress.toString());
+                startLabel.setText(startAddress.toString());
             }
         } else {
-            startLabel.setText("Start: Not set");
+            startLabel.setText("Not set");
         }
 
         if (destinationAddress != null) {
-            destinationLabel.setText("Destination: " + destinationAddress.toString());
+            destinationLabel.setText(destinationAddress.toString());
         } else {
-            destinationLabel.setText("Destination: Not set");
+            destinationLabel.setText("Not set");
         }
 
         if (startAddress == null || destinationAddress == null) {

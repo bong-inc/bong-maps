@@ -107,6 +107,10 @@
     -fx-max-width: 600px;
     -fx-padding: 10 10;
     -fx-background-radius: 5;
+    -fx-spacing: 20;
+}
+
+.pinInfo {
     -fx-spacing: 10;
 }
 
@@ -119,7 +123,7 @@
 }
 
 .hBox {
-    -fx-spacing: 10px;
+    -fx-spacing: 20px;
 }
 
 .carButton, .bikeButton, .walkButton {
@@ -213,6 +217,31 @@
 
 .cross-icon:hover {
     -fx-background-color: #953e3e;
+}
+
+.deactivatedButton {
+    -size: 15;
+    -fx-min-height: -size;
+    -fx-min-width: -size;
+    -fx-max-height: -size;
+    -fx-max-width: -size;
+}
+
+.deactivatedButton .icon {
+    -fx-background-color: #000;
+    -size: 15;
+    -fx-min-height: -size;
+    -fx-min-width: -size;
+    -fx-max-height: -size;
+    -fx-max-width: -size;
+}
+
+.endPoints {
+    -fx-spacing: 10;
+}
+
+.endPoint {
+    -fx-spacing: 10;
 }
 
 .searchFieldIcon {

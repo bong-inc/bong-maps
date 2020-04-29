@@ -55,12 +55,26 @@
         <VBox fx:id="directionsInfo" styleClass="directionsInfo" style="visibility: false">
           <StackPane styleClass="directionsInfoStack">
             <VBox styleClass="directionsInfo">
-              <HBox>
-                <VBox>
-                  <Label fx:id="startLabel" />
-                  <Label fx:id="destinationLabel" />
+              <HBox style="-fx-alignment: center-center;">
+                <VBox styleClass="endPoints">
+                  <HBox styleClass="endPoint">
+                    <Button disable="true" styleClass="icon-button, deactivatedButton">
+                      <graphic>
+                        <Region styleClass="icon, origin-icon" />
+                      </graphic>
+                    </Button>
+                    <Label fx:id="startLabel" />
+                  </HBox>
+                  <HBox styleClass="endPoint">
+                    <Button disable="true" styleClass="icon-button, deactivatedButton">
+                      <graphic>
+                        <Region styleClass="icon, destination-icon" />
+                      </graphic>
+                    </Button>
+                    <Label fx:id="destinationLabel" />
+                  </HBox>
                 </VBox>
-                <Button styleClass="icon-button, icon">
+                <Button fx:id="swap" styleClass="icon-button, icon">
                   <graphic>
                     <Region styleClass="icon, swap-icon" />
                   </graphic>
@@ -76,7 +90,7 @@
                 <RadioButton fx:id="fastButton">Fastest</RadioButton>
               </HBox>
               <Button fx:id="findRoute">Find route</Button>
-              <Label fx:id="noRouteFound" />
+              <Label fx:id="noRouteFound" managed="false">No route found</Label>
               <VBox fx:id="routeInfo" styleClass="routeInfo">
                 <Label fx:id="routeDistance" />
                 <Label fx:id="routeTime" />
