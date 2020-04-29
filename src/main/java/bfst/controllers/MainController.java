@@ -676,7 +676,7 @@ public class MainController {
     private double dist(Point2D p1, Point2D p2){
         var dx = p2.getX() - p1.getX();
         var dy = p2.getY() - p1.getY();
-        return Math.sqrt(dx * dx + dy * dy);
+        return Math.sqrt(dx * dx + dy * dy) * 0.56;
     }
 
     public void showDirectionsMenu() {
@@ -721,8 +721,8 @@ public class MainController {
                 });
                 directions.getChildren().add(button);
             }
-            routeDistance.setText("Route length: " + canvas.distanceString());
-            routeTime.setText("Expected time: " + canvas.timeString());
+            routeDistance.setText(canvas.distanceString());
+            routeTime.setText(canvas.timeString());
         }
 
         if (canvas.getRoute() != null) {

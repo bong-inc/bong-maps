@@ -63,7 +63,7 @@
                         <Region styleClass="icon, origin-icon" />
                       </graphic>
                     </Button>
-                    <Label fx:id="startLabel" />
+                    <Label fx:id="startLabel" styleClass="bold"/>
                   </HBox>
                   <HBox styleClass="endPoint">
                     <Button disable="true" styleClass="icon-button, deactivatedButton">
@@ -71,7 +71,7 @@
                         <Region styleClass="icon, destination-icon" />
                       </graphic>
                     </Button>
-                    <Label fx:id="destinationLabel" />
+                    <Label fx:id="destinationLabel" styleClass="bold"/>
                   </HBox>
                 </VBox>
                 <Button fx:id="swap" styleClass="icon-button, icon">
@@ -92,8 +92,22 @@
               <Button fx:id="findRoute">Find route</Button>
               <Label fx:id="noRouteFound" managed="false">No route found</Label>
               <VBox fx:id="routeInfo" styleClass="routeInfo">
-                <Label fx:id="routeDistance" />
-                <Label fx:id="routeTime" />
+                <HBox styleClass="routeProperty">
+                  <Button disable="true" styleClass="icon-button, deactivatedButton">
+                    <graphic>
+                      <Region styleClass="icon, distanceIcon" />
+                    </graphic>
+                  </Button>
+                  <Label fx:id="routeDistance" styleClass="bold"/>
+                </HBox>
+                <HBox styleClass="routeProperty">
+                  <Button disable="true" styleClass="icon-button, deactivatedButton">
+                    <graphic>
+                      <Region styleClass="icon, timeIcon" />
+                    </graphic>
+                  </Button>
+                  <Label fx:id="routeTime" styleClass="bold"/>
+                </HBox>
                 <ScrollPane styleClass="directions">
                   <VBox fx:id="directions" styleClass="directionButtons" />
                 </ScrollPane>
