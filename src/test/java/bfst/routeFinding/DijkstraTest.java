@@ -19,6 +19,9 @@ class DijkstraTest {
     private Node node4 = new Node(4, 4, 0);
     private Node node5 = new Node(5, 5, 5);
     private Node node6 = new Node(6, 6, 6);
+    private Node node7 = new Node(7, 7, 7);
+    private Node node8 = new Node(8, 8, 8);
+    private Node node9 = new Node(9, -1, -1);
 
     private Edge edge0;
     private Edge edge1;
@@ -26,6 +29,9 @@ class DijkstraTest {
     private Edge edge3;
     private Edge edge4;
     private Edge edge5;
+    private Edge edge6;
+    private Edge edge7;
+    private Edge edge8;
 
     private Street street;
 
@@ -49,34 +55,69 @@ class DijkstraTest {
         edge3 = new Edge(node0, node2, street);
         edge4 = new Edge(node4, node1, street);
         edge5 = new Edge(node5, node6, street);
+        edge6 = new Edge(node7, node4, street);
+        edge7 = new Edge(node8, node7, street);
+        edge8 = new Edge(node0, node9, street);
 
         graph.addEdge(edge0);
         graph.addEdge(edge1);
         graph.addEdge(edge2);
         graph.addEdge(edge3);
         graph.addEdge(edge4);
+        graph.addEdge(edge5);
+        graph.addEdge(edge6);
+        graph.addEdge(edge7);
+        graph.addEdge(edge8);
 
     }
 
     @Test
     void testDijkstra() {
-        setVariables();
-        Dijkstra dijkstra = new Dijkstra(graph, 4, 1, "Car", true);
-        Assertions.assertEquals(1, dijkstra.getLastNode());
-    }
+        try {
+            setVariables();
+            Dijkstra dijkstra = new Dijkstra(graph, 4, 1, "Car", true);
+            Assertions.assertEquals(1, dijkstra.getLastNode());
+        } catch (Exception e) {
+            Assertions.fail();
+        }
+
+        Assertions.assertThrows(Exception.class, () -> {
+            setVariables();
+            Dijkstra dijkstra = new Dijkstra(graph, 0, 3, "Car", true);
+        });
+
+        Assertions.assertThrows(Exception.class, () -> {
+            setVariables();
+            Dijkstra dijkstra = new Dijkstra(graph, 0, 15, "Car", true);
+        });
 /*
-    @Test
-    void testHasPathTo() {
-        setVariables();
-        Dijkstra dijkstra = new Dijkstra(graph, 5, 1, "Car", true);
+        Assertions.assertThrows(Exception.class, () -> {
+            setVariables();
+            Dijkstra dijkstra = new Dijkstra(graph, 0, 1, "Bicycle", true);
+        });
+
+        Assertions.assertThrows(Exception.class, () -> {
+            setVariables();
+            Dijkstra dijkstra = new Dijkstra(graph, 0, 1, "Walk", true);
+        });
+
+ */
     }
+
 
     @Test
     void testPathTo() {
-        setVariables();
-        Dijkstra dijkstra = new Dijkstra(graph, 4, 1, "Car", true);
+        try {
+            setVariables();
+            Dijkstra dijkstra = new Dijkstra(graph, 8, 9, "Car", true);
 
-        System.out.println(dijkstra.pathTo(dijkstra.getLastNode(), 2).size());
+            ArrayList<Edge> part1 = dijkstra.pathTo(dijkstra.getLastNode(), 1);
+            ArrayList<Edge> part2 = dijkstra.pathTo(dijkstra.getLastNode(), 2);
+            System.out.println("last:" + dijkstra.getLastNode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assertions.fail();
+        }
     }
-*/
+
 }

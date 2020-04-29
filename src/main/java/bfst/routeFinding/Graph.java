@@ -15,7 +15,7 @@ public class Graph implements Serializable {
         return adj;
     }
 
-    public Node getNode(long id) {
+    public Node getNode(long id) throws Exception {
         if (adj.get(id).get(0).getTailNode().getAsLong() == id) {
             return adj.get(id).get(0).getTailNode();
         } else {
