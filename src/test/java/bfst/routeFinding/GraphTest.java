@@ -58,9 +58,13 @@ class GraphTest {
 
     @Test
     public void testGetNode() {
-        setVariables();
-        Node actual = graph.getNode(2);
-        Assertions.assertEquals(node2, actual);
+        try {
+            setVariables();
+            Node actual = graph.getNode(2);
+            Assertions.assertEquals(node2, actual);
+        } catch (Exception e) {
+            Assertions.fail();
+        }
     }
 
     @Test

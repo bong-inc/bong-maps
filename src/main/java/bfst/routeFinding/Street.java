@@ -31,6 +31,7 @@ public class Street implements Serializable {
                             break;
                         case "cycleway":
                             bicycle = true;
+                            role = Role.CYCLEWAY;
                             break;
                         case "path":
                             walking = true;
@@ -92,6 +93,10 @@ public class Street implements Serializable {
                     break;
                 case "oneway":
                     onewayCar = true;
+
+                    if (role == Role.CYCLEWAY) {
+                        onewayBicycle = true;
+                    }
                     break;
                 case "oneway:bicycle":
                     onewayBicycle = true;
@@ -158,6 +163,7 @@ public class Street implements Serializable {
         NO_ROLE,
         MOTORWAY_LINK,
         ROUNDABOUT,
-        MOTORWAY
+        MOTORWAY,
+        CYCLEWAY
     }
 }

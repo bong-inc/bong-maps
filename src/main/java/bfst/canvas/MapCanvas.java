@@ -138,7 +138,9 @@ public class MapCanvas extends Canvas {
             if (route != null) {
                 gc.setStroke(Color.valueOf("#69c7ff"));
                 gc.setLineWidth(pixelwidth*3);
-                drawableRoute.draw(gc, pixelwidth, smartTrace);
+                if (drawableRoute != null) {
+                    drawableRoute.draw(gc, pixelwidth, smartTrace);
+                }
                 if(instructions != null){
                     for(Instruction instruction : instructions){
                         instruction.getIndicator().draw(gc,pixelwidth);
@@ -211,7 +213,7 @@ public class MapCanvas extends Canvas {
         renderFullScreen = bool;
     }
 
-    public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
+    public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute) throws Exception{
         long time = -System.nanoTime();
         dijkstra = new Dijkstra(model.getGraph(), startPoint, endPoint, vehicle, shortestRoute);
         time += System.nanoTime();
