@@ -608,8 +608,8 @@ public class MapCanvas extends Canvas {
         repaint(13);
     }
 
-    public void setRouteOrigin (float lon, float lat){
-        currentRouteOrigin = new RouteOriginIndicator(lon, lat, 1);
+    public void setRouteOrigin (Point2D point){
+        currentRouteOrigin = new RouteOriginIndicator((float) point.getX(), (float)  point.getY(), 1);
         repaint(27);
     }
 
@@ -618,8 +618,8 @@ public class MapCanvas extends Canvas {
         repaint(28);
     }
 
-    public void setRouteDestination (float lon, float lat){
-        currentRouteDestination = new RouteDestinationIndicator(lon, lat, 1);
+    public void setRouteDestination (Point2D point){
+        currentRouteDestination = new RouteDestinationIndicator((float) point.getX(), (float)  point.getY(), 1);
         repaint(29);
     }
 

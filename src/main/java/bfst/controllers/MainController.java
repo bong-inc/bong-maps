@@ -258,7 +258,7 @@ public class MainController {
             canvas.clearRoute();
             destinationAddress = currentAddress;
             destinationPoint = currentPoint;
-            canvas.setRouteDestination((float) destinationPoint.getX(), (float) destinationPoint.getY());
+            canvas.setRouteDestination(destinationPoint);
             showDirectionsMenu();
         });
 
@@ -267,7 +267,7 @@ public class MainController {
             canvas.clearRoute();
             startAddress = currentAddress;
             startPoint = currentPoint;
-            canvas.setRouteOrigin((float) startPoint.getX(), (float) startPoint.getY());
+            canvas.setRouteOrigin(startPoint);
             showDirectionsMenu();
         });
 
@@ -935,7 +935,10 @@ public class MainController {
         startPoint = destinationPoint;
         destinationAddress = tempAddress;
         destinationPoint = tempPoint;
+        canvas.setRouteOrigin(startPoint);
+        canvas.setRouteDestination(destinationPoint);
         showDirectionsMenu();
+        canvas.repaint(32);
     }
 
 }
