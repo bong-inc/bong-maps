@@ -67,13 +67,25 @@ public class NodeContainer {
     }
 
     public int getIndex(long id){
+        if(!sorted){
+            sort(0, fill-1);
+            sorted = true;
+        }
         return BinarySearchIndex(id);
     }
 
     public float getLonFromIndex(int index){
+        if(!sorted){
+            sort(0, fill-1);
+            sorted = true;
+        }
         return lons[index];
     }
     public float getLatFromIndex(int index){
+        if(!sorted){
+            sort(0, fill-1);
+            sorted = true;
+        }
         return lats[index];
     }
 

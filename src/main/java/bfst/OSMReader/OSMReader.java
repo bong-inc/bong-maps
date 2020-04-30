@@ -187,6 +187,7 @@ public class OSMReader {
                                     land.addNode(-2);
                                     land.addNode(-3);
                                     land.addNode(-4);
+                                    land.trim();
                                     coastlines.add(new LinePath(land, Type.COASTLINE, tempNodes));
                                 }
                                 drawableByType.put(Type.COASTLINE,coastlines);
@@ -462,5 +463,6 @@ public class OSMReader {
         //tempRelations = null;
         tempCoastlines = null;
         drawableByType = null;
+        addresses = null;
     }
 }
