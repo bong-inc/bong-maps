@@ -81,7 +81,11 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
     }
     //TODO municipality in regex
     static String regex =
-            "^(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1}))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\w?\\d{1,3}))\\.?)?,?(?: (?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\. ]+))?$";
+    "^ *(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1,2}(?!\\d)))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\w?\\d{1,3}))\\.?)?(?:[\\.|,| ])*(?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\.]+[a-zæøåÆØÅ\\-\\. ]+[a-zæøåÆØÅ\\-\\.]+)? *$";
+
+            // Old regex
+            // "^(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1}))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\w?\\d{1,3}))\\.?)?,?(?: (?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\. ]+))?$";
+    
 
     static Pattern pattern = Pattern.compile(
             regex,
