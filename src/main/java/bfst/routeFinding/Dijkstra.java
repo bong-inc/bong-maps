@@ -64,7 +64,7 @@ public class Dijkstra {
 
     }
 
-    private long determineRelax(int currDijkstra, String vehicle, boolean shortestRoute) throws Exception{
+    public long determineRelax(int currDijkstra, String vehicle, boolean shortestRoute) throws Exception{
         long v;
         if (currDijkstra == 1) {
             v = pq.delMin();

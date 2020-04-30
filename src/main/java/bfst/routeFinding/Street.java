@@ -57,6 +57,8 @@ public class Street implements Serializable {
                             break;
                         case "residential":
                         case "living_street":
+                        case "service":
+                        case "track":
                             walking = true;
                             bicycle = true;
                             car = true;
@@ -70,11 +72,7 @@ public class Street implements Serializable {
                             onewayBicycle = true;
                             role = Role.ROUNDABOUT;
                             break;
-                        case "service":
-                        case "track":
-                            car = true;
-                            bicycle = true;
-                            walking = true;
+
                     }
                     break;
                 case "maxspeed":
