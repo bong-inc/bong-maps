@@ -2,13 +2,11 @@ package bfst.OSMReader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import bfst.canvas.Range;
-import bfst.canvas.CanvasElement;
 import bfst.routeFinding.Edge;
 import bfst.routeFinding.Street;
 import bfst.util.Geometry;
@@ -79,6 +77,7 @@ public class KDTreeForEdges implements Serializable {
     }
   }
 
+  // Only used for road edges
   public Node nearestNeighbor(Point2D query, String vehicle){
     Node returnElement = nearestNeighbor(query, Double.POSITIVE_INFINITY, vehicle);
     try {
@@ -111,7 +110,6 @@ public class KDTreeForEdges implements Serializable {
       return result;
     }
 
-
     if(isLeaf() && elements.size() > 0){
       Node result = null;
       Node c = closestNodeInElements(query, vehicle);
@@ -121,10 +119,8 @@ public class KDTreeForEdges implements Serializable {
         result = c;
         bestDist = Geometry.distance(query, c.getCentroid());
       }
-
       return result;
     }
-
     return null;
   }
 
@@ -153,24 +149,25 @@ public class KDTreeForEdges implements Serializable {
   }
 
   public Node closestNodeInElements(Point2D query, String vehicle) {
-    Edge bestEdge = null;
-    Node bestNode = null;
+    Edge closestEdge = null;
+    Node closestNode = null;
     double bestDist = Double.POSITIVE_INFINITY;
     for(Edge e : elements) {
+
       Street street = e.getStreet();
       if(vehicle.equals("Car") && !street.isCar()) continue;
       if(vehicle.equals("Bicycle") && !street.isBicycle()) continue;
       if(vehicle.equals("Walk") && !street.isWalking()) continue;
-
       Node newNode = closestNodeInEdge(query, e);
+      
       double newDist = Geometry.distance(query.getX(), query.getY(), newNode.getLon(), newNode.getLat());
       if(newDist < bestDist){
-        bestEdge = e;
+        closestEdge = e;
         bestDist = newDist;
-        bestNode = newNode;
+        closestNode = newNode;
       }
     }
-    return bestNode;
+    return closestNode;
   }
 
   public Node closestNodeInEdge(Point2D query, Edge edge) {

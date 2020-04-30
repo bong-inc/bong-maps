@@ -2,7 +2,6 @@ package bfst.OSMReader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -81,7 +80,6 @@ public class KDTree implements Serializable {
     }
   }
 
-
   // Only used for Address objects
   public CanvasElement nearestNeighbor(Point2D query){
     CanvasElement returnElement = nearestNeighbor(query, Double.POSITIVE_INFINITY);
@@ -117,15 +115,15 @@ public class KDTree implements Serializable {
 
     if(isLeaf() && elements.size() > 0){
       CanvasElement result = null;
-      CanvasElement c = bestInElements(query);
+      CanvasElement c = closestElementInElements(query);
+      if(c == null) return null;
+
       if(Geometry.distance(query, c.getCentroid()) < bestDist){
         result = c;
         bestDist = Geometry.distance(query, c.getCentroid());
       }
-
       return result;
     }
-
     return null;
   }
 
@@ -143,19 +141,6 @@ public class KDTree implements Serializable {
       if(boundingBox.maxY > maxY) maxY = boundingBox.maxY;
     }
     return new Range(minX, minY, maxX, maxY);
-  }
-
-  public CanvasElement bestInElements(Point2D query){
-    CanvasElement best = elements.get(0);
-    double bestDist = Geometry.distance(query, best.getCentroid());
-    for(CanvasElement c : elements){
-      double newDist = Geometry.distance(query, c.getCentroid());
-      if(newDist < bestDist){
-        bestDist = newDist;
-        best = c;
-      }
-    }
-    return best;
   }
 
   private boolean isEvenDepth() {
@@ -190,6 +175,7 @@ public class KDTree implements Serializable {
           elementsInRange.add(element);
         }
       }
+
       return elementsInRange;
     } else {
       List<CanvasElement> elementsInLowRange = new ArrayList<CanvasElement>();
