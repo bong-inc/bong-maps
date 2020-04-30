@@ -61,13 +61,13 @@ public class MainController {
 
 
     private ToggleGroup vehicleGroup = new ToggleGroup();
-    @FXML private RadioButton carButton = new RadioButton("Car");
-    @FXML private RadioButton bikeButton = new RadioButton("Bicycle");
-    @FXML private RadioButton walkButton = new RadioButton("Walk");
+    @FXML private RadioButton carButton;
+    @FXML private RadioButton bikeButton;
+    @FXML private RadioButton walkButton;
 
     private ToggleGroup shortFastGroup = new ToggleGroup();
-    @FXML private RadioButton shortButton = new RadioButton("Shortest");
-    @FXML private RadioButton fastButton = new RadioButton("Fastest");
+    @FXML private RadioButton shortButton;
+    @FXML private RadioButton fastButton;
 
     private MapCanvas canvas;
     private boolean shouldPan = true;
