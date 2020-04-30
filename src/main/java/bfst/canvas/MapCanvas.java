@@ -53,6 +53,8 @@ public class MapCanvas extends Canvas {
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
     
+    public static boolean drawBoundingBox;
+
     Range renderRange;
     
 
@@ -165,6 +167,7 @@ public class MapCanvas extends Canvas {
 
         scaleBar.updateScaleBar(this);
         scaleBar.draw(gc, pixelwidth, false);
+        gc.setStroke(Color.BLACK);
 
         if(!renderFullScreen) renderRange.draw(gc, pixelwidth);
 
@@ -535,6 +538,10 @@ public class MapCanvas extends Canvas {
             for(CanvasElement element : kdTree.rangeSearch(renderRange)){
                 element.draw(gc, 1/pixelwidth, smartTrace);
                 if (type.shouldHaveFill()) gc.fill();
+
+                if(drawBoundingBox) {
+                    element.getBoundingBox().draw(gc, pixelwidth/2f);
+                }
             }
         }
 

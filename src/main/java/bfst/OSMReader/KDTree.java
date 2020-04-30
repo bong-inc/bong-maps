@@ -26,7 +26,6 @@ public class KDTree implements Serializable {
   KDTree high;
   Type type;
   int depth;
-  public static boolean drawBoundingBox;
 
   private enum Type {
     PARENT, LEAF
@@ -201,36 +200,5 @@ public class KDTree implements Serializable {
       return newList;
     }
   }
-
-  public void draw(GraphicsContext gc, double scale, boolean smartTrace, boolean shouldHaveFill, Range range){
-    // print number of trees visited
-    // System.out.print("draw");
-
-    // draw CanvasElements in leafValues
-    boolean isEnclosed = range.isEnclosedBy(bound);
-    if(range.overlapsWith(bound)){
-      if(this.isLeaf()){
-        for(CanvasElement element : elements){
-          Range boundingBox = element.getBoundingBox();
-          if(isEnclosed || range.overlapsWith(boundingBox)){
-            element.draw(gc, scale, smartTrace);
-            if (shouldHaveFill) gc.fill();
-
-            // if(drawBoundingBox){
-            //   Paint tempColor = gc.getStroke();
-            //   gc.setStroke(Color.PINK);
-            //   gc.strokeRect(boundingBox.minX, boundingBox.minY, boundingBox.maxX -boundingBox.minX, boundingBox.maxY -boundingBox.minY);
-            //   gc.stroke();
-            //   gc.setStroke(tempColor);
-            //   gc.stroke();
-            // }
-          }
-        }
-      } else {
-        if(low != null) low.draw(gc, scale, smartTrace, shouldHaveFill, range);
-        if(high != null) high.draw(gc, scale, smartTrace, shouldHaveFill, range);
-      }
-    }    
-  }  
 
 }

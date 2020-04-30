@@ -146,9 +146,9 @@ public class DevController {
             canvas.repaint(15);
         });
 
-        drawBoundingBox.selectedProperty().set(KDTree.drawBoundingBox);
+        drawBoundingBox.selectedProperty().set(MapCanvas.drawBoundingBox);
         drawBoundingBox.setOnAction(e -> {
-            KDTree.drawBoundingBox = drawBoundingBox.isSelected();
+            MapCanvas.drawBoundingBox = drawBoundingBox.isSelected();
             canvas.repaint(21);
         });
 
