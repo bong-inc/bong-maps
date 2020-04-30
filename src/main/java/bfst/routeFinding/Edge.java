@@ -18,8 +18,6 @@ public class Edge implements Serializable {
     private Node tailNode;
     private Node headNode;
 
-
-
     public Edge(Node tailNode, Node headNode, Street street) {
         this.tailNode = tailNode;
         this.headNode = headNode;

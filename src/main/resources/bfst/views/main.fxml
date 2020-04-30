@@ -1,103 +1,156 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
-<?import bfst.canvas.MapCanvasWrapper?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.Group?>
-
+<?import bfst.canvas.MapCanvasWrapper ?>
+<?import javafx.scene.control.* ?>
+<?import javafx.scene.layout.StackPane ?>
+<?import javafx.scene.layout.VBox ?>
+<?import javafx.scene.layout.HBox ?>
+<?import javafx.scene.layout.Region ?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Label?>
 <VBox prefHeight="800" prefWidth="1200" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" text="Open…" fx:id="loadClick"/>
+            <MenuItem mnemonicParsing="false" text="Open…" fx:id="loadClick" />
             <Menu mnemonicParsing="false" text="Resources">
               <items>
-                <MenuItem text="Load default map" fx:id="loadDefaultMap"/>
+                <MenuItem text="Load default map" fx:id="loadDefaultMap" />
               </items>
             </Menu>
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Save As…" fx:id="saveAs"/>
+            <MenuItem mnemonicParsing="false" text="Save As…" fx:id="saveAs" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Points of interest" fx:id="myPoints"/>
+        <Menu mnemonicParsing="false" text="Points of interest" fx:id="myPoints" />
         <Menu mnemonicParsing="false" text="View" fx:id="view">
-            <CheckMenuItem mnemonicParsing="false" text="Public transport" fx:id="publicTransport"/>
-            <CheckMenuItem mnemonicParsing="false" text="Dark mode" fx:id="darkMode"/>
-            <CheckMenuItem mnemonicParsing="false" text="Hover to show street" fx:id="hoverToShowStreet"/>
-            <MenuItem  mnemonicParsing="false" text="Zoom to area" fx:id="zoomToArea"/>
+          <CheckMenuItem mnemonicParsing="false" text="Public transport" fx:id="publicTransport" />
+          <CheckMenuItem mnemonicParsing="false" text="Dark mode" fx:id="darkMode" />
+          <CheckMenuItem mnemonicParsing="false" text="Hover to show street" fx:id="hoverToShowStreet" />
+          <MenuItem mnemonicParsing="false" text="Zoom to area" fx:id="zoomToArea" />
         </Menu>
         <Menu mnemonicParsing="false" text="More">
-            <MenuItem mnemonicParsing="false" text="About" fx:id="about"/>
-            <MenuItem mnemonicParsing="false" text="Help" fx:id="help"/>
-            <MenuItem mnemonicParsing="false" text="Dev Tools" fx:id="devtools"/>
+          <MenuItem mnemonicParsing="false" text="About" fx:id="about" />
+          <MenuItem mnemonicParsing="false" text="Help" fx:id="help" />
+          <MenuItem mnemonicParsing="false" text="Dev Tools" fx:id="devtools" />
         </Menu>
-
       </menus>
     </MenuBar>
     <StackPane VBox.vgrow="ALWAYS" fx:id="stackPane" styleClass="stack">
-        <MapCanvasWrapper fx:id="mapCanvasWrapper"/>
-        <VBox styleClass="UI" pickOnBounds="false">
-          <VBox styleClass="searchBar">
-            <HBox styleClass="searchFieldWrapper">
-                <TextField styleClass="searchField" fx:id="searchField" promptText="Search"/>
-                <Button styleClass="icon-button, searchFieldIcon" fx:id="search">
-                    <graphic>
-                        <Region fx:id="searchIcon" styleClass="icon, search-icon"/>
-                    </graphic>
-                </Button>
-            </HBox>
-            <VBox fx:id="suggestions" styleClass="suggestions">
-            </VBox>
-          </VBox>
-
-            <VBox fx:id="directionsInfo" styleClass="directionsInfo" style="visibility: false">
-                <Label fx:id="startLabel"/>
-                <Label fx:id="destinationLabel"/>
-                <HBox fx:id="vehicleSelection" styleClass="hBox"/>
-                <HBox fx:id="shortestFastestSelection" styleClass="hBox"/>
-                <Button fx:id="findRoute">Find route</Button>
-                <Label fx:id="noRouteFound"/>
-                <VBox fx:id="routeInfo" styleClass="routeInfo">
-                    <Label fx:id="routeDistance"/>
-                    <Label fx:id="routeTime"/>
-                    <ScrollPane styleClass="directions">
-                        <VBox fx:id="directions" styleClass="directionButtons"/>
-                    </ScrollPane>
-                </VBox>
-                <Button fx:id="cancelRoute">Cancel</Button>
-            </VBox>
-
-        </VBox>
-
-        <HBox styleClass="pinInfoWrapper" pickOnBounds="false">
-          <HBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
-              <VBox>
-                <Label fx:id="pointAddress" styleClass="pointAddress"/>
-                <Label fx:id="pointCoords" styleClass="pointCoords"/>
-              </VBox>
-              <Button fx:id="POIButton" styleClass="icon-button, icon, POIButton">
-                <graphic>
-                  <Region fx:id="searchIcon" styleClass="icon, poi-icon-is-set"/>
-                </graphic>
-              </Button>
-              <Button fx:id="setAsStart" styleClass="icon-button">
-                <graphic>
-                  <Region fx:id="searchIcon" styleClass="icon, origin-icon"/>
-                </graphic>
-              </Button>
-              <Button fx:id="setAsDestination" styleClass="icon-button">
-                <graphic>
-                  <Region fx:id="searchIcon" styleClass="icon, destination-icon"/>
-                </graphic>
-              </Button>
+      <MapCanvasWrapper fx:id="mapCanvasWrapper" />
+      <VBox styleClass="UI" pickOnBounds="false">
+        <VBox styleClass="searchBar">
+          <HBox styleClass="searchFieldWrapper">
+            <TextField styleClass="searchField" fx:id="searchField" promptText="Search" />
+            <Button styleClass="icon-button, searchFieldIcon" fx:id="search">
+              <graphic>
+                <Region fx:id="searchIcon" styleClass="icon, search-icon" />
+              </graphic>
+            </Button>
           </HBox>
+          <VBox fx:id="suggestions" styleClass="suggestions">
+            <!-- Suggestions -->
+          </VBox>
+        </VBox>
+        <VBox fx:id="directionsInfo" styleClass="directionsInfo" style="visibility: false">
+          <StackPane styleClass="directionsInfoStack">
+            <VBox styleClass="directionsInfo">
+              <HBox style="-fx-alignment: center-center;">
+                <VBox styleClass="endPoints">
+                  <HBox styleClass="endPoint">
+                    <Button disable="true" styleClass="icon-button, deactivatedButton">
+                      <graphic>
+                        <Region styleClass="icon, origin-icon" />
+                      </graphic>
+                    </Button>
+                    <Label fx:id="startLabel" styleClass="bold"/>
+                  </HBox>
+                  <HBox styleClass="endPoint">
+                    <Button disable="true" styleClass="icon-button, deactivatedButton">
+                      <graphic>
+                        <Region styleClass="icon, destination-icon" />
+                      </graphic>
+                    </Button>
+                    <Label fx:id="destinationLabel" styleClass="bold"/>
+                  </HBox>
+                </VBox>
+                <Button fx:id="swap" styleClass="icon-button, icon">
+                  <graphic>
+                    <Region styleClass="icon, swap-icon" />
+                  </graphic>
+                </Button>
+              </HBox>
+              <HBox fx:id="vehicleSelection" styleClass="hBox">
+                <RadioButton fx:id="carButton" styleClass="carButton, radioButton"></RadioButton>
+                <RadioButton fx:id="bikeButton" styleClass="bikeButton, radioButton"></RadioButton>
+                <RadioButton fx:id="walkButton" styleClass="walkButton, radioButton"></RadioButton>
+              </HBox>
+              <HBox fx:id="shortestFastestSelection" styleClass="hBox">
+                <RadioButton fx:id="shortButton">Shortest</RadioButton>
+                <RadioButton fx:id="fastButton">Fastest</RadioButton>
+              </HBox>
+              <Button fx:id="findRoute">Find route</Button>
+              <Label fx:id="noRouteFound" managed="false">No route found</Label>
+              <VBox fx:id="routeInfo" styleClass="routeInfo">
+                <HBox styleClass="routeProperty">
+                  <Button disable="true" styleClass="icon-button, deactivatedButton">
+                    <graphic>
+                      <Region styleClass="icon, distanceIcon" />
+                    </graphic>
+                  </Button>
+                  <Label fx:id="routeDistance" styleClass="bold"/>
+                </HBox>
+                <HBox styleClass="routeProperty">
+                  <Button disable="true" styleClass="icon-button, deactivatedButton">
+                    <graphic>
+                      <Region styleClass="icon, timeIcon" />
+                    </graphic>
+                  </Button>
+                  <Label fx:id="routeTime" styleClass="bold"/>
+                </HBox>
+                <ScrollPane styleClass="directions">
+                  <VBox fx:id="directions" styleClass="directionButtons" />
+                </ScrollPane>
+              </VBox>
+            </VBox>
+            <Button fx:id="cancelRoute" styleClass="directionsInfoCancel, icon-button">
+              <graphic>
+                <Region styleClass="cross-icon" />
+              </graphic>
+            </Button>
+          </StackPane>
+        </VBox>
+      </VBox>
+      <HBox styleClass="pinInfoWrapper" pickOnBounds="false">
+        <HBox fx:id="pinInfo" styleClass="pinInfo" style="visibility: false">
+          <VBox>
+            <Label fx:id="pointAddress" styleClass="pointAddress" />
+            <Label fx:id="pointCoords" styleClass="pointCoords" />
+          </VBox>
+          <Button fx:id="POIButton" styleClass="icon-button, icon, POIButton">
+            <graphic>
+              <Region styleClass="icon, poi-icon-is-set" />
+            </graphic>
+          </Button>
+          <Button fx:id="setAsStart" styleClass="icon-button">
+            <graphic>
+              <Region styleClass="icon, origin-icon" />
+            </graphic>
+          </Button>
+          <Button fx:id="setAsDestination" styleClass="icon-button">
+            <graphic>
+              <Region styleClass="icon, destination-icon" />
+            </graphic>
+          </Button>
+          <Button fx:id="pinInfoClose" styleClass="pinInfoClose, icon-button, cross-icon-button">
+            <graphic>
+              <Region styleClass="cross-icon" />
+            </graphic>
+          </Button>
         </HBox>
+      </HBox>
     </StackPane>
   </children>
 </VBox>

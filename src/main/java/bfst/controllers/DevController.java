@@ -1,6 +1,7 @@
 package bfst.controllers;
 
 import bfst.OSMReader.KDTree;
+import bfst.canvas.City;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.PointOfInterest;
 import bfst.canvas.Type;
@@ -25,50 +26,29 @@ public class DevController {
         this.canvas = canvas;
     }
 
-    @FXML
-    private Button zoomIn;
-    @FXML
-    private Button zoomOut;
-    @FXML
-    private FlowPane filterTypes;
-    @FXML
-    private Button selectall;
-    @FXML
-    private Button deselectall;
-    @FXML
-    private CheckBox smartTraceToggle;
-    @FXML
-    private CheckBox colorToggle;
-    @FXML
-    private CheckBox citiesToggle;
-    @FXML
-    private CheckBox dependentDrawToggle;
-    @FXML
-    private TextField startPoint;
-    @FXML
-    private Button showDijkstra;
-    @FXML
-    private TextField endPoint;
-    @FXML
-    private Button findRoute;
-    @FXML
-    private ComboBox<String> vehicle;
-    @FXML
-    private Button clearRoute;
-    @FXML
-    private CheckBox shortestRoute;
-    @FXML
-    private Button routeDescription;
-    @FXML
-    private Button printPOI;
-    @FXML
-    private CheckBox fullscreenRange;
-    @FXML
-    private CheckBox drawBoundingBox;
-    @FXML
-    private CheckBox showClosestNode;
-    @FXML
-    private CheckBox drawBound;
+    @FXML private Button zoomIn;
+    @FXML private Button zoomOut;
+    @FXML private FlowPane filterTypes;
+    @FXML private Button selectall;
+    @FXML private Button deselectall;
+    @FXML private CheckBox smartTraceToggle;
+    @FXML private CheckBox colorToggle;
+    @FXML private CheckBox citiesToggle;
+    @FXML private CheckBox dependentDrawToggle;
+    @FXML private TextField startPoint;
+    @FXML private Button showDijkstra;
+    @FXML private TextField endPoint;
+    @FXML private Button findRoute;
+    @FXML private ComboBox<String> vehicle;
+    @FXML private Button clearRoute;
+    @FXML private CheckBox shortestRoute;
+    @FXML private Button routeDescription;
+    @FXML private Button printPOI;
+    @FXML private CheckBox fullscreenRange;
+    @FXML private CheckBox drawBoundingBox;
+    @FXML private CheckBox showClosestNode;
+    @FXML private CheckBox drawBound;
+    @FXML private CheckBox drawPrettyCitynames;
 
     @FXML
     public void initialize() {
@@ -135,7 +115,11 @@ public class DevController {
         });
 
         findRoute.setOnAction(e -> {
-            canvas.setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+            try {
+                canvas.setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
 
         clearRoute.setOnAction(e -> {
@@ -151,7 +135,7 @@ public class DevController {
         });
 
         printPOI.setOnAction(e -> {
-            for (PointOfInterest poi : canvas.getPointsOfInterest()) {
+            for (PointOfInterest poi : PointsOfInterestController.getPointsOfInterest()) {
                 System.out.println(poi.toString());
             }
         });
@@ -162,9 +146,9 @@ public class DevController {
             canvas.repaint(15);
         });
 
-        drawBoundingBox.selectedProperty().set(KDTree.drawBoundingBox);
+        drawBoundingBox.selectedProperty().set(MapCanvas.drawBoundingBox);
         drawBoundingBox.setOnAction(e -> {
-            KDTree.drawBoundingBox = drawBoundingBox.isSelected();
+            MapCanvas.drawBoundingBox = drawBoundingBox.isSelected();
             canvas.repaint(21);
         });
 
@@ -176,6 +160,11 @@ public class DevController {
         drawBound.setSelected(canvas.getDrawBound());
         drawBound.setOnAction(e -> {
             canvas.setDrawBound(drawBound.isSelected());
+        });
+        
+        drawPrettyCitynames.setSelected(City.getDrawPrettyCitynames());
+        drawPrettyCitynames.setOnAction(e -> {
+            City.setDrawPrettyCitynames(drawPrettyCitynames.isSelected());
         });
     }
 

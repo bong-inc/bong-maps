@@ -1,0 +1,152 @@
+match,group,is_participating,start,end,content
+1,0,yes,0,33,1. junivej 1a 4 th 2900 københavn
+1,street,yes,0,10,1. junivej
+1,house,yes,11,13,1a
+1,floor,yes,14,15,4
+1,side,yes,16,18,th
+1,postcode,yes,19,23,2900
+1,city,yes,24,33,københavn
+2,0,yes,34,67,   jagtvej 1a 4 th 2900 københavn
+2,street,yes,37,44,jagtvej
+2,house,yes,45,47,1a
+2,floor,yes,48,49,4
+2,side,yes,50,52,th
+2,postcode,yes,53,57,2900
+2,city,yes,58,67,københavn
+3,0,yes,68,97,jagtvej 1a 4th 2900 københavn
+3,street,yes,68,75,jagtvej
+3,house,yes,76,78,1a
+3,floor,yes,79,80,4
+3,side,yes,80,82,th
+3,postcode,yes,83,87,2900
+3,city,yes,88,97,københavn
+4,0,yes,98,127,jagtvej 1a 4th 2900 københavn
+4,street,yes,98,105,jagtvej
+4,house,yes,106,108,1a
+4,floor,yes,109,110,4
+4,side,yes,110,112,th
+4,postcode,yes,113,117,2900
+4,city,yes,118,127,københavn
+5,0,yes,128,177,"General Bahnsons Vej 17, st.th 2000 Frederiksberg"
+5,street,yes,128,148,General Bahnsons Vej
+5,house,yes,149,151,17
+5,floor,yes,153,155,st
+5,side,yes,156,158,th
+5,postcode,yes,159,163,2000
+5,city,yes,164,177,Frederiksberg
+6,0,yes,178,201,General Bahnsons Vej 17
+6,street,yes,178,198,General Bahnsons Vej
+6,house,yes,199,201,17
+7,0,yes,202,227,"jagtvej 1, 2900 københavn"
+7,street,yes,202,209,jagtvej
+7,house,yes,210,211,1
+7,floor,no,-1,-1,
+7,side,yes,213,217,2900
+7,postcode,no,-1,-1,
+7,city,yes,218,227,københavn
+8,0,yes,228,244,"jagtvej 1, 2900 "
+8,street,yes,228,235,jagtvej
+8,house,yes,236,237,1
+8,floor,no,-1,-1,
+8,side,yes,239,243,2900
+9,0,yes,245,260,"jagtvej 1, 2900"
+9,street,yes,245,252,jagtvej
+9,house,yes,253,254,1
+9,floor,no,-1,-1,
+9,side,yes,256,260,2900
+10,0,yes,261,270,jagtvej 1
+10,street,yes,261,268,jagtvej
+10,house,yes,269,270,1
+11,0,yes,271,284,"jagtvej 1, 2."
+11,street,yes,271,278,jagtvej
+11,house,yes,279,280,1
+11,floor,yes,282,283,2
+12,0,yes,285,300,"jagtvej 1, 2.th"
+12,street,yes,285,292,jagtvej
+12,house,yes,293,294,1
+12,floor,yes,296,297,2
+12,side,yes,298,300,th
+13,0,yes,301,340,"Blegdamsvej 29a 5 607, 2100 København Ø"
+13,street,yes,301,312,Blegdamsvej
+13,house,yes,313,316,29a
+13,floor,yes,317,318,5
+13,side,yes,319,322,607
+13,postcode,yes,324,328,2100
+13,city,yes,329,340,København Ø
+14,0,yes,341,379,Blegdamsvej 29a 5 607 2100 København Ø
+14,street,yes,341,352,Blegdamsvej
+14,house,yes,353,356,29a
+14,floor,yes,357,358,5
+14,side,yes,359,362,607
+14,postcode,yes,363,367,2100
+14,city,yes,368,379,København Ø
+15,0,yes,380,402,Blegdamsvej 29a 5 607 
+15,street,yes,380,391,Blegdamsvej
+15,house,yes,392,395,29a
+15,floor,yes,396,397,5
+15,side,yes,398,401,607
+16,0,yes,403,423,"jagtvej 1, københavn"
+16,street,yes,403,410,jagtvej
+16,house,yes,411,412,1
+16,floor,no,-1,-1,
+16,side,no,-1,-1,
+16,postcode,no,-1,-1,
+16,city,yes,414,423,københavn
+17,0,yes,424,445,jagtvej 1 københavn H
+17,street,yes,424,431,jagtvej
+17,house,yes,432,433,1
+17,floor,no,-1,-1,
+17,side,no,-1,-1,
+17,postcode,no,-1,-1,
+17,city,yes,434,445,københavn H
+18,0,yes,446,468,jagtvej 1 københavn H 
+18,street,yes,446,453,jagtvej
+18,house,yes,454,455,1
+18,floor,no,-1,-1,
+18,side,no,-1,-1,
+18,postcode,no,-1,-1,
+18,city,yes,456,467,københavn H
+19,0,yes,469,502,"1.junivej 1, st th 2800 københavn"
+19,street,yes,469,478,1.junivej
+19,house,yes,479,480,1
+19,floor,yes,482,484,st
+19,side,yes,485,487,th
+19,postcode,yes,488,492,2800
+19,city,yes,493,502,københavn
+20,0,yes,503,527,"1.junivej 1, st th 2800 "
+20,street,yes,503,512,1.junivej
+20,house,yes,513,514,1
+20,floor,yes,516,518,st
+20,side,yes,519,521,th
+20,postcode,yes,522,526,2800
+21,0,yes,528,551,"1.junivej 1, st th 2800"
+21,street,yes,528,537,1.junivej
+21,house,yes,538,539,1
+21,floor,yes,541,543,st
+21,side,yes,544,546,th
+21,postcode,yes,547,551,2800
+22,0,yes,552,571,"1.junivej 1, st th "
+22,street,yes,552,561,1.junivej
+22,house,yes,562,563,1
+22,floor,yes,565,567,st
+22,side,yes,568,570,th
+23,0,yes,572,590,"1.junivej 1, st th"
+23,street,yes,572,581,1.junivej
+23,house,yes,582,583,1
+23,floor,yes,585,587,st
+23,side,yes,588,590,th
+24,0,yes,591,607,"1.junivej 1, st "
+24,street,yes,591,600,1.junivej
+24,house,yes,601,602,1
+24,floor,yes,604,606,st
+25,0,yes,608,621,"1.junivej 1, "
+25,street,yes,608,617,1.junivej
+25,house,yes,618,619,1
+26,0,yes,622,634,"1.junivej 1,"
+26,street,yes,622,631,1.junivej
+26,house,yes,632,633,1
+27,0,yes,635,646,1.junivej 1
+27,street,yes,635,644,1.junivej
+27,house,yes,645,646,1
+28,0,yes,647,656,1.junivej
+28,street,yes,647,656,1.junivej

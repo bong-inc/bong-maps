@@ -31,6 +31,7 @@ public class Street implements Serializable {
                             break;
                         case "cycleway":
                             bicycle = true;
+                            role = Role.CYCLEWAY;
                             break;
                         case "path":
                             walking = true;
@@ -43,7 +44,6 @@ public class Street implements Serializable {
                         case "primary":
                         case "secondary":
                         case "tertiary":
-                        case "service":
                         case "trunk":
                         case "trunk_link":
                         case "primary_link":
@@ -57,6 +57,8 @@ public class Street implements Serializable {
                             break;
                         case "residential":
                         case "living_street":
+                        case "service":
+                        case "track":
                             walking = true;
                             bicycle = true;
                             car = true;
@@ -70,6 +72,7 @@ public class Street implements Serializable {
                             onewayBicycle = true;
                             role = Role.ROUNDABOUT;
                             break;
+
                     }
                     break;
                 case "maxspeed":
@@ -91,7 +94,13 @@ public class Street implements Serializable {
                     name = value.intern();
                     break;
                 case "oneway":
-                    onewayCar = true;
+                    if (value.equals("yes")) {
+                        onewayCar = true;
+
+                        if (role == Role.CYCLEWAY) {
+                            onewayBicycle = true;
+                        }
+                    }
                     break;
                 case "oneway:bicycle":
                     onewayBicycle = true;
@@ -99,6 +108,9 @@ public class Street implements Serializable {
                 case "foot":
                     if (value.equals("yes") || value.equals("designated")) {
                         walking = true;
+                    }
+                    if (value.equals("private")) {
+                        walking = false;
                     }
                     break;
                 case "bicycle":
@@ -113,6 +125,12 @@ public class Street implements Serializable {
                         role = Role.ROUNDABOUT;
                     }
                     break;
+                case "service":
+                    if (value.equals("parking_aisle") || value.equals("emergency_access")) {
+                        car = false;
+                        bicycle = false;
+                        walking = false;
+                    }
             }
 
         }
@@ -158,6 +176,7 @@ public class Street implements Serializable {
         NO_ROLE,
         MOTORWAY_LINK,
         ROUNDABOUT,
-        MOTORWAY
+        MOTORWAY,
+        CYCLEWAY
     }
 }

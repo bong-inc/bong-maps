@@ -2,10 +2,10 @@ package bfst.canvas;
 
 public enum CityType {
 
-    CITY(0.001000246664f, 0.02400591994f, 20),
-    TOWN(0.003000739993f, 0.4501109989f, 10),
-    HAMLET(0.05001233322f, 0.4501109989f, 10),
-    OTHER(0.02400591994f, 0.4501109989f, 10);
+    CITY(0.001000246664f, 0.024f, 15),
+    TOWN(0.003000739993f, 0.45f, 10),
+    HAMLET(0.05001233322f, 0.8f, 10),
+    OTHER(0.02400591994f, 0.45f, 10);
     
     private final float minMxx;
     private final float maxMxx;

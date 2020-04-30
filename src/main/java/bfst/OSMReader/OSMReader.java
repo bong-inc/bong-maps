@@ -100,7 +100,7 @@ public class OSMReader {
                                 for (int i = 0; i < tagList.size(); i += 2) {
 
                                     if (tagList.get(i).equals("access")) {
-                                        if (tagList.get(i + 1).equals("no")) {
+                                        if (!(tagList.get(i + 1).equals("yes") || tagList.get(i + 1).equals("permissive"))) {
                                             break;
                                         }
                                     }
@@ -187,6 +187,7 @@ public class OSMReader {
                                     land.addNode(-2);
                                     land.addNode(-3);
                                     land.addNode(-4);
+                                    land.trim();
                                     coastlines.add(new LinePath(land, Type.COASTLINE, tempNodes));
                                 }
                                 drawableByType.put(Type.COASTLINE,coastlines);
@@ -366,7 +367,7 @@ public class OSMReader {
                 break;
             }
             else{
-                coastline.remove(currentNd.getAsLong());
+                coastline.remove(tempNodes.get(coastlineNodes[0]).getAsLong());
                 savedNd = currentNd;
             }
         }
@@ -462,5 +463,6 @@ public class OSMReader {
         //tempRelations = null;
         tempCoastlines = null;
         drawableByType = null;
+        addresses = null;
     }
 }

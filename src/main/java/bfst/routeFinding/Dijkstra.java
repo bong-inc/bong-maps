@@ -26,7 +26,7 @@ public class Dijkstra {
 
     private long lastNode = 1;
 
-    public Dijkstra(Graph G, long s, long t, String vehicle, boolean shortestRoute) {
+    public Dijkstra(Graph G, long s, long t, String vehicle, boolean shortestRoute) throws Exception {
         distTo = new HashMap<>();
         edgeTo = new HashMap<>();
         distTo2 = new HashMap<>();
@@ -64,7 +64,7 @@ public class Dijkstra {
 
     }
 
-    private long determineRelax(int currDijkstra, String vehicle, boolean shortestRoute) {
+    public long determineRelax(int currDijkstra, String vehicle, boolean shortestRoute) throws Exception{
         long v;
         if (currDijkstra == 1) {
             v = pq.delMin();
@@ -128,7 +128,7 @@ public class Dijkstra {
         return 1;
     }
 
-    private void relax(Edge edge, long v, boolean shortestRoute, HashMap<Long, Double> distTo, HashMap<Long, Edge> edgeTo, IndexMinPQ pq) {
+    private void relax(Edge edge, long v, boolean shortestRoute, HashMap<Long, Double> distTo, HashMap<Long, Edge> edgeTo, IndexMinPQ pq) throws Exception {
         long w = edge.other(v);
         if (!distTo.containsKey(w)) {
             distTo.put(w, Double.POSITIVE_INFINITY);
@@ -162,14 +162,6 @@ public class Dijkstra {
         }
     }
 
-    public boolean hasPathTo(long v, int currDijkstra) {
-        if (currDijkstra == 1) {
-            return distTo.containsKey(v);
-        } else {
-            return distTo2.containsKey(v);
-        }
-    }
-
     public HashMap<Long, Edge> getAllEdgeTo() {
         HashMap<Long, Edge> allEdgeTo = new HashMap<>();
         allEdgeTo.putAll(edgeTo);
@@ -180,9 +172,6 @@ public class Dijkstra {
 
 
     public ArrayList<Edge> pathTo(long v, int currDijkstra) {
-        if (!hasPathTo(v, currDijkstra)) {
-            return null;
-        }
         HashMap<Long, Edge> thisEdgeTo;
         if (currDijkstra == 1) {
             thisEdgeTo = edgeTo;
@@ -195,7 +184,6 @@ public class Dijkstra {
         for (Edge edge = thisEdgeTo.get(v); edge != null; edge = thisEdgeTo.get(x)) {
 
             path.push(edge);
-
 
             x = edge.other(x);
         }

@@ -46,6 +46,10 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
         });
     }
 
+    public float[] getCoords(){
+        return coords_;
+    }
+
     @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
         gc.beginPath();
@@ -93,7 +97,7 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
     public Point2D getCentroid() {
         if(boundingBox == null) 
             return null;
-        return getCenterFromRange(boundingBox);
+        return boundingBox.getCentroid();
     }
 
     @Override
@@ -101,7 +105,6 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
         return boundingBox;
     }
 
-    @Override
     public void setBoundingBox() {
         float minX = Float.MAX_VALUE;
         float maxX = Float.NEGATIVE_INFINITY;

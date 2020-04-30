@@ -13,6 +13,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -34,7 +35,6 @@ public class MapCanvas extends Canvas {
     private double routeTime;
     private double routeDistance;
     private int roundaboutCounter = 0;
-    private ArrayList<PointOfInterest> pointsOfInterest = new ArrayList<>();
     private Node lastInstructionNode;
     private String lastActionInstruction;
     private boolean renderFullScreen = true;
@@ -53,6 +53,8 @@ public class MapCanvas extends Canvas {
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
     
+    public static boolean drawBoundingBox;
+
     Range renderRange;
     
 
@@ -68,10 +70,6 @@ public class MapCanvas extends Canvas {
 
     public ArrayList<Instruction> getDescription() {
         return instructions;
-    }
-
-    public ArrayList<PointOfInterest> getPointsOfInterest() {
-        return pointsOfInterest;
     }
 
     public Pin getCurrentPin() {
@@ -122,7 +120,6 @@ public class MapCanvas extends Canvas {
         updateSearchRange(pixelwidth);
 
         if (model != null) {
-            paintCoastLines(pixelwidth, useRegularColors);
             for (Type type : typesToBeDrawn) {
                 if (type != Type.UNKNOWN) {
                     if (useDependentDraw) {
@@ -136,8 +133,11 @@ public class MapCanvas extends Canvas {
             }
 
             if (route != null) {
-                gc.setStroke(Color.BLUE);
-                drawableRoute.draw(gc, pixelwidth, smartTrace);
+                gc.setStroke(Color.valueOf("#69c7ff"));
+                gc.setLineWidth(pixelwidth*3);
+                if (drawableRoute != null) {
+                    drawableRoute.draw(gc, pixelwidth, smartTrace);
+                }
                 if(instructions != null){
                     for(Instruction instruction : instructions){
                         instruction.getIndicator().draw(gc,pixelwidth);
@@ -155,22 +155,19 @@ public class MapCanvas extends Canvas {
             if (currentPin != null) currentPin.draw(gc, pixelwidth);
 
             if (showCities) {
-                gc.setFill(Color.DARKGREY);
-                for (City city : model.getCities()) {
-                    CityType type = city.getType();
-                    Font font = new Font(pixelwidth * type.getFontSize());
-                    gc.setFont(font);
-
-
-                    if (trans.getMxx() < type.getMaxMxx() && trans.getMxx() > type.getMinMxx()) {
-                        city.draw(gc, pixelwidth, false);
-                    }
+                gc.setStroke(Color.WHITE);
+                gc.setLineWidth(pixelwidth*2);
+                gc.setFill(Color.valueOf("#555555"));
+                gc.setTextAlign(TextAlignment.CENTER);
+                for(CanvasElement element : model.getCitiesKdTree().rangeSearch(renderRange)){
+                    element.draw(gc, pixelwidth, smartTrace);
                 }
             }
         }
 
         scaleBar.updateScaleBar(this);
         scaleBar.draw(gc, pixelwidth, false);
+        gc.setStroke(Color.BLACK);
 
         if(!renderFullScreen) renderRange.draw(gc, pixelwidth);
 
@@ -216,7 +213,7 @@ public class MapCanvas extends Canvas {
         renderFullScreen = bool;
     }
 
-    public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute) {
+    public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute) throws Exception{
         long time = -System.nanoTime();
         dijkstra = new Dijkstra(model.getGraph(), startPoint, endPoint, vehicle, shortestRoute);
         time += System.nanoTime();
@@ -377,9 +374,9 @@ public class MapCanvas extends Canvas {
         }
 
         if (hourCount > 0) {
-            timeString = hourCount + " h " + (int) timeInMinutes + " m";
+            timeString = hourCount + " h " + (int) timeInMinutes + " min";
         } else {
-            timeString = (int) timeInMinutes + " m";
+            timeString = (int) timeInMinutes + " min";
         }
         return timeString;
     }
@@ -526,24 +523,6 @@ public class MapCanvas extends Canvas {
         }
     }
 
-    public void removePOI(float x, float y) {
-        for (PointOfInterest poi : pointsOfInterest) {
-            if (poi.getLon() ==  x && poi.getLat() == y ) {
-                pointsOfInterest.remove(poi);
-                break;
-            }
-        }
-    }
-
-    public boolean POIContains(float x, float y) {
-        for (PointOfInterest poi : pointsOfInterest) {
-            if (poi.getLon() ==  x && poi.getLat() == y ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean shouldZoom(double factor) {
         return (factor > 1 && trans.getMxx() < 2.2) || (factor < 1 && trans.getMxx() > 0.0005);
     }
@@ -554,7 +533,16 @@ public class MapCanvas extends Canvas {
         gc.setFill(Color.TRANSPARENT);
         if (kdTree != null) {
             setFillAndStroke(type, pixelwidth, useRegularColors);
-            kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderRange);
+            // kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderRange);
+            
+            for(CanvasElement element : kdTree.rangeSearch(renderRange)){
+                element.draw(gc, 1/pixelwidth, smartTrace);
+                if (type.shouldHaveFill()) gc.fill();
+
+                if(drawBoundingBox) {
+                    element.getBoundingBox().draw(gc, pixelwidth/2f);
+                }
+            }
         }
 
     }
@@ -568,21 +556,6 @@ public class MapCanvas extends Canvas {
             if (type.shouldHaveFill()) gc.setFill(type.getAlternateColor());
             if (type.shouldHaveStroke()) gc.setStroke(type.getAlternateColor());
         }
-    }
-
-    private void paintCoastLines(double pixelwidth, boolean useRegularColors) {
-        ArrayList<CanvasElement> coastLines = model.getCoastLines();
-        Type type = Type.COASTLINE;
-        gc.setStroke(Color.TRANSPARENT);
-        gc.setFill(Color.TRANSPARENT);
-        if (coastLines != null) {
-            setFillAndStroke(type, pixelwidth, useRegularColors);
-            for(CanvasElement c : model.getCoastLines()){
-                c.draw(gc, 1/pixelwidth, smartTrace);
-                if (type.shouldHaveFill()) gc.fill();
-            }
-        }
-
     }
 
     public void setModel(Model model) {
@@ -626,8 +599,8 @@ public class MapCanvas extends Canvas {
         repaint(13);
     }
 
-    public void setRouteOrigin (float lon, float lat){
-        currentRouteOrigin = new RouteOriginIndicator(lon, lat, 1);
+    public void setRouteOrigin (Point2D point){
+        currentRouteOrigin = new RouteOriginIndicator((float) point.getX(), (float)  point.getY(), 1);
         repaint(27);
     }
 
@@ -636,22 +609,14 @@ public class MapCanvas extends Canvas {
         repaint(28);
     }
 
-    public void setRouteDestination (float lon, float lat){
-        currentRouteDestination = new RouteDestinationIndicator(lon, lat, 1);
+    public void setRouteDestination (Point2D point){
+        currentRouteDestination = new RouteDestinationIndicator((float) point.getX(), (float)  point.getY(), 1);
         repaint(29);
     }
 
     public void nullRouteDestination () {
         currentRouteDestination = null;
         repaint(30);
-    }
-
-    public void addToPOI(PointOfInterest poi) {
-        pointsOfInterest.add(poi);
-    }
-
-    public void setPOI(ArrayList<PointOfInterest> poi) {
-        pointsOfInterest = poi;
     }
 
     public boolean getRenderFullScreen(){
@@ -673,4 +638,5 @@ public class MapCanvas extends Canvas {
     public boolean getDrawBound(){
         return drawBound;
     }
+
 }
