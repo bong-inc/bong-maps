@@ -574,7 +574,7 @@ public class MainController {
 
         POIButton.setOnAction(e -> {
             if (!POIExists.get()) {
-                poiController.addPointOfInterest(currentPoint);
+                poiController.showAddPointDialog(currentPoint);
                 myPoints.getItems().clear();
                 poiController.loadPointsOfInterest();
                 for (PointOfInterest poi : poiController.getPointsOfInterest()) {
