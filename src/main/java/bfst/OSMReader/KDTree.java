@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import bfst.canvas.Range;
 import bfst.util.Geometry;
@@ -23,7 +25,6 @@ public class KDTree implements Serializable {
   KDTree high;
   Type type;
   int depth;
-  public static boolean drawBoundingBox;
 
   private enum Type {
     PARENT, LEAF
@@ -163,34 +164,26 @@ public class KDTree implements Serializable {
     return closestElement;
   }
 
-  public void draw(GraphicsContext gc, double scale, boolean smartTrace, boolean shouldHaveFill, Range range){
-    // print number of trees visited
-    // System.out.print("draw");
-
-    // draw CanvasElements in leafValues
+  public List<CanvasElement> rangeSearch(Range range){
     boolean isEnclosed = range.isEnclosedBy(bound);
-    if(range.overlapsWith(bound)){
-      if(this.isLeaf()){
-        for(CanvasElement c : elements){
-          Range boundingBox = c.getBoundingBox();
-          if(isEnclosed || range.overlapsWith(boundingBox)){
-            c.draw(gc, scale, smartTrace);
-            if (shouldHaveFill) gc.fill();
-
-            if(drawBoundingBox){
-              Paint tempColor = gc.getStroke();
-              gc.setStroke(Color.PINK);
-              gc.strokeRect(boundingBox.minX, boundingBox.minY, boundingBox.maxX -boundingBox.minX, boundingBox.maxY -boundingBox.minY);
-              gc.stroke();
-              gc.setStroke(tempColor);
-              gc.stroke();
-            }
-          }
+    if(!range.overlapsWith(bound)) return new ArrayList<CanvasElement>();
+    if(this.isLeaf()){
+      List<CanvasElement> elementsInRange = new ArrayList<CanvasElement>();
+      for(CanvasElement element : elements){
+        Range boundingBox = element.getBoundingBox();
+        if(isEnclosed || range.overlapsWith(boundingBox)){
+          elementsInRange.add(element);
         }
-      } else {
-        if(low != null) low.draw(gc, scale, smartTrace, shouldHaveFill, range);
-        if(high != null) high.draw(gc, scale, smartTrace, shouldHaveFill, range);
       }
+
+      return elementsInRange;
+    } else {
+      List<CanvasElement> elementsInLowRange = new ArrayList<CanvasElement>();
+      List<CanvasElement> elementsInHighRange = new ArrayList<CanvasElement>();
+      if(low != null) elementsInLowRange = low.rangeSearch(range);
+      if(high != null) elementsInHighRange = high.rangeSearch(range);
+      List<CanvasElement> newList = Stream.concat(elementsInLowRange.stream(), elementsInHighRange.stream()).collect(Collectors.toList());
+      return newList;
     }
   }
 

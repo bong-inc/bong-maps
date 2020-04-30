@@ -53,6 +53,8 @@ public class MapCanvas extends Canvas {
 
     private List<Type> typesToBeDrawn = Arrays.asList(Type.getTypes());
     
+    public static boolean drawBoundingBox;
+
     Range renderRange;
     
 
@@ -157,12 +159,15 @@ public class MapCanvas extends Canvas {
                 gc.setLineWidth(pixelwidth*2);
                 gc.setFill(Color.valueOf("#555555"));
                 gc.setTextAlign(TextAlignment.CENTER);
-                model.getCitiesKdTree().draw(gc, pixelwidth, smartTrace, false, renderRange);
+                for(CanvasElement element : model.getCitiesKdTree().rangeSearch(renderRange)){
+                    element.draw(gc, pixelwidth, smartTrace);
+                }
             }
         }
 
         scaleBar.updateScaleBar(this);
         scaleBar.draw(gc, pixelwidth, false);
+        gc.setStroke(Color.BLACK);
 
         if(!renderFullScreen) renderRange.draw(gc, pixelwidth);
 
@@ -528,7 +533,16 @@ public class MapCanvas extends Canvas {
         gc.setFill(Color.TRANSPARENT);
         if (kdTree != null) {
             setFillAndStroke(type, pixelwidth, useRegularColors);
-            kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderRange);
+            // kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderRange);
+            
+            for(CanvasElement element : kdTree.rangeSearch(renderRange)){
+                element.draw(gc, 1/pixelwidth, smartTrace);
+                if (type.shouldHaveFill()) gc.fill();
+
+                if(drawBoundingBox) {
+                    element.getBoundingBox().draw(gc, pixelwidth/2f);
+                }
+            }
         }
 
     }
