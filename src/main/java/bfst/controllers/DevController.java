@@ -135,7 +135,7 @@ public class DevController {
         });
 
         printPOI.setOnAction(e -> {
-            for (PointOfInterest poi : canvas.getPointsOfInterest()) {
+            for (PointOfInterest poi : PointsOfInterestController.getPointsOfInterest()) {
                 System.out.println(poi.toString());
             }
         });

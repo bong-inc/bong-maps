@@ -59,6 +59,7 @@ public class MainController {
     private Point2D startPoint;
     private Point2D currentPoint;
     private FileController fileController;
+    private PointsOfInterestController poiController;
 
 
     private ToggleGroup vehicleGroup = new ToggleGroup();
@@ -78,6 +79,7 @@ public class MainController {
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
         this.fileController = new FileController();
+        this.poiController = new PointsOfInterestController();
     }
 
     public void setDefaultMap(){
@@ -130,9 +132,9 @@ public class MainController {
     public void initialize() {
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> {
             setDefaultMap();
-            loadPointsOfInterest();
 
-            for (PointOfInterest poi : canvas.getPointsOfInterest()) {
+            poiController.loadPointsOfInterest();
+            for (PointOfInterest poi : poiController.getPointsOfInterest()) {
                 addItemToMyPoints(poi);
             }
         });
@@ -553,10 +555,12 @@ public class MainController {
         return path;
     }
 
+
+
     public void setPOIButton() {
         AtomicBoolean POIExists = new AtomicBoolean(false);
 
-        if (canvas.POIContains(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY())) {
+        if (poiController.POIContains(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY())) {
             POIExists.set(true);
             POIButton.setTooltip(new Tooltip("Remove point of interest"));
             POIButton.getStyleClass().removeAll("POIButton-add");
@@ -570,15 +574,20 @@ public class MainController {
 
         POIButton.setOnAction(e -> {
             if (!POIExists.get()) {
-                addPointOfInterest();
-                savePointsOfInterest();
+                poiController.addPointOfInterest(currentPoint);
+                myPoints.getItems().clear();
+                poiController.loadPointsOfInterest();
+                for (PointOfInterest poi : poiController.getPointsOfInterest()) {
+                    addItemToMyPoints(poi);
+                }
+
+                poiController.savePointsOfInterest();
                 POIExists.set(true);
                 setPOIButton();
             } else {
-                canvas.removePOI(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
-                savePointsOfInterest();
+                poiController.removePOI(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
                 myPoints.getItems().clear();
-                for (PointOfInterest poi : canvas.getPointsOfInterest()) {
+                for (PointOfInterest poi : poiController.getPointsOfInterest()) {
                     addItemToMyPoints(poi);
                 }
                 POIExists.set(false);
@@ -853,43 +862,6 @@ public class MainController {
 
         time += System.nanoTime();
         System.out.println("load binary: " + time/1000000f + "ms");
-    }
-
-
-    private void savePointsOfInterest() {
-        String destFolder = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "POI.bin";
-        File file = new File(destFolder);
-        try {
-            fileController.saveBinary(file, canvas.getPointsOfInterest());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void addPointOfInterest() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setContentText("Save point of interest");
-        dialog.setHeaderText("Enter the name of the point");
-        dialog.setContentText("Name:");
-        Optional<String> givenName = dialog.showAndWait();
-
-        if (givenName.isPresent()) {
-            PointOfInterest poi = new PointOfInterest(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), givenName.get());
-            canvas.addToPOI(poi);
-            addItemToMyPoints(poi);
-        }
-        savePointsOfInterest();
-    }
-
-    private void loadPointsOfInterest() {
-        ArrayList<PointOfInterest> list = new ArrayList<>();
-        try {
-            InputStream is = new FileInputStream(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "POI.bin");
-            list = (ArrayList<PointOfInterest>) fileController.loadBinary(is);
-        } catch (Exception ignored){
-
-        }
-        canvas.setPOI(list);
     }
 
     private void swapStartAndDestination() {

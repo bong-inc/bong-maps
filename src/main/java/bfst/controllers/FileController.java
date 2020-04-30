@@ -6,20 +6,20 @@ import java.util.zip.ZipInputStream;
 
 public class FileController {
 
-    public Object loadBinary(InputStream is) throws IOException, ClassNotFoundException {
+    public static Object loadBinary(InputStream is) throws IOException, ClassNotFoundException {
         ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
         Object temp = ois.readObject();
         ois.close();
         return temp;
     }
 
-    public void saveBinary(File file, Serializable toBeSaved) throws IOException {
+    public static void saveBinary(File file, Serializable toBeSaved) throws IOException {
         ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
         oos.writeObject(toBeSaved);
         oos.close();
     }
 
-    public File loadZip(File file) throws Exception {
+    public static File loadZip(File file) throws Exception {
         String fileName = "";
         byte[] buffer = new byte[1024];
         ZipInputStream zis = new ZipInputStream(new FileInputStream(file.getAbsolutePath()));
