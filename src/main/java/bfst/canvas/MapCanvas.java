@@ -157,7 +157,7 @@ public class MapCanvas extends Canvas {
                 gc.setLineWidth(pixelwidth*2);
                 gc.setFill(Color.valueOf("#555555"));
                 gc.setTextAlign(TextAlignment.CENTER);
-                model.getCitiesKdTree().draw(gc, pixelwidth, smartTrace, false, renderRange);
+                // model.getCitiesKdTree().draw(gc, pixelwidth, smartTrace, false, renderRange);
             }
         }
 
@@ -528,7 +528,12 @@ public class MapCanvas extends Canvas {
         gc.setFill(Color.TRANSPARENT);
         if (kdTree != null) {
             setFillAndStroke(type, pixelwidth, useRegularColors);
-            kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderRange);
+            // kdTree.draw(gc, 1 / pixelwidth, smartTrace, type.shouldHaveFill(), renderRange);
+            
+            for(CanvasElement element : kdTree.rangeSearch(renderRange)){
+                element.draw(gc, 1/pixelwidth, smartTrace);
+                if (type.shouldHaveFill()) gc.fill();
+            }
         }
 
     }
