@@ -35,7 +35,6 @@ public class MapCanvas extends Canvas {
     private double routeTime;
     private double routeDistance;
     private int roundaboutCounter = 0;
-    private ArrayList<PointOfInterest> pointsOfInterest = new ArrayList<>();
     private Node lastInstructionNode;
     private String lastActionInstruction;
     private boolean renderFullScreen = true;
@@ -69,10 +68,6 @@ public class MapCanvas extends Canvas {
 
     public ArrayList<Instruction> getDescription() {
         return instructions;
-    }
-
-    public ArrayList<PointOfInterest> getPointsOfInterest() {
-        return pointsOfInterest;
     }
 
     public Pin getCurrentPin() {
@@ -523,24 +518,6 @@ public class MapCanvas extends Canvas {
         }
     }
 
-    public void removePOI(float x, float y) {
-        for (PointOfInterest poi : pointsOfInterest) {
-            if (poi.getLon() ==  x && poi.getLat() == y ) {
-                pointsOfInterest.remove(poi);
-                break;
-            }
-        }
-    }
-
-    public boolean POIContains(float x, float y) {
-        for (PointOfInterest poi : pointsOfInterest) {
-            if (poi.getLon() ==  x && poi.getLat() == y ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean shouldZoom(double factor) {
         return (factor > 1 && trans.getMxx() < 2.2) || (factor < 1 && trans.getMxx() > 0.0005);
     }
@@ -626,14 +603,6 @@ public class MapCanvas extends Canvas {
     public void nullRouteDestination () {
         currentRouteDestination = null;
         repaint(30);
-    }
-
-    public void addToPOI(PointOfInterest poi) {
-        pointsOfInterest.add(poi);
-    }
-
-    public void setPOI(ArrayList<PointOfInterest> poi) {
-        pointsOfInterest = poi;
     }
 
     public boolean getRenderFullScreen(){

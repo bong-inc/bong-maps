@@ -46,6 +46,10 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
         });
     }
 
+    public float[] getCoords(){
+        return coords_;
+    }
+
     @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
         gc.beginPath();
