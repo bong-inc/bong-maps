@@ -683,27 +683,9 @@ public class MainController {
         noRouteFound.setVisible(false);
         noRouteFound.setManaged(false);
 
-        if (startAddress != null) {
-            if (dist(startPoint, startAddress.getCentroid()) > 50) {
-                Node unprojected = MercatorProjector.unproject(startAddress.getCentroid().getX(), startAddress.getCentroid().getY());
-                startLabel.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
-            } else {
-                startLabel.setText(startAddress.toString());
-            }
-        } else {
-            startLabel.setText("Not set");
-        }
+        setStartOrDestinationLabel(startAddress, startPoint, startLabel);
 
-        if (destinationAddress != null) {
-            if (dist(destinationPoint, destinationAddress.getCentroid()) > 50) {
-                Node unprojected = MercatorProjector.unproject(destinationAddress.getCentroid().getX(), destinationAddress.getCentroid().getY());
-                destinationLabel.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
-            } else {
-                destinationLabel.setText(destinationAddress.toString());
-            }
-        } else {
-            destinationLabel.setText("Not set");
-        }
+        setStartOrDestinationLabel(destinationAddress, destinationPoint, destinationLabel);
 
         if (startAddress == null || destinationAddress == null) {
             findRoute.setDisable(true);
@@ -734,6 +716,19 @@ public class MainController {
         }
 
         directionsInfo.setVisible(true);
+    }
+
+    private void setStartOrDestinationLabel(Address address, Point2D point, Label label) {
+        if (address != null) {
+            if (dist(point, address.getCentroid()) > 50) {
+                Node unprojected = MercatorProjector.unproject(address.getCentroid().getX(), address.getCentroid().getY());
+                label.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
+            } else {
+                label.setText(address.toString());
+            }
+        } else {
+            label.setText("Not set");
+        }
     }
 
     private double distance(float pinX, float pinY, float addressX, float addressY) {

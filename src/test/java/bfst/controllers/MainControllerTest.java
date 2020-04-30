@@ -16,6 +16,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MainControllerTest {
 
+    Parent root;
+    MainController mainController;
+
+    {
+        try {
+            root = App.loadFXML("main");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void setup() {
+        Scene scene = new Scene(root);
+        mainController = new MainController(new Stage());
+    }
+
     @Test
     public void testLoadBinary() {
         try {
@@ -61,6 +77,11 @@ class MainControllerTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    @Test
+    public void testAddToMyPoints() {
 
     }
 
