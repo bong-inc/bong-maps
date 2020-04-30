@@ -12,24 +12,8 @@ public class Geometry {
     return range.minX < point.getX() && point.getX() < range.maxX 
     && range.minY < point.getY() && point.getY() < range.maxY;
   }
-  
-  public static Range boundingRangeOf(ArrayList<CanvasElement> list){
-    if(list.size() < 1) throw new RuntimeException("Empty list cannot have bounding range");
-    Float minX = Float.MAX_VALUE;
-    Float minY = Float.MAX_VALUE;
-    Float maxX = Float.NEGATIVE_INFINITY;
-    Float maxY = Float.NEGATIVE_INFINITY;
-    for(CanvasElement c : list){
-      Range boundingBox = c.getBoundingBox();
-      if(boundingBox.minX < minX) minX = boundingBox.minX;
-      if(boundingBox.minY < minY) minY = boundingBox.minY;
-      if(boundingBox.maxX > maxX) maxX = boundingBox.maxX;
-      if(boundingBox.maxY > maxY) maxY = boundingBox.maxY;
-    }
-    return new Range(minX, minY, maxX, maxY);
-  }
 
-  public static double distanceToSegment(Point2D query, Point2D start, Point2D end){
+  public static double distanceToLineSegment(Point2D query, Point2D start, Point2D end){
     var dx = end.getX() - start.getX();
     var dy = end.getY() - start.getY();
     var l2 = dx * dx + dy * dy;

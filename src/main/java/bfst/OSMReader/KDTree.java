@@ -65,14 +65,14 @@ public class KDTree implements Serializable {
         });
       }
       // Split elements in half
-      ArrayList<CanvasElement> lower = new ArrayList<>(this.elements.subList(0, (size) / 2 + 1));
-      ArrayList<CanvasElement> higher = new ArrayList<>(this.elements.subList((size) / 2 + 1, size));
+      List<CanvasElement> lower = new ArrayList<>(this.elements.subList(0, (size) / 2 + 1));
+      List<CanvasElement> higher = new ArrayList<>(this.elements.subList((size) / 2 + 1, size));
 
       // set dimentions of new subtree (low)
-      this.low = new KDTree(lower, Geometry.boundingRangeOf(lower), this.depth + 1, Type.LEAF);
+      this.low = new KDTree(lower, boundingRangeOf(lower), this.depth + 1, Type.LEAF);
 
       // set dimentions of new subtree (high)
-      this.high = new KDTree(higher, Geometry.boundingRangeOf(higher), this.depth + 1, Type.LEAF);
+      this.high = new KDTree(higher, boundingRangeOf(higher), this.depth + 1, Type.LEAF);
       
       // set this to parent node
       this.elements = null;
@@ -80,8 +80,89 @@ public class KDTree implements Serializable {
     }
   }
 
+
+  // Only used for Address objects
+  public CanvasElement nearestNeighbor(Point2D query){
+    CanvasElement returnElement = nearestNeighbor(query, Double.POSITIVE_INFINITY);
+    try {
+      if(returnElement == null) throw new Exception("No nearest neighbor found");
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+    return returnElement;
+  }
+
+  private CanvasElement nearestNeighbor(Point2D query, double bestDist) {
+    KDTree first, last;
+    if(!isLeaf()){
+      CanvasElement result = null;
+
+      first = low.bound.distanceToPoint(query) < high.bound.distanceToPoint(query) ? low : high;
+      last = low.bound.distanceToPoint(query) > high.bound.distanceToPoint(query) ? low : high;
+
+      if(first.bound.distanceToPoint(query) < bestDist){
+        result = first.nearestNeighbor(query, bestDist);
+        if(result != null) bestDist = Geometry.distance(query, result.getCentroid());
+      }
+      CanvasElement temp;
+      if(last.bound.distanceToPoint(query) < bestDist){
+        temp = last.nearestNeighbor(query, bestDist);
+        if(temp != null){
+          result = temp;
+        }
+      }
+      return result;
+    }
+
+    if(isLeaf() && elements.size() > 0){
+      CanvasElement result = null;
+      CanvasElement c = bestInElements(query);
+      if(Geometry.distance(query, c.getCentroid()) < bestDist){
+        result = c;
+        bestDist = Geometry.distance(query, c.getCentroid());
+      }
+
+      return result;
+    }
+
+    return null;
+  }
+
+  public static Range boundingRangeOf(List<CanvasElement> list){
+    if(list.size() < 1) throw new RuntimeException("Empty list cannot have bounding range");
+    Float minX = Float.MAX_VALUE;
+    Float minY = Float.MAX_VALUE;
+    Float maxX = Float.NEGATIVE_INFINITY;
+    Float maxY = Float.NEGATIVE_INFINITY;
+    for(CanvasElement c : list){
+      Range boundingBox = c.getBoundingBox();
+      if(boundingBox.minX < minX) minX = boundingBox.minX;
+      if(boundingBox.minY < minY) minY = boundingBox.minY;
+      if(boundingBox.maxX > maxX) maxX = boundingBox.maxX;
+      if(boundingBox.maxY > maxY) maxY = boundingBox.maxY;
+    }
+    return new Range(minX, minY, maxX, maxY);
+  }
+
+  public CanvasElement bestInElements(Point2D query){
+    CanvasElement best = elements.get(0);
+    double bestDist = Geometry.distance(query, best.getCentroid());
+    for(CanvasElement c : elements){
+      double newDist = Geometry.distance(query, c.getCentroid());
+      if(newDist < bestDist){
+        bestDist = newDist;
+        best = c;
+      }
+    }
+    return best;
+  }
+
   private boolean isEvenDepth() {
     return this.depth % 2 == 0;
+  }
+
+  private boolean isLeaf() {
+    return this.type == Type.LEAF;
   }
 
   public void draw(GraphicsContext gc, double scale, boolean smartTrace, boolean shouldHaveFill, Range range){
@@ -114,63 +195,5 @@ public class KDTree implements Serializable {
       }
     }    
   }  
-
-  public boolean isLeaf() {
-    return this.type == Type.LEAF;
-  }
-
-  public CanvasElement nearestNeighbor(Point2D query){
-    return nearestNeighbor(query, Double.POSITIVE_INFINITY);
-  }
-
-  private CanvasElement nearestNeighbor(Point2D query, double bestDist) {
-    KDTree first, last;
-    if(!isLeaf()){
-      CanvasElement result = null;
-
-      first = low.bound.distanceToPoint(query) < high.bound.distanceToPoint(query) ? low : high;
-      last = low.bound.distanceToPoint(query) > high.bound.distanceToPoint(query) ? low : high;
-
-      if(first.bound.distanceToPoint(query) < bestDist){
-        result = first.nearestNeighbor(query, bestDist);
-        if(result != null) bestDist = Geometry.distance(query, result.getCentroid());
-      }
-      CanvasElement temp;
-      if(last.bound.distanceToPoint(query) < bestDist){
-        temp = last.nearestNeighbor(query, bestDist);
-        if(temp != null){
-          result = temp;
-        }
-      }
-      return result;
-    }
-
-
-    if(isLeaf() && elements.size() > 0){
-      CanvasElement result = null;
-      CanvasElement c = bestInElements(query);
-      if(Geometry.distance(query, c.getCentroid()) < bestDist){
-        result = c;
-        bestDist = Geometry.distance(query, c.getCentroid());
-      }
-
-      return result;
-    }
-
-    return null;
-  }
-
-  public CanvasElement bestInElements(Point2D query){
-    CanvasElement best = elements.get(0);
-    double bestDist = Geometry.distance(query, best.getCentroid());
-    for(CanvasElement c : elements){
-      double newDist = Geometry.distance(query, c.getCentroid());
-      if(newDist < bestDist){
-        bestDist = newDist;
-        best = c;
-      }
-    }
-    return best;
-  }
 
 }

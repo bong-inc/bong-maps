@@ -33,7 +33,6 @@ public class KDTreeTest {
 
     assert(elements.size() == KDTree.maxNumOfElements+1);
     assert(kdTree.low.depth == 1);
-    assertEquals(true, kdTree.high.isLeaf());
     assertEquals(expected, actual);
   }
 

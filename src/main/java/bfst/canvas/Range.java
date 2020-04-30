@@ -38,12 +38,13 @@ public class Range implements Serializable {
       return 0.0;
     }
     double[] rangeDists = new double[]{
-      Geometry.distanceToSegment(point, new Point2D(this.minX, this.minY), new Point2D(this.maxX, this.minY)),
-      Geometry.distanceToSegment(point, new Point2D(this.maxX, this.minY), new Point2D(this.maxX, this.maxY)),
-      Geometry.distanceToSegment(point, new Point2D(this.maxX, this.maxY), new Point2D(this.minX, this.maxY)),
-      Geometry.distanceToSegment(point, new Point2D(this.minX, this.maxY), new Point2D(this.minX, this.minY)),
+      Geometry.distanceToLineSegment(point, new Point2D(this.minX, this.minY), new Point2D(this.maxX, this.minY)),
+      Geometry.distanceToLineSegment(point, new Point2D(this.maxX, this.minY), new Point2D(this.maxX, this.maxY)),
+      Geometry.distanceToLineSegment(point, new Point2D(this.maxX, this.maxY), new Point2D(this.minX, this.maxY)),
+      Geometry.distanceToLineSegment(point, new Point2D(this.minX, this.maxY), new Point2D(this.minX, this.minY)),
     };
     Arrays.sort(rangeDists);
     return rangeDists[0];
   }
+  
 }
