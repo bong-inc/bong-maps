@@ -21,8 +21,6 @@ public class ModelTest {
 
         assertEquals(osmReader.getAddresses(), model.getAddresses());
         assertEquals(osmReader.getBound(), model.getBound());
-        assertEquals(osmReader.getCities(), model.getCities());
-        assertEquals(osmReader.getDrawableByType().get(Type.BUILDING), model.getDrawablesOfType(Type.BUILDING));
         assertEquals(osmReader.getGraph(), model.getGraph());
     }
 }

@@ -47,7 +47,7 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
     }
 
     public float[] getCoords(){
-        return coords;
+        return coords_;
     }
 
     @Override

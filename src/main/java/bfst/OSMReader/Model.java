@@ -78,10 +78,6 @@ public class Model implements Serializable {
         return bound;
     }
 
-    public ArrayList<City> getCities() {
-        return cities;
-    }
-
     public KDTree getCitiesKdTree(){
         return citiesKdTree;
     }
