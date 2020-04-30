@@ -2,7 +2,6 @@ package bfst.OSMReader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -80,7 +79,6 @@ public class KDTree implements Serializable {
     }
   }
 
-
   // Only used for Address objects
   public CanvasElement nearestNeighbor(Point2D query){
     CanvasElement returnElement = nearestNeighbor(query, Double.POSITIVE_INFINITY);
@@ -116,15 +114,15 @@ public class KDTree implements Serializable {
 
     if(isLeaf() && elements.size() > 0){
       CanvasElement result = null;
-      CanvasElement c = bestInElements(query);
+      CanvasElement c = closestElementInElements(query);
+      if(c == null) return null;
+
       if(Geometry.distance(query, c.getCentroid()) < bestDist){
         result = c;
         bestDist = Geometry.distance(query, c.getCentroid());
       }
-
       return result;
     }
-
     return null;
   }
 
@@ -144,25 +142,25 @@ public class KDTree implements Serializable {
     return new Range(minX, minY, maxX, maxY);
   }
 
-  public CanvasElement bestInElements(Point2D query){
-    CanvasElement best = elements.get(0);
-    double bestDist = Geometry.distance(query, best.getCentroid());
-    for(CanvasElement c : elements){
-      double newDist = Geometry.distance(query, c.getCentroid());
-      if(newDist < bestDist){
-        bestDist = newDist;
-        best = c;
-      }
-    }
-    return best;
-  }
-
   private boolean isEvenDepth() {
     return this.depth % 2 == 0;
   }
 
   private boolean isLeaf() {
     return this.type == Type.LEAF;
+  }
+
+  public CanvasElement closestElementInElements(Point2D query){
+    CanvasElement closestElement = elements.get(0);
+    double bestDist = Geometry.distance(query, closestElement.getCentroid());
+    for(CanvasElement element : elements){
+      double newDist = Geometry.distance(query, element.getCentroid());
+      if(newDist < bestDist){
+        bestDist = newDist;
+        closestElement = element;
+      }
+    }
+    return closestElement;
   }
 
   public void draw(GraphicsContext gc, double scale, boolean smartTrace, boolean shouldHaveFill, Range range){
@@ -193,7 +191,7 @@ public class KDTree implements Serializable {
         if(low != null) low.draw(gc, scale, smartTrace, shouldHaveFill, range);
         if(high != null) high.draw(gc, scale, smartTrace, shouldHaveFill, range);
       }
-    }    
-  }  
+    }
+  }
 
 }
