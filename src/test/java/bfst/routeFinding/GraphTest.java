@@ -73,7 +73,7 @@ class GraphTest {
         int expected;
         int actual;
 
-        expected = 3;
+        expected = 4;
         actual = graph.getOutDegree(1, "Car");
         Assertions.assertEquals(expected, actual);
 
