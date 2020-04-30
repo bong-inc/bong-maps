@@ -374,9 +374,9 @@ public class MapCanvas extends Canvas {
         }
 
         if (hourCount > 0) {
-            timeString = hourCount + " h " + (int) timeInMinutes + " m";
+            timeString = hourCount + " h " + (int) timeInMinutes + " min";
         } else {
-            timeString = (int) timeInMinutes + " m";
+            timeString = (int) timeInMinutes + " min";
         }
         return timeString;
     }

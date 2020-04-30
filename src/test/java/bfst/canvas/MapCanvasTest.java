@@ -34,12 +34,12 @@ class MapCanvasTest {
         String actual;
 
         canvas.setRouteTime(900.0);
-        expected = 15 + " m";
+        expected = 15 + " min";
         actual = canvas.timeString();
         Assertions.assertEquals(expected, actual);
 
         canvas.setRouteTime(9000.0);
-        expected = 2 + " h " + 30 + " m";
+        expected = 2 + " h " + 30 + " min";
         actual = canvas.timeString();
         Assertions.assertEquals(expected, actual);
     }
