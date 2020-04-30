@@ -58,6 +58,7 @@ public class MainController {
     private Point2D destinationPoint;
     private Point2D startPoint;
     private Point2D currentPoint;
+    private FileController fileController;
 
 
     private ToggleGroup vehicleGroup = new ToggleGroup();
@@ -76,6 +77,7 @@ public class MainController {
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
+        this.fileController = new FileController();
     }
 
     public void setDefaultMap(){
@@ -768,7 +770,7 @@ public class MainController {
             fileChooser.setInitialFileName("myMap");
             File file = fileChooser.showSaveDialog(stage);
             if(file != null){
-                saveBinary(file, model);
+                fileController.saveBinary(file, model);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Saved successfully");
                 alert.showAndWait();
@@ -835,7 +837,7 @@ public class MainController {
                 canvas.setTypesToBeDrawn(list);
                 break;
             case ".zip":
-                loadFile(loadZip(file));
+                loadFile(fileController.loadZip(file));
                 break;
             default:
                 is.close();
@@ -846,57 +848,19 @@ public class MainController {
 
     private void setModelFromBinary(InputStream is) throws IOException, ClassNotFoundException {
         long time = -System.nanoTime();
-        this.model = (Model) loadBinary(is);
+        this.model = (Model) fileController.loadBinary(is);
         mapCanvasWrapper.mapCanvas.setModel(model);
 
         time += System.nanoTime();
         System.out.println("load binary: " + time/1000000f + "ms");
     }
 
-    public static Object loadBinary(InputStream is) throws IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
-        Object temp = ois.readObject();
-        ois.close();
-        return temp;
-    }
-
-    public static void saveBinary(File file, Serializable toBeSaved) throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-        oos.writeObject(toBeSaved);
-        oos.close();
-    }
-
-    public static File loadZip(File file) throws Exception {
-        String fileName = "";
-        byte[] buffer = new byte[1024];
-        ZipInputStream zis = new ZipInputStream(new FileInputStream(file.getAbsolutePath()));
-        ZipEntry zipEntry = zis.getNextEntry();
-        String destFolder = System.getProperty("user.home") + File.separator + "Documents";
-        File destDir = new File(destFolder);
-
-        while (zipEntry != null) {
-            File newFile = new File(destDir, zipEntry.getName());
-            fileName = newFile.getName();
-            FileOutputStream fos = new FileOutputStream(newFile);
-            int len;
-            while ((len = zis.read(buffer)) > 0) {
-                fos.write(buffer, 0, len);
-            }
-            fos.close();
-            zipEntry = zis.getNextEntry();
-        }
-        zis.closeEntry();
-        zis.close();
-
-        return new File(destFolder + File.separator + fileName);
-
-    }
 
     private void savePointsOfInterest() {
         String destFolder = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "POI.bin";
         File file = new File(destFolder);
         try {
-            saveBinary(file, canvas.getPointsOfInterest());
+            fileController.saveBinary(file, canvas.getPointsOfInterest());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -921,7 +885,7 @@ public class MainController {
         ArrayList<PointOfInterest> list = new ArrayList<>();
         try {
             InputStream is = new FileInputStream(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "POI.bin");
-            list = (ArrayList<PointOfInterest>) loadBinary(is);
+            list = (ArrayList<PointOfInterest>) fileController.loadBinary(is);
         } catch (Exception ignored){
 
         }

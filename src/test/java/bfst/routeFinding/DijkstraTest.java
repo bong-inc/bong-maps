@@ -98,11 +98,6 @@ class DijkstraTest {
 
         Assertions.assertThrows(Exception.class, () -> {
             setVariables();
-            Dijkstra dijkstra = new Dijkstra(graph, 0, 3, "Car", true);
-        });
-
-        Assertions.assertThrows(Exception.class, () -> {
-            setVariables();
             Dijkstra dijkstra = new Dijkstra(graph, 0, 15, "Car", true);
         });
 

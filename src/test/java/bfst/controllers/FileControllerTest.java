@@ -14,29 +14,14 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MainControllerTest {
-
-    Parent root;
-    MainController mainController;
-
-    {
-        try {
-            root = App.loadFXML("main");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void setup() {
-        Scene scene = new Scene(root);
-        mainController = new MainController(new Stage());
-    }
+class FileControllerTest {
+    FileController fileController = new FileController();
 
     @Test
     public void testLoadBinary() {
         try {
             InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/POI.bin");
-            ArrayList<PointOfInterest> actual = (ArrayList<PointOfInterest>) MainController.loadBinary(is);
+            ArrayList<PointOfInterest> actual = (ArrayList<PointOfInterest>) fileController.loadBinary(is);
             ArrayList<PointOfInterest> expected = new ArrayList<>();
 
             PointOfInterest poi1 = new PointOfInterest(1400464.0f, -7494234.5f, "Christiansborg");
@@ -59,7 +44,7 @@ class MainControllerTest {
     public void testLoadZip() {
         File file = new File(getClass().getClassLoader().getResource("bfst/demozip.zip").getFile());
         try {
-            InputStream in = new FileInputStream(MainController.loadZip(file).getPath());
+            InputStream in = new FileInputStream(fileController.loadZip(file).getPath());
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             ArrayList<String> expected = new ArrayList<>();
@@ -77,11 +62,6 @@ class MainControllerTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-    }
-
-    @Test
-    public void testAddToMyPoints() {
 
     }
 
