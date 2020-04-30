@@ -50,7 +50,9 @@
               </graphic>
             </Button>
           </HBox>
-          <VBox fx:id="suggestions" styleClass="suggestions"></VBox>
+          <VBox fx:id="suggestions" styleClass="suggestions">
+            <!-- Suggestions -->
+          </VBox>
         </VBox>
         <VBox fx:id="directionsInfo" styleClass="directionsInfo" style="visibility: false">
           <StackPane styleClass="directionsInfoStack">
