@@ -201,7 +201,7 @@ public class MainController {
 
         searchField.textProperty().addListener((obs,oldVal,newVal) -> {
             hideAddPOIButton();
-            if (searchField.isFocused()) setTempQuery(searchField.getText());
+            if (searchField.isFocused()) setTempQuery(searchField.getText().trim());
             if(searchField.getText().length() == 0) suggestions.getChildren().clear();
             canvas.nullPin();
         });
