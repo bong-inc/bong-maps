@@ -167,8 +167,6 @@ public class KDTree implements Serializable {
     return this.type == Type.LEAF;
   }
 
-<<<<<<< Updated upstream
-=======
   public CanvasElement closestElementInElements(Point2D query){
     CanvasElement closestElement = elements.get(0);
     double bestDist = Geometry.distance(query, closestElement.getCentroid());
@@ -204,7 +202,6 @@ public class KDTree implements Serializable {
     }
   }
 
->>>>>>> Stashed changes
   public void draw(GraphicsContext gc, double scale, boolean smartTrace, boolean shouldHaveFill, Range range){
     // print number of trees visited
     // System.out.print("draw");

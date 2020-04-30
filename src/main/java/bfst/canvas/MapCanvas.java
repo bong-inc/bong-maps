@@ -157,7 +157,9 @@ public class MapCanvas extends Canvas {
                 gc.setLineWidth(pixelwidth*2);
                 gc.setFill(Color.valueOf("#555555"));
                 gc.setTextAlign(TextAlignment.CENTER);
-                // model.getCitiesKdTree().draw(gc, pixelwidth, smartTrace, false, renderRange);
+                for(CanvasElement element : model.getCitiesKdTree().rangeSearch(renderRange)){
+                    element.draw(gc, pixelwidth, smartTrace);
+                }
             }
         }
 
