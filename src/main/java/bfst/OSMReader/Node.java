@@ -49,11 +49,6 @@ public class Node extends CanvasElement implements LongSupplier, Serializable {
     }
 
     @Override
-    public void setBoundingBox() {
-        //Ignored
-    }
-
-    @Override
     public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
 
     }

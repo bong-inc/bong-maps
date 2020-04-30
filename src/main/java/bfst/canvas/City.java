@@ -115,11 +115,6 @@ public class City extends CanvasElement implements Serializable, Comparable<City
         return new Range(node.getLon(), node.getLat(), node.getLon(), node.getLat());
     }
 
-    @Override
-    public void setBoundingBox() {
-        // ignore
-    }
-
     public static void setDrawPrettyCitynames(boolean drawPrettyCitynames){
         City.drawPrettyCitynames = drawPrettyCitynames;
     }

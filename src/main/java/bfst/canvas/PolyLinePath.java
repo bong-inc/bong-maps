@@ -62,7 +62,6 @@ public class PolyLinePath extends CanvasElement implements Drawable, Serializabl
         return new Range(minX, minY, maxX, maxY);
     }
 
-    @Override
     public void setBoundingBox() {
         boundingBox = mergeBoundingBoxes();
     }

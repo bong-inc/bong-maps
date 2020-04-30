@@ -159,7 +159,6 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
         return boundingBox;
     }
 
-    @Override
     public void setBoundingBox() {
         this.boundingBox = new Range(this.lon, this.lat, this.lon, this.lat);
     }

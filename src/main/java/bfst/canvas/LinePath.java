@@ -105,7 +105,6 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
         return boundingBox;
     }
 
-    @Override
     public void setBoundingBox() {
         float minX = Float.MAX_VALUE;
         float maxX = Float.NEGATIVE_INFINITY;
