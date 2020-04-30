@@ -46,5 +46,9 @@ public class Range implements Serializable {
     Arrays.sort(rangeDists);
     return rangeDists[0];
   }
+
+  public Point2D getCentroid(){
+    return new Point2D((this.maxX+this.minX)/2, (this.maxY+this.minY)/2);
+  }
   
 }

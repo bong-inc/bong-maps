@@ -39,7 +39,7 @@ public class PolyLinePath extends CanvasElement implements Drawable, Serializabl
     public Point2D getCentroid() {
         if(boundingBox == null)
             return null;
-        return getCenterFromRange(boundingBox);
+        return boundingBox.getCentroid();
     }
 
     @Override

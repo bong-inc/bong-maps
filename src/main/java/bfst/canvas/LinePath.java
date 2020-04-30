@@ -97,7 +97,7 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
     public Point2D getCentroid() {
         if(boundingBox == null) 
             return null;
-        return getCenterFromRange(boundingBox);
+        return boundingBox.getCentroid();
     }
 
     @Override
