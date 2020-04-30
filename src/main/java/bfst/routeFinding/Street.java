@@ -94,10 +94,12 @@ public class Street implements Serializable {
                     name = value.intern();
                     break;
                 case "oneway":
-                    onewayCar = true;
+                    if (value.equals("yes")) {
+                        onewayCar = true;
 
-                    if (role == Role.CYCLEWAY) {
-                        onewayBicycle = true;
+                        if (role == Role.CYCLEWAY) {
+                            onewayBicycle = true;
+                        }
                     }
                     break;
                 case "oneway:bicycle":
