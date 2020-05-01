@@ -271,7 +271,7 @@ public class MainController {
 
         searchField.textProperty().addListener((obs,oldVal,newVal) -> {
             hidePinInfo();
-            if (searchField.isFocused()) setTempQuery(searchField.getText().trim());
+            if (searchField.isFocused()) setCurrentQuery(searchField.getText().trim());
             if (searchField.getText().length() == 0) suggestionsContainer.getChildren().clear();
             canvas.nullPin();
         });
@@ -297,7 +297,7 @@ public class MainController {
         });
     }
 
-    public void setTempQuery(String newQuery){
+    public void setCurrentQuery(String newQuery){
         searchController.setCurrentQuery(newQuery);
         tempBest = searchController.getBestMatches(newQuery, model.getAddresses(), 5);
         updateSuggestionsContainer();
@@ -323,7 +323,7 @@ public class MainController {
         });
         b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.TAB) {
-                setTempQuery(((SuggestionButton) event.getSource()).getAddress().toString());
+                setCurrentQuery(((SuggestionButton) event.getSource()).getAddress().toString());
                 searchField.requestFocus();
                 searchField.positionCaret(searchField.getText().length());
                 event.consume();
@@ -343,7 +343,7 @@ public class MainController {
     }
 
     public void goToAddress(Address a) {
-        setTempQuery(a.toString());
+        setCurrentQuery(a.toString());
         searchField.setText(a.toString());
         searchField.positionCaret(searchField.getText().length());
         canvas.zoomToPoint(1, a.getLon(),  a.getLat());
