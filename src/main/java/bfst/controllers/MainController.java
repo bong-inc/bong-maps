@@ -289,6 +289,7 @@ public class MainController {
                 routeInfo.setManaged(false);
                 noRouteFound.setVisible(true);
                 noRouteFound.setManaged(true);
+                canvas.clearRoute();
                 ex.printStackTrace();
             }
         });
