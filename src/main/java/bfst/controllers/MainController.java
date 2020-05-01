@@ -80,7 +80,7 @@ public class MainController {
         this.stage = primaryStage;
         this.fileController = new FileController();
         this.poiController = new PointsOfInterestController();
-        this.searchController = new SearchController(this);
+        this.searchController = new SearchController();
     }
 
     public void setDefaultMap(){
