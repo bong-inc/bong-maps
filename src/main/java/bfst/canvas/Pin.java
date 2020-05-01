@@ -3,24 +3,10 @@ package bfst.canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Pin {
-
-    private float centerX;
-    private float centerY;
-    private float size;
-
-    public float getCenterX() {
-        return centerX;
-    }
-
-    public float getCenterY() {
-        return centerY;
-    }
+public class Pin extends Indicator {
 
     public Pin(float centerX, float centerY, float size) {
-        this.centerX = centerX;
-        this.centerY = centerY;
-        //this.size = size;
+        super(centerX, centerY, size);
     }
 
     public void draw(Drawer gc) {
@@ -39,13 +25,6 @@ public class Pin {
         gc.appendSVGPath(translated);
         gc.closePath();
         gc.fill();
-    }
-
-    public String scaleSvgPath(String text, double factor) {
-        String out = "";
-        String regex = "([Mmcl]{1}[0-9,\\-\\.]+)|(z)";
-
-        return RouteInstructionIndicator.regexedString(text, factor, out, regex);
     }
 
 }

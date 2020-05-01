@@ -6,7 +6,7 @@ import javafx.scene.shape.FillRule;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RouteOriginIndicator extends Pin {
+public class RouteOriginIndicator extends Indicator {
 
     public RouteOriginIndicator(float centerX, float centerY, float radius) {
         super(centerX,centerY,radius);
@@ -33,14 +33,6 @@ public class RouteOriginIndicator extends Pin {
         gc.closePath();
         gc.fill();
 
-    }
-
-    String circlePath(float cx, float cy, float r) {
-        return "M " + cx + " " + cy + " m -" + r + ", 0 a " + r + "," + r + " 0 1,0 " + (r * 2) + ",0 a " + r + "," + r + " 0 1,0 -" + (r * 2) + ",0";
-    }
-
-    public String scaleSvgPath(String text, double factor) {
-        return RouteInstructionIndicator.getScaledString(text, factor);
     }
 
 }

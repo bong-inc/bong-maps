@@ -6,18 +6,17 @@ import javafx.scene.paint.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RouteDestinationIndicator extends Pin{
-
+public class RouteDestinationIndicator extends Indicator {
 
     public RouteDestinationIndicator(float centerX, float centerY, float radius) {
         super(centerX,centerY,radius);
     }
 
-    public void draw(GraphicsContext gc) {
+    public void draw(Drawer gc) {
         draw(gc, 1);
     }
 
-    public void draw(GraphicsContext gc, double size) {
+    public void draw(Drawer gc, double size) {
         double factor = size*0.6;
 
         gc.setFill(Color.RED);
@@ -40,17 +39,6 @@ public class RouteDestinationIndicator extends Pin{
         gc.appendSVGPath(translated);
         gc.closePath();
         gc.fill();
-    }
-
-    String circlePath(float cx, float cy, float r) {
-        return "M " + cx + " " + cy + " m -" + r + ", 0 a " + r + "," + r + " 0 1,0 " + (r * 2) + ",0 a " + r + "," + r + " 0 1,0 -" + (r * 2) + ",0";
-    }
-
-    public String scaleSvgPath(String text, double factor) {
-        String out = "";
-        String regex = "([Mmcl]{1}[0-9,\\-\\.]+)|(z)";
-
-        return RouteInstructionIndicator.regexedString(text, factor, out, regex);
     }
 
 }
