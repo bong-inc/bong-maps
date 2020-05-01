@@ -10,12 +10,21 @@ import bfst.canvas.Range;
 import javafx.geometry.Point2D;
 
 public class GeometryTest {
-  
+
     @Test
     public void testPointInsideRange(){
       assertTrue(Geometry.pointInsideRange(new Point2D(0.5, 0.5), new Range(0, 0, 1, 1)));
       assertTrue(Geometry.pointInsideRange(new Point2D(0.1, 0.1), new Range(0, 0, 1, 1)));
       assertTrue(Geometry.pointInsideRange(new Point2D(0.0, 0.0), new Range(0, 0, 1, 1)));
+      assertTrue(Geometry.pointInsideRange(new Point2D(0.0, 1.0), new Range(0, 0, 1, 1)));
+      assertTrue(Geometry.pointInsideRange(new Point2D(1.0, 0.0), new Range(0, 0, 1, 1)));
+      assertTrue(Geometry.pointInsideRange(new Point2D(1.0, 1.0), new Range(0, 0, 1, 1)));
+      
+      assertTrue(Geometry.pointInsideRange(new Point2D(0.0, 0.5), new Range(0, 0, 1, 1)));
+      assertTrue(Geometry.pointInsideRange(new Point2D(0.5, 0.0), new Range(0, 0, 1, 1)));
+      assertTrue(Geometry.pointInsideRange(new Point2D(1.0, 0.5), new Range(0, 0, 1, 1)));
+      assertTrue(Geometry.pointInsideRange(new Point2D(0.5, 1.0), new Range(0, 0, 1, 1)));
+
       assertTrue(Geometry.pointInsideRange(new Point2D(0.5, 0.5), new Range(1, 1, 0, 0)));
       assertTrue(Geometry.pointInsideRange(new Point2D(0.0, 0.0), new Range(0, 0, 0, 0)));
       assertTrue(Geometry.pointInsideRange(new Point2D(0.0, 0.0), new Range(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
@@ -24,10 +33,19 @@ public class GeometryTest {
       assertTrue(Geometry.pointInsideRange(new Point2D(0.0, 0.0), new Range(0, 0, 1, 0)));
       assertTrue(Geometry.pointInsideRange(new Point2D(0.5, 0.5), new Range(0, 1, 1, 0)));
 
+      assertFalse(Geometry.pointInsideRange(new Point2D(-0.1, 0.5), new Range(0, 0, 1, 1)));
+      assertFalse(Geometry.pointInsideRange(new Point2D(0.5, -0.1), new Range(0, 0, 1, 1)));
+      assertFalse(Geometry.pointInsideRange(new Point2D(1.1, 0.5), new Range(0, 0, 1, 1)));
+      assertFalse(Geometry.pointInsideRange(new Point2D(0.5, 1.1), new Range(0, 0, 1, 1)));
+
       assertFalse(Geometry.pointInsideRange(new Point2D(1.1, 1.1), new Range(0, 0, 1, 1)));
       assertFalse(Geometry.pointInsideRange(new Point2D(1.1, -0.1), new Range(0, 0, 1, 1)));
+      assertFalse(Geometry.pointInsideRange(new Point2D(-0.1, 1.1), new Range(0, 0, 1, 1)));
       assertFalse(Geometry.pointInsideRange(new Point2D(-0.1, -0.1), new Range(0, 0, 1, 1)));
+      assertFalse(Geometry.pointInsideRange(new Point2D(1.1, 0.5), new Range(0, 0, 1, 1)));
       assertFalse(Geometry.pointInsideRange(new Point2D(0.5, 1.1), new Range(0, 0, 1, 1)));
+      assertFalse(Geometry.pointInsideRange(new Point2D(-0.1, 0.5), new Range(0, 0, 1, 1)));
+      assertFalse(Geometry.pointInsideRange(new Point2D(0.5, -0.1), new Range(0, 0, 1, 1)));
     }
 
     @Test
