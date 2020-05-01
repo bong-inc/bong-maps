@@ -176,6 +176,44 @@ class DijkstraTest {
             actual = dijkstra.determineRelax(2, "Walk", true);
             Assertions.assertEquals(12, actual);
 
+            Dijkstra dijkstra1 = new Dijkstra(graph, 12, 10, "bruh", true);
+            Assertions.assertThrows(Exception.class, () -> {
+                long actual1 = dijkstra1.determineRelax(2, "bruh", true);
+            });
+
+            Node node13 = new Node(13, 6, 7);
+            ArrayList<String> tags = new ArrayList<>();
+            tags.add("highway");
+            tags.add("cycleway");
+            Street cycleStreet = new Street(tags, 50);
+
+            Node node14 = new Node(14, 9, 9);
+            Node node15 = new Node(15, 5, 0);
+
+            graph.addEdge(new Edge(node7, node13, cycleStreet));
+
+            tags.add("highway");
+            tags.add("primary");
+            tags.add("highway");
+            tags.add("cycleway");
+            tags.add("oneway");
+            tags.add("yes");
+            graph.addEdge(new Edge(node8, node14, new Street(tags, 50)));
+            graph.addEdge(new Edge(node15, node4, new Street(tags, 50)));
+
+            dijkstra = new Dijkstra(graph, 9, 14, "Car", true);
+            actual = dijkstra.determineRelax(1, "Car", true);
+            Assertions.assertEquals(1, actual);
+
+            tags.clear();
+            tags.add("highway");
+            tags.add("cycleway");
+
+
+            dijkstra = new Dijkstra(graph, 9, 14, "Bicycle", true);
+            actual = dijkstra.determineRelax(1, "Bicycle", true);
+            Assertions.assertEquals(1, actual);
+
         } catch (Exception e) {
             Assertions.fail();
         }
