@@ -290,7 +290,8 @@ public class MainController {
 
         searchField.setOnAction(e -> {
             if(suggestionsContainer.getChildren().size() > 0) {
-                Address a = (Address) suggestionsContainer.getChildren().get(0).getUserData();
+                SuggestionButton b = (SuggestionButton) suggestionsContainer.getChildren().get(0);
+                Address a = b.getAddress();
                 goToAddress(a);
             }
         });
@@ -304,29 +305,25 @@ public class MainController {
 
     public void updateSuggestionsContainer(){
         ArrayList<Address> best = tempBest;
-        ArrayList<javafx.scene.Node> bs = new ArrayList<>();
+        ArrayList<SuggestionButton> bs = new ArrayList<>();
         for (Address address : best) {
             String addressString = address.toString();
 
-                Button b = setUpSuggestionButton(address, addressString);
+                SuggestionButton b = setUpSuggestionButton(address, addressString);
                 bs.add(b);
         }
         suggestionsContainer.getChildren().clear();
-        for (javafx.scene.Node b : bs) suggestionsContainer.getChildren().add(b);
+        for (SuggestionButton b : bs) suggestionsContainer.getChildren().add(b);
     }
 
-    private Button setUpSuggestionButton(Address address, String addressString) {
-        Button b = new Button();
-        b.setUserData(address);
-
-        b.setText(addressString);
-        b.getStyleClass().add("suggestion");
+    private SuggestionButton setUpSuggestionButton(Address address, String addressString) {
+        SuggestionButton b = new SuggestionButton(address);
         b.setOnAction(e -> {
-            goToAddress((Address) b.getUserData());
+            goToAddress(b.getAddress());
         });
         b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.TAB) {
-                setTempQuery(((Address) ((Button) event.getSource()).getUserData()).toString());
+                setTempQuery(((SuggestionButton) event.getSource()).getAddress().toString());
                 searchField.requestFocus();
                 searchField.positionCaret(searchField.getText().length());
                 event.consume();
@@ -337,7 +334,7 @@ public class MainController {
         });
         b.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
-                Address a = (Address) b.getUserData();
+                Address a = b.getAddress();
                 searchField.setText(a.toString());
                 peekAddress(a);
             }
