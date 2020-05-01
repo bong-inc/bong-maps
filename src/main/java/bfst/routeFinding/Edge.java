@@ -1,14 +1,9 @@
 package bfst.routeFinding;
 
 import bfst.OSMReader.Node;
-import bfst.canvas.Drawable;
-import bfst.canvas.LinePath;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Edge implements Serializable {
 

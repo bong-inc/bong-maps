@@ -3,11 +3,9 @@ package bfst.OSMReader;
 import bfst.addressparser.Address;
 import bfst.canvas.CanvasElement;
 import bfst.canvas.City;
-import bfst.canvas.Drawable;
 import bfst.canvas.Range;
 import bfst.canvas.Type;
 import bfst.routeFinding.*;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,9 +44,8 @@ public class Model implements Serializable {
     }
 
     public Map<Type, KDTree> createKdtreeByType(Map<Type, ArrayList<CanvasElement>> drawablesByType){
-        kdtreeByType = new HashMap<Type, KDTree>();
+        kdtreeByType = new HashMap<>();
         for(Entry<Type, ArrayList<CanvasElement>> e : drawablesByType.entrySet()){
-            // if(e.getKey() == Type.COASTLINE) continue;
             e.getValue().trimToSize();
             KDTree current = new KDTree(e.getValue(), new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
             kdtreeByType.put(e.getKey(), current);

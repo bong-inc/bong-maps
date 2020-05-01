@@ -6,29 +6,11 @@ import javafx.scene.paint.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RouteDestinationIndicator {
+public class RouteDestinationIndicator extends Pin{
 
-  float centerX;
-
-    public float getCenterX() {
-        return centerX;
-    }
-
-    public float getCenterY() {
-        return centerY;
-    }
-
-    float centerY;
-    float radius;
-
-    public void changeRadius(float r){
-        radius = r;
-    }
 
     public RouteDestinationIndicator(float centerX, float centerY, float radius) {
-        this.centerX = centerX;
-        this.centerY = centerY;
-        this.radius = radius;
+        super(centerX,centerY,radius);
     }
 
     public void draw(GraphicsContext gc) {
@@ -40,21 +22,21 @@ public class RouteDestinationIndicator {
 
         gc.setFill(Color.RED);
         gc.beginPath();
-        String translated = circlePath(centerX,centerY,(float) factor*15);
+        String translated = circlePath(super.getCenterX(),super.getCenterY(),(float) factor*15);
         gc.appendSVGPath(translated);
         gc.closePath();
         gc.fill();
 
         gc.setFill(Color.WHITE);
         gc.beginPath();
-        translated = circlePath(centerX,centerY,(float) factor*10);
+        translated = circlePath(super.getCenterX(),super.getCenterY(),(float) factor*10);
         gc.appendSVGPath(translated);
         gc.closePath();
         gc.fill();
 
         gc.setFill(Color.RED);
         gc.beginPath();
-        translated = circlePath(centerX,centerY,(float) factor*5);
+        translated = circlePath(super.getCenterX(),super.getCenterY(),(float) factor*5);
         gc.appendSVGPath(translated);
         gc.closePath();
         gc.fill();

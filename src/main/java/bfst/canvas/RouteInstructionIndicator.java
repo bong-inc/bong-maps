@@ -9,18 +9,6 @@ import java.util.regex.Pattern;
 
 public class RouteInstructionIndicator extends Pin {
 
-    public float getCenterX() {
-        return centerX;
-    }
-
-    public float getCenterY() {
-        return centerY;
-    }
-
-    public void changeRadius(float r){
-        radius = r;
-    }
-
     public RouteInstructionIndicator(float centerX, float centerY, float radius) {
         super(centerX,centerY,radius);
     }
@@ -34,14 +22,14 @@ public class RouteInstructionIndicator extends Pin {
 
         gc.setFill(Color.BLACK);
         gc.beginPath();
-        String translated = circlePath(centerX,centerY,(float) factor*5);
+        String translated = circlePath(super.getCenterX(),super.getCenterY(),(float) factor*5);
         gc.appendSVGPath(translated);
         gc.closePath();
         gc.fill();
 
         gc.setFill(Color.WHITE);
         gc.beginPath();
-        translated = circlePath(centerX,centerY,(float) (factor*4));
+        translated = circlePath(super.getCenterX(),super.getCenterY(),(float) (factor*4));
         gc.appendSVGPath(translated);
         gc.closePath();
         gc.fill();

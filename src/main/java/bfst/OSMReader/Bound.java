@@ -1,9 +1,6 @@
 package bfst.OSMReader;
 
-
 import bfst.canvas.Drawable;
-import bfst.canvas.Type;
-import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.io.Serializable;

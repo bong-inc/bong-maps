@@ -9,7 +9,6 @@ import bfst.routeFinding.Edge;
 import bfst.routeFinding.Instruction;
 import bfst.routeFinding.Street;
 import javafx.geometry.Point2D;
-
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;

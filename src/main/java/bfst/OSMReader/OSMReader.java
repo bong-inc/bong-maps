@@ -5,7 +5,6 @@ import bfst.canvas.*;
 import bfst.routeFinding.Edge;
 import bfst.routeFinding.Graph;
 import bfst.routeFinding.Street;
-
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -168,7 +167,7 @@ public class OSMReader {
                             case "relation":
                                 relationHolder.collectRelation(tempNodes);
                                 if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
-                                if(relationHolder.getWays().size() > 0) drawableByType.get(type).add(new PolyLinePath(relationHolder, type, tempNodes));
+                                if(relationHolder.getWays().size() > 0) drawableByType.get(type).add(new PolyLinePath(relationHolder, tempNodes));
                                 type = Type.UNKNOWN;
                                 break;
                             case "osm":
@@ -410,11 +409,10 @@ public class OSMReader {
             }
         }
         if(!fixed){
-            Node[] boundNodes = new Node[4];
-            boundNodes[0] = new Node(-1, bound.getMinLon(), bound.getMinLat()); //TOPLEFT == -1
-            boundNodes[1] = new Node(-2, bound.getMinLon(), bound.getMaxLat()); //BOTTOMLEFT == -2
-            boundNodes[2] = new Node(-3, bound.getMaxLon(), bound.getMaxLat()); //BOTTOMRIGHT == -3
-            boundNodes[3] = new Node(-4, bound.getMaxLon(), bound.getMinLat()); //TOPRIGHT == -4
+            //TOPLEFT == -1
+            //BOTTOMLEFT == -2
+            //BOTTOMRIGHT == -3
+            //TOPRIGHT == -4
 
             if(first.getLat() <= bound.getMinLat()){ //TOP
                 coastline.addNodeToFront(-4L);
@@ -460,7 +458,6 @@ public class OSMReader {
     public void destroy(){
         tempNodes = null;
         tempWays = null;
-        //tempRelations = null;
         tempCoastlines = null;
         drawableByType = null;
         addresses = null;

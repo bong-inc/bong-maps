@@ -4,22 +4,15 @@ import bfst.OSMReader.*;
 
 import bfst.controllers.RouteController;
 import bfst.routeFinding.*;
-
-import bfst.canvas.CanvasElement;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.FillRule;
-import javafx.scene.shape.Line;
-import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
-
-import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.*;
 
 public class MapCanvas extends Canvas {

@@ -1,8 +1,6 @@
 package bfst.routeFinding;
 
-import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Node;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;

@@ -1,11 +1,8 @@
 package bfst.routeFinding;
 
 import bfst.OSMReader.Node;
-import bfst.OSMReader.SortedArrayList;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 

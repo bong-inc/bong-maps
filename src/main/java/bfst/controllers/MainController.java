@@ -12,11 +12,9 @@ import bfst.exceptions.FileTypeNotSupportedException;
 import bfst.routeFinding.Edge;
 import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -26,14 +24,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,8 +37,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class MainController {
     private Stage stage;
@@ -555,15 +547,6 @@ public class MainController {
 
 
     }
-
-    private SVGPath createPath(String svgString) {
-        SVGPath path = new SVGPath();
-        path.getStyleClass().add("icon");
-        path.setContent(svgString);
-        return path;
-    }
-
-
 
     public void setPOIButton() {
         AtomicBoolean POIExists = new AtomicBoolean(false);
