@@ -3,6 +3,8 @@ package bfst.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,11 +24,8 @@ public class SearchControllerTest {
   @Test
   public void testGetBestMatches1() {
     List<Address> addresses = new ArrayList<>();
-    try {
-      addresses.add(Address.parse("Jagtvej"));
-    } catch (InvalidAddressException e) {
-      // ignore
-    }
+    
+    addresses.add(new Address("Jagtvej", null, null, null, null, 0f, 0f));
 
     List<Address> bestMatches = sc.getBestMatches("Jagtvej", addresses, 5);
     
@@ -36,16 +35,12 @@ public class SearchControllerTest {
   @Test
   public void testGetBestMatches2() {
     List<Address> addresses = new ArrayList<>();
-    try {
-      addresses.add(Address.parse("Jagtvej a"));
-      addresses.add(Address.parse("Jagtvej b"));
-      addresses.add(Address.parse("Jagtvej c"));
-      addresses.add(Address.parse("Jagtvej d"));
-      addresses.add(Address.parse("Jagtvej e"));
-      addresses.add(Address.parse("Jagtvej f"));
-    } catch (InvalidAddressException e) {
-      // ignore
-    }
+    addresses.add(new Address("Jagtvej a", null, null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej b", null, null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej c", null, null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej d", null, null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej e", null, null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej f", null, null, null, null, 0f, 0f));
 
     List<Address> bestMatches = sc.getBestMatches("Jagtvej", addresses, 5);
     
@@ -80,21 +75,26 @@ public class SearchControllerTest {
   @Test
   public void testGetBestMatches3() {
     List<Address> addresses = new ArrayList<>();
-    try {
-      addresses.add(Address.parse("Jagtvej 1"));
-      addresses.add(Address.parse("Jagtvej 1A"));
-      addresses.add(Address.parse("Jagtvej 2"));
-      addresses.add(Address.parse("Jagtvej 3"));
-      addresses.add(Address.parse("Jagtvej 10"));
-      addresses.add(Address.parse("Jagtvej 11"));
-      addresses.add(Address.parse("Jagtvej 100"));
-    } catch (InvalidAddressException e) {
-      // ignore
-    }
 
-    List<Address> bestMatches = sc.getBestMatches("Jagtvej", addresses, 5);
+    addresses.add(new Address("Jagtvej", "1", null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej", "1A", null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej", "10", null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej", "100", null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej", "11", null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej", "2", null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej", "3", null, null, null, 0f, 0f));
+
+    Collections.sort(addresses);
+
+    List<Address> bestMatches = sc.getBestMatches("Jagtve", addresses, 3);
     
-    assertEquals("Jagtvej a", bestMatches.get(0).getStreet());
+    assertEquals("Jagtvej", bestMatches.get(0).getStreet());
+    assertEquals("1", bestMatches.get(0).getHouse());
+
+    // bestMatches = sc.getBestMatches("Jagtvej", addresses, 5);
+    
+    // assertEquals("Jagtvej", bestMatches.get(0).getStreet());
+    // assertEquals("1", bestMatches.get(0).getHouse());
 
   }
 }
