@@ -39,6 +39,9 @@ public class MapCanvas extends Canvas {
     private String lastActionInstruction;
     private boolean renderFullScreen = true;
     private LinePath draggedSquare;
+    private Node startNode;
+    private Node destinationNode;
+    private boolean showRoadNodes = false;
 
     private ArrayList<Instruction> instructions;
 
@@ -60,6 +63,14 @@ public class MapCanvas extends Canvas {
 
     public Affine getTrans() {
         return trans;
+    }
+
+    public boolean isShowRoadNodes() {
+        return showRoadNodes;
+    }
+
+    public void setShowRoadNodes(boolean showRoadNodes) {
+        this.showRoadNodes = showRoadNodes;
     }
 
     public void clearOriginDestination() {
@@ -178,6 +189,11 @@ public class MapCanvas extends Canvas {
         }
         if (draggedSquare != null) {
             draggedSquare.draw(gc, pixelwidth, false);
+        }
+
+        if (showRoadNodes) {
+            drawNode(startNode);
+            drawNode(destinationNode);
         }
 
         System.out.println("Repaint: " + ((System.nanoTime() - time) / 1000000.0 + " ms at " + i));
@@ -639,4 +655,8 @@ public class MapCanvas extends Canvas {
         return drawBound;
     }
 
+    public void setStartDestPoint(Node start, Node dest) {
+        this.startNode = start;
+        this.destinationNode = dest;
+    }
 }

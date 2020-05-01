@@ -36,5 +36,6 @@
     <Button fx:id="routeDescription">Print route description</Button>
     <Button fx:id="printPOI">Print points of interest</Button>
     <CheckBox fx:id="showClosestNode">Show closest road-node</CheckBox>
+    <CheckBox fx:id="showFoundRoadNode">Show found road node</CheckBox>
   </FlowPane>
 </VBox>

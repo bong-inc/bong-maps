@@ -406,8 +406,12 @@ public class MainController {
         RadioButton selectedShortFastButton = (RadioButton) shortFastGroup.getSelectedToggle();
         boolean shortestRoute = selectedShortFastButton.getText().equals("Shortest");
 
-        long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startPoint, vehicle)).getAsLong();
-        long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationPoint, vehicle)).getAsLong(); //TODO refactor as method
+        Node startNode = ((Node) model.getRoadKDTree().nearestNeighbor(startPoint, vehicle));
+        Node destinationNode = ((Node) model.getRoadKDTree().nearestNeighbor(destinationPoint, vehicle));
+        canvas.setStartDestPoint(startNode, destinationNode);
+
+        long startRoadId = startNode.getAsLong();
+        long destinationRoadId = destinationNode.getAsLong(); //TODO refactor as method
 
         canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
 

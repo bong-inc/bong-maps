@@ -49,6 +49,7 @@ public class DevController {
     @FXML private CheckBox showClosestNode;
     @FXML private CheckBox drawBound;
     @FXML private CheckBox drawPrettyCitynames;
+    @FXML private CheckBox showFoundRoadNode;
 
     @FXML
     public void initialize() {
@@ -165,6 +166,11 @@ public class DevController {
         drawPrettyCitynames.setSelected(City.getDrawPrettyCitynames());
         drawPrettyCitynames.setOnAction(e -> {
             City.setDrawPrettyCitynames(drawPrettyCitynames.isSelected());
+        });
+
+        showFoundRoadNode.setSelected(canvas.isShowRoadNodes());
+        showFoundRoadNode.setOnAction(e -> {
+            canvas.setShowRoadNodes(showFoundRoadNode.isSelected());
         });
     }
 
