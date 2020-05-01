@@ -329,6 +329,10 @@ public class MapCanvas extends Canvas {
         resetView();
     }
 
+    public void setModelWithoutReset(Model model) {
+        this.model = model;
+    }
+
 
     public Point2D getModelCoordinates(double x, double y) {
         try {
