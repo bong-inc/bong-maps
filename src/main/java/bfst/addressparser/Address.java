@@ -15,7 +15,7 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
     private final float lat, lon;
     private Range boundingBox;
 
-    private Address(
+    public Address(
             String _street,
             String _house,
             String _postcode,
