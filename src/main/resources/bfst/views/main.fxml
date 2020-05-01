@@ -50,7 +50,7 @@
               </graphic>
             </Button>
           </HBox>
-          <VBox fx:id="suggestions" styleClass="suggestions">
+          <VBox fx:id="suggestionsContainer" styleClass="suggestions">
             <!-- Suggestions -->
           </VBox>
         </VBox>

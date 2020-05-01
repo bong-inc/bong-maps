@@ -60,7 +60,7 @@ public class MainController {
     private Point2D currentPoint;
     private FileController fileController;
     private PointsOfInterestController poiController;
-
+    private SearchController searchController;
 
     private ToggleGroup vehicleGroup = new ToggleGroup();
     @FXML private RadioButton carButton;
@@ -80,6 +80,7 @@ public class MainController {
         this.stage = primaryStage;
         this.fileController = new FileController();
         this.poiController = new PointsOfInterestController();
+        this.searchController = new SearchController(this);
     }
 
     public void setDefaultMap(){
@@ -100,7 +101,7 @@ public class MainController {
     @FXML private MenuItem about;
     @FXML private MenuItem help;
     @FXML private TextField searchField;
-    @FXML private VBox suggestions;
+    @FXML private VBox suggestionsContainer;
     @FXML private Menu myPoints;
     @FXML private HBox pinInfo;
     @FXML private Label pointAddress;
@@ -204,9 +205,9 @@ public class MainController {
         });
 
         searchField.textProperty().addListener((obs,oldVal,newVal) -> {
-            hideAddPOIButton();
+            hidePinInfo();
             if (searchField.isFocused()) setTempQuery(searchField.getText().trim());
-            if(searchField.getText().length() == 0) suggestions.getChildren().clear();
+            if(searchField.getText().length() == 0) suggestionsContainer.getChildren().clear();
             canvas.nullPin();
         });
 
@@ -215,16 +216,16 @@ public class MainController {
                 event.consume();
             }
             if (event.getCode() == KeyCode.DOWN) {
-                if(suggestions.getChildren().size() > 0) {
-                    suggestions.getChildren().get(0).requestFocus();
+                if(suggestionsContainer.getChildren().size() > 0) {
+                    suggestionsContainer.getChildren().get(0).requestFocus();
                 }
                 event.consume();
             }
         });
 
         searchField.setOnAction(e -> {
-            if(suggestions.getChildren().size() > 0) {
-                Address a = (Address) suggestions.getChildren().get(0).getUserData();
+            if(suggestionsContainer.getChildren().size() > 0) {
+                Address a = (Address) suggestionsContainer.getChildren().get(0).getUserData();
                 goToAddress(a);
             }
         });
@@ -277,7 +278,7 @@ public class MainController {
 
         pinInfoClose.setOnAction(e -> {
             canvas.nullPin();
-            hidePinMenu();
+            hidePinInfo();
         });
 
         findRoute.setOnAction(e -> {
@@ -309,13 +310,13 @@ public class MainController {
 
     }
 
-    private void goToAddress(Address a) {
+    public void goToAddress(Address a) {
         setTempQuery(a.toString());
         searchField.setText(a.toString());
         searchField.positionCaret(searchField.getText().length());
         canvas.zoomToPoint(1, a.getLon(),  a.getLat());
         canvas.setPin(a.getLon(), a.getLat());
-        suggestions.getChildren().clear();
+        suggestionsContainer.getChildren().clear();
         showPinMenu();
     }
 
@@ -664,12 +665,12 @@ public class MainController {
                 });
                 bs.add(b);
         }
-        updateSuggestions(bs);
+        updateSuggestionsContainer(bs);
     }
 
-    public void updateSuggestions(ArrayList<javafx.scene.Node> bs){
-        suggestions.getChildren().clear();
-        for (javafx.scene.Node b : bs) suggestions.getChildren().add(b);
+    public void updateSuggestionsContainer(ArrayList<javafx.scene.Node> bs){
+        suggestionsContainer.getChildren().clear();
+        for (javafx.scene.Node b : bs) suggestionsContainer.getChildren().add(b);
     }
 
     public void showPinMenu() {
@@ -758,11 +759,7 @@ public class MainController {
         return distance * meterMultiplier;
     }
 
-    public void hidePinMenu() {
-        pinInfo.setVisible(false);
-    }
-
-    public void hideAddPOIButton(){
+    public void hidePinInfo(){
         pinInfo.setVisible(false);
     }
 
@@ -882,6 +879,10 @@ public class MainController {
         canvas.setRouteDestination(destinationPoint);
         showDirectionsMenu();
         canvas.repaint(32);
+    }
+
+    public MapCanvas getCanvas(){
+        return canvas;
     }
 
 }
