@@ -76,4 +76,25 @@ public class SearchControllerTest {
     assertEquals("Jagtvej f", bestMatches.get(2).getStreet());
 
   }
+
+  @Test
+  public void testGetBestMatches3() {
+    List<Address> addresses = new ArrayList<>();
+    try {
+      addresses.add(Address.parse("Jagtvej 1"));
+      addresses.add(Address.parse("Jagtvej 1A"));
+      addresses.add(Address.parse("Jagtvej 2"));
+      addresses.add(Address.parse("Jagtvej 3"));
+      addresses.add(Address.parse("Jagtvej 10"));
+      addresses.add(Address.parse("Jagtvej 11"));
+      addresses.add(Address.parse("Jagtvej 100"));
+    } catch (InvalidAddressException e) {
+      // ignore
+    }
+
+    List<Address> bestMatches = sc.getBestMatches("Jagtvej", addresses, 5);
+    
+    assertEquals("Jagtvej a", bestMatches.get(0).getStreet());
+
+  }
 }
