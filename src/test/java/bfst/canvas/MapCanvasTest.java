@@ -1,14 +1,15 @@
 package bfst.canvas;
 
 import bfst.OSMReader.Node;
+import bfst.controllers.RouteController;
 import bfst.routeFinding.Edge;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-class MapCanvasTest {
-    private MapCanvas canvas = new MapCanvas();
+class RouterControllertest {
+    private RouteController routeController = new RouteController(new MapCanvas());
 
     @Test
     public void calculateTurnTest() {
@@ -18,12 +19,12 @@ class MapCanvasTest {
         double expected;
         double actual;
         expected = -104.03624346792648;
-        actual = canvas.calculateTurn(prevEdge1, currEdge1);
+        actual = routeController.calculateTurn(prevEdge1, currEdge1);
         Assertions.assertEquals(expected, actual);
 
         Edge prevEdge2 = new Edge(new Node(1, 5, 6), new Node(2, 9, 10), null);
         Edge currEdge2 = new Edge(new Node(2, 9, 10), new Node(2, 7, 12), null);
-        actual = canvas.calculateTurn(prevEdge2, currEdge2);
+        actual = routeController.calculateTurn(prevEdge2, currEdge2);
         expected = 90.0;
         Assertions.assertEquals(expected, actual);
     }
@@ -33,14 +34,14 @@ class MapCanvasTest {
         String expected;
         String actual;
 
-        canvas.setRouteTime(900.0);
+        routeController.setRouteTime(900.0);
         expected = 15 + " min";
-        actual = canvas.timeString();
+        actual = routeController.timeString();
         Assertions.assertEquals(expected, actual);
 
-        canvas.setRouteTime(9000.0);
+        routeController.setRouteTime(9000.0);
         expected = 2 + " h " + 30 + " min";
-        actual = canvas.timeString();
+        actual = routeController.timeString();
         Assertions.assertEquals(expected, actual);
     }
 
@@ -49,19 +50,19 @@ class MapCanvasTest {
         String expected;
         String actual;
 
-        canvas.setRouteDistance(101.1);
+        routeController.setRouteDistance(101.1);
         expected = 101 + " m";
-        actual = canvas.distanceString();
+        actual = routeController.distanceString();
         Assertions.assertEquals(expected, actual);
 
-        canvas.setRouteDistance(1011.1);
+        routeController.setRouteDistance(1011.1);
         expected = 1.01 + " km";
-        actual = canvas.distanceString();
+        actual = routeController.distanceString();
         Assertions.assertEquals(expected, actual);
 
-        canvas.setRouteDistance(101234.56);
+        routeController.setRouteDistance(101234.56);
         expected = 101 + " km";
-        actual = canvas.distanceString();
+        actual = routeController.distanceString();
         Assertions.assertEquals(expected, actual);
     }
 
@@ -81,7 +82,7 @@ class MapCanvasTest {
         route.add(new Edge(node3, node2, null));
         route.add(new Edge(node3, node4, null));
 
-        ArrayList<Edge> actual = canvas.singleDirectRoute(route);
+        ArrayList<Edge> actual = routeController.singleDirectRoute(route);
 
         for (int i = 0; i < 4; i++) {
             Assertions.assertEquals(i, actual.get(i).getTailNode().getLat());

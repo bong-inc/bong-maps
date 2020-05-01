@@ -117,20 +117,20 @@ public class DevController {
 
         findRoute.setOnAction(e -> {
             try {
-                canvas.setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+                canvas.getRouteController().setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
         clearRoute.setOnAction(e -> {
-            canvas.clearRoute();
+            canvas.getRouteController().clearRoute();
         });
 
         shortestRoute.setSelected(true);
 
         routeDescription.setOnAction(e -> {
-            for (Instruction instruction : canvas.getDescription()) {
+            for (Instruction instruction : canvas.getRouteController().getInstructions()) {
                 System.out.println(instruction.getInstruction());
             }
         });
