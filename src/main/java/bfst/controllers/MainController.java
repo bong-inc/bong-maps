@@ -66,7 +66,6 @@ public class MainController {
     private MapCanvas canvas;
     private boolean shouldPan = true;
     private boolean showStreetOnHover = false;
-    private String tempQuery = "";
 
     public MainController(Stage primaryStage){
         this.stage = primaryStage;
@@ -188,11 +187,7 @@ public class MainController {
 
         searchField.focusedProperty().addListener((obs,oldVal,newVal) -> {
             if (newVal) {
-                searchField.setText(tempQuery);
-                searchField.positionCaret(searchField.getText().length());
-                KeyEvent press = new KeyEvent(searchField,searchField,KeyEvent.KEY_PRESSED, "", "", KeyCode.RIGHT, false, false, false, false);
-                searchField.fireEvent(press);
-                searchField.positionCaret(searchField.getText().length());
+                searchField.setText(searchController.getTempQuery());
             }
         });
 
@@ -588,28 +583,12 @@ public class MainController {
     }
 
     private void query(String query) {
-        ArrayList<Address> addresses = model.getAddresses();
-        Address inputAdress = null;
-        query = query.toLowerCase();
-        try {
-            inputAdress = Address.parse(query);
-            int index = Collections.binarySearch(addresses, inputAdress);
-            tempBest = new ArrayList<>();
-            for (int i = 0; i < 5; i++){
-                if(index < 0){
-                    tempBest.add(addresses.get(-index-1+i));
-                } else {
-                    tempBest.add(addresses.get(index+i));
-                }
-            }
-        } catch (InvalidAddressException e) {
-            System.out.println("invalid address");
-        }
+        tempBest = searchController.getBestMatches(query, model.getAddresses());
     }
 
     public void setTempQuery(String newQuery){
-        tempQuery = newQuery;
-        query(tempQuery);
+        searchController.setTempQuery(newQuery);
+        query(searchController.getTempQuery());
         reGenSuggestions();
     }
 
@@ -619,36 +598,40 @@ public class MainController {
         for (Address address : best) {
             String addressString = address.toString();
 
-                Button b = new Button();
-                b.setUserData(address);
-
-                b.setText(addressString);
-                b.getStyleClass().add("suggestion");
-                b.setOnAction(e -> {
-                    goToAddress((Address) b.getUserData());
-                });
-                b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                    if (event.getCode() == KeyCode.TAB) {
-                        setTempQuery(((Address) ((Button) event.getSource()).getUserData()).toString());
-                        searchField.requestFocus();
-                        searchField.positionCaret(searchField.getText().length());
-                        event.consume();
-                    }
-                    if (event.getCode() == KeyCode.A && event.isControlDown()) {
-                        searchField.requestFocus();
-                    }
-                });
-                b.focusedProperty().addListener((obs, oldVal, newVal) -> {
-                    if (newVal) {
-                        Address a = (Address) b.getUserData();
-                        searchField.setText(a.toString());
-                        peekAddress(a);
-                    }
-                    
-                });
+                Button b = setUpSuggestionButton(address, addressString);
                 bs.add(b);
         }
         updateSuggestionsContainer(bs);
+    }
+
+    private Button setUpSuggestionButton(Address address, String addressString) {
+        Button b = new Button();
+        b.setUserData(address);
+
+        b.setText(addressString);
+        b.getStyleClass().add("suggestion");
+        b.setOnAction(e -> {
+            goToAddress((Address) b.getUserData());
+        });
+        b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.TAB) {
+                setTempQuery(((Address) ((Button) event.getSource()).getUserData()).toString());
+                searchField.requestFocus();
+                searchField.positionCaret(searchField.getText().length());
+                event.consume();
+            }
+            if (event.getCode() == KeyCode.A && event.isControlDown()) {
+                searchField.requestFocus();
+            }
+        });
+        b.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                Address a = (Address) b.getUserData();
+                searchField.setText(a.toString());
+                peekAddress(a);
+            }
+        });
+        return b;
     }
 
     public void updateSuggestionsContainer(ArrayList<javafx.scene.Node> bs){
