@@ -91,7 +91,7 @@
                 <RadioButton fx:id="shortButton">Shortest</RadioButton>
                 <RadioButton fx:id="fastButton">Fastest</RadioButton>
               </HBox>
-              <Button fx:id="findRoute">Find route</Button>
+              <Button fx:id="findRoute" styleClass="findRoute">Find route</Button>
               <Label fx:id="noRouteFound" managed="false">No route found</Label>
               <VBox fx:id="routeInfo" styleClass="routeInfo">
                 <HBox styleClass="routeProperty">
