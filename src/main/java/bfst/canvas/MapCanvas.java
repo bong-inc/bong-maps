@@ -377,7 +377,6 @@ public class MapCanvas extends Canvas {
     public void setRouteDestination (Point2D point){
         if (point != null) {
             currentRouteDestination = new RouteDestinationIndicator((float) point.getX(), (float) point.getY(), 1);
-            repaint(29);
         } else {
             currentRouteDestination = null;
         }
