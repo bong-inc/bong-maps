@@ -56,6 +56,10 @@ public class RouteController {
         return instructions;
     }
 
+    public String getLastActionInstruction() {
+        return lastActionInstruction;
+    }
+
     public void clearRoute() {
         route = null;
         instructions = null;
@@ -94,7 +98,7 @@ public class RouteController {
         } else if (roundaboutCounter > 0) {
             lastActionInstruction = "Take exit number " + roundaboutCounter + " in the roundabout";
             resetRoundaboutCounter();
-        } else if (turn > 20 && turn < 160 && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) { //Left right is inverted
+        } else if (turn > 20 && turn < 160 && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) {
             lastActionInstruction = "Turn right";
         } else if (turn < -20 && turn > -160 && currEdge.getStreet().getRole() != Street.Role.ROUNDABOUT) {
             lastActionInstruction = "Turn left";
@@ -122,7 +126,7 @@ public class RouteController {
         lastInstructionNode = currEdge.getTailNode();
     }
 
-    private void addTimeToTotal(String vehicle, Edge currEdge, double distance) {
+    public void addTimeToTotal(String vehicle, Edge currEdge, double distance) {
         switch (vehicle) {
             case "Car":
                 routeTime += distance / (currEdge.getStreet().getMaxspeed() / 3.6);
@@ -280,5 +284,9 @@ public class RouteController {
         setRoute();
         generateRouteInfo(route, vehicle);
         canvas.repaint(40);
+    }
+
+    public double getRouteTime() {
+        return routeTime;
     }
 }
