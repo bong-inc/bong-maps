@@ -20,7 +20,7 @@ public class PolyLinePath extends CanvasElement implements Drawable, Serializabl
         linePaths = new ArrayList<>();
         ArrayList<Way> ways = relation.getWays();
         for (var way : ways) {
-            linePaths.add(new LinePath(way, type, nodeContainer));
+            linePaths.add(new LinePath(way, nodeContainer));
         }
         this.type = type;
         setBoundingBox();
