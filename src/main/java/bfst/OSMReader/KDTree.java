@@ -161,13 +161,14 @@ public class KDTree implements Serializable {
   }
 
   public List<CanvasElement> rangeSearch(Range range){
-    boolean isEnclosed = range.isEnclosedBy(bound);
     if(!range.overlapsWith(bound)) return new ArrayList<CanvasElement>();
     if(this.isLeaf()){
+      if(bound.isEnclosedBy(range)) return elements;
+
       List<CanvasElement> elementsInRange = new ArrayList<CanvasElement>();
       for(CanvasElement element : elements){
         Range boundingBox = element.getBoundingBox();
-        if(isEnclosed || range.overlapsWith(boundingBox)){
+        if(range.overlapsWith(boundingBox)){
           elementsInRange.add(element);
         }
       }
