@@ -12,10 +12,6 @@ public class SearchController {
 
   private String currentQuery = "";
 
-  public SearchController() {
-
-  }
-
   public String getCurrentQuery() {
     return currentQuery;
   }
@@ -37,6 +33,7 @@ public class SearchController {
         if (index < 0) {
           tempBest.add(addresses.get(-index - 1 + i));
         } else {
+          if (index + i >= addresses.size()) break;
           tempBest.add(addresses.get(index + i));
         }
       }
