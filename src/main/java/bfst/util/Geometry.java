@@ -6,8 +6,8 @@ import javafx.geometry.Point2D;
 public class Geometry {
 
   public static boolean pointInsideRange(Point2D point, Range range) {
-    return range.getMinX() < point.getX() && point.getX() < range.getMaxX()
-    && range.getMinY() < point.getY() && point.getY() < range.getMaxX();
+    return range.getMinX() <= point.getX() && point.getX() <= range.getMaxX()
+    && range.getMinY() <= point.getY() && point.getY() <= range.getMaxX();
 
   }
 
