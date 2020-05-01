@@ -77,24 +77,22 @@ public class SearchControllerTest {
     List<Address> addresses = new ArrayList<>();
 
     addresses.add(new Address("Jagtvej", "1", null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej", "1", "2100", "København", null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "1A", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "10", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "100", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "11", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "2", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "3", null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej", "3", null, null, null, 0f, 0f));
+
 
     Collections.sort(addresses);
 
-    List<Address> bestMatches = sc.getBestMatches("Jagtve", addresses, 3);
+    List<Address> bestMatches = sc.getBestMatches("Jagtv", addresses, 1);
     
     assertEquals("Jagtvej", bestMatches.get(0).getStreet());
     assertEquals("1", bestMatches.get(0).getHouse());
-
-    // bestMatches = sc.getBestMatches("Jagtvej", addresses, 5);
-    
-    // assertEquals("Jagtvej", bestMatches.get(0).getStreet());
-    // assertEquals("1", bestMatches.get(0).getHouse());
 
   }
 }

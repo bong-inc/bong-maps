@@ -21,7 +21,6 @@ public class SearchController {
   }
 
   public ArrayList<Address> getBestMatches(String query, List<Address> addresses, int numberOfMatches) {
-    query = query.toLowerCase();
     Address inputAdress = null;
     ArrayList<Address> tempBest = new ArrayList<>();
 
@@ -31,6 +30,7 @@ public class SearchController {
       tempBest = new ArrayList<>();
       for (int i = 0; i < numberOfMatches; i++) {
         if (index < 0) {
+          if (-index - 1 + i >= addresses.size()) break;
           tempBest.add(addresses.get(-index - 1 + i));
         } else {
           if (index + i >= addresses.size()) break;

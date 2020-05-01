@@ -6,6 +6,7 @@ import bfst.canvas.Range;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.regex.*;
 
 public class Address extends CanvasElement implements Serializable, Comparable<Address> {
@@ -95,13 +96,33 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
     public int compareTo(Address that) {
         // street house floor side postcode city
 
-        if(!this.street.toLowerCase().equals(that.street.toLowerCase())){
-            return this.street.toLowerCase().compareTo(that.street.toLowerCase());
-        } else if(this.house != null && that.house != null) {
-            return this.house.toLowerCase().compareTo(that.house.toLowerCase());
-        } else {
-            return 0;
-        }
+        String this_street = (this.street != null) ? this.street.toLowerCase() : null;
+        String that_street = (that.street != null) ? that.street.toLowerCase() : null;
+        if(this_street == null && that_street == null) return 0;
+        if(this_street == null) return -1;
+        if(that_street == null) return 1;
+        if(0 != this_street.compareTo(that_street)) return this_street.compareTo(that_street);
+
+        String this_house = (this.house != null) ? this.house.toLowerCase() : null;
+        String that_house = (that.house != null) ? that.house.toLowerCase() : null;
+        if(this_house == null && that_house == null) return 0;
+        if(this_house == null) return -1;
+        if(that_house == null) return 1;
+        if(0 != this_house.compareTo(that_house)) return this_house.compareTo(that_house);
+
+        String this_postcode = (this.postcode != null) ? this.postcode.toLowerCase() : null;
+        String that_postcode = (that.postcode != null) ? that.postcode.toLowerCase() : null;
+        if(this_postcode == null && that_postcode == null) return 0;
+        if(this_postcode == null) return -1;
+        if(that_postcode == null) return 1;
+        if(0 != this_postcode.compareTo(that_postcode)) return this_postcode.compareTo(that_postcode);
+
+        String this_city = (this.city != null) ? this.city.toLowerCase() : null;
+        String that_city = (that.city != null) ? that.city.toLowerCase() : null;
+        if(this_city == null && that_city == null) return 0;
+        if(this_city == null) return -1;
+        if(that_city == null) return 1;
+        return this_city.compareTo(that_city);
     }
 
     public float getLat() {
