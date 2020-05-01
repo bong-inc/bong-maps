@@ -125,7 +125,7 @@ public class KDTreeForEdges implements Serializable {
   }
 
   private Range boundingRangeOf(List<Edge> list){
-    if(list.size() < 1) throw new RuntimeException("Empty list cannot have bounding range");
+    if(list.size() < 1) return null;
     Float minX = Float.MAX_VALUE;
     Float minY = Float.MAX_VALUE;
     Float maxX = Float.NEGATIVE_INFINITY;
