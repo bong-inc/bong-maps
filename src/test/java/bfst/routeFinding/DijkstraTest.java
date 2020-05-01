@@ -204,16 +204,6 @@ class DijkstraTest {
             dijkstra = new Dijkstra(graph, 9, 14, "Car", true);
             actual = dijkstra.determineRelax(1, "Car", true);
             Assertions.assertEquals(1, actual);
-
-            tags.clear();
-            tags.add("highway");
-            tags.add("cycleway");
-
-
-            dijkstra = new Dijkstra(graph, 9, 14, "Bicycle", true);
-            actual = dijkstra.determineRelax(1, "Bicycle", true);
-            Assertions.assertEquals(1, actual);
-
         } catch (Exception e) {
             Assertions.fail();
         }

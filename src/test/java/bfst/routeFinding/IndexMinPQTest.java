@@ -3,6 +3,8 @@ package bfst.routeFinding;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Random;
+
 class IndexMinPQTest {
 
     IndexMinPQ pq = new IndexMinPQ();
@@ -13,6 +15,10 @@ class IndexMinPQTest {
         thispq.insert(1, 5);
 
         Assertions.assertEquals(5, pq.getFromKeys(1));
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            thispq.insert(1, 5);
+        });
     }
 
     @Test
@@ -26,12 +32,13 @@ class IndexMinPQTest {
         Assertions.assertEquals("Priority queue underflow", exception);
 
         IndexMinPQ thispq = pq;
+        thispq.insert(100, 0.05);
 
-        thispq.insert(3, 2.5);
-        thispq.insert(4, 1.4);
-        thispq.insert(5, 5.5);
+        for (int i = 0; i < 100; i++) {
+            thispq.insert(i, Math.random() * (100 - 0.1 + 1) + 0.1);
+        }
 
-        Assertions.assertEquals(4L, pq.delMin());
+        Assertions.assertEquals(100L, pq.delMin());
     }
 
     @Test
@@ -56,6 +63,11 @@ class IndexMinPQTest {
 
         Assertions.assertEquals("Calling decreaseKey() with a key strictly greater than the key in the priority queue", exception);
 
+        try {
+            thispq.decreaseKey(3, 3.2);
+        } catch (Exception e) {
+            Assertions.fail();
+        }
     }
 
     @Test
