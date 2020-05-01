@@ -20,6 +20,7 @@ public class RouteController {
 
     public RouteController(MapCanvas canvas) {
         this.canvas = canvas;
+
     }
 
     private ArrayList<Edge> route;
@@ -30,10 +31,14 @@ public class RouteController {
     private int roundaboutCounter = 0;
     private Node lastInstructionNode;
     private String lastActionInstruction;
-    private ArrayList<Instruction> instructions;
+    private ArrayList<Instruction> instructions = new ArrayList<>();
 
     public Iterable<Edge> getRoute() {
         return route;
+    }
+
+    public void setLastInstructionNode(Node node) {
+        lastInstructionNode = node;
     }
 
     public Dijkstra getDijkstra() {
@@ -105,7 +110,7 @@ public class RouteController {
         }
     }
 
-    private void addInstruction(String prevEdgeName, double tempLength, Edge currEdge) {
+    public void addInstruction(String prevEdgeName, double tempLength, Edge currEdge) {
         String instruction = "Follow ";
         if (lastActionInstruction != null) {
             instruction = lastActionInstruction + " and follow ";

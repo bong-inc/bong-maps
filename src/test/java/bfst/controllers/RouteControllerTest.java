@@ -131,6 +131,22 @@ public class RouteControllerTest {
     }
 
     @Test
+    public void addInstructionTest() {
+        routeController = new RouteController(new MapCanvas());
+        routeController.setLastInstructionNode(new Node(1, 2, 3));
+        Edge edge = new Edge(new Node(1, 5, 6), new Node(2, 9, 10), null);
+        routeController.addInstruction("test street", 1500, edge);
+        String expected = "Follow test street for 1.5 km";
+        String actual = routeController.getInstructions().get(0).getInstruction();
+        Assertions.assertEquals(expected, actual);
+
+        routeController.addInstruction("test street", 15000, edge);
+        expected = "Follow test street for 15 km";
+        actual = routeController.getInstructions().get(1).getInstruction();
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
     public void distanceStringTest() {
         String expected;
         String actual;
