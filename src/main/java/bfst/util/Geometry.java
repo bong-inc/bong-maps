@@ -1,16 +1,13 @@
 package bfst.util;
 
-import java.util.ArrayList;
-
-import bfst.canvas.CanvasElement;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;
 
 public class Geometry {
 
   public static boolean pointInsideRange(Point2D point, Range range) {
-    return range.minX < point.getX() && point.getX() < range.maxX 
-    && range.minY < point.getY() && point.getY() < range.maxY;
+    return range.minX <= point.getX() && point.getX() <= range.maxX 
+    && range.minY <= point.getY() && point.getY() <= range.maxY;
   }
 
   public static double distanceToLineSegment(Point2D query, Point2D start, Point2D end){
