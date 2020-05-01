@@ -1,6 +1,5 @@
 package bfst.controllers;
 
-import bfst.OSMReader.KDTree;
 import bfst.canvas.City;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.PointOfInterest;
@@ -11,7 +10,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

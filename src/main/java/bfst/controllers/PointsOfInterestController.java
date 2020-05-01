@@ -3,7 +3,6 @@ package bfst.controllers;
 import bfst.canvas.PointOfInterest;
 import javafx.geometry.Point2D;
 import javafx.scene.control.TextInputDialog;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
