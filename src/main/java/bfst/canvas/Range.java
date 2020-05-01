@@ -2,7 +2,6 @@ package bfst.canvas;
 
 import java.io.Serializable;
 import java.util.Arrays;
-
 import bfst.util.Geometry;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;

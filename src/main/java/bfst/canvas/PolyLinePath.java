@@ -1,28 +1,24 @@
 package bfst.canvas;
 
-import bfst.canvas.CanvasElement;
 import bfst.OSMReader.NodeContainer;
 import bfst.OSMReader.Relation;
 import bfst.OSMReader.Way;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class PolyLinePath extends CanvasElement implements Drawable, Serializable {
     private static final long serialVersionUID = -4838798038938840050L;
-    ArrayList<LinePath> linePaths;
-    Type type;
+    private ArrayList<LinePath> linePaths;
     private Range boundingBox;
 
-    public PolyLinePath(Relation relation, Type type, NodeContainer nodeContainer) {
+    public PolyLinePath(Relation relation, NodeContainer nodeContainer) {
         linePaths = new ArrayList<>();
         ArrayList<Way> ways = relation.getWays();
         for (var way : ways) {
             linePaths.add(new LinePath(way, nodeContainer));
         }
-        this.type = type;
         setBoundingBox();
     }
 
