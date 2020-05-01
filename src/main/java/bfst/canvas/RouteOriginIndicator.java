@@ -1,6 +1,5 @@
 package bfst.canvas;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 
@@ -13,11 +12,11 @@ public class RouteOriginIndicator extends Pin {
         super(centerX,centerY,radius);
     }
 
-    public void draw(GraphicsContext gc) {
+    public void draw(Drawer gc) {
         draw(gc, 1);
     }
 
-    public void draw(GraphicsContext gc, double size) {
+    public void draw(Drawer gc, double size) {
         double factor = size*0.6;
 
         gc.setFill(Color.BLACK);

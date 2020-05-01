@@ -1,6 +1,7 @@
 package bfst.OSMReader;
 
 import bfst.canvas.CanvasElement;
+import bfst.canvas.Drawer;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -48,7 +49,7 @@ public class Node extends CanvasElement implements LongSupplier, Serializable {
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
 
     }
 }

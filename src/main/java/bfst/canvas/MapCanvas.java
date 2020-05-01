@@ -16,7 +16,7 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import java.util.*;
 
 public class MapCanvas extends Canvas {
-    private GraphicsContext gc;
+    private Drawer gc;
     private Affine trans;
     private Model model;
 
@@ -89,7 +89,7 @@ public class MapCanvas extends Canvas {
     }
 
     public MapCanvas() {
-        this.gc = getGraphicsContext2D();
+        this.gc = new Drawer(getGraphicsContext2D());
         this.trans = new Affine();
         this.scaleBar = new ScaleBar();
     }
