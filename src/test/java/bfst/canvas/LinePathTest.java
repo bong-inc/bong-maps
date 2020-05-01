@@ -8,7 +8,39 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LinePathTest {
+    
+class MockedDrawer extends Drawer {
+    int lineToCount = 0;
+
+    @Override 
+    public void lineTo(double x, double y) {
+        lineToCount++;
+    }
+
+    /**
+     * @return the lineToCount
+     */
+    public int getLineToCount() {
+        return lineToCount;
+    }
+}
+
+public class LinePathTest {
+
+    @Test
+    void smartTraceTest() {
+
+        MockedDrawer mockDrawer = new MockedDrawer();
+        new LinePath(new float[]{
+            0,0,
+            1,1,
+            2,2,
+            // TODO: Make it a real test
+        }).smartTrace(mockDrawer, 5);
+        
+        // TODO: Make the test make sense...
+        assertEquals(mockDrawer.getLineToCount(), 5 );
+    }
 
     @Test
     void testGetCoordsFormNodeContainer() {

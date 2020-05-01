@@ -1,6 +1,7 @@
 package bfst.addressparser;
 
 import bfst.canvas.CanvasElement;
+import bfst.canvas.Drawer;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -146,7 +147,7 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
 
     }
 

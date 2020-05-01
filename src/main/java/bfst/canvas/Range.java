@@ -28,7 +28,7 @@ public class Range implements Serializable {
     }
   }
 
-  public void draw(GraphicsContext gc, double invertedZoomFactor) {
+  public void draw(Drawer gc, double invertedZoomFactor) {
     gc.setStroke(Color.BLUE);
     gc.setLineWidth(invertedZoomFactor);
     gc.strokeRect(minX, minY, maxX-minX, maxY-minY);

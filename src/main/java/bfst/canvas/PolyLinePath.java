@@ -23,7 +23,7 @@ public class PolyLinePath extends CanvasElement implements Drawable, Serializabl
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
         gc.beginPath();
         for (LinePath linepath : linePaths) {
             linepath.traceMethod(gc, scale, smartTrace);

@@ -41,7 +41,7 @@ public class City extends CanvasElement implements Serializable, Comparable<City
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
         Font font = new Font(scale * type.getFontSize());
         gc.setFont(font);
 
@@ -55,11 +55,11 @@ public class City extends CanvasElement implements Serializable, Comparable<City
         }
     }
 
-    private void drawNormal(GraphicsContext gc, double scale){
+    private void drawNormal(Drawer gc, double scale){
         gc.fillText(this.name, node.getLon(), node.getLat());
     }
 
-    private void drawPretty(GraphicsContext gc, double scale) {
+    private void drawPretty(Drawer gc, double scale) {
         if (this.type == type.CITY) {
             gc.strokeText(this.name, node.getLon(), node.getLat() - 7 * scale);
             gc.fillText(this.name, node.getLon(), node.getLat() - 7 * scale);
