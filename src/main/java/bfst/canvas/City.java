@@ -3,11 +3,7 @@ package bfst.canvas;
 import bfst.OSMReader.Node;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
-
 import java.io.Serializable;
 
 public class City extends CanvasElement implements Serializable, Comparable<City>, Drawable {

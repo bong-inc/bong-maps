@@ -1,23 +1,18 @@
 package bfst.canvas;
 
-import bfst.canvas.CanvasElement;
 import bfst.OSMReader.Node;
 import bfst.OSMReader.NodeContainer;
 import bfst.OSMReader.Way;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class LinePath extends CanvasElement implements Drawable, Serializable {
     private float[] coords_;
     private Range boundingBox;
-    private Type type;
 
-    public LinePath(Way way, Type type, NodeContainer nodeContainer) {
+    public LinePath(Way way, NodeContainer nodeContainer) {
         this(getCoordsFromNodeContainer(way, nodeContainer));
-        this.type = type;
     }
 
     private static float[] getCoordsFromNodeContainer(Way way, NodeContainer nodeContainer) {

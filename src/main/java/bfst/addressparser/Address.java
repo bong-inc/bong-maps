@@ -1,11 +1,9 @@
 package bfst.addressparser;
 
 import bfst.canvas.CanvasElement;
-import bfst.OSMReader.Node;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
 import java.util.regex.*;
 
@@ -13,7 +11,6 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
 
     private final String street, house, postcode, city, municipality;
 
-    //public final int postcode;
     private final float lat, lon;
     private Range boundingBox;
 
@@ -37,21 +34,25 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
         } else {
             house = _house;
         }
+
         if (_postcode != null) {
             postcode = _postcode.intern();
         } else {
             postcode = _postcode;
         }
+
         if (_city !=  null) {
             city = _city.intern();
         } else {
             city = _city;
         }
+
         if (_municipality != null) {
             municipality = _municipality.intern();
         } else {
             municipality = _municipality;
         }
+
         lat = _lat;
         lon = _lon;
 
@@ -67,25 +68,8 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
         );
     }
 
-    public String toDetailedString() {
-        return (
-                "\nStreet: " +
-                        street +
-                        "\nHouse: " +
-                        house +
-                        "\nPostcode: " +
-                        postcode +
-                        "\nCity: " +
-                        city
-        );
-    }
-    //TODO municipality in regex
     static String regex =
     "^ *(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1,2}(?!\\d)))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\d{1,3}))\\.?)?(?:[\\.|,| ])*(?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\.]+[a-zæøåÆØÅ\\-\\. ]+[a-zæøåÆØÅ\\-\\.]+)? *$";
-
-            // Old regex
-            // "^(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1}))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\w?\\d{1,3}))\\.?)?,?(?: (?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\. ]+))?$";
-    
 
     static Pattern pattern = Pattern.compile(
             regex,
@@ -100,8 +84,6 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
                     .house(matcher.group("house"))
                     .postcode(matcher.group("postcode"))
                     .city(matcher.group("city"))
-                    //TODO add municipality functionality
-                    //.municipality(matcher.group("municipality"))
                     .build();
         } else {
             throw new InvalidAddressException(input);
@@ -110,7 +92,7 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
 
     @Override
     public int compareTo(Address that) {
-        // street house floor side postcode city municipality
+        // street house floor side postcode city
 
         if(!this.street.toLowerCase().equals(that.street.toLowerCase())){
             return this.street.toLowerCase().compareTo(that.street.toLowerCase());
@@ -212,7 +194,6 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
             municipality = _municipality;
             return this;
         }
-
 
         public Builder lat(float _lat) {
             lat = _lat;

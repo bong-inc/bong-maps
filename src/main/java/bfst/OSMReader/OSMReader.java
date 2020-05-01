@@ -143,7 +143,7 @@ public class OSMReader {
                                     if (wayHolder.getSize() > 0) {
                                         if (!drawableByType.containsKey(type))
                                             drawableByType.put(type, new ArrayList<>());
-                                        drawableByType.get(type).add(new LinePath(wayHolder, type, tempNodes));
+                                        drawableByType.get(type).add(new LinePath(wayHolder, tempNodes));
                                     }
                                     
                                 } else {
@@ -175,10 +175,10 @@ public class OSMReader {
                                 ArrayList<CanvasElement> coastlines = new ArrayList<>();
                                 for(Map.Entry<Long,Way> entry : tempCoastlines.entrySet()){
                                     if(entry.getValue().first() == entry.getValue().last()){
-                                        coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE,tempNodes));
+                                        coastlines.add(new LinePath(entry.getValue(), tempNodes));
                                     } else {
                                         fixCoastline(entry.getValue());
-                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE,tempNodes));
+                                        coastlines.add(new LinePath(entry.getValue(), tempNodes));
                                     }
                                 }
                                 if(coastlines.size() == 0){
@@ -188,7 +188,7 @@ public class OSMReader {
                                     land.addNode(-3);
                                     land.addNode(-4);
                                     land.trim();
-                                    coastlines.add(new LinePath(land, Type.COASTLINE, tempNodes));
+                                    coastlines.add(new LinePath(land, tempNodes));
                                 }
                                 drawableByType.put(Type.COASTLINE,coastlines);
                                 break;

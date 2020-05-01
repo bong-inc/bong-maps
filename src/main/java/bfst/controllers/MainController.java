@@ -260,7 +260,7 @@ public class MainController {
 
         setAsDestination.setTooltip(new Tooltip("Set as destination"));
         setAsDestination.setOnAction(e -> {
-            canvas.clearRoute();
+            canvas.getRouteController().clearRoute();
             destinationAddress = currentAddress;
             destinationPoint = currentPoint;
             canvas.setRouteDestination(destinationPoint);
@@ -269,7 +269,7 @@ public class MainController {
 
         setAsStart.setTooltip(new Tooltip("Set as start"));
         setAsStart.setOnAction(e -> {
-            canvas.clearRoute();
+            canvas.getRouteController().clearRoute();
             startAddress = currentAddress;
             startPoint = currentPoint;
             canvas.setRouteOrigin(startPoint);
@@ -290,7 +290,7 @@ public class MainController {
                 routeInfo.setManaged(false);
                 noRouteFound.setVisible(true);
                 noRouteFound.setManaged(true);
-                canvas.clearRoute();
+                canvas.getRouteController().clearRoute();
                 ex.printStackTrace();
             }
         });
@@ -352,7 +352,7 @@ public class MainController {
         shortButton.setSelected(true);
 
         cancelRoute.setOnAction(e -> {
-            canvas.clearRoute();
+            canvas.getRouteController().clearRoute();
             startAddress = null;
             destinationAddress = null;
             destinationPoint = null;
@@ -415,7 +415,7 @@ public class MainController {
         long startRoadId = startNode.getAsLong();
         long destinationRoadId = destinationNode.getAsLong(); //TODO refactor as method
 
-        canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
+        canvas.getRouteController().setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
 
     }
 
@@ -712,9 +712,10 @@ public class MainController {
             findRoute.setDisable(false);
         }
 
-        if (canvas.getDescription() != null) {
+        ArrayList<Instruction> instructions;
+        if ((instructions = canvas.getRouteController().getInstructions()) != null) {
             directions.getChildren().clear();
-            for (Instruction instruction : canvas.getDescription()) {
+            for (Instruction instruction : instructions) {
                 Button button = new Button(instruction.getInstruction());
                 button.getStyleClass().add("instruction");
                 button.setOnAction(e -> {
@@ -722,11 +723,11 @@ public class MainController {
                 });
                 directions.getChildren().add(button);
             }
-            routeDistance.setText(canvas.distanceString());
-            routeTime.setText(canvas.timeString());
+            routeDistance.setText(canvas.getRouteController().distanceString());
+            routeTime.setText(canvas.getRouteController().timeString());
         }
 
-        if (canvas.getRoute() != null) {
+        if (canvas.getRouteController().getRoute() != null) {
             routeInfo.setVisible(true);
             routeInfo.setManaged(true);
         } else {
