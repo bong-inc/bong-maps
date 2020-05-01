@@ -46,13 +46,13 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
         gc.beginPath();
         traceMethod(gc, scale, smartTrace);
         gc.stroke();
     }
 
-    public void traceMethod(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void traceMethod(Drawer gc, double scale, boolean smartTrace) {
         if (smartTrace) {
             smartTrace(gc, scale);
         } else {
@@ -60,14 +60,14 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
         }
     }
 
-    public void trace(GraphicsContext gc) {
+    public void trace(Drawer gc) {
         gc.moveTo(coords_[0], coords_[1]);
         for (int i = 2 ; i < coords_.length ; i += 2) {
             gc.lineTo(coords_[i], coords_[i+1]);
         }
     }
 
-    public void smartTrace(GraphicsContext gc, double scale){
+    public void smartTrace(Drawer gc, double scale){
         float lastX = coords_[0];
         float lastY = coords_[1];
         gc.moveTo(lastX,lastY);
@@ -78,7 +78,7 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
             float diffY = nextY - lastY;
             double hypotenuse = Math.sqrt(Math.pow(diffX,2) + Math.pow(diffY,2));
             double distToNext = scale * hypotenuse;
-            if(3 < distToNext){
+            if(distToNext > 3){
                 gc.lineTo(nextX,nextY);
                 lastX = nextX;
                 lastY = nextY;

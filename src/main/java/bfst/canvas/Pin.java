@@ -23,11 +23,11 @@ public class Pin {
         //this.size = size;
     }
 
-    public void draw(GraphicsContext gc) {
+    public void draw(Drawer gc) {
         draw(gc, 1);
     }
 
-    public void draw(GraphicsContext gc, double size) {
+    public void draw(Drawer gc, double size) {
         gc.setFill(Color.RED);
         gc.beginPath();
         String path = "c-9.9,0,-18,7.8,-18,17.4c0,3.8,1.3,7.4,3.6,10.4l13.6,17.8c0.3,0.4,1,0.5,1.4,0.2c0.1,-0.1,0.1,-0.1,0.2,-0.2l13.6,-17.8c2.3,-3,3.6,-6.6,3.6,-10.4c0,-9.6,-8.1,-17.4,-18,-17.4z" +

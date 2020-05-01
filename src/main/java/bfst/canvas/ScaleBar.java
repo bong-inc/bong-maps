@@ -57,7 +57,7 @@ public class ScaleBar implements Drawable {
 
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
         gc.beginPath();
         gc.moveTo(placementX, placementY - (5*scale));
         gc.lineTo(placementX, placementY);

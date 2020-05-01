@@ -28,7 +28,7 @@ public class Range implements Serializable {
     }
   }
 
-  public void draw(GraphicsContext gc, double invertedZoomFactor) {
+  public void draw(Drawer gc, double invertedZoomFactor) {
     gc.setStroke(Color.BLUE);
     gc.setLineWidth(invertedZoomFactor);
     gc.strokeRect(minX, minY, maxX-minX, maxY-minY);
@@ -36,11 +36,11 @@ public class Range implements Serializable {
   }
 
   public boolean isEnclosedBy(Range that){
-    return this.minX < that.minX && this.maxX > that.maxX && this.minY < that.minY && this.maxY > that.maxY;
+    return that.minX <= this.minX && that.maxX >= this.maxX && that.minY <= this.minY && that.maxY >= this.maxY;
   }
 
   public boolean overlapsWith(Range that) {
-    return !(that.minX > this.maxX || this.minX > that.maxX || that.minY > this.maxY || this.minY > that.maxY);
+    return !(that.minX >= this.maxX || this.minX >= that.maxX || that.minY >= this.maxY || this.minY >= that.maxY);
   }
 
   public double distanceToPoint(Point2D point){

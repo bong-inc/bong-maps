@@ -1,7 +1,7 @@
 package bfst.OSMReader;
 
 import bfst.canvas.Drawable;
-import javafx.scene.canvas.GraphicsContext;
+import bfst.canvas.Drawer;
 
 import java.io.Serializable;
 
@@ -24,7 +24,7 @@ public class Bound implements Drawable, Serializable {
     public float getMinLon(){return minLon;}
     public float getMaxLon(){return maxLon;}
 
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace){
+    public void draw(Drawer gc, double scale, boolean smartTrace){
         gc.beginPath();
         gc.setLineWidth(scale);
         gc.moveTo(minLon,minLat);
