@@ -1,8 +1,5 @@
 package bfst.util;
 
-import java.util.ArrayList;
-
-import bfst.canvas.CanvasElement;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;
 

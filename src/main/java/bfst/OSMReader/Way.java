@@ -1,8 +1,6 @@
 package bfst.OSMReader;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.function.LongSupplier;
 
 public class Way implements LongSupplier, Serializable {

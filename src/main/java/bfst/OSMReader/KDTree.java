@@ -7,14 +7,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import bfst.canvas.Range;
 import bfst.util.Geometry;
 import bfst.canvas.CanvasElement;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 public class KDTree implements Serializable {
   private static final long serialVersionUID = 8179750180455602356L;

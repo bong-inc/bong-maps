@@ -4,7 +4,6 @@
 package bfst;
 
 import java.io.IOException;
-
 import bfst.controllers.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
