@@ -2,14 +2,13 @@ package bfst.controllers;
 
 import bfst.OSMReader.Node;
 import bfst.canvas.MapCanvas;
-import bfst.controllers.RouteController;
 import bfst.routeFinding.Edge;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-class RouterControllerTest {
+public class RouteControllerTest {
     private RouteController routeController = new RouteController(new MapCanvas());
 
     @Test
@@ -89,6 +88,5 @@ class RouterControllerTest {
             Assertions.assertEquals(i, actual.get(i).getTailNode().getLat());
         }
     }
-    
 
 }
