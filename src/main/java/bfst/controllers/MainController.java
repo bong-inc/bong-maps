@@ -265,7 +265,7 @@ public class MainController {
 
         searchField.focusedProperty().addListener((obs,oldVal,newVal) -> {
             if (newVal) {
-                searchField.setText(searchController.getTempQuery());
+                searchField.setText(searchController.getCurrentQuery());
             }
         });
 
@@ -297,7 +297,7 @@ public class MainController {
     }
 
     public void setTempQuery(String newQuery){
-        searchController.setTempQuery(newQuery);
+        searchController.setCurrentQuery(newQuery);
         tempBest = searchController.getBestMatches(newQuery, model.getAddresses(), 5);
         updateSuggestionsContainer();
     }

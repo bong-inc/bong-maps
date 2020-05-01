@@ -10,18 +10,18 @@ import bfst.addressparser.InvalidAddressException;
 
 public class SearchController {
 
-  private String tempQuery = "";
+  private String currentQuery = "";
 
   public SearchController() {
 
   }
 
-  public String getTempQuery() {
-    return tempQuery;
+  public String getCurrentQuery() {
+    return currentQuery;
   }
 
-  public void setTempQuery(String newTempQuery) {
-    this.tempQuery = newTempQuery;
+  public void setCurrentQuery(String newCurrentQuery) {
+    this.currentQuery = newCurrentQuery;
   }
 
   public ArrayList<Address> getBestMatches(String query, List<Address> addresses, int numberOfMatches) {
