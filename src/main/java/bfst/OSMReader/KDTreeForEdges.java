@@ -131,10 +131,10 @@ public class KDTreeForEdges implements Serializable {
     Float maxY = Float.NEGATIVE_INFINITY;
     for(Edge c : list){
       Range boundingBox = c.getBoundingBox();
-      if(boundingBox.minX < minX) minX = boundingBox.minX;
-      if(boundingBox.minY < minY) minY = boundingBox.minY;
-      if(boundingBox.maxX > maxX) maxX = boundingBox.maxX;
-      if(boundingBox.maxY > maxY) maxY = boundingBox.maxY;
+      if(boundingBox.getMinX() < minX) minX = boundingBox.getMinX();
+      if(boundingBox.getMaxY() < minY) minY = boundingBox.getMinY();
+      if(boundingBox.getMaxX() > maxX) maxX = boundingBox.getMaxX();
+      if(boundingBox.getMaxY() > maxY) maxY = boundingBox.getMaxY();
     }
     return new Range(minX, minY, maxX, maxY);
   }

@@ -50,10 +50,10 @@ public class PolyLinePath extends CanvasElement implements Drawable, Serializabl
         float minY = Float.MAX_VALUE;
         float maxY = Float.NEGATIVE_INFINITY;
         for(LinePath l : linePaths){
-            if(l.getBoundingBox().minX < minX) minX = l.getBoundingBox().minX;
-            if(l.getBoundingBox().maxX > maxX) maxX = l.getBoundingBox().maxX;
-            if(l.getBoundingBox().minY < minY) minY = l.getBoundingBox().minY;
-            if(l.getBoundingBox().maxY > maxY) maxY = l.getBoundingBox().maxY;
+            if(l.getBoundingBox().getMinX() < minX) minX = l.getBoundingBox().getMinX();
+            if(l.getBoundingBox().getMaxX() > maxX) maxX = l.getBoundingBox().getMaxX();
+            if(l.getBoundingBox().getMinY() < minY) minY = l.getBoundingBox().getMinY();
+            if(l.getBoundingBox().getMaxY() > maxY) maxY = l.getBoundingBox().getMaxY();
         }
         return new Range(minX, minY, maxX, maxY);
     }

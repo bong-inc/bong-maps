@@ -29,7 +29,7 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
         });
     }
 
-    private static float[] getCoordsFromNodeContainer(Way way, NodeContainer nodeContainer) {
+    public static float[] getCoordsFromNodeContainer(Way way, NodeContainer nodeContainer) {
         long[] nodes = way.getNodes();
         int nodesSize = way.getSize();
         float[] coords_ = new float[nodesSize * 2];
@@ -100,7 +100,7 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
         return boundingBox;
     }
 
-    public void setBoundingBox() {
+    public Range calculateBoundingBox() {
         float minX = Float.MAX_VALUE;
         float maxX = Float.NEGATIVE_INFINITY;
         for (int x = 0; x < coords_.length; x += 2) {
@@ -113,6 +113,10 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
             if(coords_[y] < minY) minY = coords_[y];
             if(coords_[y] > maxY) maxY = coords_[y];
         }
-        this.boundingBox = new Range(minX, minY, maxX, maxY);
+        return new Range(minX, minY, maxX, maxY);
+    }
+
+    public void setBoundingBox() {
+        this.boundingBox = calculateBoundingBox();
     }
 }

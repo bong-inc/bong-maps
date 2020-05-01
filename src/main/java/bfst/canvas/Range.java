@@ -8,7 +8,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Range implements Serializable {
-  public float minX, minY, maxX, maxY;
+
+  private float minX, minY, maxX, maxY;
 
   public Range(float minX, float minY, float maxX, float maxY) {
     this.minX = minX;
@@ -49,5 +50,21 @@ public class Range implements Serializable {
   public Point2D getCentroid(){
     return new Point2D((this.maxX+this.minX)/2, (this.maxY+this.minY)/2);
   }
-  
+
+  public float getMinX() {
+    return minX;
+  }
+
+  public float getMinY() {
+    return minY;
+  }
+
+  public float getMaxX() {
+    return maxX;
+  }
+
+  public float getMaxY() {
+    return maxY;
+  }
+
 }

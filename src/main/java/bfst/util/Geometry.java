@@ -6,8 +6,8 @@ import javafx.geometry.Point2D;
 public class Geometry {
 
   public static boolean pointInsideRange(Point2D point, Range range) {
-    return range.minX < point.getX() && point.getX() < range.maxX 
-    && range.minY < point.getY() && point.getY() < range.maxY;
+    return range.getMinX() < point.getX() && point.getX() < range.getMaxX()
+    && range.getMinY() < point.getY() && point.getY() < range.getMaxX();
   }
 
   public static double distanceToLineSegment(Point2D query, Point2D start, Point2D end){
