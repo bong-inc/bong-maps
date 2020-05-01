@@ -59,11 +59,8 @@ public class Street implements Serializable {
                         case "living_street":
                         case "service":
                         case "track":
-                            walking = true;
-                            bicycle = true;
-                            car = true;
-                            break;
                         case "unclassified":
+                            walking = true;
                             bicycle = true;
                             car = true;
                             break;

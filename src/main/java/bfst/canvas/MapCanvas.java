@@ -616,7 +616,11 @@ public class MapCanvas extends Canvas {
     }
 
     public void setRouteOrigin (Point2D point){
-        currentRouteOrigin = new RouteOriginIndicator((float) point.getX(), (float)  point.getY(), 1);
+        if (point != null) {
+            currentRouteOrigin = new RouteOriginIndicator((float) point.getX(), (float) point.getY(), 1);
+        } else {
+            currentRouteOrigin = null;
+        }
         repaint(27);
     }
 
@@ -626,7 +630,12 @@ public class MapCanvas extends Canvas {
     }
 
     public void setRouteDestination (Point2D point){
-        currentRouteDestination = new RouteDestinationIndicator((float) point.getX(), (float)  point.getY(), 1);
+        if (point != null) {
+            currentRouteDestination = new RouteDestinationIndicator((float) point.getX(), (float) point.getY(), 1);
+            repaint(29);
+        } else {
+            currentRouteDestination = null;
+        }
         repaint(29);
     }
 
