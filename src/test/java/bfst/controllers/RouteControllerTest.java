@@ -52,6 +52,18 @@ public class RouteControllerTest {
         actual = routeController.calculateTurn(prevEdge2, currEdge2);
         expected = 90.0;
         Assertions.assertEquals(expected, actual);
+
+        Edge prevEdge3 = new Edge(new Node(1, 5, 6), new Node(2, 4, 1), null);
+        Edge currEdge3 = new Edge(new Node(2, 4, 1), new Node(3, 5, 7), null);
+        actual = routeController.calculateTurn(prevEdge3, currEdge3);
+        expected = -1.8476102659946245;
+        Assertions.assertEquals(expected, actual, 0.0001);
+
+        Edge prevEdge4 = new Edge(new Node(1, 0, 0), new Node(2, -10, 1), null);
+        Edge currEdge4 = new Edge(new Node(2, -10, 1), new Node(3, -11, -9), null);
+        actual = routeController.calculateTurn(prevEdge4, currEdge4);
+        expected = 90;
+        Assertions.assertEquals(expected, actual, 0.0001);
     }
 
     @Test
