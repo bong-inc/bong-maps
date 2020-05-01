@@ -57,7 +57,7 @@
         <VBox fx:id="directionsInfo" styleClass="directionsInfo" style="visibility: false">
           <StackPane styleClass="directionsInfoStack">
             <VBox styleClass="directionsInfo">
-              <HBox style="-fx-alignment: center-center;">
+              <HBox>
                 <VBox styleClass="endPoints">
                   <HBox styleClass="endPoint">
                     <Button disable="true" styleClass="icon-button, deactivatedButton">
