@@ -285,6 +285,8 @@ public class MainController {
                 findRouteFromGivenInputs();
                 showDirectionsMenu();
             } catch (Exception ex) {
+                routeInfo.setVisible(false);
+                routeInfo.setManaged(false);
                 noRouteFound.setVisible(true);
                 noRouteFound.setManaged(true);
                 ex.printStackTrace();

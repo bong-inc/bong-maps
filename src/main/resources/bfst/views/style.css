@@ -383,6 +383,13 @@ Button:hover {
     -fx-background-radius: 100;
 }
 
+.findRoute:disabled {
+    -fx-text-fill: #888;
+    -fx-background-color: white;
+    -fx-border-color: #888;
+    -fx-border-radius: 5px;
+}
+
 .findRoute {
     -fx-text-fill: white;
     -fx-background-color: #888;
