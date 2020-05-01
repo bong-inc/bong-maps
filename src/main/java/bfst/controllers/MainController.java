@@ -185,38 +185,6 @@ public class MainController {
             }
         });
 
-        searchField.focusedProperty().addListener((obs,oldVal,newVal) -> {
-            if (newVal) {
-                searchField.setText(searchController.getTempQuery());
-            }
-        });
-
-        searchField.textProperty().addListener((obs,oldVal,newVal) -> {
-            hidePinInfo();
-            if (searchField.isFocused()) setTempQuery(searchField.getText().trim());
-            if(searchField.getText().length() == 0) suggestionsContainer.getChildren().clear();
-            canvas.nullPin();
-        });
-
-        searchField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.TAB) {
-                event.consume();
-            }
-            if (event.getCode() == KeyCode.DOWN) {
-                if(suggestionsContainer.getChildren().size() > 0) {
-                    suggestionsContainer.getChildren().get(0).requestFocus();
-                }
-                event.consume();
-            }
-        });
-
-        searchField.setOnAction(e -> {
-            if(suggestionsContainer.getChildren().size() > 0) {
-                Address a = (Address) suggestionsContainer.getChildren().get(0).getUserData();
-                goToAddress(a);
-            }
-        });
-
         publicTransport.setSelected(true);
         publicTransport.setOnAction(e -> {
             updateShowPublicTransport(publicTransport.isSelected());
@@ -295,6 +263,86 @@ public class MainController {
 
         setRouteOptionButtons();
 
+        searchField.focusedProperty().addListener((obs,oldVal,newVal) -> {
+            if (newVal) {
+                searchField.setText(searchController.getTempQuery());
+            }
+        });
+
+        searchField.textProperty().addListener((obs,oldVal,newVal) -> {
+            hidePinInfo();
+            if (searchField.isFocused()) setTempQuery(searchField.getText().trim());
+            if (searchField.getText().length() == 0) suggestionsContainer.getChildren().clear();
+            canvas.nullPin();
+        });
+
+        searchField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.TAB) {
+                event.consume();
+            }
+            if (event.getCode() == KeyCode.DOWN) {
+                if(suggestionsContainer.getChildren().size() > 0) {
+                    suggestionsContainer.getChildren().get(0).requestFocus();
+                }
+                event.consume();
+            }
+        });
+
+        searchField.setOnAction(e -> {
+            if(suggestionsContainer.getChildren().size() > 0) {
+                Address a = (Address) suggestionsContainer.getChildren().get(0).getUserData();
+                goToAddress(a);
+            }
+        });
+    }
+
+    public void setTempQuery(String newQuery){
+        searchController.setTempQuery(newQuery);
+        tempBest = searchController.getBestMatches(newQuery, model.getAddresses(), 5);
+        updateSuggestionsContainer();
+    }
+
+    public void updateSuggestionsContainer(){
+        ArrayList<Address> best = tempBest;
+        ArrayList<javafx.scene.Node> bs = new ArrayList<>();
+        for (Address address : best) {
+            String addressString = address.toString();
+
+                Button b = setUpSuggestionButton(address, addressString);
+                bs.add(b);
+        }
+        suggestionsContainer.getChildren().clear();
+        for (javafx.scene.Node b : bs) suggestionsContainer.getChildren().add(b);
+    }
+
+    private Button setUpSuggestionButton(Address address, String addressString) {
+        Button b = new Button();
+        b.setUserData(address);
+
+        b.setText(addressString);
+        b.getStyleClass().add("suggestion");
+        b.setOnAction(e -> {
+            goToAddress((Address) b.getUserData());
+        });
+        b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.TAB) {
+                setTempQuery(((Address) ((Button) event.getSource()).getUserData()).toString());
+                searchField.requestFocus();
+                searchField.positionCaret(searchField.getText().length());
+                event.consume();
+            }
+            if (event.getCode() == KeyCode.A && event.isControlDown()) {
+                searchField.requestFocus();
+            }
+        });
+        b.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                Address a = (Address) b.getUserData();
+                searchField.setText(a.toString());
+                peekAddress(a);
+            }
+        });
+        return b;
     }
 
     public void goToAddress(Address a) {
@@ -582,63 +630,6 @@ public class MainController {
         });
     }
 
-    private void query(String query) {
-        tempBest = searchController.getBestMatches(query, model.getAddresses());
-    }
-
-    public void setTempQuery(String newQuery){
-        searchController.setTempQuery(newQuery);
-        query(searchController.getTempQuery());
-        reGenSuggestions();
-    }
-
-    public void reGenSuggestions(){
-        ArrayList<Address> best = tempBest;
-        ArrayList<javafx.scene.Node> bs = new ArrayList<>();
-        for (Address address : best) {
-            String addressString = address.toString();
-
-                Button b = setUpSuggestionButton(address, addressString);
-                bs.add(b);
-        }
-        updateSuggestionsContainer(bs);
-    }
-
-    private Button setUpSuggestionButton(Address address, String addressString) {
-        Button b = new Button();
-        b.setUserData(address);
-
-        b.setText(addressString);
-        b.getStyleClass().add("suggestion");
-        b.setOnAction(e -> {
-            goToAddress((Address) b.getUserData());
-        });
-        b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.TAB) {
-                setTempQuery(((Address) ((Button) event.getSource()).getUserData()).toString());
-                searchField.requestFocus();
-                searchField.positionCaret(searchField.getText().length());
-                event.consume();
-            }
-            if (event.getCode() == KeyCode.A && event.isControlDown()) {
-                searchField.requestFocus();
-            }
-        });
-        b.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                Address a = (Address) b.getUserData();
-                searchField.setText(a.toString());
-                peekAddress(a);
-            }
-        });
-        return b;
-    }
-
-    public void updateSuggestionsContainer(ArrayList<javafx.scene.Node> bs){
-        suggestionsContainer.getChildren().clear();
-        for (javafx.scene.Node b : bs) suggestionsContainer.getChildren().add(b);
-    }
-
     public void showPinMenu() {
         setPOIButton();
         Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
@@ -729,18 +720,6 @@ public class MainController {
     public void hidePinInfo(){
         pinInfo.setVisible(false);
     }
-
-    public int[] matches(String query, String address){
-        String regex = ".*?(?<match>" + query.toLowerCase() + ").*";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher m = pattern.matcher(address.toLowerCase());
-        if (m.find() && m.group("match") != null && query.length() > 0) {
-            return new int[]{m.start("match"), m.end("match")};
-        } else {
-            return null;
-        }
-    }
-
 
     public void saveFileOnClick(ActionEvent e){
         try {
