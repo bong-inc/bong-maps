@@ -15,18 +15,6 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
         this(getCoordsFromNodeContainer(way, nodeContainer));
     }
 
-    private static float[] getCoordsFromNodeContainer(Way way, NodeContainer nodeContainer) {
-        long[] nodes = way.getNodes();
-        int nodesSize = way.getSize();
-        float[] coords_ = new float[nodesSize * 2];
-        for (int i = 0 ; i < nodesSize ; ++i) {
-            int index = nodeContainer.getIndex(nodes[i]);
-            coords_[i * 2] = nodeContainer.getLonFromIndex(index);
-            coords_[i * 2 + 1] = nodeContainer.getLatFromIndex(index);
-        }
-        return coords_;
-    }
-
     public LinePath(float[] coords) {
         this.coords_ = coords;
         setBoundingBox();
@@ -39,6 +27,18 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
             head.getLon(),
             head.getLat()
         });
+    }
+
+    private static float[] getCoordsFromNodeContainer(Way way, NodeContainer nodeContainer) {
+        long[] nodes = way.getNodes();
+        int nodesSize = way.getSize();
+        float[] coords_ = new float[nodesSize * 2];
+        for (int i = 0 ; i < nodesSize ; ++i) {
+            int index = nodeContainer.getIndex(nodes[i]);
+            coords_[i * 2] = nodeContainer.getLonFromIndex(index);
+            coords_[i * 2 + 1] = nodeContainer.getLatFromIndex(index);
+        }
+        return coords_;
     }
 
     public float[] getCoords(){
