@@ -66,14 +66,4 @@ public class Graph implements Serializable {
         }
     }
 
-    public Iterable<Edge> edges() {
-        ArrayList<Edge> list = new ArrayList<>();
-
-        for (Map.Entry<Long, ArrayList<Edge>> entry : adj.entrySet()) {
-            list.addAll(entry.getValue());
-        }
-
-        return list;
-    }
-
 }
