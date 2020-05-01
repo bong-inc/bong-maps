@@ -90,6 +90,46 @@ class StreetTest {
         Assertions.assertEquals(false, street.isCar());
         Assertions.assertEquals(false, street.isWalking());
         Assertions.assertEquals(false, street.isBicycle());
+
+        tags.clear();
+
+        tags.add("highway");
+        tags.add("cycleway");
+        tags.add("maxspeed");
+        tags.add("bruh");
+        tags.add("oneway:bicycle");
+        tags.add("yes");
+
+        street = new Street(tags, 22);
+
+        Assertions.assertEquals(22, street.getMaxspeed());
+        Assertions.assertEquals(Street.Role.CYCLEWAY, street.getRole());
+        Assertions.assertTrue(street.isOnewayBicycle());
+
+        tags.clear();
+
+        tags.add("highway");
+        tags.add("cycleway");
+        tags.add("oneway");
+        tags.add("yes");
+        street = new Street(tags, 22);
+        Assertions.assertTrue(street.isOnewayBicycle());
+
+        tags.clear();
+
+        tags.add("highway");
+        tags.add("footway");
+        tags.add("foot");
+        tags.add("private");
+        street = new Street(tags, 22);
+        Assertions.assertFalse(street.isWalking());
+
+        tags.clear();
+
+        tags.add("junction");
+        tags.add("roundabout");
+        street = new Street(tags, 22);
+        Assertions.assertEquals(Street.Role.ROUNDABOUT, street.getRole());
     }
 
 }
