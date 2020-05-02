@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class InvalidAddressExceptionTest {
 
     @Test
-    public void InvalidAddressExceptionTest(){
+    public void invalidAddressExceptionTest(){
 
         try{
             Address.parse("0");

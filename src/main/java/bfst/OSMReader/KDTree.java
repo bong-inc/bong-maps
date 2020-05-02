@@ -15,7 +15,7 @@ import bfst.canvas.CanvasElement;
 import javafx.geometry.Point2D;
 
 public class KDTree implements Serializable {
-  private static final long serialVersionUID = 8179750180455602356L;
+  private static final long serialVersionUID = 1L;
   List<? extends CanvasElement> elements;
   public static int maxNumOfElements = 500; // max size of elements list in leafs
   Range bound;
@@ -218,7 +218,6 @@ public class KDTree implements Serializable {
   }
 
   public Node closestNodeInEdges(Point2D query, String vehicle) {
-    Edge closestEdge = null;
     Node closestNode = null;
     double bestDist = Double.POSITIVE_INFINITY;
     List<Edge> edges = (List<Edge>)(List<?>) elements;
@@ -232,7 +231,6 @@ public class KDTree implements Serializable {
       
       double newDist = Geometry.distance(query.getX(), query.getY(), newNode.getLon(), newNode.getLat());
       if(newDist < bestDist){
-        closestEdge = e;
         bestDist = newDist;
         closestNode = newNode;
       }

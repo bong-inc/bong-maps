@@ -4,10 +4,13 @@ import bfst.OSMReader.Node;
 import bfst.OSMReader.NodeContainer;
 import bfst.OSMReader.Way;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
 import java.io.Serializable;
 
-public class LinePath extends CanvasElement implements Drawable, Serializable {
+public class LinePath extends CanvasElement implements Serializable {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private float[] coords_;
     private Range boundingBox;
     private int smartTraceThreshold = 3;

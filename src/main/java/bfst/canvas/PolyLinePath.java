@@ -4,12 +4,11 @@ import bfst.OSMReader.NodeContainer;
 import bfst.OSMReader.Relation;
 import bfst.OSMReader.Way;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PolyLinePath extends CanvasElement implements Drawable, Serializable {
-    private static final long serialVersionUID = -4838798038938840050L;
+public class PolyLinePath extends CanvasElement implements Serializable {
+    private static final long serialVersionUID = 1L;
     private ArrayList<LinePath> linePaths;
     private Range boundingBox;
 

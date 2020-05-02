@@ -6,7 +6,6 @@ import bfst.OSMReader.Model;
 import bfst.OSMReader.Node;
 import bfst.OSMReader.OSMReader;
 import bfst.addressparser.Address;
-import bfst.addressparser.InvalidAddressException;
 import bfst.canvas.*;
 import bfst.exceptions.FileTypeNotSupportedException;
 import bfst.routeFinding.Edge;
@@ -31,12 +30,9 @@ import javafx.stage.WindowEvent;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MainController {
     private Stage stage;
@@ -50,26 +46,30 @@ public class MainController {
     private Point2D destinationPoint;
     private Point2D startPoint;
     private Point2D currentPoint;
-    private FileController fileController;
     private PointsOfInterestController poiController;
     private SearchController searchController;
 
     private ToggleGroup vehicleGroup = new ToggleGroup();
-    @FXML private RadioButton carButton;
-    @FXML private RadioButton bikeButton;
-    @FXML private RadioButton walkButton;
+    @FXML
+    private RadioButton carButton;
+    @FXML
+    private RadioButton bikeButton;
+    @FXML
+    private RadioButton walkButton;
 
     private ToggleGroup shortFastGroup = new ToggleGroup();
-    @FXML private RadioButton shortButton;
-    @FXML private RadioButton fastButton;
+    @FXML
+    private RadioButton shortButton;
+    @FXML
+    private RadioButton fastButton;
 
     private MapCanvas canvas;
     private boolean shouldPan = true;
     private boolean showStreetOnHover = false;
 
-    public MainController(Stage primaryStage){
+    public MainController(Stage primaryStage) {
         this.stage = primaryStage;
-        this.fileController = new FileController();
+        new FileController();
         this.poiController = new PointsOfInterestController();
         this.searchController = new SearchController();
     }
@@ -126,7 +126,7 @@ public class MainController {
             setDefaultMap();
 
             poiController.loadPointsOfInterest();
-            for (PointOfInterest poi : poiController.getPointsOfInterest()) {
+            for (PointOfInterest poi : PointsOfInterestController.getPointsOfInterest()) {
                 addItemToMyPoints(poi);
             }
         });
@@ -445,7 +445,7 @@ public class MainController {
         canvas.setStartDestPoint(startNode, destinationNode);
 
         long startRoadId = startNode.getAsLong();
-        long destinationRoadId = destinationNode.getAsLong(); //TODO refactor as method
+        long destinationRoadId = destinationNode.getAsLong();
 
         canvas.getRouteController().setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
 
@@ -608,7 +608,7 @@ public class MainController {
                 poiController.showAddPointDialog(currentPoint);
                 myPoints.getItems().clear();
                 poiController.loadPointsOfInterest();
-                for (PointOfInterest poi : poiController.getPointsOfInterest()) {
+                for (PointOfInterest poi : PointsOfInterestController.getPointsOfInterest()) {
                     addItemToMyPoints(poi);
                 }
 
@@ -618,7 +618,7 @@ public class MainController {
             } else {
                 poiController.removePOI(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
                 myPoints.getItems().clear();
-                for (PointOfInterest poi : poiController.getPointsOfInterest()) {
+                for (PointOfInterest poi : PointsOfInterestController.getPointsOfInterest()) {
                     addItemToMyPoints(poi);
                 }
                 POIExists.set(false);
@@ -726,7 +726,7 @@ public class MainController {
             fileChooser.setInitialFileName("myMap");
             File file = fileChooser.showSaveDialog(stage);
             if(file != null){
-                fileController.saveBinary(file, model);
+                FileController.saveBinary(file, model);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Saved successfully");
                 alert.showAndWait();
@@ -793,7 +793,7 @@ public class MainController {
                 canvas.setTypesToBeDrawn(list);
                 break;
             case ".zip":
-                loadFile(fileController.loadZip(file));
+                loadFile(FileController.loadZip(file));
                 break;
             default:
                 is.close();
@@ -804,7 +804,7 @@ public class MainController {
 
     private void setModelFromBinary(InputStream is) throws IOException, ClassNotFoundException {
         long time = -System.nanoTime();
-        this.model = (Model) fileController.loadBinary(is);
+        this.model = (Model) FileController.loadBinary(is);
         mapCanvasWrapper.mapCanvas.setModel(model);
 
         time += System.nanoTime();

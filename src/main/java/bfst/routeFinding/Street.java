@@ -5,6 +5,10 @@ import java.util.ArrayList;
 
 public class Street implements Serializable {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private boolean onewayCar = false;
     private boolean bicycle = false;
     private boolean walking = false;

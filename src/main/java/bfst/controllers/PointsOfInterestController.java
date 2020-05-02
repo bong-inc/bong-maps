@@ -53,7 +53,7 @@ public class PointsOfInterestController {
         String destFolder = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "POI.bin";
         File file = new File(destFolder);
         try {
-            FileController.saveBinary(file, this.getPointsOfInterest());
+            FileController.saveBinary(file, PointsOfInterestController.getPointsOfInterest());
         } catch (IOException e) {
             e.printStackTrace();
         }

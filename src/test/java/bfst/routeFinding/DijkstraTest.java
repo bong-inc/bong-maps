@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class DijkstraTest {
 
     private Graph graph = new Graph();
@@ -98,7 +96,7 @@ class DijkstraTest {
 
         Assertions.assertThrows(Exception.class, () -> {
             setVariables();
-            Dijkstra dijkstra = new Dijkstra(graph, 0, 15, "Car", true);
+            new Dijkstra(graph, 0, 15, "Car", true);
         });
 
         try {
@@ -178,7 +176,7 @@ class DijkstraTest {
 
             Dijkstra dijkstra1 = new Dijkstra(graph, 12, 10, "bruh", true);
             Assertions.assertThrows(Exception.class, () -> {
-                long actual1 = dijkstra1.determineRelax(2, "bruh", true);
+                dijkstra1.determineRelax(2, "bruh", true);
             });
 
             Node node13 = new Node(13, 6, 7);

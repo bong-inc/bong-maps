@@ -4,11 +4,14 @@ import java.io.Serializable;
 import java.util.Arrays;
 import bfst.util.Geometry;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Range implements Serializable {
 
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
   private float minX, minY, maxX, maxY;
 
   public Range(float minX, float minY, float maxX, float maxY) {

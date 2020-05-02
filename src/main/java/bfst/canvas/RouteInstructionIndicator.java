@@ -1,11 +1,6 @@
 package bfst.canvas;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.FillRule;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RouteInstructionIndicator extends Indicator {
 

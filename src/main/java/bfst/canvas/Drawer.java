@@ -110,5 +110,4 @@ public class Drawer {
 		gc.strokeRect(minX, minY, f, g);
 	}
 
-
 }

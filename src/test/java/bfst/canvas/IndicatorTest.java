@@ -3,8 +3,6 @@ package bfst.canvas;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class IndicatorTest {
 
     Indicator indicator = new Pin(1, 1, 2);

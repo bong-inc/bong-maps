@@ -3,7 +3,6 @@ package bfst.canvas;
 import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Node;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 

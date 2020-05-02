@@ -2,7 +2,6 @@ package bfst.OSMReader;
 
 import java.io.FileNotFoundException;
 
-import bfst.canvas.Type;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

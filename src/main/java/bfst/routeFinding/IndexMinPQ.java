@@ -1,7 +1,6 @@
 package bfst.routeFinding;
 //Code is a modified version of the algs4-implmentation.
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 

@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.function.LongSupplier;
 
 public class Way implements LongSupplier, Serializable {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private long id;
     private long[] nodes;
 

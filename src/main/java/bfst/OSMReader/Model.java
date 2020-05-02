@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class Model implements Serializable {
-    private static final long serialVerionUID = 101010101010100l;
+    private static final long serialVersionUID = 1L;
 
     private Map<Type, KDTree> kdtreeByType;
     private ArrayList<Address> addresses;

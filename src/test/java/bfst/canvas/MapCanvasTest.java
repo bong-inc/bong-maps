@@ -1,6 +1,5 @@
 package bfst.canvas;
 
-import javafx.geometry.Point2D;
 import javafx.scene.transform.Affine;
 import org.junit.jupiter.api.Test;
 

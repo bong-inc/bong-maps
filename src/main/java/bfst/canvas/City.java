@@ -2,11 +2,14 @@ package bfst.canvas;
 
 import bfst.OSMReader.Node;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
 import java.io.Serializable;
 
-public class City extends CanvasElement implements Serializable, Comparable<City>, Drawable {
+public class City extends CanvasElement implements Serializable, Comparable<City> {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private final String name;
     private final Node node;
     private final CityType type;
@@ -56,7 +59,7 @@ public class City extends CanvasElement implements Serializable, Comparable<City
     }
 
     private void drawPretty(Drawer gc, double scale) {
-        if (this.type == type.CITY) {
+        if (this.type == CityType.CITY) {
             gc.strokeText(this.name, node.getLon(), node.getLat() - 7 * scale);
             gc.fillText(this.name, node.getLon(), node.getLat() - 7 * scale);
             double radius = 4 * scale;

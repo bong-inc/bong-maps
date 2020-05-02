@@ -4,12 +4,15 @@ import bfst.canvas.CanvasElement;
 import bfst.canvas.Drawer;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.regex.*;
 
 public class Address extends CanvasElement implements Serializable, Comparable<Address> {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
     private final String street, house, postcode, city, municipality;
 
@@ -166,7 +169,7 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
     }
 
     public static class Builder {
-        private String street, house, postcode, city, municipality, floor, side;
+        private String street, house, postcode, city, municipality;
         private float lat, lon;
         private boolean isEmpty = true;
 
@@ -186,12 +189,10 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
         }
 
         public Builder floor(String _floor) {
-            floor = _floor;
             return this;
         }
 
         public Builder side(String _side) {
-            side = _side;
             return this;
         }
 

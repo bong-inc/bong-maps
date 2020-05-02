@@ -10,6 +10,10 @@ import java.io.Serializable;
 
 public class Edge extends CanvasElement implements Serializable {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private float weight;
     private Street street;
 
