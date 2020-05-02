@@ -71,7 +71,7 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
     }
 
     static String regex =
-    "^ *(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1,2}(?!\\d)))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\d{1,3}))\\.?)?(?:[\\.|,| ])*(?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\.]+[a-zæøåÆØÅ\\-\\. ]+[a-zæøåÆØÅ\\-\\.]+)? *$";
+    "^ *(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1,2}(?!\\d)))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\d{1,3}))\\.?)?(?:[\\.|,| ])*(?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\.]+[a-zæøåÆØÅ\\-\\. ]*?[a-zæøåÆØÅ\\-\\.]*)? *$";
 
     static Pattern pattern = Pattern.compile(
             regex,
@@ -95,7 +95,7 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
     @Override
     public int compareTo(Address that) {
         // street house floor side postcode city
-
+        
         String this_street = (this.street != null) ? this.street.toLowerCase() : null;
         String that_street = (that.street != null) ? that.street.toLowerCase() : null;
         if(this_street == null && that_street == null) return 0;
@@ -109,13 +109,6 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
         if(this_house == null) return -1;
         if(that_house == null) return 1;
         if(0 != this_house.compareTo(that_house)) return this_house.compareTo(that_house);
-
-        String this_postcode = (this.postcode != null) ? this.postcode.toLowerCase() : null;
-        String that_postcode = (that.postcode != null) ? that.postcode.toLowerCase() : null;
-        if(this_postcode == null && that_postcode == null) return 0;
-        if(this_postcode == null) return -1;
-        if(that_postcode == null) return 1;
-        if(0 != this_postcode.compareTo(that_postcode)) return this_postcode.compareTo(that_postcode);
 
         String this_city = (this.city != null) ? this.city.toLowerCase() : null;
         String that_city = (that.city != null) ? that.city.toLowerCase() : null;
