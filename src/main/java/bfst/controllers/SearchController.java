@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import bfst.OSMReader.Model;
 import bfst.addressparser.Address;
 import bfst.addressparser.InvalidAddressException;
 
