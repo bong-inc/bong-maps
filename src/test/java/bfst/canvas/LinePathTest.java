@@ -69,6 +69,40 @@ public class LinePathTest {
     }
 
     @Test
+    void traceTest() {
+
+        MockedDrawer mockDrawer = new MockedDrawer();
+        new LinePath(new float[]{
+                0,0 , 1,0
+        }).trace(mockDrawer);
+        assertEquals(1, mockDrawer.getLineToCount());
+
+        mockDrawer = new MockedDrawer();
+        new LinePath(new float[]{
+                0,0 , 1,0 , 2,0
+        }).trace(mockDrawer);
+        assertEquals(2, mockDrawer.getLineToCount());
+
+        mockDrawer = new MockedDrawer();
+        new LinePath(new float[]{
+                0,0 , 5,0 , 10,0
+        }).trace(mockDrawer);
+        assertEquals(2, mockDrawer.getLineToCount());
+
+        mockDrawer = new MockedDrawer();
+        new LinePath(new float[]{
+                0,0 , 5,0 , 10,0
+        }).trace(mockDrawer);
+        assertEquals(2, mockDrawer.getLineToCount());
+
+        mockDrawer = new MockedDrawer();
+        new LinePath(new float[]{
+                0,0 , 5,0 , 10,0
+        }).trace(mockDrawer);
+        assertEquals(2, mockDrawer.getLineToCount());
+    }
+
+    @Test
     void testGetCoordsFormNodeContainer() {
         NodeContainer ndc = new NodeContainer();
         ndc.add(0, 5,10);
