@@ -11,11 +11,18 @@ import static org.junit.jupiter.api.Assertions.*;
     
 class MockedDrawer extends Drawer {
     int lineToCount = 0;
+    int moveToCount = 0;
 
     @Override 
     public void lineTo(double x, double y) {
         lineToCount++;
     }
+
+    @Override 
+    public void moveTo(double x, double y) {
+        moveToCount++;
+    }
+
 
     /**
      * @return the lineToCount
@@ -32,14 +39,33 @@ public class LinePathTest {
 
         MockedDrawer mockDrawer = new MockedDrawer();
         new LinePath(new float[]{
-            0,0,
-            1,1,
-            2,2,
-            // TODO: Make it a real test
-        }).smartTrace(mockDrawer, 5);
-        
-        // TODO: Make the test make sense...
-        assertEquals(mockDrawer.getLineToCount(), 5 );
+            0,0 , 1,0
+        }).smartTrace(mockDrawer, 1);
+        assertEquals(1, mockDrawer.getLineToCount());
+
+        mockDrawer = new MockedDrawer();
+        new LinePath(new float[]{
+            0,0 , 1,0 , 2,0
+        }).smartTrace(mockDrawer, 1);
+        assertEquals(1, mockDrawer.getLineToCount());
+
+        mockDrawer = new MockedDrawer();
+        new LinePath(new float[]{
+            0,0 , 5,0 , 10,0
+        }).smartTrace(mockDrawer, 1);
+        assertEquals(2, mockDrawer.getLineToCount());
+
+        mockDrawer = new MockedDrawer();
+        new LinePath(new float[]{
+            0,0 , 5,0 , 10,0
+        }).smartTrace(mockDrawer, 1.5);
+        assertEquals(2, mockDrawer.getLineToCount());
+
+        mockDrawer = new MockedDrawer();
+        new LinePath(new float[]{
+            0,0 , 5,0 , 10,0
+        }).smartTrace(mockDrawer, 0.5);
+        assertEquals(1, mockDrawer.getLineToCount());
     }
 
     @Test
