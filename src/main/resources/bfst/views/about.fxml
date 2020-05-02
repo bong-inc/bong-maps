@@ -14,4 +14,16 @@
     <Label>• Frederik Søgren Blunk Raise (frai@itu.dk)</Label>
     <Label>• Thomas Hoffmann Kilbak (thhk@itu.dk)</Label>
     <Label>• Kristoffer Bruun Højelse (krbh@itu.dk)</Label>
+    <Label/>
+    <Label>Icon creators (from The Noun Project)</Label>
+    <FlowPane>
+        <Label>Sofía Franco, </Label>
+        <Label>Caesar Rizky Kurniawan, </Label>
+        <Label>Iconfield, </Label>
+        <Label>Adrien Coquet, </Label>
+        <Label>Danil Polshin, </Label>
+        <Label>Gregor Cresnar, </Label>
+        <Label>Rohith M S, </Label>
+        <Label>Hassan Ali</Label>
+    </FlowPane>
 </VBox>
