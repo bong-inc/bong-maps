@@ -53,6 +53,26 @@ public class MapCanvas extends Canvas {
         return trans;
     }
 
+    public RouteDestinationIndicator getCurrentRouteDestination() {
+        return currentRouteDestination;
+    }
+
+    public RouteOriginIndicator getCurrentRouteOrigin() {
+        return currentRouteOrigin;
+    }
+
+    public void setCurrentRouteDestination() {
+        currentRouteDestination = new RouteDestinationIndicator(1,1,1);
+    }
+
+    public void setCurrentRouteOrigin() {
+        currentRouteOrigin = new RouteOriginIndicator(1,1,1);
+    }
+
+    public Range getRenderRange() {
+        return renderRange;
+    }
+
     public ScaleBar getScaleBar() {
         return scaleBar;
     }
@@ -295,7 +315,19 @@ public class MapCanvas extends Canvas {
     }
 
     public boolean shouldZoom(double factor) {
-        return (factor > 1 && trans.getMxx() < 2.2) || (factor < 1 && trans.getMxx() > 0.0005);
+        if (factor > 1) {
+            if (trans.getMxx() < 2.2) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (trans.getMxx() > 0.0005) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     private void paintDrawablesOfType(Type type, double pixelwidth, boolean useRegularColors) {
