@@ -29,51 +29,12 @@ public class SearchControllerTest {
 
     List<Address> bestMatches = sc.getBestMatches("Jagtvej", addresses, 5);
     
+    assertEquals(1, bestMatches.size());
     assertEquals("Jagtvej", bestMatches.get(0).getStreet());
   }
 
   @Test
   public void testGetBestMatches2() {
-    List<Address> addresses = new ArrayList<>();
-    addresses.add(new Address("Jagtvej a", null, null, null, null, 0f, 0f));
-    addresses.add(new Address("Jagtvej b", null, null, null, null, 0f, 0f));
-    addresses.add(new Address("Jagtvej c", null, null, null, null, 0f, 0f));
-    addresses.add(new Address("Jagtvej d", null, null, null, null, 0f, 0f));
-    addresses.add(new Address("Jagtvej e", null, null, null, null, 0f, 0f));
-    addresses.add(new Address("Jagtvej f", null, null, null, null, 0f, 0f));
-
-    List<Address> bestMatches = sc.getBestMatches("Jagtvej", addresses, 5);
-    
-    assertEquals("Jagtvej a", bestMatches.get(0).getStreet());
-    assertEquals(5, bestMatches.size());
-
-    bestMatches = sc.getBestMatches("Jag", addresses, 5);
-
-    assertEquals("Jagtvej a", bestMatches.get(0).getStreet());
-    assertEquals("Jagtvej b", bestMatches.get(1).getStreet());
-    assertEquals("Jagtvej c", bestMatches.get(2).getStreet());
-    assertEquals("Jagtvej d", bestMatches.get(3).getStreet());
-    assertEquals("Jagtvej e", bestMatches.get(4).getStreet());
-
-    bestMatches = sc.getBestMatches("Jag", addresses, 5);
-
-    assertEquals("Jagtvej a", bestMatches.get(0).getStreet());
-    assertEquals("Jagtvej b", bestMatches.get(1).getStreet());
-    assertEquals("Jagtvej c", bestMatches.get(2).getStreet());
-    assertEquals("Jagtvej d", bestMatches.get(3).getStreet());
-    assertEquals("Jagtvej e", bestMatches.get(4).getStreet());
-
-    bestMatches = sc.getBestMatches("Jagtvej d", addresses, 5);
-
-    assertEquals(3, bestMatches.size());
-    assertEquals("Jagtvej d", bestMatches.get(0).getStreet());
-    assertEquals("Jagtvej e", bestMatches.get(1).getStreet());
-    assertEquals("Jagtvej f", bestMatches.get(2).getStreet());
-
-  }
-
-  @Test
-  public void testGetBestMatches3() {
     List<Address> addresses = new ArrayList<>();
 
     addresses.add(new Address("Jagtvej", "1", null, null, null, 0f, 0f));
@@ -82,17 +43,49 @@ public class SearchControllerTest {
     addresses.add(new Address("Jagtvej", "10", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "100", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "11", null, null, null, 0f, 0f));
+    addresses.add(new Address("Jagtvej", "13", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "2", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "3", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "3", null, null, null, 0f, 0f));
 
+    List<Address> bestMatches = sc.getBestMatches("Jagtvej 10", addresses, 5);
+    
+    assertEquals(5, bestMatches.size());
+    assertEquals("Jagtvej", bestMatches.get(0).getStreet());
+    assertEquals("10", bestMatches.get(0).getHouse());
 
-    Collections.sort(addresses);
-
-    List<Address> bestMatches = sc.getBestMatches("Jagtv", addresses, 1);
+    bestMatches = sc.getBestMatches("Jagtvej 12", addresses, 1);
     
     assertEquals("Jagtvej", bestMatches.get(0).getStreet());
-    assertEquals("1", bestMatches.get(0).getHouse());
+    assertEquals("13", bestMatches.get(0).getHouse());
 
   }
+
+  @Test
+  public void testGetBestMatches3() {
+    List<Address> addresses = new ArrayList<>();
+
+    addresses.add(new Address("Vibevej", "1", "2400", "København NV", null, 0f, 0f));
+    addresses.add(new Address("Vibevej", "2", "2400", "København NV", null, 0f, 0f));
+    addresses.add(new Address("Vibevej", "3", "2400", "København NV", null, 0f, 0f));
+    addresses.add(new Address("Vibevej", "4", "2400", "København NV", null, 0f, 0f));
+
+    addresses.add(new Address("Vibevej", "1", "2650", "Hvidovre", null, 0f, 0f));
+    addresses.add(new Address("Vibevej", "2", "2650", "Hvidovre", null, 0f, 0f));
+    addresses.add(new Address("Vibevej", "3", "2650", "Hvidovre", null, 0f, 0f));
+    addresses.add(new Address("Vibevej", "4", "2650", "Hvidovre", null, 0f, 0f));
+
+    addresses.add(new Address("Vibevej", "1", "2791", "Dragør", null, 0f, 0f));
+    addresses.add(new Address("Vibevej", "2", "2791", "Dragør", null, 0f, 0f));
+    addresses.add(new Address("Vibevej", "3", "2791", "Dragør", null, 0f, 0f));
+    addresses.add(new Address("Vibevej", "4", "2791", "Dragør", null, 0f, 0f));
+
+    Collections.sort(addresses);
+    List<Address> bestMatches = sc.getBestMatches("Vibevej 1, Dragør", addresses, 5);
+
+    assertEquals("Vibevej", bestMatches.get(0).getStreet());
+    assertEquals("Dragør", bestMatches.get(0).getCity());
+
+  }
+
 }
