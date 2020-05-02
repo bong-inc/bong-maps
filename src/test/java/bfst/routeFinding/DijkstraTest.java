@@ -115,6 +115,43 @@ class DijkstraTest {
             Assertions.fail();
         }
 
+        Node node01 = new Node(21,1,1);
+        Node node02 = new Node(22,2,2);
+        Node node03 = new Node(23,3,3);
+        Node node04 = new Node(24,4,4);
+        Node node05 = new Node(25,5,5);
+
+        ArrayList<String> tags2 = new ArrayList<>();
+        tags2.add("highway");
+        tags2.add("primary");
+        tags2.add("highway");
+        tags2.add("cycleway");
+        tags2.add("oneway");
+        tags2.add("yes");
+        street = new Street(tags2, 50);
+        Edge edge1 = new Edge(node01, node02, street);
+        Edge edge2 = new Edge(node02, node03, street);
+        Edge edge3 = new Edge(node03, node04, street);
+        Edge edge4 = new Edge(node04, node05, street);
+        graph.addEdge(edge1);
+        graph.addEdge(edge2);
+        graph.addEdge(edge3);
+        graph.addEdge(edge4);
+
+        try {
+            Dijkstra dijkstra = new Dijkstra(graph, 21, 25, "Bicycle", true);
+            long actual = dijkstra.getLastNode();
+            Assertions.assertEquals(23, actual);
+
+
+            Dijkstra dijkstra5 = new Dijkstra(graph, 25, 21, "Bicycle", true);
+            Assertions.assertEquals(0, dijkstra5.getEdgeTo().size());
+            Assertions.assertEquals(0, dijkstra5.getEdgeTo2().size());
+
+        } catch (Exception e) {
+            Assertions.fail();
+        }
+
     }
 
 
@@ -202,6 +239,7 @@ class DijkstraTest {
             dijkstra = new Dijkstra(graph, 9, 14, "Car", true);
             actual = dijkstra.determineRelax(1, "Car", true);
             Assertions.assertEquals(1, actual);
+
         } catch (Exception e) {
             Assertions.fail();
         }

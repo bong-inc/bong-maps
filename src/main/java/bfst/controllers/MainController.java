@@ -591,15 +591,22 @@ public class MainController {
         Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
         pointCoords.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
 
-
-        currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
-        currentPoint = new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
-        pointAddress.setText(currentAddress.toString());
-        double distance = distance(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
-        System.out.println("distance: " + distance);
-        if (distance > 50) {
-            pointAddress.setText("No nearby address");
+        if (model != null && model.getAddressKDTree() != null && canvas.getCurrentPin() != null) {
+            currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
         }
+            currentPoint = new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+
+        if (currentAddress == null) {
+            pointAddress.setText("No nearby address");
+        } else {
+            double distance = distance(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
+            if (distance > 80) {
+                pointAddress.setText("No nearby address");
+            } else {
+                pointAddress.setText(currentAddress.toString());
+            }
+        }
+
 
         pinInfo.setTranslateY(10);
         pinInfo.setVisible(true);
@@ -653,7 +660,7 @@ public class MainController {
 
     private void setStartOrDestinationLabel(Address address, Point2D point, Label label) {
         if (address != null) {
-            if (dist(point, address.getCentroid()) > 50) {
+            if (dist(point, address.getCentroid()) > 80) {
                 Node unprojected = MercatorProjector.unproject(address.getCentroid().getX(), address.getCentroid().getY());
                 label.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
             } else {
@@ -665,10 +672,7 @@ public class MainController {
     }
 
     private double distance(float pinX, float pinY, float addressX, float addressY) {
-        System.out.println("clicked: " + pinX + " " +pinY);
-        System.out.println("address: " + addressX + " " + addressY);
         double meterMultiplier = - (MercatorProjector.unproject(pinX, pinY).getLat()) / 100;
-        System.out.println("multiplier: " + meterMultiplier);
         double distance = Math.sqrt(Math.pow(pinX - addressX, 2) + Math.pow(pinY - addressY, 2));
         return distance * meterMultiplier;
     }
