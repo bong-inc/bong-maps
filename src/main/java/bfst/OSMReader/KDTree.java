@@ -123,7 +123,7 @@ public class KDTree implements Serializable {
     return null;
   }
 
-  public static Range boundingRangeOf(List<CanvasElement> list){
+  public Range boundingRangeOf(List<CanvasElement> list){
     if(list.size() < 1) throw new RuntimeException("Empty list cannot have bounding range");
     Float minX = Float.MAX_VALUE;
     Float minY = Float.MAX_VALUE;

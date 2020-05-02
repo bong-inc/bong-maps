@@ -1,11 +1,13 @@
 package bfst.routeFinding;
 
 import bfst.OSMReader.Node;
+import bfst.canvas.CanvasElement;
+import bfst.canvas.Drawer;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;
 import java.io.Serializable;
 
-public class Edge implements Serializable {
+public class Edge extends CanvasElement implements Serializable {
 
     private float weight;
     private Street street;
@@ -17,7 +19,8 @@ public class Edge implements Serializable {
         this.tailNode = tailNode;
         this.headNode = headNode;
         this.street = street;
-        weight = (float) Math.sqrt(Math.pow(this.tailNode.getLon() - this.headNode.getLon(), 2) + Math.pow(this.tailNode.getLat() - this.headNode.getLat(), 2));
+        weight = (float) Math.sqrt(Math.pow(this.tailNode.getLon() - this.headNode.getLon(), 2)
+                + Math.pow(this.tailNode.getLat() - this.headNode.getLat(), 2));
     }
 
     public Node getTailNode() {
@@ -44,7 +47,7 @@ public class Edge implements Serializable {
         }
     }
 
-    public Node otherNode (long vertex) {
+    public Node otherNode(long vertex) {
         if (vertex == tailNode.getAsLong()) {
             return headNode;
         } else {
@@ -52,20 +55,24 @@ public class Edge implements Serializable {
         }
     }
 
-    public Point2D getCentroid(){
-        return new Point2D((tailNode.getLon() + headNode.getLon())/2, (tailNode.getLat() + headNode.getLat())/2);
+    public Point2D getCentroid() {
+        return new Point2D((tailNode.getLon() + headNode.getLon()) / 2, (tailNode.getLat() + headNode.getLat()) / 2);
     }
 
-    public Range getBoundingBox(){
+    public Range getBoundingBox() {
         float tailLon = tailNode.getLon();
         float tailLat = tailNode.getLat();
         float headLon = headNode.getLon();
         float headLat = headNode.getLat();
-        return new Range(
-            headLon < tailLon ? headLon : tailLon, // minX
-            headLat < tailLat ? headLat : tailLat, // minY
-            headLon > tailLon ? headLon : tailLon, // maxX
-            headLat > tailLat ? headLat : tailLat  // maxY
+        return new Range(headLon < tailLon ? headLon : tailLon, // minX
+                headLat < tailLat ? headLat : tailLat, // minY
+                headLon > tailLon ? headLon : tailLon, // maxX
+                headLat > tailLat ? headLat : tailLat // maxY
         );
+    }
+
+    @Override
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
+        // ignored
     }
 }

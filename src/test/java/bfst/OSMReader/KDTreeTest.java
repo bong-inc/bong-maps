@@ -77,7 +77,7 @@ public class KDTreeTest {
   @Test
   public void EmptyBoundingRangeOf() {
     try {
-      KDTree.boundingRangeOf(new ArrayList<CanvasElement>());
+      new KDTree(new ArrayList<>(), new Range(0,0,1,1)).boundingRangeOf(new ArrayList<CanvasElement>());
     } catch (RuntimeException e) {
       assertEquals("Empty list cannot have bounding range", e.getMessage());
     }
