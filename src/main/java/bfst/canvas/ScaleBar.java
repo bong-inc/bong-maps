@@ -55,6 +55,13 @@ public class ScaleBar implements Drawable {
         }
     }
 
+    public double getBarLength() {
+        return barLength;
+    }
+
+    public String getBarShowing() {
+        return barShowing;
+    }
 
     @Override
     public void draw(Drawer gc, double scale, boolean smartTrace) {

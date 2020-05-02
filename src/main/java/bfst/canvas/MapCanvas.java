@@ -53,6 +53,10 @@ public class MapCanvas extends Canvas {
         return trans;
     }
 
+    public ScaleBar getScaleBar() {
+        return scaleBar;
+    }
+
     public Model getModel() {
         return model;
     }
