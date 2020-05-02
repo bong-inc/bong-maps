@@ -3,8 +3,6 @@ package bfst.routeFinding;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 class IndexMinPQTest {
 
     IndexMinPQ pq = new IndexMinPQ();

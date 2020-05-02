@@ -2,7 +2,6 @@ package bfst.controllers;
 
 import bfst.canvas.PointOfInterest;
 import javafx.geometry.Point2D;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,8 +11,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class PointsOfInterestControllerTest {
 

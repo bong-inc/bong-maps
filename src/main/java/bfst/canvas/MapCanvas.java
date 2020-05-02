@@ -1,11 +1,12 @@
 package bfst.canvas;
 
 import bfst.OSMReader.*;
-
+import bfst.controllers.MainController;
 import bfst.controllers.RouteController;
 import bfst.routeFinding.*;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.FillRule;
@@ -434,4 +435,44 @@ public class MapCanvas extends Canvas {
         this.startNode = start;
         this.destinationNode = dest;
     }
+
+	public void showStreetNearMouse(MainController mainController, MouseEvent e) {
+	    try {
+	        Point2D translatedCoords = getTrans().inverseTransform(e.getX(), e.getY());
+	        Node nearestNode = (Node) mainController.model.getRoadKDTree().nearestNeighborForEdges(translatedCoords, "Walk");
+	        long nodeAsLong = nearestNode.getAsLong();
+	        Edge streetEdge = mainController.model.getGraph().getAdj().get(nodeAsLong).get(0);
+	        double bestAngle = Double.POSITIVE_INFINITY;
+	
+	
+	        Point2D mouseRelativeToNodeVector = new Point2D(translatedCoords.getX() - nearestNode.getLon(), translatedCoords.getY() - nearestNode.getLat());
+	
+	        for (Edge edge : mainController.model.getGraph().getAdj().get(nearestNode.getAsLong())) {
+	            Node otherNode = edge.otherNode(nodeAsLong);
+	            Point2D otherNodeRelativeToNodeVector = new Point2D(otherNode.getLon() - nearestNode.getLon(), otherNode.getLat() - nearestNode.getLat());
+	
+	            double angle = Math.acos((mouseRelativeToNodeVector.getX() * otherNodeRelativeToNodeVector.getX() + mouseRelativeToNodeVector.getY() * otherNodeRelativeToNodeVector.getY()) / (mouseRelativeToNodeVector.magnitude() * otherNodeRelativeToNodeVector.magnitude()));
+	
+	            if (angle < bestAngle) {
+	                bestAngle = angle;
+	                streetEdge = edge;
+	            }
+	        }
+	
+	        String streetName = streetEdge.getStreet().getName();
+	        if (streetName == null) {
+	            streetName = "Unnamed street";
+	        }
+	        repaint(25);
+	        drawEdge(streetEdge);
+	
+	        if (getShowStreetNodeCloseToMouse()) {
+	            drawNode(nearestNode);
+	        }
+	
+	        drawStreetName(translatedCoords, streetName);
+	    } catch (Exception ex) {
+	        ex.printStackTrace();
+	    }
+	}
 }

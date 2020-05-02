@@ -8,7 +8,6 @@ import bfst.OSMReader.OSMReader;
 import bfst.addressparser.Address;
 import bfst.canvas.*;
 import bfst.exceptions.FileTypeNotSupportedException;
-import bfst.routeFinding.Edge;
 import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -36,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainController {
     private Stage stage;
-    private Model model;
+    public Model model;
     private Point2D lastMouse;
     private ArrayList<Address> tempBest = new ArrayList<>();
     private boolean hasBeenDragged = false;
@@ -252,7 +251,7 @@ public class MainController {
 
         canvas.setOnMouseMoved(e -> {
             if (showStreetOnHover) {
-                showStreetNearMouse(e);
+                canvas.showStreetNearMouse(this, e);
             }
 
         });
@@ -392,46 +391,6 @@ public class MainController {
             canvas.clearOriginDestination();
             directionsInfo.setVisible(false);
         });
-    }
-
-    private void showStreetNearMouse(MouseEvent e) {
-        try {
-            Point2D translatedCoords = canvas.getTrans().inverseTransform(e.getX(), e.getY());
-            Node nearestNode = (Node) model.getRoadKDTree().nearestNeighborForEdges(translatedCoords, "Walk");
-            long nodeAsLong = nearestNode.getAsLong();
-            Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
-            double bestAngle = Double.POSITIVE_INFINITY;
-
-
-            Point2D mouseRelativeToNodeVector = new Point2D(translatedCoords.getX() - nearestNode.getLon(), translatedCoords.getY() - nearestNode.getLat());
-
-            for (Edge edge : model.getGraph().getAdj().get(nearestNode.getAsLong())) {
-                Node otherNode = edge.otherNode(nodeAsLong);
-                Point2D otherNodeRelativeToNodeVector = new Point2D(otherNode.getLon() - nearestNode.getLon(), otherNode.getLat() - nearestNode.getLat());
-
-                double angle = Math.acos((mouseRelativeToNodeVector.getX() * otherNodeRelativeToNodeVector.getX() + mouseRelativeToNodeVector.getY() * otherNodeRelativeToNodeVector.getY()) / (mouseRelativeToNodeVector.magnitude() * otherNodeRelativeToNodeVector.magnitude()));
-
-                if (angle < bestAngle) {
-                    bestAngle = angle;
-                    streetEdge = edge;
-                }
-            }
-
-            String streetName = streetEdge.getStreet().getName();
-            if (streetName == null) {
-                streetName = "Unnamed street";
-            }
-            canvas.repaint(25);
-            canvas.drawEdge(streetEdge);
-
-            if (canvas.getShowStreetNodeCloseToMouse()) {
-                canvas.drawNode(nearestNode);
-            }
-
-            canvas.drawStreetName(translatedCoords, streetName);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     private void findRouteFromGivenInputs() throws Exception {

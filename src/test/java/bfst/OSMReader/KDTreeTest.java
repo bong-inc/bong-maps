@@ -1,18 +1,14 @@
 package bfst.OSMReader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import bfst.addressparser.Address;
 import bfst.canvas.CanvasElement;
-import bfst.canvas.City;
 import bfst.canvas.LinePath;
 import bfst.canvas.Range;
 import bfst.routeFinding.Edge;
