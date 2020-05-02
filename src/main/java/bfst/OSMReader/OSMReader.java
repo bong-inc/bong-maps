@@ -96,47 +96,7 @@ public class OSMReader {
                                 break;
                             case "way":
                                 wayHolder.trim();
-                                for (int i = 0; i < tagList.size(); i += 2) {
-
-                                    if (tagList.get(i).equals("access")) {
-                                        if (!(tagList.get(i + 1).equals("yes") || tagList.get(i + 1).equals("permissive"))) {
-                                            break;
-                                        }
-                                    }
-                                    if (tagList.get(i).equals("highway")) {
-
-                                        int defaultSpeed;
-                                        switch(tagList.get(i + 1)) {
-                                            case "motorway":
-                                                defaultSpeed = 130;
-                                                break;
-                                            case "primary":
-                                            case "secondary":
-                                            case "tertiary":
-                                            case "trunk":
-                                                defaultSpeed = 80;
-                                                break;
-                                            case "living_street":
-                                                defaultSpeed = 30;
-                                                break;
-                                            default:
-                                                defaultSpeed = 50;
-                                                break;
-                                        }
-
-                                        long[] nodes = wayHolder.getNodes();
-                                        currentStreet = new Street(tagList, defaultSpeed);
-
-                                        for (int j = 1; j < nodes.length; j++){
-                                            Node currentNode = tempNodes.get(nodes[j]);
-                                            Edge edge = new Edge(tempNodes.get(nodes[j-1]), currentNode, currentStreet);
-                                            graph.addEdge(edge);
-                                            roadEdges.add(edge);
-                                        }
-
-                                        break; 
-                                    }
-                                }
+                                parseStreet();
 
                                 if(type != Type.COASTLINE) {
                                     if (wayHolder.getSize() > 0) {
@@ -201,6 +161,50 @@ public class OSMReader {
 
         for (var entry : graph.getAdj().entrySet()) {
             entry.getValue().trimToSize();
+        }
+    }
+
+    public void parseStreet() {
+        for (int i = 0; i < tagList.size(); i += 2) {
+
+            if (tagList.get(i).equals("access")) {
+                if (!(tagList.get(i + 1).equals("yes") || tagList.get(i + 1).equals("permissive"))) {
+                    break;
+                }
+            }
+            if (tagList.get(i).equals("highway")) {
+
+                int defaultSpeed;
+                switch(tagList.get(i + 1)) {
+                    case "motorway":
+                        defaultSpeed = 130;
+                        break;
+                    case "primary":
+                    case "secondary":
+                    case "tertiary":
+                    case "trunk":
+                        defaultSpeed = 80;
+                        break;
+                    case "living_street":
+                        defaultSpeed = 30;
+                        break;
+                    default:
+                        defaultSpeed = 50;
+                        break;
+                }
+
+                long[] nodes = wayHolder.getNodes();
+                currentStreet = new Street(tagList, defaultSpeed);
+
+                for (int j = 1; j < nodes.length; j++){
+                    Node currentNode = tempNodes.get(nodes[j]);
+                    Edge edge = new Edge(tempNodes.get(nodes[j-1]), currentNode, currentStreet);
+                    graph.addEdge(edge);
+                    roadEdges.add(edge);
+                }
+
+                break;
+            }
         }
     }
 
@@ -307,6 +311,10 @@ public class OSMReader {
             }
         }
 
+        parseCity(k, v);
+    }
+
+    public void parseCity(String k, String v) {
         if (k.equals("place") && (v.equals("city") || v.equals("town") ||  v.equals("suburb") || v.equals("village") || v.equals("hamlet"))) {
             boolean cityNotPresent = true;
             for (City city : cities) {
@@ -461,5 +469,9 @@ public class OSMReader {
         tempCoastlines = null;
         drawableByType = null;
         addresses = null;
+    }
+
+    public void setPreviousName(String name) {
+        previousName = name;
     }
 }
