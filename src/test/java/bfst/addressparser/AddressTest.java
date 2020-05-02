@@ -2,7 +2,10 @@ package bfst.addressparser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -287,5 +290,19 @@ public class AddressTest {
 		assertEquals(addressParts[5], parsed.getPostcode());
 		parsed = Address.parse(withCity);
 		assertEquals(addressParts[6], parsed.getCity());
+	}
+
+	@Test
+	public void testCompareTo(){
+		List<Address> addresses = new ArrayList<>();
+
+    addresses.add(new Address(null, null, null, null, null, 0f, 0f));
+    addresses.add(new Address(null, null, null, null, null, 0f, 0f));
+    addresses.add(new Address("Vibevej", "2", "2400", "København NV", null, 0f, 0f));
+
+    Collections.sort(addresses);
+
+    assertEquals(null, addresses.get(0).getStreet());
+    assertEquals("Vibevej", addresses.get(2).getStreet());
 	}
 }
