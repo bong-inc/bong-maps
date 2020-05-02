@@ -7,16 +7,12 @@ import javafx.scene.text.Font;
 import java.io.Serializable;
 
 public class City extends CanvasElement implements Serializable, Comparable<City>, Drawable {
-    public String getName() {
-        return name;
-    }
-
     private final String name;
     private final Node node;
     private final CityType type;
     private static boolean drawPrettyCitynames = true;
 
-    private City(String _name, Node _node, String _cityType) {
+    public City(String _name, Node _node, String _cityType) {
         name = _name;
         node = _node;
         switch (_cityType) {
@@ -74,6 +70,10 @@ public class City extends CanvasElement implements Serializable, Comparable<City
 
     public CityType getType() {
         return type;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public static class Builder {
