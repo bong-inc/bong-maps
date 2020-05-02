@@ -4,6 +4,7 @@ import bfst.OSMReader.Node;
 import bfst.canvas.CanvasElement;
 import bfst.canvas.Drawer;
 import bfst.canvas.Range;
+import bfst.util.Geometry;
 import javafx.geometry.Point2D;
 import java.io.Serializable;
 
@@ -69,6 +70,12 @@ public class Edge extends CanvasElement implements Serializable {
                 headLon > tailLon ? headLon : tailLon, // maxX
                 headLat > tailLat ? headLat : tailLat // maxY
         );
+    }
+
+    public Node closestNode(Point2D query) {
+        double distToTail = Geometry.distance(query.getX(), query.getY(), this.getTailNode().getLon(), this.getTailNode().getLat());
+        double distToHead = Geometry.distance(query.getX(), query.getY(), this.getHeadNode().getLon(), this.getHeadNode().getLat());
+        return distToTail < distToHead ? this.getTailNode() : this.getHeadNode();
     }
 
     @Override

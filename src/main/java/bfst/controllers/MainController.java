@@ -397,7 +397,7 @@ public class MainController {
     private void showStreetNearMouse(MouseEvent e) {
         try {
             Point2D translatedCoords = canvas.getTrans().inverseTransform(e.getX(), e.getY());
-            Node nearestNode = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Walk");
+            Node nearestNode = (Node) model.getRoadKDTree().nearestNeighborForEdges(translatedCoords, "Walk");
             long nodeAsLong = nearestNode.getAsLong();
             Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
             double bestAngle = Double.POSITIVE_INFINITY;
@@ -440,8 +440,8 @@ public class MainController {
         RadioButton selectedShortFastButton = (RadioButton) shortFastGroup.getSelectedToggle();
         boolean shortestRoute = selectedShortFastButton.getText().equals("Shortest");
 
-        Node startNode = ((Node) model.getRoadKDTree().nearestNeighbor(startPoint, vehicle));
-        Node destinationNode = ((Node) model.getRoadKDTree().nearestNeighbor(destinationPoint, vehicle));
+        Node startNode = ((Node) model.getRoadKDTree().nearestNeighborForEdges(startPoint, vehicle));
+        Node destinationNode = ((Node) model.getRoadKDTree().nearestNeighborForEdges(destinationPoint, vehicle));
         canvas.setStartDestPoint(startNode, destinationNode);
 
         long startRoadId = startNode.getAsLong();

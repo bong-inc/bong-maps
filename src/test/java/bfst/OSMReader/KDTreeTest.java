@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,8 @@ import bfst.canvas.CanvasElement;
 import bfst.canvas.City;
 import bfst.canvas.LinePath;
 import bfst.canvas.Range;
+import bfst.routeFinding.Edge;
+import bfst.routeFinding.Street;
 import javafx.geometry.Point2D;
 
 public class KDTreeTest {
@@ -77,7 +81,7 @@ public class KDTreeTest {
   @Test
   public void EmptyBoundingRangeOf() {
     try {
-      new KDTree(new ArrayList<>(), new Range(0,0,1,1)).boundingRangeOf(new ArrayList<CanvasElement>());
+      CanvasElement.boundingRangeOf(new ArrayList<CanvasElement>());
     } catch (RuntimeException e) {
       assertEquals("Empty list cannot have bounding range", e.getMessage());
     }
@@ -97,7 +101,7 @@ public class KDTreeTest {
 
     KDTree kdTree = new KDTree(elements, new Range(-2,-2,2,2));
 
-    List<CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f));
+    List<? extends CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f));
     assertEquals(3, actual.size());
   }
 
@@ -120,7 +124,7 @@ public class KDTreeTest {
 
     KDTree kdTree = new KDTree(elements, new Range(-2,-2,2,2));
 
-    List<CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f));
+    List<? extends CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f));
     assertEquals(3 + KDTree.maxNumOfElements*4, actual.size());
   }
 
@@ -129,13 +133,54 @@ public class KDTreeTest {
     ArrayList<CanvasElement> elements = new ArrayList<>();
     KDTree kdTree = new KDTree(elements, new Range(-2,-2,2,2));
     elements.add(new LinePath(new Node(0l,5f,5f), new Node(0l,5f,5f)));
-    List<CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f));
+    List<? extends CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f));
     assertEquals(0, actual.size());
   }
 
   @Test
-  public void firstIsEnclosedInSecond() {
+  public void ForEdges() {
+    ArrayList<Edge> edges = new ArrayList<>();
+
+    String[] tags = new String[]{"highway","unclassified"};
+    ArrayList<String> arrayList = new ArrayList<>();
+    Collections.addAll(arrayList, tags);
+    edges.add(new Edge(new Node(0l, 1f, 1f), new Node(1l, 0.5f, 0.5f), new Street(arrayList, 50)));
+
+    for (int i = 0; i < KDTree.maxNumOfElements*2; i++) {
+      edges.add(new Edge(new Node(0l, -1f, -1f), new Node(0l, -1f, -1f), new Street(arrayList, 50)));
+      edges.add(new Edge(new Node(0l, 1f, 1f), new Node(0l, 1f, 1f), new Street(arrayList, 50)));
+      edges.add(new Edge(new Node(0l, 1f, -1f), new Node(0l, 1f, -1f), new Street(arrayList, 50)));
+      edges.add(new Edge(new Node(0l, -1f, 1f), new Node(0l, -1f, 1f), new Street(arrayList, 50)));
+    }
+
+    tags = new String[]{"highway","cycleway"};
+    arrayList = new ArrayList<>();
+    Collections.addAll(arrayList, tags); 
+    edges.add(new Edge(new Node(0l, 1f, 1f), new Node(2l, 0.3f, 0.3f), new Street(arrayList, 50)));
+
+    tags = new String[]{"highway","crossing"};
+    arrayList = new ArrayList<>();
+    Collections.addAll(arrayList, tags); 
+    edges.add(new Edge(new Node(0l, 1f, 1f), new Node(3l, 0.1f, 0.1f), new Street(arrayList, 50)));
+
+    KDTree kdTree = new KDTree(edges, new Range(-2,-2,2,2));
+
+    Node actual = kdTree.nearestNeighborForEdges(new Point2D(0f, 0f), "Car");
+    assertEquals(1l, actual.getAsLong());
     
+    actual = kdTree.nearestNeighborForEdges(new Point2D(0f, 0f), "Bicycle");
+    assertEquals(2l, actual.getAsLong());
+
+    actual = kdTree.nearestNeighborForEdges(new Point2D(0f, 0f), "Walk");
+    assertEquals(3l, actual.getAsLong());
+
+  }
+
+  @Test
+  public void EmptyForEdges() {
+    ArrayList<Edge> edges = new ArrayList<>();
+    KDTree kdTree = new KDTree(edges, new Range(-2,-2,2,2));
+    assertEquals(null, kdTree.nearestNeighborForEdges(new Point2D(0f, 0f), "Car"));
   }
 
 }
