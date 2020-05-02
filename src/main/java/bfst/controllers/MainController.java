@@ -75,7 +75,7 @@ public class MainController {
 
     public void setDefaultMap(){
         try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/copenhagen.bin");
+            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/denmark.bin");
             setModelFromBinary(is);
         }catch (Exception e){
             System.out.println("Failed to set default map");

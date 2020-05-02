@@ -173,7 +173,15 @@ public class MapCanvas extends Canvas {
             if (showCities) {
                 gc.setStroke(Color.WHITE);
                 gc.setLineWidth(pixelwidth*2);
-                gc.setFill(Color.valueOf("#555555"));
+                
+                if (useRegularColors) {
+                    gc.setFill(Color.valueOf("#555555"));
+                    gc.setStroke(Color.WHITE);
+                } else {
+                    gc.setFill(Color.WHITE);
+                    gc.setStroke(Color.valueOf("#555555"));
+                }
+
                 gc.setTextAlign(TextAlignment.CENTER);
                 for(CanvasElement element : model.getCitiesKdTree().rangeSearch(renderRange)){
                     element.draw(gc, pixelwidth, smartTrace);
@@ -182,6 +190,7 @@ public class MapCanvas extends Canvas {
         }
 
         scaleBar.updateScaleBar(this);
+        gc.setStroke(useRegularColors ? Color.BLACK : Color.WHITE);
         scaleBar.draw(gc, pixelwidth, false);
         gc.setStroke(Color.BLACK);
 
