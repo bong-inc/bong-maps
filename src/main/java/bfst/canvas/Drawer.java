@@ -99,7 +99,7 @@ public class Drawer {
 	}
 
 	public Paint getStroke() {
-		return getStroke();
+		return gc.getStroke();
 	}
 
 	public void setStroke(Paint prevStroke) {
