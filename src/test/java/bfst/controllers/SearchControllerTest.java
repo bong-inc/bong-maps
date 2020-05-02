@@ -47,7 +47,8 @@ public class SearchControllerTest {
     addresses.add(new Address("Jagtvej", "2", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "3", null, null, null, 0f, 0f));
     addresses.add(new Address("Jagtvej", "3", null, null, null, 0f, 0f));
-
+    Collections.sort(addresses);
+    
     List<Address> bestMatches = sc.getBestMatches("Jagtvej 10", addresses, 5);
     
     assertEquals(5, bestMatches.size());
