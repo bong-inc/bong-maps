@@ -4,10 +4,7 @@ import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Node;
 import bfst.canvas.LinePath;
 import bfst.canvas.MapCanvas;
-import bfst.routeFinding.Dijkstra;
-import bfst.routeFinding.Edge;
-import bfst.routeFinding.Instruction;
-import bfst.routeFinding.Street;
+import bfst.routeFinding.*;
 import javafx.geometry.Point2D;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -23,7 +20,7 @@ public class RouteController {
 
     }
 
-    private ArrayList<Edge> route;
+    private ArrayList<Edge> route = new ArrayList<>();
     private Dijkstra dijkstra;
     private LinePath drawableRoute;
     private double routeTime;
@@ -179,7 +176,7 @@ public class RouteController {
         return distanceString;
     }
 
-    public void generateRouteInfo(ArrayList<Edge> list, String vehicle) {
+    public void generateRouteInfo(ArrayList<Edge> list, String vehicle, Graph graph) {
 
         instructions = new ArrayList<>();
         routeDistance = 0;
@@ -189,12 +186,12 @@ public class RouteController {
         String prevEdgeName = first.getStreet().getName();
         double tempLength = 0;
         Edge prevEdge = first;
-        lastInstructionNode = route.get(0).getTailNode();
+        lastInstructionNode = list.get(0).getTailNode();
         for (int i = 0; i < list.size(); i++) {
             Edge currEdge = list.get(i);
             double meterMultiplier = - (MercatorProjector.unproject(currEdge.getTailNode().getLon(), currEdge.getTailNode().getLat()).getLat()) / 100;
 
-            if (currEdge.getStreet().getRole() == Street.Role.ROUNDABOUT && canvas.getModel().getGraph().getOutDegree(currEdge.getHeadNode().getAsLong(), vehicle) > 1) {
+            if (currEdge.getStreet().getRole() == Street.Role.ROUNDABOUT && graph.getOutDegree(currEdge.getHeadNode().getAsLong(), vehicle) > 1) {
                 roundaboutCounter++;
             }
 
@@ -230,7 +227,7 @@ public class RouteController {
             routeDistance += distance;
             addTimeToTotal(vehicle, currEdge, distance);
         }
-        instructions.add(new Instruction("You have arrived at your destination", route.get(route.size() - 1).getHeadNode()));
+        instructions.add(new Instruction("You have arrived at your destination", list.get(list.size() - 1).getHeadNode()));
     }
 
     public ArrayList<Edge> singleDirectRoute(ArrayList<Edge> route) {
@@ -287,7 +284,7 @@ public class RouteController {
         System.out.println("Set dijkstra: " + time / 1000000f + "ms");
 
         setRoute();
-        generateRouteInfo(route, vehicle);
+        generateRouteInfo(route, vehicle, canvas.getModel().getGraph());
         canvas.repaint(40);
     }
 

@@ -5,6 +5,8 @@ import bfst.OSMReader.Node;
 import bfst.OSMReader.OSMReader;
 import bfst.canvas.MapCanvas;
 import bfst.routeFinding.Edge;
+import bfst.routeFinding.Graph;
+import bfst.routeFinding.Instruction;
 import bfst.routeFinding.Street;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,10 @@ public class RouteControllerTest {
         routeController = new RouteController(new MapCanvas());
         routeController.addTimeToTotal("Bicycle", edge, 66);
         Assertions.assertEquals(11, routeController.getRouteTime());
+
+        routeController = new RouteController(new MapCanvas());
+        routeController.addTimeToTotal("bruh", edge, 66);
+        Assertions.assertEquals(0, routeController.getRouteTime());
     }
 
     @Test
@@ -112,6 +118,22 @@ public class RouteControllerTest {
         routeController.setActionInstruction(prevEdge2, currEdge2, 0);
         Assertions.assertEquals("Turn right", routeController.getLastActionInstruction());
 
+        routeController = new RouteController(new MapCanvas());
+
+        tags.add("junction");
+        tags.add("roundabout");
+        currStreet = new Street(tags, 50);
+
+        Edge prevEdge3 = new Edge(new Node(1, 5, 6), new Node(2, 9, 10), currStreet);
+        Edge currEdge3 = new Edge(new Node(2, 9, 10), new Node(2, 7, 12), currStreet);
+        routeController.setActionInstruction(prevEdge3, currEdge3, 0);
+        Assertions.assertNull(routeController.getLastActionInstruction());
+
+        Edge prevEdge4 = new Edge(new Node(1, 5, 6), new Node(2, 9, 10), currStreet);
+        Edge currEdge4 = new Edge(new Node(2, 9, 10), new Node(2, 12, 5), currStreet);
+        routeController.setActionInstruction(prevEdge4, currEdge4, 0);
+        Assertions.assertNull(routeController.getLastActionInstruction());
+
     }
 
     @Test
@@ -188,6 +210,19 @@ public class RouteControllerTest {
         for (int i = 0; i < 4; i++) {
             Assertions.assertEquals(i, actual.get(i).getTailNode().getLat());
         }
+
+        route.clear();
+
+        route.add(new Edge(node1, node0, null));
+        route.add(new Edge(node2, node1, null));
+        route.add(new Edge(node3, node2, null));
+        route.add(new Edge(node3, node4, null));
+
+        actual = routeController.singleDirectRoute(route);
+
+        for (int i = 0; i < 4; i++) {
+            Assertions.assertEquals(i, actual.get(i).getTailNode().getLat());
+        }
     }
 
     @Test
@@ -232,6 +267,60 @@ public class RouteControllerTest {
         } catch (Exception e) {
             Assertions.fail();
         }
+    }
+
+    @Test
+    void generateRouteInfoTest() {
+        Graph graph = new Graph();
+
+        ArrayList<Edge> route = new ArrayList<>();
+
+        Node node0 = new Node(0, 0, 0);
+        Node node1 = new Node(1, 1, 1);
+        Node node2 = new Node(2, 2, 2);
+        Node node3 = new Node(3, 3, 3);
+        Node node4 = new Node(4, 4, 4);
+        Node node5 = new Node(5, 3, 4);
+        Node node6 = new Node(6, 5, 5);
+
+        ArrayList<String> tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("primary");
+        tags.add("junction");
+        tags.add("roundabout");
+        Street street = new Street(tags, 50);
+
+        Edge edge0 = new Edge(node0, node1, street);
+        Edge edge1 = new Edge(node1, node2, street);
+        Edge edge2 = new Edge(node2, node3, street);
+        Edge edge3 = new Edge(node3, node4, street);
+        Edge edge4 = new Edge(node2, node5, street);
+
+        tags.add("highway");
+        tags.add("primary");
+        street = new Street(tags, 50);
+
+        Edge edge5 = new Edge(node4, node6, street);
+
+        graph.addEdge(edge0);
+        graph.addEdge(edge1);
+        graph.addEdge(edge2);
+        graph.addEdge(edge3);
+        graph.addEdge(edge4);
+        graph.addEdge(edge5);
+        route.add(edge0);
+        route.add(edge1);
+        route.add(edge2);
+        route.add(edge3);
+        route.add(edge5);
+
+        routeController = new RouteController(new MapCanvas());
+        routeController.generateRouteInfo(route, "Car", graph);
+        String actual = routeController.getInstructions().get(1).getInstruction();
+
+        Assertions.assertEquals("Take exit number 1 in the roundabout and follow road for 1 m", actual);
+
+
     }
 
 }
