@@ -75,7 +75,6 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
 
     static String regex =
     "^ *(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1,2}(?!\\d)))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\d{1,3}))\\.?)?(?:[\\.|,| ])*(?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\.]+[a-zæøåÆØÅ\\-\\. ]*?[a-zæøåÆØÅ\\-\\.]*)? *$";
-
     static Pattern pattern = Pattern.compile(
             regex,
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE

@@ -20,6 +20,17 @@ public class SearchControllerTest {
   }
 
   @Test
+  public void testGetBestMatches0() {
+    List<Address> addresses = new ArrayList<>();
+    
+    addresses.add(new Address("Jagtvej", null, null, null, null, 0f, 0f));
+
+    List<Address> bestMatches = sc.getBestMatches("?", addresses, 5);
+    
+    assertEquals(0, bestMatches.size());
+  }
+
+  @Test
   public void testGetBestMatches1() {
     List<Address> addresses = new ArrayList<>();
     

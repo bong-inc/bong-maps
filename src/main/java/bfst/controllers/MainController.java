@@ -49,18 +49,13 @@ public class MainController {
     private SearchController searchController;
 
     private ToggleGroup vehicleGroup = new ToggleGroup();
-    @FXML
-    private RadioButton carButton;
-    @FXML
-    private RadioButton bikeButton;
-    @FXML
-    private RadioButton walkButton;
+    @FXML private RadioButton carButton;
+    @FXML private RadioButton bikeButton;
+    @FXML private RadioButton walkButton;
 
     private ToggleGroup shortFastGroup = new ToggleGroup();
-    @FXML
-    private RadioButton shortButton;
-    @FXML
-    private RadioButton fastButton;
+    @FXML private RadioButton shortButton;
+    @FXML private RadioButton fastButton;
 
     private MapCanvas canvas;
     private boolean shouldPan = true;
@@ -75,7 +70,7 @@ public class MainController {
 
     public void setDefaultMap(){
         try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/denmark.bin");
+            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/denmark.bin"); //TODO make it work
             setModelFromBinary(is);
         }catch (Exception e){
             System.out.println("Failed to set default map");
@@ -599,7 +594,7 @@ public class MainController {
         if (currentAddress == null) {
             pointAddress.setText("No nearby address");
         } else {
-            double distance = distance(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
+            double distance = distanceInMeters(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
             if (distance > 80) {
                 pointAddress.setText("No nearby address");
             } else {
@@ -660,7 +655,7 @@ public class MainController {
 
     private void setStartOrDestinationLabel(Address address, Point2D point, Label label) {
         if (address != null) {
-            if (dist(point, address.getCentroid()) > 80) {
+            if (dist(point, address.getCentroid()) > 80) { // TODO should this use distanceInMeters() ?
                 Node unprojected = MercatorProjector.unproject(address.getCentroid().getX(), address.getCentroid().getY());
                 label.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
             } else {
@@ -671,7 +666,7 @@ public class MainController {
         }
     }
 
-    private double distance(float pinX, float pinY, float addressX, float addressY) {
+    private double distanceInMeters(float pinX, float pinY, float addressX, float addressY) {
         double meterMultiplier = - (MercatorProjector.unproject(pinX, pinY).getLat()) / 100;
         double distance = Math.sqrt(Math.pow(pinX - addressX, 2) + Math.pow(pinY - addressY, 2));
         return distance * meterMultiplier;

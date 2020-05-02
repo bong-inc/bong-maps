@@ -296,13 +296,37 @@ public class AddressTest {
 	public void testCompareTo(){
 		List<Address> addresses = new ArrayList<>();
 
-    addresses.add(new Address(null, null, null, null, null, 0f, 0f));
-    addresses.add(new Address(null, null, null, null, null, 0f, 0f));
-    addresses.add(new Address("Vibevej", "2", "2400", "København NV", null, 0f, 0f));
+		addresses.add(new Address(null, null, null, null, null, 0f, 0f));
+		addresses.add(new Address("Vibevej", "2", "2400", "København NV", null, 0f, 0f));
+		addresses.add(new Address("Vibevej", "2", null, null, null, 0f, 0f));
+		addresses.add(new Address(null, null, null, null, null, 0f, 0f));
+		addresses.add(new Address("Aarhus vejen", "2", null, null, null, 0f, 0f));
+		addresses.add(new Address("Aarhus vejen", null, null, null, null, 0f, 0f));
+		addresses.add(new Address("Aarhus vej", "2", null, null, null, 0f, 0f));
+		addresses.add(new Address("Aarhus vej", null, null, null, null, 0f, 0f));
+		addresses.add(new Address("Aarhus vej", "3", null, null, null, 0f, 0f));
+
+
 
     Collections.sort(addresses);
 
-    assertEquals(null, addresses.get(0).getStreet());
-    assertEquals("Vibevej", addresses.get(2).getStreet());
+		assertEquals(null, addresses.get(0).getStreet());
+		assertEquals(null, addresses.get(1).getStreet());
+		assertEquals("Aarhus vej", addresses.get(2).getStreet());
+		assertEquals(null, addresses.get(2).getHouse());
+		assertEquals("Aarhus vej", addresses.get(3).getStreet());
+		assertEquals("2", addresses.get(3).getHouse());
+		assertEquals("Aarhus vej", addresses.get(4).getStreet());
+		assertEquals("3", addresses.get(4).getHouse());
+		assertEquals("Aarhus vejen", addresses.get(5).getStreet());
+		assertEquals(null, addresses.get(5).getHouse());
+		assertEquals("Aarhus vejen", addresses.get(6).getStreet());
+		assertEquals("2", addresses.get(6).getHouse());
+		assertEquals("Vibevej", addresses.get(7).getStreet());
+		assertEquals(null, addresses.get(7).getCity());
+		assertEquals("Vibevej", addresses.get(8).getStreet());
+		assertEquals("København NV", addresses.get(8).getCity());
+
+
 	}
 }

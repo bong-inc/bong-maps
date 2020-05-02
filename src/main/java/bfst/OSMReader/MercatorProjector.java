@@ -52,4 +52,5 @@ public class MercatorProjector {
     private static double unprojectY(double lat) {
         return Math.toDegrees(Math.atan(Math.exp(lat / R_MAJOR)) * 2 - Math.PI/2);
     }
+    
 }

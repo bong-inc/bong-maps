@@ -154,7 +154,6 @@ public class Dijkstra {
             edgeTo.put(w, edge);
             if (pq.contains(w)) {
                 pq.decreaseKey(w, distTo.get(w) + distanceToDestination);
-                System.out.println("hej");
             } else {
                 pq.insert(w, distTo.get(w) + distanceToDestination);
             }

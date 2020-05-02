@@ -70,4 +70,5 @@ public class GeometryTest {
       assertEquals(5.0, Geometry.distance(3,4,0,0));
       assertEquals(0.001, Geometry.distance(0.001,0,0,0));
     }
+
 }

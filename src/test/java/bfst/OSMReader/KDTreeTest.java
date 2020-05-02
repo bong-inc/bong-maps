@@ -64,6 +64,30 @@ public class KDTreeTest {
   }
 
   @Test
+  public void NearestNeighborForLinePaths3() {
+    ArrayList<CanvasElement> elements = new ArrayList<>();
+    
+    // expected element
+    LinePath expected = new LinePath(new Node(1l, 0.49f, 1f), new Node(2l, 0.49f, 1f));
+    elements.add(expected);
+
+    // Add others such that 'elements' has maxNumOfElements+1 elements
+    for (int i = 0; i < KDTree.maxNumOfElements*2; i++) {
+      elements.add(new LinePath(new Node(123l, 0.0f, 0.0f), new Node(123l, 0.1f, 0.1f)));
+      elements.add(new LinePath(new Node(123l, 1.0f, 1.0f), new Node(123l, 0.9f, 0.9f)));
+      elements.add(new LinePath(new Node(123l, 0.0f, 1.0f), new Node(123l, 0.1f, 0.9f)));
+      elements.add(new LinePath(new Node(123l, 1.0f, 0.0f), new Node(123l, 0.9f, 0.1f)));
+    }
+
+    KDTree kdTree = new KDTree(elements, new Range(0,0,1,1));
+
+    CanvasElement actual = kdTree.nearestNeighbor(new Point2D(0.51, 0.51));
+    assertEquals(expected, actual);
+
+    assert(kdTree.low.low.depth == 2);
+  }
+
+  @Test
   public void EmptyNearestNeighbor() {
     ArrayList<CanvasElement> elements = new ArrayList<>();
     KDTree kdTree = new KDTree(elements, new Range(0,0,1,1));
