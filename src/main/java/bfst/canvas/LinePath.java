@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class LinePath extends CanvasElement implements Drawable, Serializable {
     private float[] coords_;
     private Range boundingBox;
+    private int smartTraceThreshold = 3;
 
     public LinePath(Way way, NodeContainer nodeContainer) {
         this(getCoordsFromNodeContainer(way, nodeContainer));
@@ -78,7 +79,7 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
             float diffY = nextY - lastY;
             double hypotenuse = Math.sqrt(Math.pow(diffX,2) + Math.pow(diffY,2));
             double distToNext = scale * hypotenuse;
-            if(distToNext > 3){
+            if(distToNext > this.smartTraceThreshold){
                 gc.lineTo(nextX,nextY);
                 lastX = nextX;
                 lastY = nextY;
