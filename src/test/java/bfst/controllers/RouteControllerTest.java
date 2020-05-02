@@ -6,13 +6,10 @@ import bfst.OSMReader.OSMReader;
 import bfst.canvas.MapCanvas;
 import bfst.routeFinding.Edge;
 import bfst.routeFinding.Graph;
-import bfst.routeFinding.Instruction;
 import bfst.routeFinding.Street;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 
 public class RouteControllerTest {

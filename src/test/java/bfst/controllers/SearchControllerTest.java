@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import bfst.addressparser.Address;
-import bfst.addressparser.InvalidAddressException;
 
 public class SearchControllerTest {
   SearchController sc;

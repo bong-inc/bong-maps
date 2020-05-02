@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FileTypeNotSupportedTest {
 
     @Test
-    public void FileTypeNotSupportedTest(){
+    public void fileTypeNotSupportedTest(){
         try{
             throw new FileTypeNotSupportedException(".filetype");
         } catch (FileTypeNotSupportedException e) {

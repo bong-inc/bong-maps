@@ -11,8 +11,8 @@ public class Dijkstra {
     private HashMap<Long, Edge> edgeTo;
     private HashMap<Long, Double> distTo2;
     private HashMap<Long, Edge> edgeTo2;
-    private IndexMinPQ pq;
-    private IndexMinPQ pq2;
+    private IndexMinPQ<Double> pq;
+    private IndexMinPQ<Double> pq2;
     private int currDijkstra = 1;
     private Node startNode;
     private Node endNode;
@@ -38,10 +38,10 @@ public class Dijkstra {
         distTo.put(s, 0.0);
         distTo2.put(t, 0.0);
 
-        pq = new IndexMinPQ();
+        pq = new IndexMinPQ<>();
         pq.insert(s, distTo.get(s));
 
-        pq2 = new IndexMinPQ();
+        pq2 = new IndexMinPQ<>();
         pq2.insert(t, distTo2.get(t));
 
         while (!pq.isEmpty()) {
@@ -126,7 +126,7 @@ public class Dijkstra {
         return 1;
     }
 
-    private void relax(Edge edge, long v, boolean shortestRoute, HashMap<Long, Double> distTo, HashMap<Long, Edge> edgeTo, IndexMinPQ pq) throws Exception {
+    private void relax(Edge edge, long v, boolean shortestRoute, HashMap<Long, Double> distTo, HashMap<Long, Edge> edgeTo, IndexMinPQ<Double> pq) throws Exception {
         long w = edge.other(v);
         if (!distTo.containsKey(w)) {
             distTo.put(w, Double.POSITIVE_INFINITY);

@@ -5,17 +5,17 @@ import org.junit.jupiter.api.Test;
 
 class IndexMinPQTest {
 
-    IndexMinPQ pq = new IndexMinPQ();
+    IndexMinPQ<Double> pq = new IndexMinPQ<>();
 
     @Test
     void insert() {
-        IndexMinPQ thispq = pq;
-        thispq.insert(1, 5);
+        IndexMinPQ<Double> thispq = pq;
+        thispq.insert(1, 5d);
 
         Assertions.assertEquals(5, pq.getFromKeys(1));
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            thispq.insert(1, 5);
+            thispq.insert(1, 5d);
         });
     }
 
@@ -29,7 +29,7 @@ class IndexMinPQTest {
         }
         Assertions.assertEquals("Priority queue underflow", exception);
 
-        IndexMinPQ thispq = pq;
+        IndexMinPQ<Double> thispq = pq;
         thispq.insert(100, 0.05);
 
         for (int i = 0; i < 100; i++) {
@@ -42,7 +42,7 @@ class IndexMinPQTest {
     @Test
     void decreaseKey() {
         String exception = "";
-        IndexMinPQ thispq = pq;
+        IndexMinPQ<Double> thispq = pq;
         thispq.insert(3, 4.2);
 
         try {
@@ -70,7 +70,7 @@ class IndexMinPQTest {
 
     @Test
     void greater() {
-        IndexMinPQ thispq = pq;
+        IndexMinPQ<Double> thispq = pq;
         thispq.insert(3, 5.6);
         thispq.insert(4, 7.6);
 
@@ -91,7 +91,7 @@ class IndexMinPQTest {
 
     @Test
     void exch() {
-        IndexMinPQ thispq = pq;
+        IndexMinPQ<Double> thispq = pq;
         thispq.insert(3, 5.6);
         thispq.insert(4, 7.6);
 
