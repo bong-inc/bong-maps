@@ -117,7 +117,6 @@ public class LinePathTest {
         float[] floats = {1,1,3,4,5,0};
         LinePath linePath = new LinePath(floats);
         Range actual = linePath.calculateBoundingBox();
-        System.out.println("gaming");
 
         Assertions.assertEquals(1, actual.getMinX());
         Assertions.assertEquals(5, actual.getMaxX());
