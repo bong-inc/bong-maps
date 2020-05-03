@@ -422,6 +422,11 @@ Button:hover {
     -fx-background-color: white;
 }
 
+.selectDefaultMapsButtons {
+    -fx-spacing: 10;
+    -fx-alignment: center;
+}
+
 .findRoute:disabled {
     -fx-text-fill: #888;
     -fx-background-color: white;

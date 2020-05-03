@@ -163,7 +163,7 @@
   </VBox>
 <VBox fx:id="welcomeOverlay" styleClass="darkFilter">
   <VBox styleClass="selectMap">
-      <HBox spacing="10" alignment="center">
+      <HBox style="selectMapButtons">
         <Button fx:id="welcomeDenmark" styleClass="welcomeButton" style="-fx-background-image: url('bfst/denmark.png')"></Button>
         <Button fx:id="welcomeCopenhagen" styleClass="welcomeButton" style="-fx-background-image: url('bfst/copenhagen.png')"></Button>
       </HBox>
