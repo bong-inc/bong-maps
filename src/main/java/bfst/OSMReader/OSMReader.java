@@ -97,7 +97,7 @@ public class OSMReader {
                             case "way":
                                 wayHolder.trim();
                                 parseStreet();
-
+                                if(type == Type.UNKNOWN) break;
                                 if(type != Type.COASTLINE) {
                                     if (wayHolder.getSize() > 0) {
                                         if (!drawableByType.containsKey(type))
@@ -125,6 +125,7 @@ public class OSMReader {
                                 type = Type.UNKNOWN;
                                 break;
                             case "relation":
+                                if(type == Type.UNKNOWN) break;
                                 relationHolder.collectRelation(tempNodes);
                                 if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
                                 if(relationHolder.getWays().size() > 0) drawableByType.get(type).add(new PolyLinePath(relationHolder, tempNodes));
@@ -248,7 +249,6 @@ public class OSMReader {
             case "relation":
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 relationHolder = new Relation(currentID);
-                //tempRelations.add(relationHolder);
                 break;
             case "tag":
                 String k = reader.getAttributeValue(null, "k").intern();

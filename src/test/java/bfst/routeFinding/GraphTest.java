@@ -58,7 +58,7 @@ class GraphTest {
         try {
             setVariables();
             Node actual = graph.getNode(2);
-            Assertions.assertEquals(node2, actual);
+            Assertions.assertEquals(node2.getAsLong(), actual.getAsLong());
         } catch (Exception e) {
             Assertions.fail();
         }

@@ -17,23 +17,32 @@ public class Edge extends CanvasElement implements Serializable {
     private float weight;
     private Street street;
 
-    private Node tailNode;
-    private Node headNode;
+    private long tailId;
+    private float tailLon;
+    private float tailLat;
+
+    private long headId;
+    private float headLon;
+    private float headLat;
 
     public Edge(Node tailNode, Node headNode, Street street) {
-        this.tailNode = tailNode;
-        this.headNode = headNode;
+        this.tailId = tailNode.getAsLong();
+        this.tailLon = tailNode.getLon();
+        this.tailLat = tailNode.getLat();
+        this.headId = headNode.getAsLong();
+        this.headLon = headNode.getLon();
+        this.headLat = headNode.getLat();
         this.street = street;
-        weight = (float) Math.sqrt(Math.pow(this.tailNode.getLon() - this.headNode.getLon(), 2)
-                + Math.pow(this.tailNode.getLat() - this.headNode.getLat(), 2));
+        weight = (float) Math.sqrt(Math.pow(this.tailLon - this.headLon, 2)
+                + Math.pow(this.tailLat - this.headLat, 2));
     }
 
     public Node getTailNode() {
-        return tailNode;
+        return new Node(tailId, tailLon, tailLat);
     }
 
     public Node getHeadNode() {
-        return headNode;
+        return new Node(headId, headLon, headLat);
     }
 
     public double getWeight() {
@@ -45,30 +54,26 @@ public class Edge extends CanvasElement implements Serializable {
     }
 
     public long other(long vertex) {
-        if (vertex == tailNode.getAsLong()) {
-            return headNode.getAsLong();
+        if (vertex == tailId) {
+            return headId;
         } else {
-            return tailNode.getAsLong();
+            return tailId;
         }
     }
 
     public Node otherNode(long vertex) {
-        if (vertex == tailNode.getAsLong()) {
-            return headNode;
+        if (vertex == tailId) {
+            return new Node(headId, headLon, headLat);
         } else {
-            return tailNode;
+            return new Node(tailId, tailLon, tailLat);
         }
     }
 
     public Point2D getCentroid() {
-        return new Point2D((tailNode.getLon() + headNode.getLon()) / 2, (tailNode.getLat() + headNode.getLat()) / 2);
+        return new Point2D((tailLon + headLon) / 2, (tailLat + headLat) / 2);
     }
 
     public Range getBoundingBox() {
-        float tailLon = tailNode.getLon();
-        float tailLat = tailNode.getLat();
-        float headLon = headNode.getLon();
-        float headLat = headNode.getLat();
         return new Range(headLon < tailLon ? headLon : tailLon, // minX
                 headLat < tailLat ? headLat : tailLat, // minY
                 headLon > tailLon ? headLon : tailLon, // maxX
