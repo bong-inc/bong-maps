@@ -337,7 +337,7 @@ public class MainController {
     }
 
     private Tooltip setupTooltip(String message){
-        Tooltip tip = new Tooltip("Set as start");
+        Tooltip tip = new Tooltip(message);
         tip.setShowDelay(Duration.ZERO);
         return tip;
     }
