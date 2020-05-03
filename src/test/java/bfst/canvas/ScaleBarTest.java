@@ -10,7 +10,7 @@ class ScaleBarTest {
 
         MapCanvas canvas = new MapCanvas();
         canvas.getTrans().prependScale(0.9, 0.9);
-        canvas.repaint(50);
+        canvas.repaint();
         canvas.getScaleBar().updateScaleBar(canvas);
         String actual = canvas.getScaleBar().getBarShowing();
         Assertions.assertEquals("50m", actual);
@@ -18,7 +18,7 @@ class ScaleBarTest {
 
         canvas = new MapCanvas();
         canvas.getTrans().prependScale(0.4, 0.4);
-        canvas.repaint(50);
+        canvas.repaint();
         canvas.getScaleBar().updateScaleBar(canvas);
         actual = canvas.getScaleBar().getBarShowing();
         Assertions.assertEquals("100m", actual);
@@ -26,7 +26,7 @@ class ScaleBarTest {
 
         canvas = new MapCanvas();
         canvas.getTrans().prependScale(0.2, 0.2);
-        canvas.repaint(50);
+        canvas.repaint();
         canvas.getScaleBar().updateScaleBar(canvas);
         actual = canvas.getScaleBar().getBarShowing();
         Assertions.assertEquals("250m", actual);
@@ -34,7 +34,7 @@ class ScaleBarTest {
 
         canvas = new MapCanvas();
         canvas.getTrans().prependScale(0.1, 0.1);
-        canvas.repaint(50);
+        canvas.repaint();
         canvas.getScaleBar().updateScaleBar(canvas);
         actual = canvas.getScaleBar().getBarShowing();
         Assertions.assertEquals("500m", actual);
@@ -42,7 +42,7 @@ class ScaleBarTest {
 
         canvas = new MapCanvas();
         canvas.getTrans().prependScale(0.05, 0.05);
-        canvas.repaint(50);
+        canvas.repaint();
         canvas.getScaleBar().updateScaleBar(canvas);
         actual = canvas.getScaleBar().getBarShowing();
         Assertions.assertEquals("1km", actual);
@@ -50,7 +50,7 @@ class ScaleBarTest {
 
         canvas = new MapCanvas();
         canvas.getTrans().prependScale(0.025, 0.025);
-        canvas.repaint(50);
+        canvas.repaint();
         canvas.getScaleBar().updateScaleBar(canvas);
         actual = canvas.getScaleBar().getBarShowing();
         Assertions.assertEquals("2km", actual);
@@ -58,7 +58,7 @@ class ScaleBarTest {
 
         canvas = new MapCanvas();
         canvas.getTrans().prependScale(0.012, 0.012);
-        canvas.repaint(50);
+        canvas.repaint();
         canvas.getScaleBar().updateScaleBar(canvas);
         actual = canvas.getScaleBar().getBarShowing();
         Assertions.assertEquals("5km", actual);
@@ -66,7 +66,7 @@ class ScaleBarTest {
 
         canvas = new MapCanvas();
         canvas.getTrans().prependScale(0.005, 0.005);
-        canvas.repaint(50);
+        canvas.repaint();
         canvas.getScaleBar().updateScaleBar(canvas);
         actual = canvas.getScaleBar().getBarShowing();
         Assertions.assertEquals("10km", actual);
@@ -74,7 +74,7 @@ class ScaleBarTest {
 
         canvas = new MapCanvas();
         canvas.getTrans().prependScale(0.0025, 0.0025);
-        canvas.repaint(50);
+        canvas.repaint();
         canvas.getScaleBar().updateScaleBar(canvas);
         actual = canvas.getScaleBar().getBarShowing();
         Assertions.assertEquals("20km", actual);

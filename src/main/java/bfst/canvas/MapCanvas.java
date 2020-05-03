@@ -92,7 +92,7 @@ public class MapCanvas extends Canvas {
     public void clearOriginDestination() {
         currentRouteOrigin = null;
         currentRouteDestination = null;
-        repaint(30);
+        repaint();
     }
 
     public Pin getCurrentPin() {
@@ -118,9 +118,7 @@ public class MapCanvas extends Canvas {
         this.scaleBar = new ScaleBar();
     }
 
-    public void repaint(int i) {
-        long time = System.nanoTime();
-
+    public void repaint() {
         gc.setTransform(new Affine());
         if (useRegularColors) {
             gc.setFill(Type.WATER.getColor());
@@ -209,13 +207,11 @@ public class MapCanvas extends Canvas {
             drawNode(startNode);
             drawNode(destinationNode);
         }
-
-        System.out.println("Repaint: " + ((System.nanoTime() - time) / 1000000.0 + " ms at " + i));
     }
 
     public void setDraggedSquare(LinePath linePath) {
         draggedSquare = linePath;
-        repaint(1);
+        repaint();
     }
 
     public void updateSearchRange(double pixelwidth) {
@@ -267,27 +263,27 @@ public class MapCanvas extends Canvas {
 
     public void setTypesToBeDrawn(List<Type> typesToBeDrawn) {
         this.typesToBeDrawn = typesToBeDrawn;
-        repaint(3);
+        repaint();
     }
 
     public void setUseRegularColors(boolean shouldUseRegularColors) {
         useRegularColors = shouldUseRegularColors;
-        repaint(4);
+        repaint();
     }
 
     public void setTraceType(boolean shouldSmartTrace) {
         smartTrace = shouldSmartTrace;
-        repaint(5);
+        repaint();
     }
 
     public void setShowCities(boolean shouldShowCities) {
         showCities = shouldShowCities;
-        repaint(6);
+        repaint();
     }
 
     public void setUseDependentDraw(boolean shouldUseDependentDraw) {
         useDependentDraw = shouldUseDependentDraw;
-        repaint(7);
+        repaint();
     }
 
     public void resetView() {
@@ -313,13 +309,13 @@ public class MapCanvas extends Canvas {
 
     public void pan(double dx, double dy) {
         trans.prependTranslation(dx, dy);
-        repaint(8);
+        repaint();
     }
 
     public void zoom(double factor, double x, double y) {
         if (shouldZoom(factor)) {
             trans.prependScale(factor, factor, x, y);
-            repaint(9);
+            repaint();
         }
     }
 
@@ -397,17 +393,17 @@ public class MapCanvas extends Canvas {
         pan(-lon, -lat);
         zoom(factor, 0, 0);
         pan(getWidth() / 2, getHeight() / 2);
-        repaint(10);
+        repaint();
     }
 
     public void setPin (float lon, float lat){
         currentPin = new Pin(lon, lat, 1);
-        repaint(12);
+        repaint();
     }
 
     public void nullPin () {
         currentPin = null;
-        repaint(13);
+        repaint();
     }
 
     public void setRouteOrigin (Point2D point){
@@ -416,7 +412,7 @@ public class MapCanvas extends Canvas {
         } else {
             currentRouteOrigin = null;
         }
-        repaint(27);
+        repaint();
     }
 
     public void setRouteDestination (Point2D point){
@@ -425,7 +421,7 @@ public class MapCanvas extends Canvas {
         } else {
             currentRouteDestination = null;
         }
-        repaint(29);
+        repaint();
     }
 
     public boolean getRenderFullScreen(){
@@ -472,7 +468,7 @@ public class MapCanvas extends Canvas {
 	        if (streetName == null) {
 	            streetName = "Unnamed street";
 	        }
-	        repaint(25);
+	        repaint();
 	        drawEdge(streetEdge);
 	
 	        if (getShowStreetNodeCloseToMouse()) {

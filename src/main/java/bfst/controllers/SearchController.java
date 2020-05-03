@@ -37,22 +37,8 @@ public class SearchController {
         }
       }
 
-    } catch (InvalidAddressException e) {
-      System.out.println("invalid address");
-    }
+    } catch (InvalidAddressException ignored) {}
 
     return tempBest;
   }
-
-  // public int[] matches(String query, String address) {
-  //   String regex = ".*?(?<match>" + query.toLowerCase() + ").*";
-  //   Pattern pattern = Pattern.compile(regex);
-  //   Matcher m = pattern.matcher(address.toLowerCase());
-  //   if (m.find() && m.group("match") != null && query.length() > 0) {
-  //     return new int[] { m.start("match"), m.end("match") };
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
 }

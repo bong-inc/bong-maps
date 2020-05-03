@@ -30,8 +30,6 @@ public class OSMReader {
     private Street currentStreet;
     private ArrayList<Edge> roadEdges = new ArrayList<>();
 
-    int counter = 0; //TODO bruges kun til videreudvikling, skal fjernes fra endelige produkt
-
     private ArrayList<Address> addresses = new ArrayList<>();
     private Address.Builder builder;
     private ArrayList<City> cities = new ArrayList<>();
@@ -73,11 +71,6 @@ public class OSMReader {
                     .createXMLStreamReader(inputStream);
 
             while (reader.hasNext()) {
-                counter++;
-                if (counter % 1000000 == 0) {
-                    System.out.println(counter);
-                }
-
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:

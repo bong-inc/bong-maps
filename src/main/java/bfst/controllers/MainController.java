@@ -77,7 +77,10 @@ public class MainController {
             InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/" + mapName + ".bin");
             setModelFromBinary(is);
         } catch (Exception e){
-            System.out.println("Failed to load map of " + mapName);
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setHeaderText("An error occured");
+            alert.setContentText("Failed to load map of " + mapName);
+            alert.showAndWait();
         }
     } 
     
@@ -234,7 +237,7 @@ public class MainController {
         hoverToShowStreet.setSelected(showStreetOnHover);
         hoverToShowStreet.setOnAction(e -> {
             showStreetOnHover = hoverToShowStreet.isSelected();
-            canvas.repaint(26);
+            canvas.repaint();
         });
 
         zoomToArea.setOnAction(e ->  {
@@ -799,16 +802,12 @@ public class MainController {
                 break;
             case ".osm":
                 canvas.setTypesToBeDrawn(new ArrayList<>());
-                long time = -System.nanoTime();
 
                 OSMReader reader = new OSMReader(is);
                 this.model = new Model(reader);
                 reader.destroy();
                 reader = null;
                 mapCanvasWrapper.mapCanvas.setModel(model);
-
-                time += System.nanoTime();
-                System.out.println("load osm: " + time/1000000f + "ms");
 
                 ArrayList<Type> list = new ArrayList<>(Arrays.asList(Type.getTypes()));
                 canvas.setTypesToBeDrawn(list);
@@ -824,12 +823,8 @@ public class MainController {
     }
 
     private void setModelFromBinary(InputStream is) throws IOException, ClassNotFoundException {
-        long time = -System.nanoTime();
         this.model = (Model) FileController.loadBinary(is);
         mapCanvasWrapper.mapCanvas.setModel(model);
-
-        time += System.nanoTime();
-        System.out.println("load binary: " + time/1000000f + "ms");
     }
 
     private void swapStartAndDestination() {
@@ -842,7 +837,7 @@ public class MainController {
         canvas.setRouteOrigin(startPoint);
         canvas.setRouteDestination(destinationPoint);
         showDirectionsMenu();
-        canvas.repaint(32);
+        canvas.repaint();
     }
 
     public MapCanvas getCanvas(){

@@ -17,7 +17,6 @@ public class Dijkstra {
     private Node startNode;
     private Node endNode;
     private Graph G;
-    private int relaxCounter;
 
     public long getLastNode() {
         return lastNode;
@@ -26,7 +25,6 @@ public class Dijkstra {
     private long lastNode = 1;
 
     public Dijkstra(Graph G, long s, long t, String vehicle, boolean shortestRoute, boolean useBidirectional, boolean useAStar) throws Exception {
-        relaxCounter = 0;
         distTo = new HashMap<>();
         edgeTo = new HashMap<>();
         distTo2 = new HashMap<>();
@@ -68,7 +66,6 @@ public class Dijkstra {
             }
             lastNode = determineRelax(currDijkstra, vehicle, shortestRoute, useBidirectional, useAStar);
         }
-        System.out.println("# of relaxes: " + relaxCounter);
     }
 
     public long determineRelax(int currDijkstra, String vehicle, boolean shortestRoute, boolean useBidirectional, boolean useAStar) throws Exception{
@@ -136,7 +133,6 @@ public class Dijkstra {
     }
 
     private void relax(Edge edge, long v, boolean shortestRoute, HashMap<Long, Double> distTo, HashMap<Long, Edge> edgeTo, IndexMinPQ<Double> pq, boolean useAStar) throws Exception {
-        relaxCounter++;
         long w = edge.other(v);
         if (!distTo.containsKey(w)) {
             distTo.put(w, Double.POSITIVE_INFINITY);

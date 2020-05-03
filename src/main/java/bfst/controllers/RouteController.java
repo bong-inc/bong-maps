@@ -67,7 +67,7 @@ public class RouteController {
         instructions = null;
         dijkstra = null;
         drawableRoute = null;
-        canvas.repaint(2);
+        canvas.repaint();
     }
 
     public double calculateTurn(Edge prevEdge, Edge currEdge) {
@@ -277,18 +277,14 @@ public class RouteController {
 
         drawableRoute = new LinePath(floats);
 
-        canvas.repaint(16);
+        canvas.repaint();
     }
 
     public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute, boolean useBidirectional, boolean useAStar) throws Exception{
-        long time = -System.nanoTime();
         dijkstra = new Dijkstra(canvas.getModel().getGraph(), startPoint, endPoint, vehicle, shortestRoute, useBidirectional, useAStar);
-        time += System.nanoTime();
-        System.out.println("Set dijkstra: " + time / 1000000f + "ms");
-
         setRoute(useBidirectional);
         generateRouteInfo(route, vehicle, canvas.getModel().getGraph());
-        canvas.repaint(40);
+        canvas.repaint();
     }
 
     public double getRouteTime() {

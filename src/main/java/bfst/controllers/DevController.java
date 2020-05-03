@@ -144,13 +144,13 @@ public class DevController {
         fullscreenRange.selectedProperty().set(canvas.getRenderFullScreen());
         fullscreenRange.setOnAction(e -> {
             canvas.setRenderFullScreen(fullscreenRange.isSelected());
-            canvas.repaint(15);
+            canvas.repaint();
         });
 
         drawBoundingBox.selectedProperty().set(MapCanvas.drawBoundingBox);
         drawBoundingBox.setOnAction(e -> {
             MapCanvas.drawBoundingBox = drawBoundingBox.isSelected();
-            canvas.repaint(21);
+            canvas.repaint();
         });
 
         showClosestNode.setSelected(false);

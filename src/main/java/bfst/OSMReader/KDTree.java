@@ -80,13 +80,7 @@ public class KDTree implements Serializable {
 
   // Only used for Address objects
   public CanvasElement nearestNeighbor(Point2D query){
-    CanvasElement returnElement = nearestNeighbor(query, Double.POSITIVE_INFINITY);
-    try {
-      if(returnElement == null) throw new Exception("No nearest neighbor found");
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
-    return returnElement;
+    return nearestNeighbor(query, Double.POSITIVE_INFINITY);
   }
 
   private CanvasElement nearestNeighbor(Point2D query, double bestDist) {
@@ -172,13 +166,7 @@ public class KDTree implements Serializable {
 
   // Only used for road edges
   public Node nearestNeighborForEdges(Point2D query, String vehicle){
-    Node returnElement = nearestNeighborForEdges(query, Double.POSITIVE_INFINITY, vehicle);
-    try {
-      if(returnElement == null) throw new Exception("No nearest neighbor found");
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
-    return returnElement;
+    return nearestNeighborForEdges(query, Double.POSITIVE_INFINITY, vehicle);
   }
 
   private Node nearestNeighborForEdges(Point2D query, double bestDist, String vehicle) {
