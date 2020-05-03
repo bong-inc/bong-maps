@@ -16,6 +16,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -69,9 +70,18 @@ public class MainController {
         this.searchController = new SearchController();
     }
 
+    public void setDenmarkMap(){
+        try {
+            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/denmark.bin");
+            setModelFromBinary(is);
+        }catch (Exception e){
+            System.out.println("Failed to load map of Denmark");
+        }
+    }
+
     public void setDefaultMap(){
         try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/denmark.bin"); //TODO make it work
+            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/copenhagen.bin");
             setModelFromBinary(is);
         }catch (Exception e){
             System.out.println("Failed to set default map");
@@ -82,6 +92,7 @@ public class MainController {
     @FXML private MapCanvasWrapper mapCanvasWrapper;
     @FXML private MenuItem loadClick;
     @FXML private MenuItem loadDefaultMap;
+    @FXML private MenuItem loadDenmark;
     @FXML private MenuItem saveAs;
     @FXML private MenuItem devtools;
     @FXML private MenuItem about;
@@ -161,6 +172,10 @@ public class MainController {
 
         loadDefaultMap.setOnAction(e -> {
             setDefaultMap();
+        });
+
+        loadDenmark.setOnAction(e -> {
+            setDenmarkMap();
         });
 
         saveAs.setOnAction(this::saveFileOnClick);
