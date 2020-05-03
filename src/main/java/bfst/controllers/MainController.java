@@ -431,7 +431,7 @@ public class MainController {
 
         shortButton.setToggleGroup(shortFastGroup);
         fastButton.setToggleGroup(shortFastGroup);
-        shortButton.setSelected(true);
+        fastButton.setSelected(true);
 
         cancelRoute.setOnAction(e -> {
             canvas.getRouteController().clearRoute();

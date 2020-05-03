@@ -67,6 +67,7 @@ public class PointsOfInterestController {
 
     public void showAddPointDialog(Point2D point) {
         TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Point of interest");
         dialog.setContentText("Save point of interest");
         dialog.setHeaderText("Enter the name of the point");
         dialog.setContentText("Name:");
