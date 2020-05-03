@@ -6,7 +6,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.text.Font;
 
 public class ScaleBar implements Drawable {
-    //0.0089993 is an estimate for the length of 1km in model coordinates.
+    //0.0089993 is an estimate for the length of 1km in geographical coordinates.
     private final double kilometerLength = 0.0089993;
     private double placementX;
     private double placementY;
