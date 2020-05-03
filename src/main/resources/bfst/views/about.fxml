@@ -3,10 +3,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <VBox prefHeight="150" prefWidth="250">
-    <Label>Bong Maps</Label>
+    <Label>Bong Maps™</Label>
     <Label>May 4th 2020</Label>
     <Label>Release version 1.0</Label>
+    <ImageView>
+        <image>
+            <Image url="bfst/views/bongIcon.png"/>
+        </image>
+    </ImageView>
     <Label/>
     <Label>Developers</Label>
     <Label>• Emil Jäpelt (emja@itu.dk)</Label>
