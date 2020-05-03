@@ -28,6 +28,8 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -185,11 +187,17 @@ public class MainController {
             setMapBinaryFromPath("denmark");
         });
 
+        Tooltip dkTip = new Tooltip("Denmark");
+        dkTip.setShowDelay(Duration.ZERO);
+        welcomeDenmark.setTooltip(dkTip);
         welcomeDenmark.setOnAction(e -> {
             setMapBinaryFromPath("denmark");
             closeWelcomeOverlay();
         });
-        
+
+        Tooltip cphTip = new Tooltip("Copenhagen");
+        cphTip.setShowDelay(Duration.ZERO);
+        welcomeCopenhagen.setTooltip(cphTip);
         welcomeCopenhagen.setOnAction(e -> {
             closeWelcomeOverlay();
         });    

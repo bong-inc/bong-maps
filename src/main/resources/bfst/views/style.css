@@ -19,6 +19,19 @@
     -fx-background-size: contain;
 }
 
+.denmark {
+    -fx-background-image: url('../denmark.png');
+}
+
+.copenhagen {
+    -fx-background-image: url('../copenhagen.png');
+}
+
+.selectAMap {
+    -fx-text-fill: "#555";
+    -fx-font-size: 25;
+}
+
 .welcomeLabel {
     -fx-text-fill: "#555";
 }
@@ -417,9 +430,10 @@ Button:hover {
 .selectMap {
     -fx-spacing: 10;
     -fx-alignment: center;
-    -fx-pref-height: 400;
-    -fx-max-width: 480;
+    -fx-pref-height: 360;
+    -fx-max-width: 380;
     -fx-background-color: white;
+    -fx-background-radius: 5px;
 }
 
 .selectDefaultMapsButtons {
