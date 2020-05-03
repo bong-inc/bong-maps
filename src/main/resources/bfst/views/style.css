@@ -144,15 +144,11 @@
 }
 
 .radioButton:hover {
-    -fx-background-color: grey;
+    -fx-background-color: #bbb;
 }
 
 .radioButton {
     -fx-text-fill: transparent;
-}
-
-.radioButton:selected {
-    -fx-text-fill: green;
 }
 
 .carButton {
@@ -376,10 +372,11 @@ Button:hover {
 
 .radio-button:hover {
     -fx-cursor: hand;
+    -fx-background-color: #bbb;
 }
 
 .radio-button {
-    -fx-padding: 3 6 3 3;
+    -fx-padding: 3 13 3 0;
     -fx-background-radius: 100;
 }
 
@@ -393,6 +390,10 @@ Button:hover {
 .findRoute {
     -fx-text-fill: white;
     -fx-background-color: #888;
+}
+
+.findRoute:hover {
+    -fx-background-color: "#69c7ff";
 }
 
 .radio-button > .radio {
