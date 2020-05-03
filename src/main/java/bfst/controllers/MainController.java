@@ -70,26 +70,28 @@ public class MainController {
         this.searchController = new SearchController();
     }
 
-    public void setDenmarkMap(){
+    public void setMapBinaryFromPath(String mapName) {
         try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/denmark.bin");
+            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/" + mapName + ".bin");
             setModelFromBinary(is);
-        }catch (Exception e){
-            System.out.println("Failed to load map of Denmark");
+        } catch (Exception e){
+            System.out.println("Failed to load map of " + mapName);
         }
+    } 
+    
+    public void setDefaultMap(){
+        setMapBinaryFromPath("copenhagen");
     }
 
-    public void setDefaultMap(){
-        try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/copenhagen.bin");
-            setModelFromBinary(is);
-        }catch (Exception e){
-            System.out.println("Failed to set default map");
-        }
-    }
+    @FXML private VBox welcomeOverlay;
+    @FXML private VBox mainView;
+    @FXML private Button welcomeDenmark;
+    @FXML private Button welcomeCopenhagen;
+    @FXML private Button welcomeCustom;
 
     @FXML private StackPane stackPane;
     @FXML private MapCanvasWrapper mapCanvasWrapper;
+    @FXML private MenuBar menu;
     @FXML private MenuItem loadClick;
     @FXML private MenuItem loadDefaultMap;
     @FXML private MenuItem loadDenmark;
@@ -128,6 +130,9 @@ public class MainController {
     
     @FXML
     public void initialize() {
+
+        mainView.setDisable(true);
+        mainView.setFocusTraversable(false);
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> {
             setDefaultMap();
 
@@ -137,7 +142,9 @@ public class MainController {
             }
         });
 
-        loadClick.setOnAction(this::loadFileOnClick);
+        loadClick.setOnAction((ActionEvent e) -> {
+            loadFileOnClick();
+        });
 
         canvas = mapCanvasWrapper.mapCanvas;
 
@@ -175,8 +182,25 @@ public class MainController {
         });
 
         loadDenmark.setOnAction(e -> {
-            setDenmarkMap();
+            setMapBinaryFromPath("denmark");
         });
+
+        welcomeDenmark.setOnAction(e -> {
+            setMapBinaryFromPath("denmark");
+            closeWelcomeOverlay();
+        });
+        
+        welcomeCopenhagen.setOnAction(e -> {
+            closeWelcomeOverlay();
+        });    
+
+        welcomeCustom.setOnAction(e -> {
+            if(loadFileOnClick()) {
+                closeWelcomeOverlay();
+            }
+        });
+
+      
 
         saveAs.setOnAction(this::saveFileOnClick);
 
@@ -305,6 +329,12 @@ public class MainController {
                 goToAddress(a);
             }
         });
+    }
+
+    private void closeWelcomeOverlay() {
+        mainView.setDisable(false);
+        mainView.setFocusTraversable(true);
+        welcomeOverlay.setVisible(false);
     }
 
     public void setCurrentQuery(String newQuery){
@@ -716,7 +746,7 @@ public class MainController {
         }
     }
 
-    public void loadFileOnClick(ActionEvent e){
+    public boolean loadFileOnClick(){
         try {
             List<String> acceptedFileTypes = new ArrayList<>();
             acceptedFileTypes.add("*.bin");
@@ -730,18 +760,23 @@ public class MainController {
             File file = fileChooser.showOpenDialog(stage);
             if (file != null) {
                 loadFile(file);
-            }
+                return true;
+            } 
+            return false;
         } catch(FileTypeNotSupportedException exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("File type not supported: " + exception.getFileType());
             alert.showAndWait();
+            return false;
         } catch (NullPointerException exception){
             exception.printStackTrace();
+            return false;
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("Something unexpected happened, please try again");
             alert.showAndWait();
             exception.printStackTrace();
+            return false;
         }
     }
 
