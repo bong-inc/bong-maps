@@ -13,7 +13,7 @@ public class ModelTest {
     @Test
     public void modelTest() throws FileNotFoundException {
         OSMReader osmReader = new OSMReader(
-            getClass().getClassLoader().getResourceAsStream("bfst/skelby.osm")
+            getClass().getClassLoader().getResourceAsStream("bfst/noCoastline.osm")
             );
         Model model = new Model(osmReader);
 

@@ -405,14 +405,14 @@ public class OSMReader {
         if((first.getLon() < bound.getMaxLon() && first.getLon() > bound.getMinLon()) && (last.getLon() < bound.getMaxLon() && last.getLon() > bound.getMinLon())) {
             if( (first.getLat() < midLat && last.getLat() < midLat && first.getLon() < last.getLon()) ||
                     (first.getLat() > midLat && last.getLat() > midLat && first.getLon() > last.getLon())) {
-                coastline.addNode(last.getAsLong());
+                coastline.addNode(first.getAsLong());
                 fixed = true;
             }
         }
         else if((first.getLat() < bound.getMaxLat() && first.getLat() > bound.getMinLat()) && (last.getLat() < bound.getMaxLat() && last.getLat() > bound.getMinLat())){
             if( (first.getLon() < midLon && last.getLon() < midLon && first.getLat() > last.getLat()) ||
                     (first.getLon() > midLon && last.getLon() > midLon && first.getLat() < last.getLat())){
-                coastline.addNode(last.getAsLong());
+                coastline.addNode(first.getAsLong());
                 fixed = true;
             }
         }

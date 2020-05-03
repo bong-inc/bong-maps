@@ -12,13 +12,13 @@ public class OSMReaderTest {
     @Test
     public void destroyTest(){
         try {
-            OSMReader r = new OSMReader(getClass().getClassLoader().getResourceAsStream("bfst/skelby.osm"));
+            OSMReader r = new OSMReader(getClass().getClassLoader().getResourceAsStream("bfst/noCoastline.osm"));
             r.destroy();
 
             assertNull(r.getAddresses());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Assertions.fail();
         }
     }
 
@@ -36,19 +36,53 @@ public class OSMReaderTest {
             assertEquals(first.getLat(), last.getLat());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Assertions.fail();
         }
     }
 
     @Test
     public void noCoastlineTest() {
         try {
-            OSMReader r = new OSMReader(getClass().getClassLoader().getResourceAsStream("bfst/skelby.osm"));
+            OSMReader r = new OSMReader(getClass().getClassLoader().getResourceAsStream("bfst/noCoastline.osm"));
 
             assertEquals(1, r.getDrawableByType().get(Type.COASTLINE).size());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void PeninsulaEastTest() {
+        try {
+            OSMReader r = new OSMReader(getClass().getClassLoader().getResourceAsStream("bfst/PenEast.osm"));
+
+            LinePath coastline = (LinePath) r.getDrawableByType().get(Type.COASTLINE).get(0);
+            float[] coords = coastline.getCoords();
+            Node first = new Node(0, coords[0], coords[1]);
+            Node last = new Node(1, coords[coords.length-2], coords[coords.length-1]);
+            assertEquals(first.getLon(), last.getLon());
+            assertEquals(first.getLat(), last.getLat());
+
+        } catch (Exception e) {
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void PeninsulaSouthTest() {
+        try {
+            OSMReader r = new OSMReader(getClass().getClassLoader().getResourceAsStream("bfst/PenSouth.osm"));
+
+            LinePath coastline = (LinePath) r.getDrawableByType().get(Type.COASTLINE).get(0);
+            float[] coords = coastline.getCoords();
+            Node first = new Node(0, coords[0], coords[1]);
+            Node last = new Node(1, coords[coords.length-2], coords[coords.length-1]);
+            assertEquals(first.getLon(), last.getLon());
+            assertEquals(first.getLat(), last.getLat());
+
+        } catch (Exception e) {
+            Assertions.fail();
         }
     }
 
@@ -66,7 +100,61 @@ public class OSMReaderTest {
             assertEquals(first.getLat(), last.getLat());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void southernCoastlineCutoutTest(){
+        try {
+            OSMReader r = new OSMReader(getClass().getClassLoader().getResourceAsStream("bfst/SouthernCoastlineCutout.osm"));
+
+            LinePath coastline = (LinePath) r.getDrawableByType().get(Type.COASTLINE).get(0);
+            float[] coords = coastline.getCoords();
+            Node first = new Node(0, coords[0], coords[1]);
+            Node last = new Node(1, coords[coords.length-2], coords[coords.length-1]);
+
+            assertEquals(first.getLon(), last.getLon());
+            assertEquals(first.getLat(), last.getLat());
+
+        } catch (Exception e) {
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void westernCoastlineCutoutTest(){
+        try {
+            OSMReader r = new OSMReader(getClass().getClassLoader().getResourceAsStream("bfst/WesternCoastlineCutout.osm"));
+
+            LinePath coastline = (LinePath) r.getDrawableByType().get(Type.COASTLINE).get(0);
+            float[] coords = coastline.getCoords();
+            Node first = new Node(0, coords[0], coords[1]);
+            Node last = new Node(1, coords[coords.length-2], coords[coords.length-1]);
+
+            assertEquals(first.getLon(), last.getLon());
+            assertEquals(first.getLat(), last.getLat());
+
+        } catch (Exception e) {
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void easternCoastlineCutoutTest(){
+        try {
+            OSMReader r = new OSMReader(getClass().getClassLoader().getResourceAsStream("bfst/EasternCoastlineCutout.osm"));
+
+            LinePath coastline = (LinePath) r.getDrawableByType().get(Type.COASTLINE).get(0);
+            float[] coords = coastline.getCoords();
+            Node first = new Node(0, coords[0], coords[1]);
+            Node last = new Node(1, coords[coords.length-2], coords[coords.length-1]);
+
+            assertEquals(first.getLon(), last.getLon());
+            assertEquals(first.getLat(), last.getLat());
+
+        } catch (Exception e) {
+            Assertions.fail();
         }
     }
 
