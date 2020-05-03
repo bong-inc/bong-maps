@@ -483,6 +483,10 @@ Button:hover {
     -fx-font-size: 0.85em;
 }
 
+.welcomeButton:hover {
+    -fx-opacity: 0.7;
+}
+
 .instruction:hover {
     -fx-background-color: #f8f8f8;
 }
