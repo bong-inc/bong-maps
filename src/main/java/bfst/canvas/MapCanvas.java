@@ -379,7 +379,6 @@ public class MapCanvas extends Canvas {
         try {
             return trans.inverseTransform(x, y);
         } catch (NonInvertibleTransformException e) {
-            e.printStackTrace();
             return null;
         }
     }

@@ -2,7 +2,10 @@ package bfst.controllers;
 
 import bfst.canvas.PointOfInterest;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Alert.AlertType;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -55,7 +58,10 @@ public class PointsOfInterestController {
         try {
             FileController.saveBinary(file, PointsOfInterestController.getPointsOfInterest());
         } catch (IOException e) {
-            e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setHeaderText("Unable to save point of interest");
+            alert.setContentText("Please try again");
+            alert.showAndWait();
         }
     }
 

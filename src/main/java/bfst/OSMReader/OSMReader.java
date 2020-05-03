@@ -5,6 +5,9 @@ import bfst.canvas.*;
 import bfst.routeFinding.Edge;
 import bfst.routeFinding.Graph;
 import bfst.routeFinding.Street;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -150,7 +153,10 @@ public class OSMReader {
                 }
             }
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setHeaderText("An unexpected error occured while loading OSM file");
+            alert.setContentText("Please verify the file integrity, or attempt loading another file");
+            alert.showAndWait();
         }
 
         for (var entry : graph.getAdj().entrySet()) {
