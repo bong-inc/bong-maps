@@ -4,12 +4,16 @@
 package bfst;
 
 import java.io.IOException;
-
 import bfst.controllers.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -18,10 +22,13 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         App.primaryStage = primaryStage;
+
+
         Parent root = App.loadFXML("main");
         primaryStage.setTitle("Bong Maps");
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+        primaryStage.getIcons().add(new Image(this.getClass().getClassLoader().getResourceAsStream("bfst/views/bongIcon.png")));
         primaryStage.setScene(scene);
         primaryStage.show();
     }

@@ -7,7 +7,7 @@ public class InvalidAddressException extends Exception {
     /**
      *
      */
-    private static final long serialVersionUID = 4076268921174823753L;
+    private static final long serialVersionUID = 1L;
     private String addressString;
 
     public InvalidAddressException(String addressString) {

@@ -6,49 +6,40 @@ import bfst.OSMReader.Model;
 import bfst.OSMReader.Node;
 import bfst.OSMReader.OSMReader;
 import bfst.addressparser.Address;
-import bfst.addressparser.InvalidAddressException;
 import bfst.canvas.*;
 import bfst.exceptions.FileTypeNotSupportedException;
-import bfst.routeFinding.Edge;
 import bfst.routeFinding.Instruction;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class MainController {
     private Stage stage;
-    private Model model;
+    public Model model;
     private Point2D lastMouse;
     private ArrayList<Address> tempBest = new ArrayList<>();
     private boolean hasBeenDragged = false;
@@ -58,9 +49,8 @@ public class MainController {
     private Point2D destinationPoint;
     private Point2D startPoint;
     private Point2D currentPoint;
-    private FileController fileController;
     private PointsOfInterestController poiController;
-
+    private SearchController searchController;
 
     private ToggleGroup vehicleGroup = new ToggleGroup();
     @FXML private RadioButton carButton;
@@ -74,33 +64,45 @@ public class MainController {
     private MapCanvas canvas;
     private boolean shouldPan = true;
     private boolean showStreetOnHover = false;
-    private String tempQuery = "";
 
-    public MainController(Stage primaryStage){
+    public MainController(Stage primaryStage) {
         this.stage = primaryStage;
-        this.fileController = new FileController();
+        new FileController();
         this.poiController = new PointsOfInterestController();
+        this.searchController = new SearchController();
     }
 
-    public void setDefaultMap(){
+    public void setMapBinaryFromPath(String mapName) {
         try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/copenhagen.bin");
+            InputStream is = getClass().getClassLoader().getResourceAsStream("bfst/" + mapName + ".bin");
             setModelFromBinary(is);
-        }catch (Exception e){
-            System.out.println("Failed to set default map");
+        } catch (Exception e){
+            System.out.println("Failed to load map of " + mapName);
         }
+    } 
+    
+    public void setDefaultMap(){
+        setMapBinaryFromPath("copenhagen");
     }
+
+    @FXML private VBox welcomeOverlay;
+    @FXML private VBox mainView;
+    @FXML private Button welcomeDenmark;
+    @FXML private Button welcomeCopenhagen;
+    @FXML private Button welcomeCustom;
 
     @FXML private StackPane stackPane;
     @FXML private MapCanvasWrapper mapCanvasWrapper;
+    @FXML private MenuBar menu;
     @FXML private MenuItem loadClick;
     @FXML private MenuItem loadDefaultMap;
+    @FXML private MenuItem loadDenmark;
     @FXML private MenuItem saveAs;
     @FXML private MenuItem devtools;
     @FXML private MenuItem about;
     @FXML private MenuItem help;
     @FXML private TextField searchField;
-    @FXML private VBox suggestions;
+    @FXML private VBox suggestionsContainer;
     @FXML private Menu myPoints;
     @FXML private HBox pinInfo;
     @FXML private Label pointAddress;
@@ -130,16 +132,21 @@ public class MainController {
     
     @FXML
     public void initialize() {
+
+        mainView.setDisable(true);
+        mainView.setFocusTraversable(false);
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> {
             setDefaultMap();
 
             poiController.loadPointsOfInterest();
-            for (PointOfInterest poi : poiController.getPointsOfInterest()) {
+            for (PointOfInterest poi : PointsOfInterestController.getPointsOfInterest()) {
                 addItemToMyPoints(poi);
             }
         });
 
-        loadClick.setOnAction(this::loadFileOnClick);
+        loadClick.setOnAction((ActionEvent e) -> {
+            loadFileOnClick();
+        });
 
         canvas = mapCanvasWrapper.mapCanvas;
 
@@ -176,6 +183,27 @@ public class MainController {
             setDefaultMap();
         });
 
+        loadDenmark.setOnAction(e -> {
+            setMapBinaryFromPath("denmark");
+        });
+
+        welcomeDenmark.setOnAction(e -> {
+            setMapBinaryFromPath("denmark");
+            closeWelcomeOverlay();
+        });
+
+        welcomeCopenhagen.setOnAction(e -> {
+            closeWelcomeOverlay();
+        });    
+
+        welcomeCustom.setOnAction(e -> {
+            if(loadFileOnClick()) {
+                closeWelcomeOverlay();
+            }
+        });
+
+      
+
         saveAs.setOnAction(this::saveFileOnClick);
 
         canvas.setOnScroll(e -> {
@@ -190,42 +218,6 @@ public class MainController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 openDevTools();
-            }
-        });
-
-        searchField.focusedProperty().addListener((obs,oldVal,newVal) -> {
-            if (newVal) {
-                searchField.setText(tempQuery);
-                searchField.positionCaret(searchField.getText().length());
-                KeyEvent press = new KeyEvent(searchField,searchField,KeyEvent.KEY_PRESSED, "", "", KeyCode.RIGHT, false, false, false, false);
-                searchField.fireEvent(press);
-                searchField.positionCaret(searchField.getText().length());
-            }
-        });
-
-        searchField.textProperty().addListener((obs,oldVal,newVal) -> {
-            hideAddPOIButton();
-            if (searchField.isFocused()) setTempQuery(searchField.getText().trim());
-            if(searchField.getText().length() == 0) suggestions.getChildren().clear();
-            canvas.nullPin();
-        });
-
-        searchField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.TAB) {
-                event.consume();
-            }
-            if (event.getCode() == KeyCode.DOWN) {
-                if(suggestions.getChildren().size() > 0) {
-                    suggestions.getChildren().get(0).requestFocus();
-                }
-                event.consume();
-            }
-        });
-
-        searchField.setOnAction(e -> {
-            if(suggestions.getChildren().size() > 0) {
-                Address a = (Address) suggestions.getChildren().get(0).getUserData();
-                goToAddress(a);
             }
         });
 
@@ -257,18 +249,18 @@ public class MainController {
             openHelp();
         });
 
-        setAsDestination.setTooltip(new Tooltip("Set as destination"));
+        setAsDestination.setTooltip(setupTooltip("Set as destination"));
         setAsDestination.setOnAction(e -> {
-            canvas.clearRoute();
+            canvas.getRouteController().clearRoute();
             destinationAddress = currentAddress;
             destinationPoint = currentPoint;
             canvas.setRouteDestination(destinationPoint);
             showDirectionsMenu();
         });
 
-        setAsStart.setTooltip(new Tooltip("Set as start"));
+        setAsStart.setTooltip(setupTooltip("Set as start"));
         setAsStart.setOnAction(e -> {
-            canvas.clearRoute();
+            canvas.getRouteController().clearRoute();
             startAddress = currentAddress;
             startPoint = currentPoint;
             canvas.setRouteOrigin(startPoint);
@@ -277,7 +269,7 @@ public class MainController {
 
         pinInfoClose.setOnAction(e -> {
             canvas.nullPin();
-            hidePinMenu();
+            hidePinInfo();
         });
 
         findRoute.setOnAction(e -> {
@@ -285,15 +277,18 @@ public class MainController {
                 findRouteFromGivenInputs();
                 showDirectionsMenu();
             } catch (Exception ex) {
+                routeInfo.setVisible(false);
+                routeInfo.setManaged(false);
                 noRouteFound.setVisible(true);
                 noRouteFound.setManaged(true);
+                canvas.getRouteController().clearRoute();
                 ex.printStackTrace();
             }
         });
 
         canvas.setOnMouseMoved(e -> {
             if (showStreetOnHover) {
-                showStreetNearMouse(e);
+                canvas.showStreetNearMouse(this, e);
             }
 
         });
@@ -304,15 +299,104 @@ public class MainController {
 
         setRouteOptionButtons();
 
+        searchField.focusedProperty().addListener((obs,oldVal,newVal) -> {
+            if (newVal) {
+                searchField.setText(searchController.getCurrentQuery());
+            }
+        });
+
+        searchField.textProperty().addListener((obs,oldVal,newVal) -> {
+            hidePinInfo();
+            if (searchField.isFocused()) setCurrentQuery(searchField.getText().trim());
+            if (searchField.getText().length() == 0) suggestionsContainer.getChildren().clear();
+            canvas.nullPin();
+        });
+
+        searchField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.TAB) {
+                event.consume();
+            }
+            if (event.getCode() == KeyCode.DOWN) {
+                if(suggestionsContainer.getChildren().size() > 0) {
+                    suggestionsContainer.getChildren().get(0).requestFocus();
+                }
+                event.consume();
+            }
+        });
+
+        searchField.setOnAction(e -> {
+            if(suggestionsContainer.getChildren().size() > 0) {
+                SuggestionButton b = (SuggestionButton) suggestionsContainer.getChildren().get(0);
+                Address a = b.getAddress();
+                goToAddress(a);
+            }
+        });
     }
 
-    private void goToAddress(Address a) {
-        setTempQuery(a.toString());
+    private Tooltip setupTooltip(String message){
+        Tooltip tip = new Tooltip("Set as start");
+        tip.setShowDelay(Duration.ZERO);
+        return tip;
+    }
+
+    private void closeWelcomeOverlay() {
+        mainView.setDisable(false);
+        mainView.setFocusTraversable(true);
+        welcomeOverlay.setVisible(false);
+    }
+
+    public void setCurrentQuery(String newQuery){
+        searchController.setCurrentQuery(newQuery);
+        tempBest = searchController.getBestMatches(newQuery, model.getAddresses(), 5);
+        updateSuggestionsContainer();
+    }
+
+    public void updateSuggestionsContainer(){
+        ArrayList<Address> best = tempBest;
+        ArrayList<SuggestionButton> bs = new ArrayList<>();
+        for (Address address : best) {
+            String addressString = address.toString();
+
+                SuggestionButton b = setUpSuggestionButton(address, addressString);
+                bs.add(b);
+        }
+        suggestionsContainer.getChildren().clear();
+        for (SuggestionButton b : bs) suggestionsContainer.getChildren().add(b);
+    }
+
+    private SuggestionButton setUpSuggestionButton(Address address, String addressString) {
+        SuggestionButton b = new SuggestionButton(address);
+        b.setOnAction(e -> {
+            goToAddress(b.getAddress());
+        });
+        b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.TAB) {
+                setCurrentQuery(((SuggestionButton) event.getSource()).getAddress().toString());
+                searchField.requestFocus();
+                searchField.positionCaret(searchField.getText().length());
+                event.consume();
+            }
+            if (event.getCode() == KeyCode.A && event.isControlDown()) {
+                searchField.requestFocus();
+            }
+        });
+        b.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                Address a = b.getAddress();
+                searchField.setText(a.toString());
+                peekAddress(a);
+            }
+        });
+        return b;
+    }
+
+    public void goToAddress(Address a) {
+        setCurrentQuery(a.toString());
         searchField.setText(a.toString());
         searchField.positionCaret(searchField.getText().length());
         canvas.zoomToPoint(1, a.getLon(),  a.getLat());
         canvas.setPin(a.getLon(), a.getLat());
-        suggestions.getChildren().clear();
+        suggestionsContainer.getChildren().clear();
         showPinMenu();
     }
 
@@ -348,7 +432,7 @@ public class MainController {
         shortButton.setSelected(true);
 
         cancelRoute.setOnAction(e -> {
-            canvas.clearRoute();
+            canvas.getRouteController().clearRoute();
             startAddress = null;
             destinationAddress = null;
             destinationPoint = null;
@@ -358,56 +442,20 @@ public class MainController {
         });
     }
 
-    private void showStreetNearMouse(MouseEvent e) {
-        try {
-            Point2D translatedCoords = canvas.getTrans().inverseTransform(e.getX(), e.getY());
-            Node nearestNode = (Node) model.getRoadKDTree().nearestNeighbor(translatedCoords, "Walk");
-            long nodeAsLong = nearestNode.getAsLong();
-            Edge streetEdge = model.getGraph().getAdj().get(nodeAsLong).get(0);
-            double bestAngle = Double.POSITIVE_INFINITY;
-
-
-            Point2D mouseRelativeToNodeVector = new Point2D(translatedCoords.getX() - nearestNode.getLon(), translatedCoords.getY() - nearestNode.getLat());
-
-            for (Edge edge : model.getGraph().getAdj().get(nearestNode.getAsLong())) {
-                Node otherNode = edge.otherNode(nodeAsLong);
-                Point2D otherNodeRelativeToNodeVector = new Point2D(otherNode.getLon() - nearestNode.getLon(), otherNode.getLat() - nearestNode.getLat());
-
-                double angle = Math.acos((mouseRelativeToNodeVector.getX() * otherNodeRelativeToNodeVector.getX() + mouseRelativeToNodeVector.getY() * otherNodeRelativeToNodeVector.getY()) / (mouseRelativeToNodeVector.magnitude() * otherNodeRelativeToNodeVector.magnitude()));
-
-                if (angle < bestAngle) {
-                    bestAngle = angle;
-                    streetEdge = edge;
-                }
-            }
-
-            String streetName = streetEdge.getStreet().getName();
-            if (streetName == null) {
-                streetName = "Unnamed street";
-            }
-            canvas.repaint(25);
-            canvas.drawEdge(streetEdge);
-
-            if (canvas.getShowStreetNodeCloseToMouse()) {
-                canvas.drawNode(nearestNode);
-            }
-
-            canvas.drawStreetName(translatedCoords, streetName);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
     private void findRouteFromGivenInputs() throws Exception {
         RadioButton selectedVehicleButton = (RadioButton) vehicleGroup.getSelectedToggle();
         String vehicle = (String) selectedVehicleButton.getUserData();
         RadioButton selectedShortFastButton = (RadioButton) shortFastGroup.getSelectedToggle();
         boolean shortestRoute = selectedShortFastButton.getText().equals("Shortest");
 
-        long startRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(startPoint, vehicle)).getAsLong();
-        long destinationRoadId = ((Node) model.getRoadKDTree().nearestNeighbor(destinationPoint, vehicle)).getAsLong(); //TODO refactor as method
+        Node startNode = ((Node) model.getRoadKDTree().nearestNeighborForEdges(startPoint, vehicle));
+        Node destinationNode = ((Node) model.getRoadKDTree().nearestNeighborForEdges(destinationPoint, vehicle));
+        canvas.setStartDestPoint(startNode, destinationNode);
 
-        canvas.setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
+        long startRoadId = startNode.getAsLong();
+        long destinationRoadId = destinationNode.getAsLong();
+
+        canvas.getRouteController().setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute, true, true);
 
     }
 
@@ -419,6 +467,7 @@ public class MainController {
             helpStage.setTitle("Help");
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+            helpStage.getIcons().add(new Image(this.getClass().getClassLoader().getResourceAsStream("bfst/views/bongIcon.png")));
             helpStage.setScene(scene);
             helpStage.show();
         } catch (Exception ex) {
@@ -434,6 +483,7 @@ public class MainController {
             aboutStage.setTitle("About");
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+            aboutStage.getIcons().add(new Image(this.getClass().getClassLoader().getResourceAsStream("bfst/views/bongIcon.png")));
             aboutStage.setScene(scene);
             aboutStage.show();
         } catch (Exception ex) {
@@ -451,6 +501,7 @@ public class MainController {
             devStage.setTitle("dev tools");
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+            devStage.getIcons().add(new Image(this.getClass().getClassLoader().getResourceAsStream("bfst/views/bongIcon.png")));
             devStage.setScene(scene);
             devStage.show();
         } catch (Exception ex) {
@@ -548,36 +599,28 @@ public class MainController {
 
     }
 
-    private SVGPath createPath(String svgString) {
-        SVGPath path = new SVGPath();
-        path.getStyleClass().add("icon");
-        path.setContent(svgString);
-        return path;
-    }
-
-
-
     public void setPOIButton() {
         AtomicBoolean POIExists = new AtomicBoolean(false);
 
         if (poiController.POIContains(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY())) {
             POIExists.set(true);
-            POIButton.setTooltip(new Tooltip("Remove point of interest"));
+
+            POIButton.setTooltip(setupTooltip("Remove point of interest"));
             POIButton.getStyleClass().removeAll("POIButton-add");
             POIButton.getStyleClass().add("POIButton-remove");
         } else {
             POIExists.set(false);
-            POIButton.setTooltip(new Tooltip("Add to points of interest"));
+            POIButton.setTooltip(setupTooltip("Add to points of interest"));
             POIButton.getStyleClass().removeAll("POIButton-remove");
             POIButton.getStyleClass().add("POIButton-add");
         }
 
         POIButton.setOnAction(e -> {
             if (!POIExists.get()) {
-                poiController.addPointOfInterest(currentPoint);
+                poiController.showAddPointDialog(currentPoint);
                 myPoints.getItems().clear();
                 poiController.loadPointsOfInterest();
-                for (PointOfInterest poi : poiController.getPointsOfInterest()) {
+                for (PointOfInterest poi : PointsOfInterestController.getPointsOfInterest()) {
                     addItemToMyPoints(poi);
                 }
 
@@ -587,7 +630,7 @@ public class MainController {
             } else {
                 poiController.removePOI(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
                 myPoints.getItems().clear();
-                for (PointOfInterest poi : poiController.getPointsOfInterest()) {
+                for (PointOfInterest poi : PointsOfInterestController.getPointsOfInterest()) {
                     addItemToMyPoints(poi);
                 }
                 POIExists.set(false);
@@ -596,89 +639,27 @@ public class MainController {
         });
     }
 
-    private void query(String query) {
-        ArrayList<Address> addresses = model.getAddresses();
-        Address inputAdress = null;
-        query = query.toLowerCase();
-        try {
-            inputAdress = Address.parse(query);
-            int index = Collections.binarySearch(addresses, inputAdress);
-            tempBest = new ArrayList<>();
-            for (int i = 0; i < 5; i++){
-                if(index < 0){
-                    tempBest.add(addresses.get(-index-1+i));
-                } else {
-                    tempBest.add(addresses.get(index+i));
-                }
-            }
-        } catch (InvalidAddressException e) {
-            System.out.println("invalid address");
-        }
-    }
-
-    public void setTempQuery(String newQuery){
-        tempQuery = newQuery;
-        query(tempQuery);
-        reGenSuggestions();
-    }
-
-    public void reGenSuggestions(){
-        ArrayList<Address> best = tempBest;
-        ArrayList<javafx.scene.Node> bs = new ArrayList<>();
-        for (Address address : best) {
-            String addressString = address.toString();
-
-                Button b = new Button();
-                b.setUserData(address);
-
-                b.setText(addressString);
-                b.getStyleClass().add("suggestion");
-                b.setOnAction(e -> {
-                    goToAddress((Address) b.getUserData());
-                });
-                b.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                    if (event.getCode() == KeyCode.TAB) {
-                        setTempQuery(((Address) ((Button) event.getSource()).getUserData()).toString());
-                        searchField.requestFocus();
-                        searchField.positionCaret(searchField.getText().length());
-                        event.consume();
-                    }
-                    if (event.getCode() == KeyCode.A && event.isControlDown()) {
-                        searchField.requestFocus();
-                    }
-                });
-                b.focusedProperty().addListener((obs, oldVal, newVal) -> {
-                    if (newVal) {
-                        Address a = (Address) b.getUserData();
-                        searchField.setText(a.toString());
-                        peekAddress(a);
-                    }
-                    
-                });
-                bs.add(b);
-        }
-        updateSuggestions(bs);
-    }
-
-    public void updateSuggestions(ArrayList<javafx.scene.Node> bs){
-        suggestions.getChildren().clear();
-        for (javafx.scene.Node b : bs) suggestions.getChildren().add(b);
-    }
-
     public void showPinMenu() {
         setPOIButton();
         Node unprojected = MercatorProjector.unproject(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
         pointCoords.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
 
-
-        currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
-        currentPoint = new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
-        pointAddress.setText(currentAddress.toString());
-        double distance = distance(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
-        System.out.println("distance: " + distance);
-        if (distance > 50) {
-            pointAddress.setText("No nearby address");
+        if (model != null && model.getAddressKDTree() != null && canvas.getCurrentPin() != null) {
+            currentAddress = (Address) model.getAddressKDTree().nearestNeighbor(new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY()));
         }
+            currentPoint = new Point2D(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY());
+
+        if (currentAddress == null) {
+            pointAddress.setText("No nearby address");
+        } else {
+            double distance = distanceInMeters(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY(), currentAddress.getLon(), currentAddress.getLat());
+            if (distance > 80) {
+                pointAddress.setText("No nearby address");
+            } else {
+                pointAddress.setText(currentAddress.toString());
+            }
+        }
+
 
         pinInfo.setTranslateY(10);
         pinInfo.setVisible(true);
@@ -704,9 +685,10 @@ public class MainController {
             findRoute.setDisable(false);
         }
 
-        if (canvas.getDescription() != null) {
+        ArrayList<Instruction> instructions;
+        if ((instructions = canvas.getRouteController().getInstructions()) != null) {
             directions.getChildren().clear();
-            for (Instruction instruction : canvas.getDescription()) {
+            for (Instruction instruction : instructions) {
                 Button button = new Button(instruction.getInstruction());
                 button.getStyleClass().add("instruction");
                 button.setOnAction(e -> {
@@ -714,11 +696,11 @@ public class MainController {
                 });
                 directions.getChildren().add(button);
             }
-            routeDistance.setText(canvas.distanceString());
-            routeTime.setText(canvas.timeString());
+            routeDistance.setText(canvas.getRouteController().distanceString());
+            routeTime.setText(canvas.getRouteController().timeString());
         }
 
-        if (canvas.getRoute() != null) {
+        if (canvas.getRouteController().getRoute() != null) {
             routeInfo.setVisible(true);
             routeInfo.setManaged(true);
         } else {
@@ -731,7 +713,7 @@ public class MainController {
 
     private void setStartOrDestinationLabel(Address address, Point2D point, Label label) {
         if (address != null) {
-            if (dist(point, address.getCentroid()) > 50) {
+            if (dist(point, address.getCentroid()) > 80) { // TODO should this use distanceInMeters() ?
                 Node unprojected = MercatorProjector.unproject(address.getCentroid().getX(), address.getCentroid().getY());
                 label.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
             } else {
@@ -742,34 +724,15 @@ public class MainController {
         }
     }
 
-    private double distance(float pinX, float pinY, float addressX, float addressY) {
-        System.out.println("clicked: " + pinX + " " +pinY);
-        System.out.println("address: " + addressX + " " + addressY);
+    private double distanceInMeters(float pinX, float pinY, float addressX, float addressY) {
         double meterMultiplier = - (MercatorProjector.unproject(pinX, pinY).getLat()) / 100;
-        System.out.println("multiplier: " + meterMultiplier);
         double distance = Math.sqrt(Math.pow(pinX - addressX, 2) + Math.pow(pinY - addressY, 2));
         return distance * meterMultiplier;
     }
 
-    public void hidePinMenu() {
+    public void hidePinInfo(){
         pinInfo.setVisible(false);
     }
-
-    public void hideAddPOIButton(){
-        pinInfo.setVisible(false);
-    }
-
-    public int[] matches(String query, String address){
-        String regex = ".*?(?<match>" + query.toLowerCase() + ").*";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher m = pattern.matcher(address.toLowerCase());
-        if (m.find() && m.group("match") != null && query.length() > 0) {
-            return new int[]{m.start("match"), m.end("match")};
-        } else {
-            return null;
-        }
-    }
-
 
     public void saveFileOnClick(ActionEvent e){
         try {
@@ -779,7 +742,7 @@ public class MainController {
             fileChooser.setInitialFileName("myMap");
             File file = fileChooser.showSaveDialog(stage);
             if(file != null){
-                fileController.saveBinary(file, model);
+                FileController.saveBinary(file, model);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Saved successfully");
                 alert.showAndWait();
@@ -792,7 +755,7 @@ public class MainController {
         }
     }
 
-    public void loadFileOnClick(ActionEvent e){
+    public boolean loadFileOnClick(){
         try {
             List<String> acceptedFileTypes = new ArrayList<>();
             acceptedFileTypes.add("*.bin");
@@ -806,18 +769,23 @@ public class MainController {
             File file = fileChooser.showOpenDialog(stage);
             if (file != null) {
                 loadFile(file);
-            }
+                return true;
+            } 
+            return false;
         } catch(FileTypeNotSupportedException exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("File type not supported: " + exception.getFileType());
             alert.showAndWait();
+            return false;
         } catch (NullPointerException exception){
             exception.printStackTrace();
+            return false;
         } catch (Exception exception) {
             Alert alert = new Alert((Alert.AlertType.ERROR));
             alert.setHeaderText("Something unexpected happened, please try again");
             alert.showAndWait();
             exception.printStackTrace();
+            return false;
         }
     }
 
@@ -846,7 +814,7 @@ public class MainController {
                 canvas.setTypesToBeDrawn(list);
                 break;
             case ".zip":
-                loadFile(fileController.loadZip(file));
+                loadFile(FileController.loadZip(file));
                 break;
             default:
                 is.close();
@@ -857,7 +825,7 @@ public class MainController {
 
     private void setModelFromBinary(InputStream is) throws IOException, ClassNotFoundException {
         long time = -System.nanoTime();
-        this.model = (Model) fileController.loadBinary(is);
+        this.model = (Model) FileController.loadBinary(is);
         mapCanvasWrapper.mapCanvas.setModel(model);
 
         time += System.nanoTime();
@@ -875,6 +843,10 @@ public class MainController {
         canvas.setRouteDestination(destinationPoint);
         showDirectionsMenu();
         canvas.repaint(32);
+    }
+
+    public MapCanvas getCanvas(){
+        return canvas;
     }
 
 }

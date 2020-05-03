@@ -1,13 +1,12 @@
 package bfst.OSMReader;
 
 import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WayTest {
 
     @Test
-    public void WayTest(){
+    public void wayTest(){
         Node nd1 = new Node(1, 10, 10);
         Node nd2 = new Node(2, 20, 20);
         Node nd3 = new Node(3, 99, 22);
@@ -101,7 +100,6 @@ public class WayTest {
 
     @Test
     public void MergeTestUnconnected(){
-        Way test;
         Way w1 = new Way();
         w1.addNode(nd1.getAsLong());
         w1.addNode(nd2.getAsLong());
@@ -111,7 +109,7 @@ public class WayTest {
 
         String message = "";
         try {
-            test = Way.merge(w1, w2);
+            Way.merge(w1, w2);
         } catch (Exception e){
             message = e.getMessage();
         }

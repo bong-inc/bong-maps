@@ -48,6 +48,12 @@ dependencies {
     // Use JUnit test framework
     //testImplementation 'junit:junit:4.12'
     testImplementation('org.junit.jupiter:junit-jupiter:5.6.0')
+
+    implementation 'org.openjfx:javafx-fxml:11.0.2'
+    implementation 'org.openjfx:javafx-base:11.0.2'
+    implementation 'org.openjfx:javafx-graphics:11.0.2:win'
+    implementation 'org.openjfx:javafx-graphics:11.0.2:linux'
+    implementation 'org.openjfx:javafx-graphics:11.0.2:mac'
 }
 
 test {

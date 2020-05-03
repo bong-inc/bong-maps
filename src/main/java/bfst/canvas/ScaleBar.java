@@ -3,8 +3,6 @@ package bfst.canvas;
 import bfst.OSMReader.MercatorProjector;
 import bfst.OSMReader.Node;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class ScaleBar implements Drawable {
@@ -55,15 +53,21 @@ public class ScaleBar implements Drawable {
         }
     }
 
+    public double getBarLength() {
+        return barLength;
+    }
+
+    public String getBarShowing() {
+        return barShowing;
+    }
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
         gc.beginPath();
         gc.moveTo(placementX, placementY - (5*scale));
         gc.lineTo(placementX, placementY);
         gc.lineTo(placementX-barLength, placementY);
         gc.lineTo(placementX-barLength, placementY - (5*scale));
-        gc.setStroke(Color.BLACK);
         gc.setLineWidth(2*scale);
         gc.stroke();
         gc.setFont(new Font(Font.getDefault().toString(), 12 * scale));

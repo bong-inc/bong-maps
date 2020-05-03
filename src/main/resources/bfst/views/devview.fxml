@@ -30,11 +30,14 @@
     <TextField fx:id="startPoint" promptText="Start point (node)"/>
     <TextField fx:id="endPoint" promptText="End point (node)"/>
     <CheckBox fx:id="shortestRoute">Shortest route (off means fastest)</CheckBox>
+    <CheckBox fx:id="useBidirectional">Use bidirectional</CheckBox>
+    <CheckBox fx:id="useAStar">Use A*</CheckBox>
     <Button fx:id="showDijkstra">Show dijkstra</Button>
     <Button fx:id="findRoute">Find route</Button>
     <Button fx:id="clearRoute">Clear route</Button>
     <Button fx:id="routeDescription">Print route description</Button>
     <Button fx:id="printPOI">Print points of interest</Button>
     <CheckBox fx:id="showClosestNode">Show closest road-node</CheckBox>
+    <CheckBox fx:id="showFoundRoadNode">Show found road node</CheckBox>
   </FlowPane>
 </VBox>

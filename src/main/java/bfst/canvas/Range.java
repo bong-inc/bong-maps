@@ -2,23 +2,36 @@ package bfst.canvas;
 
 import java.io.Serializable;
 import java.util.Arrays;
-
 import bfst.util.Geometry;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Range implements Serializable {
-  public float minX, minY, maxX, maxY;
+
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
+  private float minX, minY, maxX, maxY;
 
   public Range(float minX, float minY, float maxX, float maxY) {
-    this.minX = minX;
-    this.minY = minY;
-    this.maxX = maxX;
-    this.maxY = maxY;
+    if (minX < maxX) {
+      this.minX = minX;
+      this.maxX = maxX;
+    } else {
+      this.minX = maxX;
+      this.maxX = minX;
+    }
+    if (minY < maxY) {
+      this.minY = minY;
+      this.maxY = maxY;
+    } else {
+      this.minY = maxY;
+      this.maxY = minY;
+    }
   }
 
-  public void draw(GraphicsContext gc, double invertedZoomFactor){
+  public void draw(Drawer gc, double invertedZoomFactor) {
     gc.setStroke(Color.BLUE);
     gc.setLineWidth(invertedZoomFactor);
     gc.strokeRect(minX, minY, maxX-minX, maxY-minY);
@@ -26,11 +39,11 @@ public class Range implements Serializable {
   }
 
   public boolean isEnclosedBy(Range that){
-    return this.minX < that.minX && this.maxX > that.maxX && this.minY < that.minY && this.maxY > that.maxY;
+    return that.minX <= this.minX && that.maxX >= this.maxX && that.minY <= this.minY && that.maxY >= this.maxY;
   }
 
   public boolean overlapsWith(Range that) {
-    return !(that.minX > this.maxX || this.minX > that.maxX || that.minY > this.maxY || this.minY > that.maxY);
+    return !(that.minX >= this.maxX || this.minX >= that.maxX || that.minY >= this.maxY || this.minY >= that.maxY);
   }
 
   public double distanceToPoint(Point2D point){
@@ -50,5 +63,21 @@ public class Range implements Serializable {
   public Point2D getCentroid(){
     return new Point2D((this.maxX+this.minX)/2, (this.maxY+this.minY)/2);
   }
-  
+
+  public float getMinX() {
+    return minX;
+  }
+
+  public float getMinY() {
+    return minY;
+  }
+
+  public float getMaxX() {
+    return maxX;
+  }
+
+  public float getMaxY() {
+    return maxY;
+  }
+
 }

@@ -5,6 +5,10 @@ import java.util.ArrayList;
 
 public class Street implements Serializable {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private boolean onewayCar = false;
     private boolean bicycle = false;
     private boolean walking = false;
@@ -59,11 +63,8 @@ public class Street implements Serializable {
                         case "living_street":
                         case "service":
                         case "track":
-                            walking = true;
-                            bicycle = true;
-                            car = true;
-                            break;
                         case "unclassified":
+                            walking = true;
                             bicycle = true;
                             car = true;
                             break;

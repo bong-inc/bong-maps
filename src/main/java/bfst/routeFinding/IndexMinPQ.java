@@ -1,4 +1,5 @@
 package bfst.routeFinding;
+//Code is a modified version of the algs4-implmentation.
 
 import java.util.HashMap;
 import java.util.NoSuchElementException;
@@ -36,10 +37,6 @@ public class IndexMinPQ<Key extends Comparable<Key>>  {
         return qp.containsKey(i);
     }
 
-    public long size() {
-        return n;
-    }
-
     public void insert(long i, Key key) {
         if (contains(i)) throw new IllegalArgumentException("index is already in the priority queue");
         n++;
@@ -54,7 +51,6 @@ public class IndexMinPQ<Key extends Comparable<Key>>  {
         long min = pq.get(1L);
         exch(1, n--);
         sink(1);
-        assert min == pq.get(n+1);
         qp.remove(min);
         keys.remove(min);
         return min;
@@ -91,11 +87,14 @@ public class IndexMinPQ<Key extends Comparable<Key>>  {
     private void sink(long k) {
         while (2*k <= n) {
             long j = 2*k;
-            if (j < n && greater(j, j+1)) j++;
-            if (!greater(k, j)) break;
+            if (j < n && greater(j, j+1)) {
+                j++;
+            }
+            if (!greater(k, j)) {
+                break;
+            }
             exch(k, j);
             k = j;
         }
     }
-
 }

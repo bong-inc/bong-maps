@@ -1,15 +1,16 @@
 package bfst.routeFinding;
 
 import bfst.OSMReader.Node;
-import bfst.OSMReader.SortedArrayList;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeMap;
 
 public class Graph implements Serializable {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
     public TreeMap<Long, ArrayList<Edge>> getAdj() {
         return adj;
@@ -67,16 +68,6 @@ public class Graph implements Serializable {
             list.add(edge);
             adj.put(w, list);
         }
-    }
-
-    public Iterable<Edge> edges() {
-        ArrayList<Edge> list = new ArrayList<>();
-
-        for (Map.Entry<Long, ArrayList<Edge>> entry : adj.entrySet()) {
-            list.addAll(entry.getValue());
-        }
-
-        return list;
     }
 
 }

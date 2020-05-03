@@ -1,23 +1,25 @@
 package bfst.addressparser;
 
 import bfst.canvas.CanvasElement;
-import bfst.OSMReader.Node;
+import bfst.canvas.Drawer;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
 import java.util.regex.*;
 
 public class Address extends CanvasElement implements Serializable, Comparable<Address> {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
     private final String street, house, postcode, city, municipality;
 
-    //public final int postcode;
     private final float lat, lon;
     private Range boundingBox;
 
-    private Address(
+    public Address(
             String _street,
             String _house,
             String _postcode,
@@ -37,21 +39,25 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
         } else {
             house = _house;
         }
+
         if (_postcode != null) {
             postcode = _postcode.intern();
         } else {
             postcode = _postcode;
         }
+
         if (_city !=  null) {
             city = _city.intern();
         } else {
             city = _city;
         }
+
         if (_municipality != null) {
             municipality = _municipality.intern();
         } else {
             municipality = _municipality;
         }
+
         lat = _lat;
         lon = _lon;
 
@@ -67,26 +73,8 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
         );
     }
 
-    public String toDetailedString() {
-        return (
-                "\nStreet: " +
-                        street +
-                        "\nHouse: " +
-                        house +
-                        "\nPostcode: " +
-                        postcode +
-                        "\nCity: " +
-                        city
-        );
-    }
-    //TODO municipality in regex
     static String regex =
-    "^ *(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1,2}(?!\\d)))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\d{1,3}))\\.?)?(?:[\\.|,| ])*(?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\.]+[a-zæøåÆØÅ\\-\\. ]+[a-zæøåÆØÅ\\-\\.]+)? *$";
-
-            // Old regex
-            // "^(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1}))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\w?\\d{1,3}))\\.?)?,?(?: (?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\. ]+))?$";
-    
-
+    "^ *(?<street>(?:\\d+\\. ?)?[a-zæøåÆØÅé\\-\\. ]+(?<! ))(?: (?<house>[\\da-z]+(?:\\-\\d)?)?)?,?(?: (?<floor>(?:st)|(?:\\d{1,2}(?!\\d)))?(?:\\.|,| )? ?)?(?:(?<side>(?:tv|th|mf)|(?:\\d{1,3}))\\.?)?(?:[\\.|,| ])*(?<postcode>\\d{4})? ?(?<city>[a-zæøåÆØÅ\\-\\.]+[a-zæøåÆØÅ\\-\\. ]*?[a-zæøåÆØÅ\\-\\.]*)? *$";
     static Pattern pattern = Pattern.compile(
             regex,
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE
@@ -100,8 +88,6 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
                     .house(matcher.group("house"))
                     .postcode(matcher.group("postcode"))
                     .city(matcher.group("city"))
-                    //TODO add municipality functionality
-                    //.municipality(matcher.group("municipality"))
                     .build();
         } else {
             throw new InvalidAddressException(input);
@@ -110,15 +96,28 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
 
     @Override
     public int compareTo(Address that) {
-        // street house floor side postcode city municipality
+        // street house floor side postcode city
+        
+        String this_street = (this.street != null) ? this.street.toLowerCase() : null;
+        String that_street = (that.street != null) ? that.street.toLowerCase() : null;
+        if(this_street == null && that_street == null) return 0;
+        if(this_street == null) return -1;
+        if(that_street == null) return 1;
+        if(0 != this_street.compareTo(that_street)) return this_street.compareTo(that_street);
 
-        if(!this.street.toLowerCase().equals(that.street.toLowerCase())){
-            return this.street.toLowerCase().compareTo(that.street.toLowerCase());
-        } else if(this.house != null && that.house != null) {
-            return this.house.toLowerCase().compareTo(that.house.toLowerCase());
-        } else {
-            return 0;
-        }
+        String this_house = (this.house != null) ? this.house.toLowerCase() : null;
+        String that_house = (that.house != null) ? that.house.toLowerCase() : null;
+        if(this_house == null && that_house == null) return 0;
+        if(this_house == null) return -1;
+        if(that_house == null) return 1;
+        if(0 != this_house.compareTo(that_house)) return this_house.compareTo(that_house);
+
+        String this_city = (this.city != null) ? this.city.toLowerCase() : null;
+        String that_city = (that.city != null) ? that.city.toLowerCase() : null;
+        if(this_city == null && that_city == null) return 0;
+        if(this_city == null) return -1;
+        if(that_city == null) return 1;
+        return this_city.compareTo(that_city);
     }
 
     public float getLat() {
@@ -164,12 +163,12 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
 
     }
 
     public static class Builder {
-        private String street, house, postcode, city, municipality, floor, side;
+        private String street, house, postcode, city, municipality;
         private float lat, lon;
         private boolean isEmpty = true;
 
@@ -189,12 +188,10 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
         }
 
         public Builder floor(String _floor) {
-            floor = _floor;
             return this;
         }
 
         public Builder side(String _side) {
-            side = _side;
             return this;
         }
 
@@ -212,7 +209,6 @@ public class Address extends CanvasElement implements Serializable, Comparable<A
             municipality = _municipality;
             return this;
         }
-
 
         public Builder lat(float _lat) {
             lat = _lat;

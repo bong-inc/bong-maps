@@ -4,10 +4,7 @@ import bfst.OSMReader.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class GraphTest {
 
@@ -61,7 +58,7 @@ class GraphTest {
         try {
             setVariables();
             Node actual = graph.getNode(2);
-            Assertions.assertEquals(node2, actual);
+            Assertions.assertEquals(node2.getAsLong(), actual.getAsLong());
         } catch (Exception e) {
             Assertions.fail();
         }

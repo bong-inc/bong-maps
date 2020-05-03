@@ -3,6 +3,10 @@ package bfst.canvas;
 import java.io.Serializable;
 
 public class PointOfInterest implements Serializable {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private float lon;
     private float lat;
     private String name;

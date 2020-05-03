@@ -1,6 +1,5 @@
 package bfst.controllers;
 
-import bfst.OSMReader.KDTree;
 import bfst.canvas.City;
 import bfst.canvas.MapCanvas;
 import bfst.canvas.PointOfInterest;
@@ -11,7 +10,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +47,9 @@ public class DevController {
     @FXML private CheckBox showClosestNode;
     @FXML private CheckBox drawBound;
     @FXML private CheckBox drawPrettyCitynames;
+    @FXML private CheckBox showFoundRoadNode;
+    @FXML private CheckBox useBidirectional;
+    @FXML private CheckBox useAStar;
 
     @FXML
     public void initialize() {
@@ -116,20 +117,20 @@ public class DevController {
 
         findRoute.setOnAction(e -> {
             try {
-                canvas.setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+                canvas.getRouteController().setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected(), useBidirectional.isSelected(), useAStar.isSelected());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
         clearRoute.setOnAction(e -> {
-            canvas.clearRoute();
+            canvas.getRouteController().clearRoute();
         });
 
         shortestRoute.setSelected(true);
 
         routeDescription.setOnAction(e -> {
-            for (Instruction instruction : canvas.getDescription()) {
+            for (Instruction instruction : canvas.getRouteController().getInstructions()) {
                 System.out.println(instruction.getInstruction());
             }
         });
@@ -166,6 +167,14 @@ public class DevController {
         drawPrettyCitynames.setOnAction(e -> {
             City.setDrawPrettyCitynames(drawPrettyCitynames.isSelected());
         });
+
+        showFoundRoadNode.setSelected(canvas.isShowRoadNodes());
+        showFoundRoadNode.setOnAction(e -> {
+            canvas.setShowRoadNodes(showFoundRoadNode.isSelected());
+        });
+
+        useBidirectional.setSelected(true);
+        useAStar.setSelected(true);
     }
 
     private void updateTypesToBeDrawn() {

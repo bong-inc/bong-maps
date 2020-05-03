@@ -21,10 +21,10 @@ public enum Type {
     RAILWAY("railway",new String[]{"rail","light_rail","subway"}, Color.DARKGREY,1,false, Color.DARKGREY, 0.0025f, 5f),
     BUILDING("building",new String[]{""},Color.valueOf("#dbdbdb"),0,true, Color.valueOf("#292929"), 0.5f, 5f),
 
-    PRIMARY_ROAD("highway",new String[]{"primary","motorway","trunk"},Color.YELLOW,1.5,false, Color.valueOf("#ad9900"), 0.0005f, 5f),
-    SECONDARY_ROAD("highway",new String[]{"secondary", "secondary_link", "trunk_link"},Color.WHITE,1,false, Color.valueOf("d1d1d1"), 0.005f, 5f),
-    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},Color.WHITE,1,false, Color.valueOf("d1d1d1"), 0.05f, 5f),
-    OTHER("highway",new String[]{"residential", "unclassified", "track", "footway", "cycleway", "path", "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"},Color.WHITE,1,false, Color.valueOf("d1d1d1"), 0.2f, 5f);
+    PRIMARY_ROAD("highway",new String[]{"primary","motorway","trunk"},Color.YELLOW,3,false, Color.valueOf("#ad9900"), 0.0005f, 5f),
+    SECONDARY_ROAD("highway",new String[]{"secondary", "secondary_link", "trunk_link"},Color.WHITE,2,false, Color.valueOf("d1d1d1"), 0.005f, 5f),
+    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},Color.WHITE,2,false, Color.valueOf("d1d1d1"), 0.05f, 5f),
+    OTHER("highway",new String[]{"residential", "unclassified", "track", "footway", "cycleway", "path", "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"},Color.WHITE,2,false, Color.valueOf("d1d1d1"), 0.2f, 5f);
 
     public String getKey() {
         return key;

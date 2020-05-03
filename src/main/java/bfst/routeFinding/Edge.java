@@ -1,36 +1,48 @@
 package bfst.routeFinding;
 
 import bfst.OSMReader.Node;
-import bfst.canvas.Drawable;
-import bfst.canvas.LinePath;
+import bfst.canvas.CanvasElement;
+import bfst.canvas.Drawer;
 import bfst.canvas.Range;
+import bfst.util.Geometry;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 
-public class Edge implements Serializable {
+public class Edge extends CanvasElement implements Serializable {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private float weight;
     private Street street;
 
-    private Node tailNode;
-    private Node headNode;
+    private long tailId;
+    private float tailLon;
+    private float tailLat;
+
+    private long headId;
+    private float headLon;
+    private float headLat;
 
     public Edge(Node tailNode, Node headNode, Street street) {
-        this.tailNode = tailNode;
-        this.headNode = headNode;
+        this.tailId = tailNode.getAsLong();
+        this.tailLon = tailNode.getLon();
+        this.tailLat = tailNode.getLat();
+        this.headId = headNode.getAsLong();
+        this.headLon = headNode.getLon();
+        this.headLat = headNode.getLat();
         this.street = street;
-        weight = (float) Math.sqrt(Math.pow(this.tailNode.getLon() - this.headNode.getLon(), 2) + Math.pow(this.tailNode.getLat() - this.headNode.getLat(), 2));
+        weight = (float) Math.sqrt(Math.pow(this.tailLon - this.headLon, 2)
+                + Math.pow(this.tailLat - this.headLat, 2));
     }
 
     public Node getTailNode() {
-        return tailNode;
+        return new Node(tailId, tailLon, tailLat);
     }
 
     public Node getHeadNode() {
-        return headNode;
+        return new Node(headId, headLon, headLat);
     }
 
     public double getWeight() {
@@ -42,35 +54,41 @@ public class Edge implements Serializable {
     }
 
     public long other(long vertex) {
-        if (vertex == tailNode.getAsLong()) {
-            return headNode.getAsLong();
+        if (vertex == tailId) {
+            return headId;
         } else {
-            return tailNode.getAsLong();
+            return tailId;
         }
     }
 
-    public Node otherNode (long vertex) {
-        if (vertex == tailNode.getAsLong()) {
-            return headNode;
+    public Node otherNode(long vertex) {
+        if (vertex == tailId) {
+            return new Node(headId, headLon, headLat);
         } else {
-            return tailNode;
+            return new Node(tailId, tailLon, tailLat);
         }
     }
 
-    public Point2D getCentroid(){
-        return new Point2D((tailNode.getLon() + headNode.getLon())/2, (tailNode.getLat() + headNode.getLat())/2);
+    public Point2D getCentroid() {
+        return new Point2D((tailLon + headLon) / 2, (tailLat + headLat) / 2);
     }
 
-    public Range getBoundingBox(){
-        float tailLon = tailNode.getLon();
-        float tailLat = tailNode.getLat();
-        float headLon = headNode.getLon();
-        float headLat = headNode.getLat();
-        return new Range(
-            headLon < tailLon ? headLon : tailLon, // minX
-            headLat < tailLat ? headLat : tailLat, // minY
-            headLon > tailLon ? headLon : tailLon, // maxX
-            headLat > tailLat ? headLat : tailLat  // maxY
+    public Range getBoundingBox() {
+        return new Range(headLon < tailLon ? headLon : tailLon, // minX
+                headLat < tailLat ? headLat : tailLat, // minY
+                headLon > tailLon ? headLon : tailLon, // maxX
+                headLat > tailLat ? headLat : tailLat // maxY
         );
+    }
+
+    public Node closestNode(Point2D query) {
+        double distToTail = Geometry.distance(query.getX(), query.getY(), this.getTailNode().getLon(), this.getTailNode().getLat());
+        double distToHead = Geometry.distance(query.getX(), query.getY(), this.getHeadNode().getLon(), this.getHeadNode().getLat());
+        return distToTail < distToHead ? this.getTailNode() : this.getHeadNode();
+    }
+
+    @Override
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
+        // ignored
     }
 }

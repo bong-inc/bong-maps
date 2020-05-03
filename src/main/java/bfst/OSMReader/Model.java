@@ -3,11 +3,9 @@ package bfst.OSMReader;
 import bfst.addressparser.Address;
 import bfst.canvas.CanvasElement;
 import bfst.canvas.City;
-import bfst.canvas.Drawable;
 import bfst.canvas.Range;
 import bfst.canvas.Type;
 import bfst.routeFinding.*;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,14 +14,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class Model implements Serializable {
-    private static final long serialVerionUID = 101010101010100l;
+    private static final long serialVersionUID = 1L;
 
     private Map<Type, KDTree> kdtreeByType;
     private ArrayList<Address> addresses;
     private ArrayList<City> cities;
     private Graph graph;
     private KDTree addressKDTree;
-    private KDTreeForEdges roadKDTree;
+    private KDTree roadKDTree;
     private KDTree citiesKdTree;
 
     private Bound bound;
@@ -39,16 +37,15 @@ public class Model implements Serializable {
         cities.trimToSize();
         this.kdtreeByType = createKdtreeByType(reader.getDrawableByType());
         this.addressKDTree = createKDTreeFromAddresses();
-        this.roadKDTree = new KDTreeForEdges(reader.getRoadEdges(), new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
+        this.roadKDTree = new KDTree(reader.getRoadEdges(), new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
         this.citiesKdTree = createKDTreeFromCities();
 
         this.cities = null;
     }
 
     public Map<Type, KDTree> createKdtreeByType(Map<Type, ArrayList<CanvasElement>> drawablesByType){
-        kdtreeByType = new HashMap<Type, KDTree>();
+        kdtreeByType = new HashMap<>();
         for(Entry<Type, ArrayList<CanvasElement>> e : drawablesByType.entrySet()){
-            // if(e.getKey() == Type.COASTLINE) continue;
             e.getValue().trimToSize();
             KDTree current = new KDTree(e.getValue(), new Range(bound.getMinLon(),bound.getMinLat(),bound.getMaxLon(), bound.getMaxLat()));
             kdtreeByType.put(e.getKey(), current);
@@ -90,7 +87,7 @@ public class Model implements Serializable {
         return addressKDTree;
     }
 
-    public KDTreeForEdges getRoadKDTree() {
+    public KDTree getRoadKDTree() {
         return roadKDTree;
     }
 }

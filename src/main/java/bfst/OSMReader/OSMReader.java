@@ -5,7 +5,6 @@ import bfst.canvas.*;
 import bfst.routeFinding.Edge;
 import bfst.routeFinding.Graph;
 import bfst.routeFinding.Street;
-
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -97,53 +96,13 @@ public class OSMReader {
                                 break;
                             case "way":
                                 wayHolder.trim();
-                                for (int i = 0; i < tagList.size(); i += 2) {
-
-                                    if (tagList.get(i).equals("access")) {
-                                        if (!(tagList.get(i + 1).equals("yes") || tagList.get(i + 1).equals("permissive"))) {
-                                            break;
-                                        }
-                                    }
-                                    if (tagList.get(i).equals("highway")) {
-
-                                        int defaultSpeed;
-                                        switch(tagList.get(i + 1)) {
-                                            case "motorway":
-                                                defaultSpeed = 130;
-                                                break;
-                                            case "primary":
-                                            case "secondary":
-                                            case "tertiary":
-                                            case "trunk":
-                                                defaultSpeed = 80;
-                                                break;
-                                            case "living_street":
-                                                defaultSpeed = 30;
-                                                break;
-                                            default:
-                                                defaultSpeed = 50;
-                                                break;
-                                        }
-
-                                        long[] nodes = wayHolder.getNodes();
-                                        currentStreet = new Street(tagList, defaultSpeed);
-
-                                        for (int j = 1; j < nodes.length; j++){
-                                            Node currentNode = tempNodes.get(nodes[j]);
-                                            Edge edge = new Edge(tempNodes.get(nodes[j-1]), currentNode, currentStreet);
-                                            graph.addEdge(edge);
-                                            roadEdges.add(edge);
-                                        }
-
-                                        break; 
-                                    }
-                                }
-
+                                parseStreet();
+                                if(type == Type.UNKNOWN) break;
                                 if(type != Type.COASTLINE) {
                                     if (wayHolder.getSize() > 0) {
                                         if (!drawableByType.containsKey(type))
                                             drawableByType.put(type, new ArrayList<>());
-                                        drawableByType.get(type).add(new LinePath(wayHolder, type, tempNodes));
+                                        drawableByType.get(type).add(new LinePath(wayHolder, tempNodes));
                                     }
                                     
                                 } else {
@@ -166,19 +125,20 @@ public class OSMReader {
                                 type = Type.UNKNOWN;
                                 break;
                             case "relation":
+                                if(type == Type.UNKNOWN) break;
                                 relationHolder.collectRelation(tempNodes);
                                 if(!drawableByType.containsKey(type)) drawableByType.put(type, new ArrayList<>());
-                                if(relationHolder.getWays().size() > 0) drawableByType.get(type).add(new PolyLinePath(relationHolder, type, tempNodes));
+                                if(relationHolder.getWays().size() > 0) drawableByType.get(type).add(new PolyLinePath(relationHolder, tempNodes));
                                 type = Type.UNKNOWN;
                                 break;
                             case "osm":
                                 ArrayList<CanvasElement> coastlines = new ArrayList<>();
                                 for(Map.Entry<Long,Way> entry : tempCoastlines.entrySet()){
                                     if(entry.getValue().first() == entry.getValue().last()){
-                                        coastlines.add(new LinePath(entry.getValue(),Type.COASTLINE,tempNodes));
+                                        coastlines.add(new LinePath(entry.getValue(), tempNodes));
                                     } else {
                                         fixCoastline(entry.getValue());
-                                        coastlines.add(new LinePath(entry.getValue(), Type.COASTLINE,tempNodes));
+                                        coastlines.add(new LinePath(entry.getValue(), tempNodes));
                                     }
                                 }
                                 if(coastlines.size() == 0){
@@ -188,7 +148,7 @@ public class OSMReader {
                                     land.addNode(-3);
                                     land.addNode(-4);
                                     land.trim();
-                                    coastlines.add(new LinePath(land, Type.COASTLINE, tempNodes));
+                                    coastlines.add(new LinePath(land, tempNodes));
                                 }
                                 drawableByType.put(Type.COASTLINE,coastlines);
                                 break;
@@ -202,6 +162,50 @@ public class OSMReader {
 
         for (var entry : graph.getAdj().entrySet()) {
             entry.getValue().trimToSize();
+        }
+    }
+
+    public void parseStreet() {
+        for (int i = 0; i < tagList.size(); i += 2) {
+
+            if (tagList.get(i).equals("access")) {
+                if (!(tagList.get(i + 1).equals("yes") || tagList.get(i + 1).equals("permissive"))) {
+                    break;
+                }
+            }
+            if (tagList.get(i).equals("highway")) {
+
+                int defaultSpeed;
+                switch(tagList.get(i + 1)) {
+                    case "motorway":
+                        defaultSpeed = 130;
+                        break;
+                    case "primary":
+                    case "secondary":
+                    case "tertiary":
+                    case "trunk":
+                        defaultSpeed = 80;
+                        break;
+                    case "living_street":
+                        defaultSpeed = 30;
+                        break;
+                    default:
+                        defaultSpeed = 50;
+                        break;
+                }
+
+                long[] nodes = wayHolder.getNodes();
+                currentStreet = new Street(tagList, defaultSpeed);
+
+                for (int j = 1; j < nodes.length; j++){
+                    Node currentNode = tempNodes.get(nodes[j]);
+                    Edge edge = new Edge(tempNodes.get(nodes[j-1]), currentNode, currentStreet);
+                    graph.addEdge(edge);
+                    roadEdges.add(edge);
+                }
+
+                break;
+            }
         }
     }
 
@@ -245,7 +249,6 @@ public class OSMReader {
             case "relation":
                 currentID = Long.parseLong(reader.getAttributeValue(null, "id"));
                 relationHolder = new Relation(currentID);
-                //tempRelations.add(relationHolder);
                 break;
             case "tag":
                 String k = reader.getAttributeValue(null, "k").intern();
@@ -308,6 +311,10 @@ public class OSMReader {
             }
         }
 
+        parseCity(k, v);
+    }
+
+    public void parseCity(String k, String v) {
         if (k.equals("place") && (v.equals("city") || v.equals("town") ||  v.equals("suburb") || v.equals("village") || v.equals("hamlet"))) {
             boolean cityNotPresent = true;
             for (City city : cities) {
@@ -398,23 +405,22 @@ public class OSMReader {
         if((first.getLon() < bound.getMaxLon() && first.getLon() > bound.getMinLon()) && (last.getLon() < bound.getMaxLon() && last.getLon() > bound.getMinLon())) {
             if( (first.getLat() < midLat && last.getLat() < midLat && first.getLon() < last.getLon()) ||
                     (first.getLat() > midLat && last.getLat() > midLat && first.getLon() > last.getLon())) {
-                coastline.addNode(last.getAsLong());
+                coastline.addNode(first.getAsLong());
                 fixed = true;
             }
         }
         else if((first.getLat() < bound.getMaxLat() && first.getLat() > bound.getMinLat()) && (last.getLat() < bound.getMaxLat() && last.getLat() > bound.getMinLat())){
             if( (first.getLon() < midLon && last.getLon() < midLon && first.getLat() > last.getLat()) ||
                     (first.getLon() > midLon && last.getLon() > midLon && first.getLat() < last.getLat())){
-                coastline.addNode(last.getAsLong());
+                coastline.addNode(first.getAsLong());
                 fixed = true;
             }
         }
         if(!fixed){
-            Node[] boundNodes = new Node[4];
-            boundNodes[0] = new Node(-1, bound.getMinLon(), bound.getMinLat()); //TOPLEFT == -1
-            boundNodes[1] = new Node(-2, bound.getMinLon(), bound.getMaxLat()); //BOTTOMLEFT == -2
-            boundNodes[2] = new Node(-3, bound.getMaxLon(), bound.getMaxLat()); //BOTTOMRIGHT == -3
-            boundNodes[3] = new Node(-4, bound.getMaxLon(), bound.getMinLat()); //TOPRIGHT == -4
+            //TOPLEFT == -1
+            //BOTTOMLEFT == -2
+            //BOTTOMRIGHT == -3
+            //TOPRIGHT == -4
 
             if(first.getLat() <= bound.getMinLat()){ //TOP
                 coastline.addNodeToFront(-4L);
@@ -460,9 +466,12 @@ public class OSMReader {
     public void destroy(){
         tempNodes = null;
         tempWays = null;
-        //tempRelations = null;
         tempCoastlines = null;
         drawableByType = null;
         addresses = null;
+    }
+
+    public void setPreviousName(String name) {
+        previousName = name;
     }
 }

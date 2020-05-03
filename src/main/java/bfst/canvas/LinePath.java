@@ -1,35 +1,22 @@
 package bfst.canvas;
 
-import bfst.canvas.CanvasElement;
 import bfst.OSMReader.Node;
 import bfst.OSMReader.NodeContainer;
 import bfst.OSMReader.Way;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 
-public class LinePath extends CanvasElement implements Drawable, Serializable {
+public class LinePath extends CanvasElement implements Serializable {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private float[] coords_;
     private Range boundingBox;
-    private Type type;
+    private int smartTraceThreshold = 3;
 
-    public LinePath(Way way, Type type, NodeContainer nodeContainer) {
+    public LinePath(Way way, NodeContainer nodeContainer) {
         this(getCoordsFromNodeContainer(way, nodeContainer));
-        this.type = type;
-    }
-
-    private static float[] getCoordsFromNodeContainer(Way way, NodeContainer nodeContainer) {
-        long[] nodes = way.getNodes();
-        int nodesSize = way.getSize();
-        float[] coords_ = new float[nodesSize * 2];
-        for (int i = 0 ; i < nodesSize ; ++i) {
-            int index = nodeContainer.getIndex(nodes[i]);
-            coords_[i * 2] = nodeContainer.getLonFromIndex(index);
-            coords_[i * 2 + 1] = nodeContainer.getLatFromIndex(index);
-        }
-        return coords_;
     }
 
     public LinePath(float[] coords) {
@@ -46,18 +33,30 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
         });
     }
 
+    public static float[] getCoordsFromNodeContainer(Way way, NodeContainer nodeContainer) {
+        long[] nodes = way.getNodes();
+        int nodesSize = way.getSize();
+        float[] coords_ = new float[nodesSize * 2];
+        for (int i = 0 ; i < nodesSize ; ++i) {
+            int index = nodeContainer.getIndex(nodes[i]);
+            coords_[i * 2] = nodeContainer.getLonFromIndex(index);
+            coords_[i * 2 + 1] = nodeContainer.getLatFromIndex(index);
+        }
+        return coords_;
+    }
+
     public float[] getCoords(){
         return coords_;
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
         gc.beginPath();
         traceMethod(gc, scale, smartTrace);
         gc.stroke();
     }
 
-    public void traceMethod(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void traceMethod(Drawer gc, double scale, boolean smartTrace) {
         if (smartTrace) {
             smartTrace(gc, scale);
         } else {
@@ -65,14 +64,14 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
         }
     }
 
-    public void trace(GraphicsContext gc) {
+    public void trace(Drawer gc) {
         gc.moveTo(coords_[0], coords_[1]);
         for (int i = 2 ; i < coords_.length ; i += 2) {
             gc.lineTo(coords_[i], coords_[i+1]);
         }
     }
 
-    public void smartTrace(GraphicsContext gc, double scale){
+    public void smartTrace(Drawer gc, double scale){
         float lastX = coords_[0];
         float lastY = coords_[1];
         gc.moveTo(lastX,lastY);
@@ -83,7 +82,7 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
             float diffY = nextY - lastY;
             double hypotenuse = Math.sqrt(Math.pow(diffX,2) + Math.pow(diffY,2));
             double distToNext = scale * hypotenuse;
-            if(3 < distToNext){
+            if(distToNext > this.smartTraceThreshold){
                 gc.lineTo(nextX,nextY);
                 lastX = nextX;
                 lastY = nextY;
@@ -105,7 +104,7 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
         return boundingBox;
     }
 
-    public void setBoundingBox() {
+    public Range calculateBoundingBox() {
         float minX = Float.MAX_VALUE;
         float maxX = Float.NEGATIVE_INFINITY;
         for (int x = 0; x < coords_.length; x += 2) {
@@ -118,6 +117,10 @@ public class LinePath extends CanvasElement implements Drawable, Serializable {
             if(coords_[y] < minY) minY = coords_[y];
             if(coords_[y] > maxY) maxY = coords_[y];
         }
-        this.boundingBox = new Range(minX, minY, maxX, maxY);
+        return new Range(minX, minY, maxX, maxY);
+    }
+
+    public void setBoundingBox() {
+        this.boundingBox = calculateBoundingBox();
     }
 }

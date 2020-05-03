@@ -2,24 +2,21 @@ package bfst.OSMReader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import bfst.canvas.Range;
+import bfst.routeFinding.Edge;
+import bfst.routeFinding.Street;
 import bfst.util.Geometry;
 import bfst.canvas.CanvasElement;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 public class KDTree implements Serializable {
-  private static final long serialVersionUID = 8179750180455602356L;
-  List<CanvasElement> elements;
+  private static final long serialVersionUID = 1L;
+  List<? extends CanvasElement> elements;
   public static int maxNumOfElements = 500; // max size of elements list in leafs
   Range bound;
   KDTree low;
@@ -32,12 +29,12 @@ public class KDTree implements Serializable {
   }
 
   /** first instance is root and depth 0 */
-  public KDTree(List<CanvasElement> elements, Range bound){
+  public KDTree(List<? extends CanvasElement> elements, Range bound){
     this(elements,bound,0,Type.LEAF);
   }
 
   /** Recursive constructor for intermediate nodes */
-  public KDTree(List<CanvasElement> elements, Range bound, int depth, Type type){
+  public KDTree(List<? extends CanvasElement> elements, Range bound, int depth, Type type){
     this.bound = bound;
     this.elements = elements;
     this.type = type;
@@ -70,17 +67,16 @@ public class KDTree implements Serializable {
       List<CanvasElement> higher = new ArrayList<>(this.elements.subList((size) / 2 + 1, size));
 
       // set dimentions of new subtree (low)
-      this.low = new KDTree(lower, boundingRangeOf(lower), this.depth + 1, Type.LEAF);
+      this.low = new KDTree(lower, CanvasElement.boundingRangeOf(lower), this.depth + 1, Type.LEAF);
 
       // set dimentions of new subtree (high)
-      this.high = new KDTree(higher, boundingRangeOf(higher), this.depth + 1, Type.LEAF);
+      this.high = new KDTree(higher, CanvasElement.boundingRangeOf(higher), this.depth + 1, Type.LEAF);
       
       // set this to parent node
       this.elements = null;
       this.type = Type.PARENT;
     }
   }
-
 
   // Only used for Address objects
   public CanvasElement nearestNeighbor(Point2D query){
@@ -117,45 +113,16 @@ public class KDTree implements Serializable {
 
     if(isLeaf() && elements.size() > 0){
       CanvasElement result = null;
-      CanvasElement c = bestInElements(query);
+      CanvasElement c = closestElementInElements(query);
+      if(c == null) return null;
+
       if(Geometry.distance(query, c.getCentroid()) < bestDist){
         result = c;
         bestDist = Geometry.distance(query, c.getCentroid());
       }
-
       return result;
     }
-
     return null;
-  }
-
-  public static Range boundingRangeOf(List<CanvasElement> list){
-    if(list.size() < 1) throw new RuntimeException("Empty list cannot have bounding range");
-    Float minX = Float.MAX_VALUE;
-    Float minY = Float.MAX_VALUE;
-    Float maxX = Float.NEGATIVE_INFINITY;
-    Float maxY = Float.NEGATIVE_INFINITY;
-    for(CanvasElement c : list){
-      Range boundingBox = c.getBoundingBox();
-      if(boundingBox.minX < minX) minX = boundingBox.minX;
-      if(boundingBox.minY < minY) minY = boundingBox.minY;
-      if(boundingBox.maxX > maxX) maxX = boundingBox.maxX;
-      if(boundingBox.maxY > maxY) maxY = boundingBox.maxY;
-    }
-    return new Range(minX, minY, maxX, maxY);
-  }
-
-  public CanvasElement bestInElements(Point2D query){
-    CanvasElement best = elements.get(0);
-    double bestDist = Geometry.distance(query, best.getCentroid());
-    for(CanvasElement c : elements){
-      double newDist = Geometry.distance(query, c.getCentroid());
-      if(newDist < bestDist){
-        bestDist = newDist;
-        best = c;
-      }
-    }
-    return best;
   }
 
   private boolean isEvenDepth() {
@@ -179,26 +146,96 @@ public class KDTree implements Serializable {
     return closestElement;
   }
 
-  public List<CanvasElement> rangeSearch(Range range){
-    boolean isEnclosed = range.isEnclosedBy(bound);
+  public List<? extends CanvasElement> rangeSearch(Range range){
     if(!range.overlapsWith(bound)) return new ArrayList<CanvasElement>();
     if(this.isLeaf()){
+      if(bound.isEnclosedBy(range)) return elements;
+
       List<CanvasElement> elementsInRange = new ArrayList<CanvasElement>();
       for(CanvasElement element : elements){
         Range boundingBox = element.getBoundingBox();
-        if(isEnclosed || range.overlapsWith(boundingBox)){
+        if(range.overlapsWith(boundingBox)){
           elementsInRange.add(element);
         }
       }
+
       return elementsInRange;
     } else {
-      List<CanvasElement> elementsInLowRange = new ArrayList<CanvasElement>();
-      List<CanvasElement> elementsInHighRange = new ArrayList<CanvasElement>();
+      List<? extends CanvasElement> elementsInLowRange = new ArrayList<CanvasElement>();
+      List<? extends CanvasElement> elementsInHighRange = new ArrayList<CanvasElement>();
       if(low != null) elementsInLowRange = low.rangeSearch(range);
       if(high != null) elementsInHighRange = high.rangeSearch(range);
       List<CanvasElement> newList = Stream.concat(elementsInLowRange.stream(), elementsInHighRange.stream()).collect(Collectors.toList());
       return newList;
     }
+  }
+
+  // Only used for road edges
+  public Node nearestNeighborForEdges(Point2D query, String vehicle){
+    Node returnElement = nearestNeighborForEdges(query, Double.POSITIVE_INFINITY, vehicle);
+    try {
+      if(returnElement == null) throw new Exception("No nearest neighbor found");
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+    return returnElement;
+  }
+
+  private Node nearestNeighborForEdges(Point2D query, double bestDist, String vehicle) {
+    KDTree first, last;
+    if(!isLeaf()){
+      Node result = null;
+
+      first = low.bound.distanceToPoint(query) < high.bound.distanceToPoint(query) ? low : high;
+      last = low.bound.distanceToPoint(query) > high.bound.distanceToPoint(query) ? low : high;
+
+      if(first.bound.distanceToPoint(query) < bestDist){
+        result = first.nearestNeighborForEdges(query, bestDist, vehicle);
+        if(result != null) bestDist = Geometry.distance(query, result.getCentroid());
+      }
+      Node temp;
+      if(last.bound.distanceToPoint(query) < bestDist){
+        temp = last.nearestNeighborForEdges(query, bestDist, vehicle);
+        if(temp != null){
+          result = temp;
+        }
+      }
+      return result;
+    }
+
+    if(isLeaf() && elements.size() > 0){
+      Node result = null;
+      Node c = closestNodeInEdges(query, vehicle);
+      if(c == null) return null;
+
+      if(Geometry.distance(query, c.getCentroid()) < bestDist){
+        result = c;
+        bestDist = Geometry.distance(query, c.getCentroid());
+      }
+      return result;
+    }
+    return null;
+  }
+
+  public Node closestNodeInEdges(Point2D query, String vehicle) {
+    Node closestNode = null;
+    double bestDist = Double.POSITIVE_INFINITY;
+    List<Edge> edges = (List<Edge>)(List<?>) elements;
+    for(Edge e : edges) {
+
+      Street street = e.getStreet();
+      if(vehicle.equals("Car") && !street.isCar()) continue;
+      if(vehicle.equals("Bicycle") && !street.isBicycle()) continue;
+      if(vehicle.equals("Walk") && !street.isWalking()) continue;
+      Node newNode = e.closestNode(query);
+      
+      double newDist = Geometry.distance(query.getX(), query.getY(), newNode.getLon(), newNode.getLat());
+      if(newDist < bestDist){
+        bestDist = newDist;
+        closestNode = newNode;
+      }
+    }
+    return closestNode;
   }
 
 }

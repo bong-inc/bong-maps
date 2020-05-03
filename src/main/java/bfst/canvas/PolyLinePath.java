@@ -1,33 +1,28 @@
 package bfst.canvas;
 
-import bfst.canvas.CanvasElement;
 import bfst.OSMReader.NodeContainer;
 import bfst.OSMReader.Relation;
 import bfst.OSMReader.Way;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PolyLinePath extends CanvasElement implements Drawable, Serializable {
-    private static final long serialVersionUID = -4838798038938840050L;
-    ArrayList<LinePath> linePaths;
-    Type type;
+public class PolyLinePath extends CanvasElement implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private ArrayList<LinePath> linePaths;
     private Range boundingBox;
 
-    public PolyLinePath(Relation relation, Type type, NodeContainer nodeContainer) {
+    public PolyLinePath(Relation relation, NodeContainer nodeContainer) {
         linePaths = new ArrayList<>();
         ArrayList<Way> ways = relation.getWays();
         for (var way : ways) {
-            linePaths.add(new LinePath(way, type, nodeContainer));
+            linePaths.add(new LinePath(way, nodeContainer));
         }
-        this.type = type;
         setBoundingBox();
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
         gc.beginPath();
         for (LinePath linepath : linePaths) {
             linepath.traceMethod(gc, scale, smartTrace);
@@ -54,10 +49,10 @@ public class PolyLinePath extends CanvasElement implements Drawable, Serializabl
         float minY = Float.MAX_VALUE;
         float maxY = Float.NEGATIVE_INFINITY;
         for(LinePath l : linePaths){
-            if(l.getBoundingBox().minX < minX) minX = l.getBoundingBox().minX;
-            if(l.getBoundingBox().maxX > maxX) maxX = l.getBoundingBox().maxX;
-            if(l.getBoundingBox().minY < minY) minY = l.getBoundingBox().minY;
-            if(l.getBoundingBox().maxY > maxY) maxY = l.getBoundingBox().maxY;
+            if(l.getBoundingBox().getMinX() < minX) minX = l.getBoundingBox().getMinX();
+            if(l.getBoundingBox().getMaxX() > maxX) maxX = l.getBoundingBox().getMaxX();
+            if(l.getBoundingBox().getMinY() < minY) minY = l.getBoundingBox().getMinY();
+            if(l.getBoundingBox().getMaxY() > maxY) maxY = l.getBoundingBox().getMaxY();
         }
         return new Range(minX, minY, maxX, maxY);
     }

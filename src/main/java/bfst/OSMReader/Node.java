@@ -1,10 +1,9 @@
 package bfst.OSMReader;
 
 import bfst.canvas.CanvasElement;
+import bfst.canvas.Drawer;
 import bfst.canvas.Range;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
 import java.util.function.LongSupplier;
 
@@ -12,7 +11,7 @@ public class Node extends CanvasElement implements LongSupplier, Serializable {
     private long id;
     private float lon;
     private float lat;
-    private static final long serialVersionUID = 4076268921174823754L;
+    private static final long serialVersionUID = 1L;
 
     public Node(long id, float lon, float lat){
         this.id = id;
@@ -49,7 +48,7 @@ public class Node extends CanvasElement implements LongSupplier, Serializable {
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
 
     }
 }

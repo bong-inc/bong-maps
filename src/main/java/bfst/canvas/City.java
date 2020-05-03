@@ -2,25 +2,20 @@ package bfst.canvas;
 
 import bfst.OSMReader.Node;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
-
 import java.io.Serializable;
 
-public class City extends CanvasElement implements Serializable, Comparable<City>, Drawable {
-    public String getName() {
-        return name;
-    }
-
+public class City extends CanvasElement implements Serializable, Comparable<City> {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private final String name;
     private final Node node;
     private final CityType type;
     private static boolean drawPrettyCitynames = true;
 
-    private City(String _name, Node _node, String _cityType) {
+    public City(String _name, Node _node, String _cityType) {
         name = _name;
         node = _node;
         switch (_cityType) {
@@ -45,7 +40,7 @@ public class City extends CanvasElement implements Serializable, Comparable<City
     }
 
     @Override
-    public void draw(GraphicsContext gc, double scale, boolean smartTrace) {
+    public void draw(Drawer gc, double scale, boolean smartTrace) {
         Font font = new Font(scale * type.getFontSize());
         gc.setFont(font);
 
@@ -59,12 +54,12 @@ public class City extends CanvasElement implements Serializable, Comparable<City
         }
     }
 
-    private void drawNormal(GraphicsContext gc, double scale){
+    private void drawNormal(Drawer gc, double scale){
         gc.fillText(this.name, node.getLon(), node.getLat());
     }
 
-    private void drawPretty(GraphicsContext gc, double scale) {
-        if (this.type == type.CITY) {
+    private void drawPretty(Drawer gc, double scale) {
+        if (this.type == CityType.CITY) {
             gc.strokeText(this.name, node.getLon(), node.getLat() - 7 * scale);
             gc.fillText(this.name, node.getLon(), node.getLat() - 7 * scale);
             double radius = 4 * scale;
@@ -78,6 +73,10 @@ public class City extends CanvasElement implements Serializable, Comparable<City
 
     public CityType getType() {
         return type;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public static class Builder {
