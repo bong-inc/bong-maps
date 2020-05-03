@@ -160,8 +160,8 @@
       </StackPane>
     </children>
   </VBox>
-  <VBox fx:id="welcomeOverlay" alignment="CENTER" prefHeight="Infinity" prefWidth="Infinity" style="-fx-background-color: #000000cc;">
-    <VBox alignment="CENTER" prefHeight="200" maxWidth="600" style="-fx-background-color: #ffffffcc;">
+  <VBox fx:id="welcomeOverlay" styleClass="darkFilter">
+    <VBox styleClass="selectMap">
       <Button fx:id="welcomeDenmark">Denmark</Button>
       <!-- <ImageView id="boxImage">    
         <image>

@@ -380,6 +380,20 @@ Button:hover {
     -fx-background-radius: 100;
 }
 
+.darkFilter {
+    -fx-background-color: #000000cc;
+    -fx-pref-width: infinity;
+    -fx-pref-height: infinity;
+    -fx-alignment: center;
+}
+
+.selectMap {
+    -fx-alignment: center;
+    -fx-pref-height: 200;
+    -fx-max-width: 600;
+    -fx-background-color: white;
+}
+
 .findRoute:disabled {
     -fx-text-fill: #888;
     -fx-background-color: white;
