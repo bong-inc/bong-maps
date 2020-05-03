@@ -24,6 +24,7 @@
         <Label>Danil Polshin, </Label>
         <Label>Gregor Cresnar, </Label>
         <Label>Rohith M S, </Label>
-        <Label>Hassan Ali</Label>
+        <Label>Hassan Ali, </Label>
+        <Label>Erik Sigblad</Label>
     </FlowPane>
 </VBox>
