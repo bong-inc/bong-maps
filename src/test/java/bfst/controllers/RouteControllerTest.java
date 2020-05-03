@@ -229,8 +229,8 @@ public class RouteControllerTest {
             MapCanvas canvas = new MapCanvas();
             canvas.setModelWithoutReset(model);
             routeController = new RouteController(canvas);
-            routeController.setDijkstra(31471020, 280177408, "Car", true);
-            routeController.setRoute();
+            routeController.setDijkstra(31471020, 280177408, "Car", true, true, true);
+            routeController.setRoute(true);
 
             var actualRoute = (ArrayList<Edge>) routeController.getRoute();
             var actualInstructions = routeController.getInstructions();
@@ -253,8 +253,8 @@ public class RouteControllerTest {
             MapCanvas canvas = new MapCanvas();
             canvas.setModelWithoutReset(model);
             routeController = new RouteController(canvas);
-            routeController.setDijkstra(31471020, 280177408, "Car", true);
-            routeController.setRoute();
+            routeController.setDijkstra(31471020, 280177408, "Car", true, true, true);
+            routeController.setRoute(true);
             routeController.clearRoute();
 
             Assertions.assertEquals(null, routeController.getRoute());

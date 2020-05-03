@@ -48,6 +48,8 @@ public class DevController {
     @FXML private CheckBox drawBound;
     @FXML private CheckBox drawPrettyCitynames;
     @FXML private CheckBox showFoundRoadNode;
+    @FXML private CheckBox useBidirectional;
+    @FXML private CheckBox useAStar;
 
     @FXML
     public void initialize() {
@@ -115,7 +117,7 @@ public class DevController {
 
         findRoute.setOnAction(e -> {
             try {
-                canvas.getRouteController().setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected());
+                canvas.getRouteController().setDijkstra(Long.parseLong(startPoint.getText()), Long.parseLong(endPoint.getText()), vehicle.getValue(), shortestRoute.isSelected(), useBidirectional.isSelected(), useAStar.isSelected());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -170,6 +172,9 @@ public class DevController {
         showFoundRoadNode.setOnAction(e -> {
             canvas.setShowRoadNodes(showFoundRoadNode.isSelected());
         });
+
+        useBidirectional.setSelected(true);
+        useAStar.setSelected(true);
     }
 
     private void updateTypesToBeDrawn() {
