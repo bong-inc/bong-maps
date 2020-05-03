@@ -580,7 +580,6 @@ public class MainController {
         try {
             inversedStart = canvas.getTrans().inverseTransform(lastMouse.getX(), lastMouse.getY());
             inversedEnd = canvas.getTrans().inverseTransform(end.getX(), end.getY());
-            throw new NonInvertibleTransformException("");
         } catch (NonInvertibleTransformException e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setContentText("Troels promised this should not have happened... :'-(");
