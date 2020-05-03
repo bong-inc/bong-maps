@@ -168,7 +168,7 @@
         <Button fx:id="welcomeDenmark" styleClass="welcomeButton, denmark">Denmark</Button>
         <Button fx:id="welcomeCopenhagen" styleClass="welcomeButton, copenhagen">Copenhagen</Button>
       </HBox>
-      <Button fx:id="welcomeCustom" styleClass="findRoute">or select your own file...</Button>
+      <Button fx:id="welcomeCustom" styleClass="welcomeCustom">or select your own file...</Button>
       <Label styleClass="welcomeLabel">Supported file types:</Label>
       <Label styleClass="welcomeLabel">.osm or .zip (or .bin saved from Bong Maps)</Label>
     </VBox>

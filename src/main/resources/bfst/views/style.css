@@ -49,7 +49,7 @@
 }
 
 .welcomeCustom:hover {
-    -fx-text-fill: "#333333";
+    -fx-background-color: "#ededed";
 }
 
 .content {
