@@ -16,6 +16,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -413,6 +414,7 @@ public class MainController {
             helpStage.setTitle("Help");
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+            helpStage.getIcons().add(new Image(this.getClass().getClassLoader().getResourceAsStream("bfst/views/bongIcon.png")));
             helpStage.setScene(scene);
             helpStage.show();
         } catch (Exception ex) {
@@ -428,6 +430,7 @@ public class MainController {
             aboutStage.setTitle("About");
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+            aboutStage.getIcons().add(new Image(this.getClass().getClassLoader().getResourceAsStream("bfst/views/bongIcon.png")));
             aboutStage.setScene(scene);
             aboutStage.show();
         } catch (Exception ex) {
@@ -445,6 +448,7 @@ public class MainController {
             devStage.setTitle("dev tools");
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getClassLoader().getResource("bfst/views/style.css").toExternalForm());
+            devStage.getIcons().add(new Image(this.getClass().getClassLoader().getResourceAsStream("bfst/views/bongIcon.png")));
             devStage.setScene(scene);
             devStage.show();
         } catch (Exception ex) {
