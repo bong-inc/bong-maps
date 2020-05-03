@@ -28,6 +28,8 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -189,7 +191,7 @@ public class MainController {
             setMapBinaryFromPath("denmark");
             closeWelcomeOverlay();
         });
-        
+
         welcomeCopenhagen.setOnAction(e -> {
             closeWelcomeOverlay();
         });    
@@ -247,7 +249,7 @@ public class MainController {
             openHelp();
         });
 
-        setAsDestination.setTooltip(new Tooltip("Set as destination"));
+        setAsDestination.setTooltip(setupTooltip("Set as destination"));
         setAsDestination.setOnAction(e -> {
             canvas.getRouteController().clearRoute();
             destinationAddress = currentAddress;
@@ -256,7 +258,7 @@ public class MainController {
             showDirectionsMenu();
         });
 
-        setAsStart.setTooltip(new Tooltip("Set as start"));
+        setAsStart.setTooltip(setupTooltip("Set as start"));
         setAsStart.setOnAction(e -> {
             canvas.getRouteController().clearRoute();
             startAddress = currentAddress;
@@ -329,6 +331,12 @@ public class MainController {
                 goToAddress(a);
             }
         });
+    }
+
+    private Tooltip setupTooltip(String message){
+        Tooltip tip = new Tooltip("Set as start");
+        tip.setShowDelay(Duration.ZERO);
+        return tip;
     }
 
     private void closeWelcomeOverlay() {
@@ -596,12 +604,13 @@ public class MainController {
 
         if (poiController.POIContains(canvas.getCurrentPin().getCenterX(), canvas.getCurrentPin().getCenterY())) {
             POIExists.set(true);
-            POIButton.setTooltip(new Tooltip("Remove point of interest"));
+
+            POIButton.setTooltip(setupTooltip("Remove point of interest"));
             POIButton.getStyleClass().removeAll("POIButton-add");
             POIButton.getStyleClass().add("POIButton-remove");
         } else {
             POIExists.set(false);
-            POIButton.setTooltip(new Tooltip("Add to points of interest"));
+            POIButton.setTooltip(setupTooltip("Add to points of interest"));
             POIButton.getStyleClass().removeAll("POIButton-remove");
             POIButton.getStyleClass().add("POIButton-add");
         }

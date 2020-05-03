@@ -17,6 +17,26 @@
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
     -fx-background-size: contain;
+    -fx-font-weight: bold;
+    -fx-text-fill: transparent;
+    -fx-content-display: bottom;
+}
+
+.welcomeButton:hover {
+    -fx-text-fill: "#333";
+}
+
+.denmark {
+    -fx-background-image: url('../denmark.png');
+}
+
+.copenhagen {
+    -fx-background-image: url('../copenhagen.png');
+}
+
+.selectAMap {
+    -fx-text-fill: "#555";
+    -fx-font-size: 25;
 }
 
 .welcomeLabel {
@@ -26,11 +46,10 @@
 .welcomeCustom {
     -fx-background-color: "#ddd";
     -fx-text-fill: "#000000";
-    -fx-font-weight: "bold";
 }
 
 .welcomeCustom:hover {
-    -fx-text-fill: "#333333";
+    -fx-background-color: "#ededed";
 }
 
 .content {
@@ -417,9 +436,10 @@ Button:hover {
 .selectMap {
     -fx-spacing: 10;
     -fx-alignment: center;
-    -fx-pref-height: 400;
-    -fx-max-width: 480;
+    -fx-pref-height: 360;
+    -fx-max-width: 380;
     -fx-background-color: white;
+    -fx-background-radius: 5px;
 }
 
 .selectDefaultMapsButtons {
@@ -467,6 +487,10 @@ Button:hover {
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.5) , 10, 0.0 , 0 , 3 );
     */
     -fx-font-size: 0.85em;
+}
+
+.welcomeButton:hover {
+    -fx-opacity: 0.7;
 }
 
 .instruction:hover {

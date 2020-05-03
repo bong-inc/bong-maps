@@ -163,9 +163,10 @@
   </VBox>
   <VBox fx:id="welcomeOverlay" styleClass="darkFilter">
     <VBox styleClass="selectMap">
+      <Label styleClass="selectAMap">Select a map</Label>
       <HBox styleClass="selectDefaultMapsButtons">
-        <Button fx:id="welcomeDenmark" styleClass="welcomeButton" style="-fx-background-image: url('bfst/denmark.png')"></Button>
-        <Button fx:id="welcomeCopenhagen" styleClass="welcomeButton" style="-fx-background-image: url('bfst/copenhagen.png')"></Button>
+        <Button fx:id="welcomeDenmark" styleClass="welcomeButton, denmark">Denmark</Button>
+        <Button fx:id="welcomeCopenhagen" styleClass="welcomeButton, copenhagen">Copenhagen</Button>
       </HBox>
       <Button fx:id="welcomeCustom" styleClass="welcomeCustom">or select your own file...</Button>
       <Label styleClass="welcomeLabel">Supported file types:</Label>
