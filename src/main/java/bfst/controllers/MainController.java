@@ -401,7 +401,7 @@ public class MainController {
         long startRoadId = startNode.getAsLong();
         long destinationRoadId = destinationNode.getAsLong();
 
-        canvas.getRouteController().setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute);
+        canvas.getRouteController().setDijkstra(startRoadId, destinationRoadId, vehicle, shortestRoute, true, true);
 
     }
 

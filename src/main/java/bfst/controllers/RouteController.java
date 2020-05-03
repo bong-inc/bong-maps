@@ -251,12 +251,15 @@ public class RouteController {
         return  singleDirectedRoute;
     }
 
-    public void setRoute() {
+    public void setRoute(boolean useBidirectional) {
         route = dijkstra.pathTo(dijkstra.getLastNode(), 1);
+
         lastInstructionNode = route.get(0).getTailNode();
-        ArrayList<Edge> secondPart = dijkstra.pathTo(dijkstra.getLastNode(), 2);
-        Collections.reverse(secondPart);
-        route.addAll(secondPart);
+        if (useBidirectional) {
+            ArrayList<Edge> secondPart = dijkstra.pathTo(dijkstra.getLastNode(), 2);
+            Collections.reverse(secondPart);
+            route.addAll(secondPart);
+        }
         route = singleDirectRoute(route);
 
         float[] floats = new float[route.size() * 2 + 2];
@@ -277,13 +280,13 @@ public class RouteController {
         canvas.repaint(16);
     }
 
-    public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute) throws Exception{
+    public void setDijkstra(long startPoint, long endPoint, String vehicle, boolean shortestRoute, boolean useBidirectional, boolean useAStar) throws Exception{
         long time = -System.nanoTime();
-        dijkstra = new Dijkstra(canvas.getModel().getGraph(), startPoint, endPoint, vehicle, shortestRoute);
+        dijkstra = new Dijkstra(canvas.getModel().getGraph(), startPoint, endPoint, vehicle, shortestRoute, useBidirectional, useAStar);
         time += System.nanoTime();
         System.out.println("Set dijkstra: " + time / 1000000f + "ms");
 
-        setRoute();
+        setRoute(useBidirectional);
         generateRouteInfo(route, vehicle, canvas.getModel().getGraph());
         canvas.repaint(40);
     }
