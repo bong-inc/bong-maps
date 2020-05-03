@@ -17,9 +17,9 @@ class FileControllerTest {
             ArrayList<PointOfInterest> actual = (ArrayList<PointOfInterest>) FileController.loadBinary(is);
             ArrayList<PointOfInterest> expected = new ArrayList<>();
 
-            PointOfInterest poi1 = new PointOfInterest(1400464.0f, -7494234.5f, "Christiansborg");
-            PointOfInterest poi2 = new PointOfInterest(1384447.9f, -7482500.0f, "Emils nabo :))");
-            PointOfInterest poi3 = new PointOfInterest(1402559.0f, -7493729.0f, "Pusher street");
+            PointOfInterest poi1 = new PointOfInterest(1392929.9f, -7496614.0f, "punkt");
+            PointOfInterest poi2 = new PointOfInterest(1403347.4f, -7486917.5f, "punkt2");
+            PointOfInterest poi3 = new PointOfInterest(999491.44f, -7472447.0f, "punkt3");
             expected.add(poi1);
             expected.add(poi2);
             expected.add(poi3);
@@ -30,6 +30,7 @@ class FileControllerTest {
 
         } catch (Exception e) {
             e.printStackTrace();
+            Assertions.fail();
         }
     }
 
