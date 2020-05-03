@@ -293,7 +293,6 @@ public class MainController {
             if (showStreetOnHover) {
                 canvas.showStreetNearMouse(this, e);
             }
-
         });
 
         swap.setOnAction(e -> {

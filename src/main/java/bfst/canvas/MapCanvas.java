@@ -44,6 +44,7 @@ public class MapCanvas extends Canvas {
     public static boolean drawBoundingBox;
 
     private Range renderRange;
+    private double pixelWidth;
 
     public RouteController getRouteController() {
         return routeController;
@@ -99,15 +100,6 @@ public class MapCanvas extends Canvas {
         return currentPin;
     }
 
-    public void setShowStreetNodeCloseToMouse(boolean newValue) {
-        showStreetNodeCloseToMouse = newValue;
-    }
-
-    public void drawStreetName(Point2D location, String text) {
-        gc.setFill(Color.BLACK);
-        gc.fillText(text, location.getX() + 15, location.getY() - 15);
-    }
-
     public boolean getShowStreetNodeCloseToMouse() {
         return showStreetNodeCloseToMouse;
     }
@@ -128,6 +120,7 @@ public class MapCanvas extends Canvas {
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
+        this.pixelWidth = pixelwidth;
         gc.setFillRule(FillRule.EVEN_ODD);
 
         updateSearchRange(pixelwidth);
@@ -465,18 +458,37 @@ public class MapCanvas extends Canvas {
 	
 	        String streetName = streetEdge.getStreet().getName();
 	        if (streetName == null) {
-	            streetName = "Unnamed street";
-	        }
-	        repaint();
-	        drawEdge(streetEdge);
+                streetName = "Unnamed street";
+            }
+            repaint();
+            drawEdge(streetEdge);
 	
 	        if (getShowStreetNodeCloseToMouse()) {
 	            drawNode(nearestNode);
 	        }
 	
-	        drawStreetName(translatedCoords, streetName);
+	        drawStreetName(streetName);
 	    } catch (Exception ex) {
 	        ex.printStackTrace();
 	    }
-	}
+    }
+    
+    public void setShowStreetNodeCloseToMouse(boolean newValue) {
+        showStreetNodeCloseToMouse = newValue;
+    }
+
+    public void drawStreetName(String text) {
+        gc.setFill(Color.BLACK);
+        gc.setStroke(Color.BLACK);
+        gc.setTextAlign(TextAlignment.LEFT);
+        gc.setLineWidth(1 * getPixelWidth());
+        Point2D placement = getModelCoordinates(50, getHeight() - 50 + 13);
+        gc.strokeText(text, placement.getX(), placement.getY());
+        gc.fillText(text, placement.getX(),  placement.getY());
+    }
+
+    private double getPixelWidth() {
+        return this.pixelWidth;
+    }
+
 }
