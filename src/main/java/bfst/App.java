@@ -9,6 +9,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -25,6 +28,10 @@ public class App extends Application {
         primaryStage.getIcons().add(new Image(this.getClass().getClassLoader().getResourceAsStream("bfst/views/bongIcon.png")));
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        Alert startUpAlert = new Alert(AlertType.NONE);
+        startUpAlert.getButtonTypes().add(ButtonType.CLOSE);
+        startUpAlert.showAndWait();
     }
 
     public static Parent loadFXML(String filename) throws IOException {
