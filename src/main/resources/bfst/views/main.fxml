@@ -10,7 +10,8 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.Label?>
-<!-- <?import javafx.scene.control.Image?> -->
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <StackPane prefHeight="800" prefWidth="1200" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <VBox fx:id="mainView">
@@ -160,18 +161,15 @@
       </StackPane>
     </children>
   </VBox>
-  <VBox fx:id="welcomeOverlay" alignment="CENTER" prefHeight="Infinity" prefWidth="Infinity" style="-fx-background-color: #000000cc;">
-    <VBox alignment="CENTER" prefHeight="200" maxWidth="600" style="-fx-background-color: #ffffffcc;">
-      <Button fx:id="welcomeDenmark">Denmark</Button>
-      <!-- <ImageView id="boxImage">    
-        <image>
-            <Image url="denmark.png" />
-        </image>
-      </ImageView> -->
-      <Button fx:id="welcomeCopenhagen">Copenhagen</Button>
-      <Button fx:id="welcomeCustom">or select your own file!</Button>
-      <Label>Supported file types:</Label>
-      <Label>.osm or .zip (or .bin saved from Bong Maps)</Label>
+  <VBox spacing="30" fx:id="welcomeOverlay" alignment="CENTER" prefHeight="Infinity" prefWidth="Infinity" style="-fx-background-color: #000000aa;">
+    <VBox spacing="10" alignment="CENTER" prefHeight="400" maxWidth="480" style="-fx-background-color: #ffffff;">
+      <HBox spacing="10" alignment="center">
+        <Button fx:id="welcomeDenmark" styleClass="welcomeButton" style="-fx-background-image: url('bfst/denmark.png')"></Button>
+        <Button fx:id="welcomeCopenhagen" styleClass="welcomeButton" style="-fx-background-image: url('bfst/copenhagen.png')"></Button>
+      </HBox>
+      <Button fx:id="welcomeCustom" styleClass="welcomeCustom">or select your own file...</Button>
+      <Label styleClass="welcomeLabel">Supported file types:</Label>
+      <Label styleClass="welcomeLabel">.osm or .zip (or .bin saved from Bong Maps)</Label>
     </VBox>
   </VBox>
 </StackPane>

@@ -6,6 +6,33 @@
     -fx-faint-focus-color: transparent;
 }
 
+.welcomeButton {
+    -fx-min-width: 160px;
+    -fx-min-height: 160px;
+    -fx-pref-width: 160px;
+    -fx-pref-height: 160px;
+    -fx-max-width: 160px;
+    -fx-max-height: 160px;
+    -fx-background-color: "#ade1ff";
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: contain;
+}
+
+.welcomeLabel {
+    -fx-text-fill: "#555";
+}
+
+.welcomeCustom {
+    -fx-background-color: "#ddd";
+    -fx-text-fill: "#000000";
+    -fx-font-weight: "bold";
+}
+
+.welcomeCustom:hover {
+    -fx-text-fill: "#333333";
+}
+
 .content {
     -fx-fit-to-width: true;
 }
