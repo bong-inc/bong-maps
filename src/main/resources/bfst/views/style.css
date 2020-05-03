@@ -104,6 +104,10 @@
     -fx-background-color: #f8f8f8;
 }
 
+.suggestion:hover {
+    -fx-cursor: hand;
+}
+
 .searchBar {
     -fx-background-color: white;
     -fx-max-width: 400;
