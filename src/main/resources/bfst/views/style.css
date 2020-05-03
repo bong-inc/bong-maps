@@ -407,6 +407,21 @@ Button:hover {
     -fx-background-radius: 100;
 }
 
+.darkFilter {
+    -fx-background-color: #000000aa;
+    -fx-pref-width: infinity;
+    -fx-pref-height: infinity;
+    -fx-alignment: center;
+}
+
+.selectMap {
+    -fx-spacing: 10;
+    -fx-alignment: center;
+    -fx-pref-height: 400;
+    -fx-max-width: 480;
+    -fx-background-color: white;
+}
+
 .findRoute:disabled {
     -fx-text-fill: #888;
     -fx-background-color: white;

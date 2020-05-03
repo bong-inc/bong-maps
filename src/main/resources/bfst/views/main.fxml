@@ -161,8 +161,8 @@
       </StackPane>
     </children>
   </VBox>
-  <VBox spacing="30" fx:id="welcomeOverlay" alignment="CENTER" prefHeight="Infinity" prefWidth="Infinity" style="-fx-background-color: #000000aa;">
-    <VBox spacing="10" alignment="CENTER" prefHeight="400" maxWidth="480" style="-fx-background-color: #ffffff;">
+<VBox fx:id="welcomeOverlay" styleClass="darkFilter">
+  <VBox styleClass="selectMap">
       <HBox spacing="10" alignment="center">
         <Button fx:id="welcomeDenmark" styleClass="welcomeButton" style="-fx-background-image: url('bfst/denmark.png')"></Button>
         <Button fx:id="welcomeCopenhagen" styleClass="welcomeButton" style="-fx-background-image: url('bfst/copenhagen.png')"></Button>
