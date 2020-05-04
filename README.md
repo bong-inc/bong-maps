@@ -5,7 +5,7 @@ Bong Maps is a GIS application capable of displaying data from [OpenStreetMap](h
 This project was developed during spring 2020 by @emja, @thhk, @krbh, @frai and @jglr
 
 ## Running the application
-Download the [latest release](https://github.itu.dk/trbj/BFST20Gruppe21/releases/latest) as a .jar file. To run the application, this file should be executed by opening it directly.
+[Download](https://github.itu.dk/trbj/BFST20Gruppe21/releases/latest/download/bfst.jar) the [latest release](https://github.itu.dk/trbj/BFST20Gruppe21/releases/latest) as a .jar file. To run the application, this file should be executed by opening it directly.
 
 It is also possible to run it from the command line like so:
 
