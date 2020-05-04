@@ -5,7 +5,7 @@ Bong Maps is a [GIS](https://en.wikipedia.org/wiki/Geographic_information_system
 This project was developed during spring 2020 by [@emja](https://github.itu.dk/emja), [@thhk](https://github.itu.dk/thhk), [@krbh](https://github.itu.dk/krbh), [@frai](https://github.itu.dk/frai) and [@jglr](https://github.itu.dk/jglr)
 
 ## Running the application
-[Download](https://github.itu.dk/trbj/BFST20Gruppe21/releases/latest/download/bfst.jar) the [latest release](https://github.itu.dk/trbj/BFST20Gruppe21/releases/latest) as a .jar file. To run the application, this file should be executed by opening it directly.
+[Download](https://github.itu.dk/trbj/BFST20Gruppe21/releases/latest/download/bong.jar) the [latest release](https://github.itu.dk/trbj/BFST20Gruppe21/releases/latest) as a .jar file. To run the application, this file should be executed by opening it directly.
 
 It is also possible to run it from the command line like so:
 
@@ -39,7 +39,7 @@ gradlew jar
 Assuming an executable `.jar` file is located at the default location, run the following command at the project root:
 
 ```
-java -jar build\libs\bfst.jar
+java -jar build\libs\bong.jar
 ```
 
 ### Running test suite

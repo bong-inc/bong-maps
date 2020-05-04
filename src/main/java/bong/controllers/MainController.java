@@ -718,7 +718,7 @@ public class MainController {
 
     private void setStartOrDestinationLabel(Address address, Point2D point, Label label) {
         if (address != null) {
-            if (dist(point, address.getCentroid()) > 80) { // TODO should this use distanceInMeters() ?
+            if (dist(point, address.getCentroid()) > 80) {
                 Node unprojected = MercatorProjector.unproject(address.getCentroid().getX(), address.getCentroid().getY());
                 label.setText(-unprojected.getLat() + "°N " + unprojected.getLon() + "°E");
             } else {
