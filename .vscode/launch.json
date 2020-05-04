@@ -6,10 +6,10 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Debug (Launch)-Launcher<bfst>",
+            "name": "Debug (Launch)-Launcher<bong>",
             "request": "launch",
-            "mainClass": "bfst.Launcher",
-            "projectName": "bfst"
+            "mainClass": "bong.Launcher",
+            "projectName": "bong"
         }
     ]
 }
