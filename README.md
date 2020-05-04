@@ -19,7 +19,7 @@ Running the application using the command line exposes useful logging for develo
 This project was initialized using [gradle](https://gradle.org/). Common tasks can be run through this tool. The tool is provided with the source code, so no installation is required. Only a compatible JDK is  required. All commands are using the already provided [gradle wrapper](https://github.itu.dk/trbj/BFST20Gruppe21/blob/master/gradlew).
 
 ### Dev Tools
-The dev tools provide access to advanced features, not meant for the end user. Some of the dev tools provide useful logging, that only is exposed when the application is run from the command line or from an IDE.
+The dev tools provide access to advanced features, not meant for the end user. Find the devtools in More > Devtools. Some of the dev tools provide useful logging, that only is exposed when the application is run from the command line or from an IDE.
 
 ### Running the application directly from source files
 
