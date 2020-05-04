@@ -72,3 +72,5 @@ application {
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
+
+applicationDefaultJvmArgs = ["-XX:+UseG1GC", "-XX:MaxHeapFreeRatio=10", "-XX:MinHeapFreeRatio=10"]
