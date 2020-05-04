@@ -17,9 +17,9 @@ class FileControllerTest {
             ArrayList<PointOfInterest> actual = (ArrayList<PointOfInterest>) FileController.loadBinary(is);
             ArrayList<PointOfInterest> expected = new ArrayList<>();
 
-            PointOfInterest poi1 = new PointOfInterest(1392929.9f, -7496614.0f, "punkt");
-            PointOfInterest poi2 = new PointOfInterest(1403347.4f, -7486917.5f, "punkt2");
-            PointOfInterest poi3 = new PointOfInterest(999491.44f, -7472447.0f, "punkt3");
+            PointOfInterest poi1 = new PointOfInterest(1388618.0f, -7490362.0f, "punkt1");
+            PointOfInterest poi2 = new PointOfInterest(1380238.8f, -7502516.0f, "punkt2");
+            PointOfInterest poi3 = new PointOfInterest(1409182.8f, -7483031.5f, "punkt3");
             expected.add(poi1);
             expected.add(poi2);
             expected.add(poi3);
