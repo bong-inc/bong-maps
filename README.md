@@ -2,7 +2,7 @@
 
 Bong Maps is a [GIS](https://en.wikipedia.org/wiki/Geographic_information_system) application capable of displaying data from [OpenStreetMap](https://www.openstreetmap.org/) in the formats ZIP and OSM. 
 
-This project was developed during spring 2020 by @emja, @thhk, @krbh, @frai and @jglr
+This project was developed during spring 2020 by [@emja](https://github.itu.dk/emja), [@thhk](https://github.itu.dk/thhk), [@krbh](https://github.itu.dk/krbh), [@frai](https://github.itu.dk/frai) and [@jglr](https://github.itu.dk/jglr)
 
 ## Running the application
 [Download](https://github.itu.dk/trbj/BFST20Gruppe21/releases/latest/download/bfst.jar) the [latest release](https://github.itu.dk/trbj/BFST20Gruppe21/releases/latest) as a .jar file. To run the application, this file should be executed by opening it directly.
