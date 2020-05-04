@@ -8,7 +8,7 @@ Gruppe kontrakt for gruppe 21
 | Emil Jäpelt        | EMJA |
 | Thomas Kilbak      | THHK |
 | Jonas Røssum       | JGLR |
-| Kristoffer Højelse | FRAI |
+| Kristoffer Højelse | KRBH |
 
 1. Organisatoriske normer
     1. Form for organisation
