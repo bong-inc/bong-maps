@@ -49,7 +49,7 @@ The project includes several automated tests, that can be run by using the follo
 gradlew test
 ```
 
-To generate a test coverage report using [JaCoCo](https://www.eclemma.org/jacoco/), run the following command
+To generate a test coverage report using [JaCoCo](https://www.eclemma.org/jacoco/), run `gradlew test` and then run the following command:
 
 ```
 gradlew jacocoTestReport
