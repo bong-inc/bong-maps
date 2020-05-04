@@ -29,7 +29,7 @@ With the source files downloaded, run the following command in the root of the p
 gradlew run
 ```
 
-### Build an executable jar from source
+### Building an executable jar from source
 
 ```
 gradlew jar
