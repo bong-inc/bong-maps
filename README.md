@@ -10,7 +10,7 @@ This project was developed during spring 2020 by @emja, @thhk, @krbh, @frai and 
 It is also possible to run it from the command line like so:
 
 ```
-java - jar bfst.jar
+java -jar bfst.jar
 ```
 
 Running the application using the command line exposes useful logging for development purposes.
