@@ -5,17 +5,21 @@ Bong Maps is a GIS application capable of displaying data from [OpenStreetMap](h
 This project was developed during spring 2020 by @emja, @thhk, @krbh, @frai and @jglr
 
 ## Running the application
-Download the [latest release](https://github.itu.dk/trbj/BFST20Gruppe21/releases) as a .jar file.
+Download the [latest release](https://github.itu.dk/trbj/BFST20Gruppe21/releases) as a .jar file. To run the application, this file should be executed by opening it directly.
 
-To run the application, this file should be executed, either by opening it directly or running it from the command line like so:
+It is also possible to run it from the command line like so:
 
 ```
 java - jar bfst.jar
 ```
 
-## Development
+Running the application using the command line exposes useful logging for development purposes.
 
-This project was initialized using [gradle](https://gradle.org/). Common tasks can be run through this tool. The tool is provided with the source code, so no installation is required. Only a compatible JDK is  required. All commands are using the already provided [gradle wrapper](https://github.itu.dk/trbj/BFST20Gruppe21/blob/master/gradlew)
+## Development
+This project was initialized using [gradle](https://gradle.org/). Common tasks can be run through this tool. The tool is provided with the source code, so no installation is required. Only a compatible JDK is  required. All commands are using the already provided [gradle wrapper](https://github.itu.dk/trbj/BFST20Gruppe21/blob/master/gradlew).
+
+### Dev Tools
+The dev tools provide access to advanced features, not meant for the end user. Some of the dev tools provide useful logging, that only is exposed when the application is run from the command line or from an IDE.
 
 ### Running the application directly from source files
 
