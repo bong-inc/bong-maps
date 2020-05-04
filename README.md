@@ -1,6 +1,6 @@
 # Bong Maps
 
-Bong Maps is a GIS application capable of displaying data from [OpenStreetMap](https://www.openstreetmap.org/) in the formats ZIP and OSM. 
+Bong Maps is a [GIS](https://en.wikipedia.org/wiki/Geographic_information_system) application capable of displaying data from [OpenStreetMap](https://www.openstreetmap.org/) in the formats ZIP and OSM. 
 
 This project was developed during spring 2020 by @emja, @thhk, @krbh, @frai and @jglr
 
