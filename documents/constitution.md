@@ -101,34 +101,3 @@ Gruppe kontrakt for gruppe 21
    4. Build tool chain
 
         Vi bruger Gradle som buildtool, for at skabe et agnostisk udviklingsmiljø der kan distribuere til forskellige platforme, samt udvikles på uanset IDE/Kode editor.
-
-## Underskrifter
-
-<!-- Gruppe kontrakt for gruppe 21
-| medlem             | id   | signatur |
-| ------------------ | ---- | -------- |
-| Frederik Raisa     | FRAI |![alt text](./signatures/frai.png) |
-| Emil Jäpelt        | EMJA | |
-| Thomas Kilbak      | THHK | |
-| Jonas Røssum       | JGLR | |
-| Kristoffer Højelse | KRBH | | -->
-
-Frederik Raisa FRAI
-
-![alt text](./signatures/frai.png)
-
-Emil Jäpelt EMJA
-
-![alt text](./signatures/emja.png)
-
-Thomas Kilbak THHK
-
-![alt text](./signatures/thhk.png)
-
-Jonas Røssum JGLR
-
-![alt text](./signatures/jglr.png)
-
-Kristoffer Højelse KRBH
-
-![alt text](./signatures/krbh.png)

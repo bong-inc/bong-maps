@@ -3,5 +3,3 @@
 #
 # These are explicitly windows files and should use crlf
 *.bat           text eol=crlf
-*.osm filter=lfs diff=lfs merge=lfs -text
-*.bin filter=lfs diff=lfs merge=lfs -text
