@@ -19,7 +19,7 @@ Requirements included: route finding, address search and a lag-free experience a
 <img src="https://user-images.githubusercontent.com/34659757/82275818-f77ab100-9983-11ea-92ab-817c50b22f6f.png" alt="Bong Maps logo">
 
 ## Running the application
-Download the [latest release](https://github.com/joglr/bong-maps/releases/latest) as a .jar file. To run the application, this file should be executed by opening it directly.
+Download the [latest release](https://github.com/hojelse/bong-maps/releases/latest) as a .jar file. To run the application, this file should be executed by opening it directly.
 
 It is also possible to run it from the command line like so:
 
@@ -30,7 +30,7 @@ java -jar bong.jar
 Running the application using the command line exposes useful logging for development purposes.
 
 ## Development
-This project was initialized using [gradle](https://gradle.org/). Common tasks can be run through this tool. The tool is provided with the source code, so no installation is required. Only a compatible JDK is  required. All commands are using the already provided [gradle wrapper](https://github.com/joglr/bong-maps/blob/master/gradlew).
+This project was initialized using [gradle](https://gradle.org/). Common tasks can be run through this tool. The tool is provided with the source code, so no installation is required. Only a compatible JDK is  required.
 
 ### Dev Tools
 The dev tools provide access to advanced features, not meant for the end user. Find the devtools in More > Devtools. Some of the dev tools provide useful logging, that only is exposed when the application is run from the command line or from an IDE.
