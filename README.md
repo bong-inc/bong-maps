@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://github.com/joglr/bong-maps/blob/master/src/main/resources/bong/views/bongIcon.png" alt="Bong Maps logo" width="200" height="200">
+<img src="https://github.com/hojelse/bong-maps/blob/master/src/main/resources/bong/views/bongIcon.png" alt="Bong Maps logo" width="200" height="200">
 </p>
 
 # Bong Maps
