@@ -19,7 +19,11 @@ Requirements included: route finding, address search and a lag-free experience a
 <img src="https://user-images.githubusercontent.com/34659757/82275818-f77ab100-9983-11ea-92ab-817c50b22f6f.png" alt="Bong Maps logo">
 
 ## Running the application
-Download the [latest release](https://github.com/hojelse/bong-maps/releases/latest) as a .jar file. To run the application, this file should be executed by opening it directly. A compatible Java Runtime Environment like [Java 8](https://www.java.com/en/download/) or Java Development Kit [JDK 13](https://www.oracle.com/java/technologies/javase-downloads.html) is required.
+Download the [latest release](https://github.com/hojelse/bong-maps/releases/latest) as a .jar file.
+
+To run the application, this file should be executed by opening it directly.
+
+A compatible Java Runtime Environment like [Java 8](https://www.java.com/en/download/) or Java Development Kit [JDK 13](https://www.oracle.com/java/technologies/javase-downloads.html) is required.
 
 It is also possible to run it from the command line like so:
 
