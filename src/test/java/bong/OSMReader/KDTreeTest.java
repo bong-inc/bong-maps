@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -121,7 +122,7 @@ public class KDTreeTest {
 
     KDTree kdTree = new KDTree(elements, new Range(-2,-2,2,2));
 
-    List<? extends CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f));
+    List<? extends CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f)).collect(Collectors.toList());
     assertEquals(3, actual.size());
   }
 
@@ -144,7 +145,7 @@ public class KDTreeTest {
 
     KDTree kdTree = new KDTree(elements, new Range(-2,-2,2,2));
 
-    List<? extends CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f));
+    List<? extends CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f)).collect(Collectors.toList());;
     assertEquals(3 + KDTree.maxNumOfElements*4, actual.size());
   }
 
@@ -153,7 +154,7 @@ public class KDTreeTest {
     ArrayList<CanvasElement> elements = new ArrayList<>();
     KDTree kdTree = new KDTree(elements, new Range(-2,-2,2,2));
     elements.add(new LinePath(new Node(0l,5f,5f), new Node(0l,5f,5f)));
-    List<? extends CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f));
+    List<? extends CanvasElement> actual = kdTree.rangeSearch(new Range(-1f, -1f, 1f, 1f)).collect(Collectors.toList());;
     assertEquals(0, actual.size());
   }
 

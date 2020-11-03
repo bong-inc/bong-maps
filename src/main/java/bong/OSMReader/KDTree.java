@@ -140,10 +140,10 @@ public class KDTree implements Serializable {
     return closestElement;
   }
 
-  public List<? extends CanvasElement> rangeSearch(Range range){
-    if(!range.overlapsWith(bound)) return new ArrayList<CanvasElement>();
+  public Stream<? extends CanvasElement> rangeSearch(Range range){
+    if(!range.overlapsWith(bound)) return Stream.empty();
     if(this.isLeaf()){
-      if(bound.isEnclosedBy(range)) return elements;
+      if(bound.isEnclosedBy(range)) return elements.stream();
 
       List<CanvasElement> elementsInRange = new ArrayList<CanvasElement>();
       for(CanvasElement element : elements){
@@ -153,14 +153,17 @@ public class KDTree implements Serializable {
         }
       }
 
-      return elementsInRange;
+      return elementsInRange.stream();
     } else {
-      List<? extends CanvasElement> elementsInLowRange = new ArrayList<CanvasElement>();
-      List<? extends CanvasElement> elementsInHighRange = new ArrayList<CanvasElement>();
-      if(low != null) elementsInLowRange = low.rangeSearch(range);
-      if(high != null) elementsInHighRange = high.rangeSearch(range);
-      List<CanvasElement> newList = Stream.concat(elementsInLowRange.stream(), elementsInHighRange.stream()).collect(Collectors.toList());
-      return newList;
+      Stream<? extends CanvasElement> elementsInLowRange;
+      Stream<? extends CanvasElement> elementsInHighRange;
+      Stream<? extends CanvasElement> newStream = null;
+      if(low != null && high != null){
+        elementsInLowRange = low.rangeSearch(range);
+        elementsInHighRange = high.rangeSearch(range);
+        newStream = Stream.concat(elementsInLowRange, elementsInHighRange);
+      }
+      return newStream;
     }
   }
 

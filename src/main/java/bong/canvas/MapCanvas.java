@@ -14,6 +14,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class MapCanvas extends Canvas {
     private Drawer gc;
@@ -174,9 +175,12 @@ public class MapCanvas extends Canvas {
                 }
 
                 gc.setTextAlign(TextAlignment.CENTER);
-                for(CanvasElement element : model.getCitiesKdTree().rangeSearch(renderRange)){
-                    element.draw(gc, pixelwidth, smartTrace);
-                }
+                model.getCitiesKdTree().rangeSearch(renderRange).forEach(e -> {
+                    e.draw(gc, pixelwidth, smartTrace);
+                });
+                // for(CanvasElement element : model.getCitiesKdTree().rangeSearch(renderRange)){
+                //     element.draw(gc, pixelwidth, smartTrace);
+                // }
             }
         }
 
@@ -334,14 +338,15 @@ public class MapCanvas extends Canvas {
         gc.setFill(Color.TRANSPARENT);
         if (kdTree != null) {
             setFillAndStroke(type, pixelwidth, useRegularColors);
-            
-            for(CanvasElement element : kdTree.rangeSearch(renderRange)){
-                element.draw(gc, 1/pixelwidth, smartTrace);
-                if (type.shouldHaveFill()) gc.fill();
-
-                if(drawBoundingBox) {
-                    element.getBoundingBox().draw(gc, pixelwidth/2f);
-                }
+            if(kdTree.rangeSearch(renderRange) != null) {
+                kdTree.rangeSearch(renderRange).forEach(element -> {
+                    element.draw(gc, 1/pixelwidth, smartTrace);
+                    if (type.shouldHaveFill()) gc.fill();
+    
+                    if(drawBoundingBox) {
+                        element.getBoundingBox().draw(gc, pixelwidth/2f);
+                    }
+                });
             }
         }
 
