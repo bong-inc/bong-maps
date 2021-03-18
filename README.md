@@ -39,7 +39,7 @@ This project was initialized using [gradle](https://gradle.org/). Common tasks c
 ### Dev Tools
 The dev tools provide access to advanced features, not meant for the end user. Find the devtools in More > Devtools. Some of the dev tools provide useful logging, that only is exposed when the application is run from the command line or from an IDE.
 
-### Points of iterest
+### Points of interest
 Points of interest are saved locally, meaning that the first time you start the program, there won't be any. Also this means that if you open the program on a different computer, the points of interest won't be there. Running the tests will clear the points of interest.
 
 ### Running the application directly from source files
